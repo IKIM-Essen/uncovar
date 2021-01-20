@@ -1,12 +1,12 @@
 rule bwa_index:
     input:
-        "resources/genome.fasta"
+        "resources/genome.fasta",
     output:
-        multiext("resources/genome.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa")
+        multiext("resources/genome.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa"),
     log:
-        "logs/bwa-index.log"
+        "logs/bwa-index.log",
     resources:
-        mem_mb=369000
+        mem_mb=369000,
     wrapper:
         "0.69.0/bio/bwa/index"
 
@@ -14,16 +14,16 @@ rule bwa_index:
 rule map_reads:
     input:
         reads=get_fastqs,
-        idx=rules.bwa_index.output
+        idx=rules.bwa_index.output,
     output:
-        temp("results/mapped/{sample}.bam")
+        temp("results/mapped/{sample}.bam"),
     log:
-        "logs/bwa-mem/{sample}.log"
+        "logs/bwa-mem/{sample}.log",
     params:
         index=lambda w, input: os.path.splitext(input.idx[0])[0],
         extra="",
         sort="samtools",
-        sort_order="coordinate"
+        sort_order="coordinate",
     threads: 8
     wrapper:
         "0.69.0/bio/bwa/mem"
@@ -31,14 +31,14 @@ rule map_reads:
 
 rule mark_duplicates:
     input:
-        "results/mapped/{sample}.bam"
+        "results/mapped/{sample}.bam",
     output:
         bam="results/dedup/{sample}.bam",
-        metrics="results/qc/dedup/{sample}.metrics.txt"
+        metrics="results/qc/dedup/{sample}.metrics.txt",
     log:
-        "logs/picard/dedup/{sample}.log"
+        "logs/picard/dedup/{sample}.log",
     params:
-        ""
+        "",
     wrapper:
         "0.69.0/bio/picard/markduplicates"
 
@@ -46,13 +46,13 @@ rule mark_duplicates:
 rule samtools_calmd:
     input:
         aln="results/dedup/{sample}.bam",
-        ref="resources/genome.fasta"
+        ref="resources/genome.fasta",
     output:
-        "results/recal/{sample}.bam"
+        "results/recal/{sample}.bam",
     log:
-        "logs/samtools-calmd/{sample}.log"
+        "logs/samtools-calmd/{sample}.log",
     params:
-        "-A"
+        "-A",
     threads: 8
     wrapper:
         "0.69.0/bio/samtools/calmd"
@@ -60,10 +60,10 @@ rule samtools_calmd:
 
 rule bam_index:
     input:
-        "{prefix}.bam"
+        "{prefix}.bam",
     output:
-        "{prefix}.bam.bai"
+        "{prefix}.bam.bai",
     log:
-        "logs/bam-index/{prefix}.log"
+        "logs/bam-index/{prefix}.log",
     wrapper:
         "0.59.2/bio/samtools/index"

@@ -12,11 +12,11 @@ rule get_genome:
 
 rule genome_faidx:
     input:
-        "resources/genome.fasta"
+        "resources/genome.fasta",
     output:
-        "resources/genome.fasta.fai"
+        "resources/genome.fasta.fai",
     log:
-        "logs/genome-faidx.log"
+        "logs/genome-faidx.log",
     wrapper:
         "0.59.2/bio/samtools/faidx"
 
