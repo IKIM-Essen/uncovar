@@ -11,4 +11,5 @@ include: "rules/variant_annotation.smk"
 
 rule all:
     input:
-        "results/qc/multiqc.html"
+        "results/qc/multiqc.html",
+        expand("results/calls/{sample}.bcf", sample=get_samples())

@@ -1,6 +1,6 @@
 rule get_genome:
     output:
-        "refs/genome.fasta",
+        "resources/genome.fasta",
     log:
         "logs/get-genome.log",
     conda:
@@ -10,9 +10,20 @@ rule get_genome:
         "efetch -format fasta > {output}) 2> {log}"
 
 
+rule genome_faidx:
+    input:
+        "resources/genome.fasta"
+    output:
+        "resources/genome.fasta.fai"
+    log:
+        "logs/genome-faidx.log"
+    wrapper:
+        "0.59.2/bio/samtools/faidx"
+
+
 rule get_genome_annotation:
     output:
-        "refs/annotation.gff",
+        "resources/annotation.gff",
     log:
         "logs/get-annotation.log",
     conda:
@@ -25,7 +36,7 @@ rule get_genome_annotation:
 
 rule get_problematic_sites:
     output:
-        temp("refs/problematic-sites.vcf"),  # always retrieve the latest VCF
+        temp("resources/problematic-sites.vcf"),  # always retrieve the latest VCF
     log:
         "logs/get-problematic-sites.log",
     conda:

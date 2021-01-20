@@ -1,1 +1,4 @@
 pepfile: config/pep/config.yaml
+
+variant-calling:
+  scenario: config/scenario.yaml
