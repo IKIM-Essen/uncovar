@@ -42,7 +42,7 @@ jobs:
       with:
         path: |
           .tests/data
-        key: "" # TODO update key once we cache more than the data
+        key: "testdata" # TODO update key once we cache more than the data
 
     - name: Download test data
       run: |
