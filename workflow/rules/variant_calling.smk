@@ -47,7 +47,7 @@ rule varlociraptor_preprocess:
     output:
         "results/observations/{sample}.bcf",
     params:
-        depth=config["variant-calling"]["max-read-depth"]
+        depth=config["variant-calling"]["max-read-depth"],
     log:
         "logs/varlociraptor/preprocess/{sample}.log",
     conda:

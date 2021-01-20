@@ -1,5 +1,7 @@
 from pathlib import Path
 
+VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
+
 
 def get_samples():
     return list(pep.sample_table["sample_name"].values)
@@ -20,9 +22,18 @@ def get_report_input(pattern):
     return inner
 
 
-def get_report_args(wildcards, files):
+def get_report_bcfs(wildcards, input):
     return expand(
-        "{sample}={file}", zip, sample=get_report_samples(wildcards), file=files
+        "{sample}={bcf}", zip, sample=get_report_samples(wildcards), bcf=input.bcfs
+    )
+
+
+def get_report_bams(wildcards, input):
+    return expand(
+        "{sample}:{sample}={bam}",
+        zip,
+        sample=get_report_samples(wildcards),
+        bam=input.bams,
     )
 
 
@@ -33,13 +44,14 @@ def get_report_samples(wildcards):
 def get_merge_calls_input(suffix):
     def inner(wildcards):
         return expand(
-            "results/filtered-calls/{{sample}}.{vartype}.bcf.{suffix}",
+            "results/filtered-calls/{{sample}}.{vartype}{suffix}",
             suffix=suffix,
-            vartype=["SNV", "MNV", "INS", "DEL", "REP"],
+            vartype=VARTYPES,
         )
+
     return inner
 
 
-
 wildcard_constraints:
-    sample="|".join(get_samples())
+    sample="|".join(get_samples()),
+    vartypes="|".join(VARTYPES),

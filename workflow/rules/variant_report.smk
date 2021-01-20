@@ -12,8 +12,8 @@ rule vcf_report:
             category="Variant calls",
         ),
     params:
-        bcfs=lambda w, input: get_report_args(w, input.bcfs),
-        bams=lambda w, input: get_report_args(w, input.bams),
+        bcfs=get_report_bcfs,
+        bams=get_report_bams,
         format_field="DP AF OBS",
         template=get_resource("custom-table-report.js"),
         max_read_depth=config["variant-calling"]["report"]["max-read-depth"],
@@ -24,4 +24,4 @@ rule vcf_report:
         "../envs/rbt.yaml"
     shell:
         "rbt vcf-report {input.ref} --bams {params.bams} --vcfs {params.bcfs} --format {params.format_field} "
-        "--info PROB_* --js {params.template} -d {params.max_read_depth} --js-file {params.js_files} {output} 2> {log}"
+        "--info PROB_* --js {params.template} -d {params.max_read_depth} --js-file {params.js_files} -- {output} 2> {log}"
