@@ -1,10 +1,11 @@
 # TODO Johannes add rules to retrieve main assembly and annotation
 
+
 rule get_genome:
     output:
-        "refs/genome.fasta"
+        "refs/genome.fasta",
     log:
-        "logs/get-genome.log"
+        "logs/get-genome.log",
     conda:
         "../envs/entrez.yaml"
     shell:
@@ -14,9 +15,9 @@ rule get_genome:
 
 rule get_genome_annotation:
     output:
-        "refs/annotation.gff"
+        "refs/annotation.gff",
     log:
-        "logs/get-annotation.log"
+        "logs/get-annotation.log",
     conda:
         "../envs/curl.yaml"
     shell:
@@ -27,13 +28,14 @@ rule get_genome_annotation:
 
 rule get_problematic_sites:
     output:
-        temp("refs/problematic-sites.vcf") # always retrieve the latest VCF
+        temp("refs/problematic-sites.vcf"),  # always retrieve the latest VCF
     log:
-        "logs/get-problematic-sites.log"
+        "logs/get-problematic-sites.log",
     conda:
         "../envs/curl.yaml"
     shell:
         "curl -sSL https://raw.githubusercontent.com/W-L/ProblematicSites_SARS-CoV2/"
         "master/problematic_sites_sarsCov2.vcf > {output} 2> {log}"
+
 
 # TODO Alexander + Thomas add rules to retrieve strain sequences (I currently don't yet know from where)
