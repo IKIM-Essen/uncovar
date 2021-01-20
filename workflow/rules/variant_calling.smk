@@ -25,6 +25,8 @@ rule render_scenario:
         report("results/scenarios/{sample}.yaml", caption="../report/scenario.rst", category="Variant calling scenarios")
     log:
         "logs/render-scenario/{sample}.log"
+    conda:
+        "../envs/unix.yaml"
     shell:
         "sed 's/sample:/{wildcards.sample}/' {input} > {output}"
 

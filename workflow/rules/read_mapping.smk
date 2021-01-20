@@ -7,7 +7,6 @@ rule bwa_index:
         "logs/bwa-index.log"
     resources:
         mem_mb=369000
-    cache: True
     wrapper:
         "0.69.0/bio/bwa/index"
 
@@ -50,6 +49,8 @@ rule samtools_calmd:
         ref="resources/genome.fasta"
     output:
         "results/recal/{sample}.bam"
+    log:
+        "logs/samtools-calmd/{sample}.log"
     params:
         "-A"
     threads: 8

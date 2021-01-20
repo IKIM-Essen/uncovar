@@ -27,7 +27,7 @@ rule get_genome_annotation:
     log:
         "logs/get-annotation.log",
     conda:
-        "../envs/curl.yaml"
+        "../envs/unix.yaml"
     shell:
         "(curl -sSL https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/009/858/895/"
         "GCF_009858895.2_ASM985889v3/GCF_009858895.2_ASM985889v3_genomic.gff.gz | "
@@ -40,7 +40,7 @@ rule get_problematic_sites:
     log:
         "logs/get-problematic-sites.log",
     conda:
-        "../envs/curl.yaml"
+        "../envs/unix.yaml"
     shell:
         "curl -sSL https://raw.githubusercontent.com/W-L/ProblematicSites_SARS-CoV2/"
         "master/problematic_sites_sarsCov2.vcf > {output} 2> {log}"
