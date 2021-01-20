@@ -13,7 +13,7 @@ rule fastqc:
 
 rule multiqc:
     input:
-        expand("results/qc/{sample}_fastqc.zip", sample=get_samples())
+        expand("results/qc/fastqc/{sample}_fastqc.zip", sample=get_samples())
     output:
         "results/qc/multiqc.html"
     params:
