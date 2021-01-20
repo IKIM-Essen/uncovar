@@ -22,7 +22,7 @@ rule freebayes:
 
 rule render_scenario:
     input:
-        local(config["variant-calling"]["scenario"]),
+        local("resources/scenario.yaml"),
     output:
         report(
             "results/scenarios/{sample}.yaml",
@@ -46,13 +46,15 @@ rule varlociraptor_preprocess:
         bai="results/recal/{sample}.bam.bai",
     output:
         "results/observations/{sample}.bcf",
+    params:
+        depth=config["variant-calling"]["max-read-depth"]
     log:
         "logs/varlociraptor/preprocess/{sample}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
         "varlociraptor preprocess variants --candidates {input.candidates} "
-        "{input.ref} --bam {input.bam} --output {output} 2> {log}"
+        "{input.ref} --bam {input.bam} --max-depth {params.depth} --output {output} 2> {log}"
 
 
 rule varlociraptor_call:

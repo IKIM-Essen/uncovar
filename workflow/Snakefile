@@ -9,8 +9,11 @@ include: "rules/strain_calling.smk"
 include: "rules/read_mapping.smk"
 include: "rules/variant_calling.smk"
 include: "rules/variant_annotation.smk"
+include: "rules/variant_filtration.smk"
+include: "rules/variant_report.smk"
 
 rule all:
     input:
         "results/qc/multiqc.html",
+        expand("results/vcf-report/{target}", target=["all"] + get_samples()),
         expand("results/calls/{sample}.bcf", sample=get_samples())

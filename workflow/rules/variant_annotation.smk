@@ -17,7 +17,6 @@ rule annotate_variants:
         fai="resources/genome.fasta.fai",
         gff="resources/annotation.gff.gz",
         csi="resources/annotation.gff.gz.tbi",
-        synonyms=get_synonyms(),
         problematic="resources/problematic-sites.vcf.gz",
         problematic_tbi="resources/problematic-sites.vcf.gz.tbi",
     output:
@@ -27,8 +26,8 @@ rule annotate_variants:
         # Pass a list of plugins to use, see https://www.ensembl.org/info/docs/tools/vep/script/vep_plugins.html
         # Plugin args can be added as well, e.g. via an entry "MyPlugin,1,FOO", see docs.
         plugins=["LoFtool"],
-        extra=lambda w, input: "--synonyms {input.synonyms} --custom {input.problematic},,vcf,exact,0,".format(
-            input=input
+        extra=lambda w, input: "--synonyms {synonyms} --custom {input.problematic},,vcf,exact,0,".format(
+            input=input, synonyms=get_resource("synonyms.txt")
         ),
     log:
         "logs/vep/{sample}.log",

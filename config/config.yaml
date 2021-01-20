@@ -1,4 +1,10 @@
 pepfile: config/pep/config.yaml
 
 variant-calling:
-  scenario: config/scenario.yaml
+  # false discovery rate to control for
+  fdr: 0.05
+  # downsample loci to this read depth
+  max-read-depth: 2000
+  report:
+    # downsample loci to this read depth for visualization in report
+    max-read-depth: 100
