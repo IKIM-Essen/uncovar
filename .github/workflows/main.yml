@@ -51,14 +51,14 @@ jobs:
         curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_2.fastq.gz > .tests/data/ERR4861412_2.fastq.gz
 
     - name: Test workflow
-      uses: snakemake/snakemake-github-action@v1.12.0
+      uses: snakemake/snakemake-github-action@v1.14.0
       with:
         directory: .tests
         snakefile: workflow/Snakefile
         args: "--use-conda --show-failed-logs -j 10 --conda-cleanup-pkgs cache --conda-frontend mamba"
 
     - name: Test report
-      uses: snakemake/snakemake-github-action@v1.12.0
+      uses: snakemake/snakemake-github-action@v1.14.0
       with:
         directory: .test
         snakefile: workflow/Snakefile
