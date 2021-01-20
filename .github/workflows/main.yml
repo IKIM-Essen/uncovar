@@ -1,0 +1,57 @@
+name: Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+
+jobs:
+  Formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Formatting
+        uses: github/super-linter@v3
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_SNAKEMAKE_SNAKEFMT: true
+
+
+  Linting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Lint workflow
+        uses: snakemake/snakemake-github-action@v1.12.0
+        with:
+          directory: .
+          snakefile: workflow/Snakefile
+          args: "--lint"
+
+  Testing:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+  
+    - name: Download test data
+      run: |
+        curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_1.fastq.gz > .tests/data/ERR4861412_1.fastq.gz
+        curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_2.fastq.gz > .tests/data/ERR4861412_2.fastq.gz
+
+    - name: Test workflow
+      uses: snakemake/snakemake-github-action@v1.12.0
+      with:
+        directory: .tests
+        snakefile: workflow/Snakefile
+        args: "--use-conda --show-failed-logs -j 10 --conda-cleanup-pkgs cache --conda-frontend mamba"
+
+    - name: Test report
+      uses: snakemake/snakemake-github-action@v1.12.0
+      with:
+        directory: .test
+        snakefile: workflow/Snakefile
+        args: "--report report.zip"
