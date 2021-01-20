@@ -4,7 +4,7 @@ rule get_genome:
     output:
         "refs/genome.fasta"
     log:
-        "logs/get_genome.log"
+        "logs/get-genome.log"
     conda:
         "../envs/entrez.yaml"
     shell:
@@ -16,7 +16,7 @@ rule get_genome_annotation:
     output:
         "refs/annotation.gff"
     log:
-        "logs/get_annotation.log"
+        "logs/get-annotation.log"
     conda:
         "../envs/curl.yaml"
     shell:
@@ -28,6 +28,8 @@ rule get_genome_annotation:
 rule get_problematic_sites:
     output:
         temp("refs/problematic-sites.vcf") # always retrieve the latest VCF
+    log:
+        "logs/get-problematic-sites.log"
     conda:
         "../envs/curl.yaml"
     shell:
