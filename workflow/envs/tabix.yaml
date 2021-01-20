@@ -2,5 +2,5 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
+  - tabix =0.2.6
   - curl
-  - sed

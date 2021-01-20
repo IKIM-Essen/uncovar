@@ -23,27 +23,28 @@ rule genome_faidx:
 
 rule get_genome_annotation:
     output:
-        "resources/annotation.gff",
+        "resources/annotation.gff.gz",
     log:
         "logs/get-annotation.log",
     conda:
-        "../envs/unix.yaml"
+        "../envs/tabix.yaml"
     shell:
+        # download, sort and bgzip gff (see https://www.ensembl.org/info/docs/tools/vep/script/vep_custom.html)
         "(curl -sSL https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/009/858/895/"
         "GCF_009858895.2_ASM985889v3/GCF_009858895.2_ASM985889v3_genomic.gff.gz | "
-        "zcat > {output}) 2> {log}"
+        "zcat | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > {output}) 2> {log}"
 
 
 rule get_problematic_sites:
     output:
-        temp("resources/problematic-sites.vcf"),  # always retrieve the latest VCF
+        temp("resources/problematic-sites.vcf.gz"),  # always retrieve the latest VCF
     log:
         "logs/get-problematic-sites.log",
     conda:
-        "../envs/unix.yaml"
+        "../envs/tabix.yaml"
     shell:
         "curl -sSL https://raw.githubusercontent.com/W-L/ProblematicSites_SARS-CoV2/"
-        "master/problematic_sites_sarsCov2.vcf > {output} 2> {log}"
+        "master/problematic_sites_sarsCov2.vcf | bgzip -c > {output} 2> {log}"
 
 
 # TODO Alexander + Thomas add rules to retrieve strain sequences (I currently don't yet know from where)

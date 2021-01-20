@@ -56,14 +56,3 @@ rule samtools_calmd:
     threads: 8
     wrapper:
         "0.69.0/bio/samtools/calmd"
-
-
-rule bam_index:
-    input:
-        "{prefix}.bam",
-    output:
-        "{prefix}.bam.bai",
-    log:
-        "logs/bam-index/{prefix}.log",
-    wrapper:
-        "0.59.2/bio/samtools/index"

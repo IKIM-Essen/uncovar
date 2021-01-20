@@ -34,7 +34,7 @@ rule render_scenario:
     conda:
         "../envs/unix.yaml"
     shell:
-        "sed 's/sample:/{wildcards.sample}/' {input} > {output}"
+        "sed 's/sample:/{wildcards.sample}:/' {input} > {output}"
 
 
 rule varlociraptor_preprocess:
@@ -60,7 +60,7 @@ rule varlociraptor_call:
         obs="results/observations/{sample}.bcf",
         scenario="results/scenarios/{sample}.yaml",
     output:
-        temp("results/calls/{sample}.bcf"),
+        "results/calls/{sample}.bcf",
     log:
         "logs/varlociraptor/call/{sample}.log",
     conda:

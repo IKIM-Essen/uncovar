@@ -1,5 +1,6 @@
 samples:
   sample:
+    resolution: 100
     universe: "[0.0,1.0]"
 
 events:

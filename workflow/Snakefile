@@ -2,6 +2,7 @@ configfile: "config/config.yaml"
 pepfile: config["pepfile"]
 
 include: "rules/common.smk"
+include: "rules/utils.smk"
 include: "rules/ref.smk"
 include: "rules/qc.smk"
 include: "rules/strain_calling.smk"
