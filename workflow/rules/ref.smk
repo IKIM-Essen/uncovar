@@ -27,7 +27,7 @@ rule get_genome_annotation:
 
 rule get_problematic_sites:
     output:
-        "refs/problematic-sites.vcf"
+        temp("refs/problematic-sites.vcf") # always retrieve the latest VCF
     conda:
         "../envs/curl.yaml"
     shell:
