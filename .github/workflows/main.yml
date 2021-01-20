@@ -37,6 +37,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1
   
+    - name: Cache data
+      uses: actions/cache@v2
+      with:
+        path: |
+          .tests/data
+        key: "" # TODO update key once we cache more than the data
+
     - name: Download test data
       run: |
         mkdir -p .tests/data
