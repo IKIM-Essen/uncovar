@@ -1,6 +1,3 @@
-# TODO Johannes add rules to retrieve main assembly and annotation
-
-
 rule get_genome:
     output:
         "refs/genome.fasta",
