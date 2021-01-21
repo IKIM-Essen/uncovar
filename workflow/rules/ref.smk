@@ -1,8 +1,19 @@
+rule get_strain_accessions:
+    output:
+        temp("resources/strain-accessions.txt"),
+    log:
+        "logs/get-accessions.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "curl -sSL https://www.ncbi.nlm.nih.gov/sars-cov-2/download-nuccore-ids > {output} 2> {log}"
+
+
 rule get_genome:
     output:
         "resources/{accession}.fasta",
     params:
-        accession=lambda w: "NC_045512.2" if w.accession == "genome" else w.accession
+        accession=lambda w: "NC_045512.2" if w.accession == "genome" else w.accession,
     log:
         "logs/get-genome/{accession}.log",
     conda:
