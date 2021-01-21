@@ -11,6 +11,10 @@ def get_fastqs(wildcards):
     return pep.sample_table.loc[wildcards.sample][["fq1", "fq2"]]
 
 
+def get_adapters(wildcards):
+    return pep.sample_table.loc[wildcards.sample, "adapter-args"] or ""
+
+
 def get_resource(name):
     return str((Path(workflow.snakefile).parent.parent / "resources") / name)
 
