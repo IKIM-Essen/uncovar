@@ -22,7 +22,7 @@ rule freebayes:
 
 rule render_scenario:
     input:
-        local(get_resource("resources/scenario.yaml")),
+        local(get_resource("scenario.yaml")),
     output:
         report(
             "results/scenarios/{sample}.yaml",
