@@ -7,7 +7,7 @@ rule cutadapt:
         qc="results/trimmed/{sample}.qc.txt",
     params:
         # https://cutadapt.readthedocs.io/en/stable/guide.html#adapter-types
-        adapters=get_adapters,
+        adapters="",
         # https://cutadapt.readthedocs.io/en/stable/guide.html#
         extra="--minimum-length 1 -q 20",
     log:

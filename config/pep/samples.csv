@@ -1,2 +1,2 @@
-sample_name,fq1,fq2,adapter_args
-a,data/ERR4861412_1.fastq.gz,data/ERR4861412_1.fastq.gz,
+sample_name,fq1,fq2
+a,data/ERR4861412_1.fastq.gz,data/ERR4861412_1.fastq.gz
