@@ -1,12 +1,14 @@
 rule get_genome:
     output:
-        "resources/genome.fasta",
+        "resources/{accession}.fasta",
+    params:
+        accession=lambda w: "NC_045512.2" if w.accession == "genome" else w.accession
     log:
-        "logs/get-genome.log",
+        "logs/get-genome/{accession}.log",
     conda:
         "../envs/entrez.yaml"
     shell:
-        "(esearch -db nucleotide -query 'NC_045512.2' |"
+        "(esearch -db nucleotide -query '{params.accession}' |"
         "efetch -format fasta > {output}) 2> {log}"
 
 
