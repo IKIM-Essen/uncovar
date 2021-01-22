@@ -58,16 +58,3 @@ rule get_problematic_sites:
     shell:
         "curl -sSL https://raw.githubusercontent.com/W-L/ProblematicSites_SARS-CoV2/"
         "master/problematic_sites_sarsCov2.vcf | bgzip -c > {output} 2> {log}"
-
-# rule get_strains:
-#     #https://api.ncbi.nlm.nih.gov/datasets/v1alpha/virus/taxon/11118/genome/download?complete_only=True&host=9606
-#     output:
-#         "resources/ncbi-genomes"
-#     log:
-#         "logs/get_strains.log",
-#     conda:
-#         "../envs/tabix.yaml"
-#     shell:
-#         "curl -L -o {output} https://osf.io/9hg85/download | unzip -d {output}"
-
-# TODO Alexander + Thomas add rules to retrieve strain sequences (I currently don't yet know from where)
