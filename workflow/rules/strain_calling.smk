@@ -1,5 +1,6 @@
 rule cat_covid_genomes:
     input:
+        # how to not use the string "resources/strain-accessions.txt"? Problematic if .txt is not ava. from start
         genomes = expand("resources/covid-genomes/{accession}.fasta", accession=get_strain_accessions_from_txt("resources/strain-accessions.txt"))
     output:
         "resources/covid-genomes.fasta"
@@ -28,7 +29,7 @@ rule sourmash_compute_covid_genomes:
     params:
         k="31",
         scaled="1000",
-        extra="singleton",
+        extra="",
     wrapper:
         "v0.69.0/bio/sourmash/compute"
 
