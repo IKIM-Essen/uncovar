@@ -13,7 +13,7 @@ rule bwa_index:
 
 rule map_reads:
     input:
-        reads=get_fastqs,
+        reads=expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
         idx=rules.bwa_index.output,
     output:
         temp("results/mapped/{sample}.bam"),
