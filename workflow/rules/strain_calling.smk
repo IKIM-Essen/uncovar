@@ -16,10 +16,10 @@ rule cat_trimmed_samples:
         "cat {input} > {output}"
 
 
-rule sourmash_covid_genomes:
+rule sourmash_compute_covid_genomes:
     input:
-        # "resources/covid-genomes.fasta",
-        "resources/genomic.fna",
+        "resources/covid-genomes.fasta",
+        # "resources/genomic.fna",
     output:
         "resources/sourmash/covid-genomes.sig",
     log:
@@ -28,7 +28,7 @@ rule sourmash_covid_genomes:
     params:
         k="31",
         scaled="1000",
-        extra="",
+        extra="singleton",
     wrapper:
         "v0.69.0/bio/sourmash/compute"
 
@@ -49,20 +49,6 @@ rule sourmash_compute_samples:
         "v0.69.0/bio/sourmash/compute"
 
 
-rule sourmash_search:
-    input:
-        reads = "resources/sourmash/{sample}.sig",
-        metagenome = "resources/sourmash/covid-genomes.sig"
-    output:
-        "results/sourmash/search-{sample}.csv"
-    log:
-        "logs/sourmash/search-{sample}.log",
-    conda:
-         "../envs/sourmash.yaml"
-    shell:
-        "(sourmash search -k 31 {input.reads} {input.metagenome} --containment -o {output}) 2> {log}"
-
-
 rule sourmash_gather:
     input:
         reads = "resources/sourmash/{sample}.sig",
@@ -75,5 +61,3 @@ rule sourmash_gather:
         "../envs/sourmash.yaml"
     shell:
         "(sourmash gather -k 31 {input.reads} {input.metagenome} -o {output}) 2> {log}"
-
-# TODO Alexander and Thomas: add sourmash gather rule
