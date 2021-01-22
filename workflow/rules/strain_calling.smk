@@ -112,3 +112,4 @@ rule sourmash_gather:
 # if ok, then gather with folkers datat
 # filter low abundnce
 # parameter adjustment
+# https://sourmash.readthedocs.io/en/latest/using-sourmash-a-guide.html#computing-signatures-for-read-files
