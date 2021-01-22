@@ -55,7 +55,7 @@ def get_strain_accessions_from_txt(file):
     with open(file, 'r') as f:
         strain_accessions = f.read().splitlines()
     strain_accessions.remove('id')
-    return list(strain_accessions)[:100]
+    return list(strain_accessions)[:1000]
 
 wildcard_constraints:
     sample="|".join(get_samples()),
