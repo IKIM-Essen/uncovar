@@ -12,20 +12,20 @@ score_scales["SIFT"] = { "colors": ["#2ba6cb", "#ff5555"], "entries": ["Benign",
 score_scales["PolyPhen"] = { "colors": ["#2ba6cb", "#ffa3a3", "#ff5555"], "entries": ["Benign", "Possibly Damaging", "Probably Damaging"] }
 
 $(document).ready(function () {
-
-
-
     $("html").on('click', '.variant-row', function () {
+        $(this).siblings().children().removeClass("active-row");
+        $(this).children().addClass("active-row");
         let vis_len = $(this).data('vislen');
-        if ($(this).data('packed')) {
-            for (let t = 1; t <= vis_len; t++) {
-                let compressed_specs = $(this).data('vis' + t.toString());
-                let unpacker = new jsonm.Unpacker();
-                unpacker.setMaxDictSize(100000);
-                $(this).data('vis' + t.toString(), unpacker.unpack(compressed_specs));
-            }
-            $(this).data('packed', false);
+
+        for (let t = 1; t <= vis_len; t++) {
+            $(this).data('index');
+            let compressed_specs = plots[0][$(this).data('idx') + "_" + t.toString()];
+            let decompressed = LZString.decompressFromUTF16(compressed_specs);
+            let unpacker = new jsonm.Unpacker();
+            unpacker.setMaxDictSize(100000);
+            $(this).data('vis' + t.toString(), unpacker.unpack(JSON.parse(decompressed)));
         }
+
         let d = $(this).data('description')
         d = d.replace(/, /g,"\",\"");
         d = d.replace("[","[\"");
@@ -68,9 +68,11 @@ $(document).ready(function () {
                 }
             });
             specs.title = 'Sample: ' + $(this).data('vis-sample' + t.toString());
-            specs.width = $('#vis' + t.toString()).width() - 40;
-            let v = vegaEmbed('#vis' + t.toString(), specs);
+            specs.width = $('#vis1').width() - 40;
+            vegaEmbed('#vis' + t.toString(), specs);
         }
+
+        $('.spinner-border').hide();
 
         $("#sidebar").empty();
         $.each($(this).data(), function(i, v) {
@@ -84,12 +86,34 @@ $(document).ready(function () {
         ann_values.forEach(function (x) {
             let name = description[x];
             $('#ann-sidebar').append('<tr>');
-            $('#ann-sidebar').append('<th class="thead-dark" style="position: sticky; left:-1px; z-index: 1; background: white">' + name + '</th>');
+            $('#ann-sidebar').append('<th class="thead-dark" style="position: sticky; left:-1px;">' + name + '</th>');
             for (let j = 1; j <= ann_length; j++) {
                 let ix = x + 1;
                 let field = 'ann[' + j + '][' + ix + ']';
-                let val = $(that).data(field);
-                $('#ann-sidebar').append('<td>' + val + '</td>');
+                let vl = $(that).data(field);
+                if (name === "Existing_variation" && vl !== "") {
+                    let fields = vl.split('&');
+                    let result = "";
+                    for (var o = 0; o < fields.length; o++) {
+                        let val = fields[o];
+                        if (val.startsWith("rs")) {
+                            result = result + "<a href='https://www.ncbi.nlm.nih.gov/snp/" + val + "'>" + val + "</a>";
+                        } else if (val.startsWith("COSM")) {
+                            let num = val.replace( /^\D+/g, '');
+                            result = result + "<a href='https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=" + num + "'>" + val + "</a>";
+                        } else if (val.startsWith("COSN")) {
+                            let num = val.replace( /^\D+/g, '');
+                            result = result + "<a href='https://cancer.sanger.ac.uk/cosmic/ncv/overview?id=" + num + "'>" + val + "</a>";
+                        } else {
+                            result = result + val;
+                        }
+                        if (!(o === fields.length - 1)) {
+                            result = result + ", ";
+                        }
+                    }
+                    vl = result;
+                }
+                $('#ann-sidebar').append('<td>' + vl + '</td>');
             }
             $('#ann-sidebar').append('</tr>');
         });
@@ -570,4 +594,5 @@ $(document).ready(function () {
             vegaEmbed(`#${cell_id}`, ScoreSpec)
         }
     })
+    $('#variant1').trigger('click');
 })
