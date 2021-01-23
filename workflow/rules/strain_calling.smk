@@ -4,6 +4,7 @@ rule cat_covid_genomes:
         genomes = expand("resources/covid-genomes/{accession}.fasta", accession=get_strain_accessions_from_txt("resources/strain-accessions.txt"))
     output:
         "resources/covid-genomes.fasta"
+    threads: 4
     shell:
         "cat {input.genomes} > {output}"
 
@@ -27,7 +28,7 @@ rule sourmash_compute_covid_genomes:
         "resources/sourmash/covid-genomes.sig",
     log:
         "logs/sourmash/sourmash-compute.log",
-    threads: 2
+    threads: 4
     params:
         k="31",
         scaled="1000",
@@ -43,7 +44,7 @@ rule sourmash_compute_samples:
         "resources/sourmash/{sample}.sig",
     log:
         "logs/sourmash/sourmash-compute-{sample}.log",
-    threads: 2
+    threads: 4
     params:
         k="31",
         scaled="1000",
@@ -107,9 +108,10 @@ rule sourmash_gather:
         "(sourmash gather -k 31 {input.read} {input.metagenome} -o {output} --threshold-bp 1000) 2> {log}"
 
 # TODO
-# bei compute two fastq files handovern, dont use cat_trimmed_samples
-# clean up logs
-# if ok, then gather with folkers datat
-# filter low abundnce
-# parameter adjustment
+# 1. at compute handover of two fastq files, dont use cat_trimmed_samples
+# 2. the entrez rule get_genome also downloads partial reads of covid genomes (e.g. MW368461) or empty genome files (e.g. MW454604). Add rule to exiculde those rules "faulty" covid genomes
+# 3. clean up logging / add propper logging
+# 4. if ok, then gather with folkers data
+# 5. filter low abundnce
+# 6 .parameter adjustment
 # https://sourmash.readthedocs.io/en/latest/using-sourmash-a-guide.html#computing-signatures-for-read-files
