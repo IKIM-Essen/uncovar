@@ -32,7 +32,7 @@ rule sourmash_compute_covid_genomes:
     params:
         k="31",
         scaled="1000",
-        extra="--singleton",
+        extra="", # --singleton flag needed here?
     wrapper:
         "v0.69.0/bio/sourmash/compute"
 
