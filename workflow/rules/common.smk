@@ -51,11 +51,22 @@ def get_merge_calls_input(suffix):
 
     return inner
 
+#original
+# def get_strain_accessions_from_txt(file):
+#     with open(file, 'r') as f:
+#         strain_accessions = f.read().splitlines()
+#     strain_accessions.remove('id')
+#     return list(strain_accessions)[:100] # TODO clip at first 100 covid samples
+
+#variant with DL
 def get_strain_accessions_from_txt(file):
+    if not os.path.exists(file):
+        # get_strain_accessions  # doesn't work, is there a better/correct way?
+        os.system("curl -sSL https://www.ncbi.nlm.nih.gov/sars-cov-2/download-nuccore-ids > " + file)  # works
     with open(file, 'r') as f:
         strain_accessions = f.read().splitlines()
     strain_accessions.remove('id')
-    return list(strain_accessions)#[:100] # TODO clip at first 100 covid samples
+    return list(strain_accessions)[:100] # TODO clip at first 100 covid samples
 
 wildcard_constraints:
     sample="|".join(get_samples()),
