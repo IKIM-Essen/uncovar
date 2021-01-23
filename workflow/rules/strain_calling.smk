@@ -1,7 +1,7 @@
 rule cat_covid_genomes:
     input:
         # TODO how to not use the string "resources/strain-accessions.txt"? Problematic if .txt is not ava. from start
-        genomes = expand("resources/covid-genomes/{accession}.fasta", accession=get_strain_accessions_from_txt("resources/strain-accessions.txt"))
+        # DONE in common.smk, not sure if it is the correct way with curl, could reach the get_strain_accessions rule in ref.smk
     output:
         "resources/covid-genomes.fasta"
     threads: 4
@@ -9,14 +9,14 @@ rule cat_covid_genomes:
         "cat {input.genomes} > {output}"
 
 
-# NOT needed, if rule sourmash_compute_samples takes two fast qs
-rule cat_trimmed_samples:
-    input:
-        expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2])
-    output:
-        "results/trimmed/{sample}.both.fastq.gz"
-    shell:
-        "cat {input} > {output}"
+# # NOT needed, if rule sourmash_compute_samples takes two fast qs
+# rule cat_trimmed_samples:
+#     input:
+#         expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2])
+#     output:
+#         "results/trimmed/{sample}.both.fastq.gz"
+#     shell:
+#         "cat {input} > {output}"
 
 
 rule sourmash_compute_covid_genomes:
@@ -32,14 +32,15 @@ rule sourmash_compute_covid_genomes:
     params:
         k="31",
         scaled="1000",
-        extra="", # --singleton flag needed here?
+        extra="--singleton", # --singleton flag needed here?
     wrapper:
         "v0.69.0/bio/sourmash/compute"
 
 # TODO Adjust for 2 fastqs, singleton flag?
+# DONE
 rule sourmash_compute_samples:
     input:
-        "results/trimmed/{sample}.both.fastq.gz"
+        expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2])
     output:
         "resources/sourmash/{sample}.sig",
     log:
@@ -48,7 +49,7 @@ rule sourmash_compute_samples:
     params:
         k="31",
         scaled="1000",
-        extra="",
+        extra="--merge {sample}",
     wrapper:
         "v0.69.0/bio/sourmash/compute"
 
@@ -96,7 +97,7 @@ rule sourmash_search:
 rule sourmash_gather:
     input:
         read = "resources/sourmash/{sample}.sig",
-        metagenome = "resources/sourmash/covid-genomes.sig"
+        metagenome = "resources/sourmash/covid-genomes.sig" # also vs single strain genome sig's?
     output:
         "results/sourmash/gather-{sample}.csv"
     log:
@@ -107,11 +108,11 @@ rule sourmash_gather:
         "(sourmash gather -k 31 {input.read} {input.metagenome} -o {output} --threshold-bp 1000) 2> {log}"
 
 # TODO
-# 1. at compute handover of two fastq files, dont use cat_trimmed_samples
+# 1.√at compute handover of two fastq files, dont use cat_trimmed_samples 
 # 2. the entrez rule get_genome also downloads partial reads of covid genomes (e.g. MW368461) or empty genome files (e.g. MW454604). Add rule to exiculde those rules "faulty" covid genomes
-# 3. Fix get_strain_accessions_from_txt - txt file must be in folder before staring the workflow -> questionable
-# 3. clean up logging / add propper logging
+# 3.√Fix get_strain_accessions_from_txt - txt file must be in folder before staring the workflow -> questionable
+# 3. clean up logging / add proper logging
 # 4. if ok, then gather with folkers data
-# 5. filter low abundnce
+# 5. filter low abundance
 # 6. parameter adjustment
 # https://sourmash.readthedocs.io/en/latest/using-sourmash-a-guide.html#computing-signatures-for-read-files
