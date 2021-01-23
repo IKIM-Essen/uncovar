@@ -52,7 +52,7 @@ rule sourmash_compute_samples:
     wrapper:
         "v0.69.0/bio/sourmash/compute"
 
-# make .sig from whole all single covid genomes .fasta
+# makes .sig from whole all single covid genomes .fasta
 rule sourmash_compute_covids:
     input:
         "resources/covid-genomes/{accession}.fasta"
@@ -73,7 +73,6 @@ rule sourmash_compute_covids:
 rule smash_index:
     input:
         genomes = expand("resources/covid-genomes/{accession}.sig", accession=get_strain_accessions_from_txt("resources/strain-accessions.txt")),
-        # sigs = "resources/covid-genomes/*.sig"
     output:
         "resources/sourmash/covid-db.sbt.json"
     conda:
@@ -110,8 +109,9 @@ rule sourmash_gather:
 # TODO
 # 1. at compute handover of two fastq files, dont use cat_trimmed_samples
 # 2. the entrez rule get_genome also downloads partial reads of covid genomes (e.g. MW368461) or empty genome files (e.g. MW454604). Add rule to exiculde those rules "faulty" covid genomes
+# 3. Fix get_strain_accessions_from_txt - txt file must be in folder before staring the workflow -> questionable
 # 3. clean up logging / add propper logging
 # 4. if ok, then gather with folkers data
 # 5. filter low abundnce
-# 6 .parameter adjustment
+# 6. parameter adjustment
 # https://sourmash.readthedocs.io/en/latest/using-sourmash-a-guide.html#computing-signatures-for-read-files
