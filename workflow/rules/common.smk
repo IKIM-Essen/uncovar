@@ -9,7 +9,12 @@ def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
 
-def get_fastqs(wildcards):
+def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
+    if wildcards.sample.startswith(benchmark_prefix):
+        # this is a simulated benchmark sample, do not look up FASTQs in the sample sheet
+        accession = wildcards.sample[len(benchmark_prefix):]
+        return expand("resources/benchmarking/{accession}/reads.{read}.fastq.gz", accession=accession, read=[1, 2])
+    # default case, look up FASTQs in the sample sheet
     return pep.sample_table.loc[wildcards.sample][["fq1", "fq2"]]
 
 
@@ -76,6 +81,15 @@ def get_strain_signatures(wildcards):
     )
 
 
+def get_strain_simulated_reads(wildcards):
+    expand("resources/benchmarking/{accession}/reads.{read}.fastq.gz", read=[1, 2], accession=get_strain_accessions(wildcards))
+
+
+def get_benchmark_results(wildcards):
+    accessions = get_strain_accessions(wildcards)
+    return expand("results/sourmash/gather-benchmark-sample-{accession}.csv", accession=accessions)
+
+
 wildcard_constraints:
-    sample="|".join(get_samples()),
+    sample="[^/]+",
     vartypes="|".join(VARTYPES),

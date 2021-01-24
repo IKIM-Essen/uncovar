@@ -20,7 +20,7 @@ rule cat_genomes:
 #     shell:
 #         "cat {input} > {output}"
 
-
+# TODO add abundance tracking
 rule sourmash_compute_genomes:
     input:
         "resources/strain-genomes.fasta",

@@ -1,0 +1,6 @@
+channels:
+  - conda-forge
+dependencies:
+  - python =3.9
+  - pandas =1.2
+  - jupyter =1.0
