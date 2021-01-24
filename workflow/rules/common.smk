@@ -81,7 +81,7 @@ def get_strain_genomes(wildcards):
 
 def get_strain_signatures(wildcards):
     return expand(
-        "resources/genomes/{accession}.sig", accession=get_strain_accessions(wildcards),
+        "resources/genomes/{accession}.sig", accession=get_strain_accessions(wildcards)
     )
 
 
