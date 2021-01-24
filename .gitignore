@@ -4,6 +4,7 @@
 !workflow/report/*
 !workflow/envs/*
 !workflow/scripts/*
+!workflow/notebooks/*
 !workflow/rules/*
 !workflow/rules/annotation/*
 !workflow/resources/*

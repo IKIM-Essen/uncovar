@@ -20,7 +20,7 @@ rule cat_genomes:
 #     shell:
 #         "cat {input} > {output}"
 
-# TODO add abundance tracking
+
 rule sourmash_compute_genomes:
     input:
         "resources/strain-genomes.fasta",
@@ -32,7 +32,7 @@ rule sourmash_compute_genomes:
     params:
         k="31",
         scaled="1000",
-        extra="--singleton",  # compute signature for each sequence record individually
+        extra="--singleton --track-abundance",  # compute signature for each sequence record individually
     wrapper:
         "0.70.0/bio/sourmash/compute"
 
@@ -48,7 +48,7 @@ rule sourmash_compute_samples:
     params:
         k="31",
         scaled="1000",
-        extra="--merge {sample}",
+        extra="--merge {sample} --track-abundance",
     wrapper:
         "0.70.0/bio/sourmash/compute"
 
@@ -109,7 +109,7 @@ rule sourmash_gather:
     conda:
         "../envs/sourmash.yaml"
     shell:
-        "(sourmash gather -k 31 {input.read} {input.metagenome} -o {output} --threshold-bp 1000) 2> {log}"
+        "(sourmash gather -k 31 {input.read} {input.metagenome} -o {output} --threshold-bp 1000) > {log} 2>&1"
 
 
 # TODO
