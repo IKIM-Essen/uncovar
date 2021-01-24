@@ -1,4 +1,6 @@
 from pathlib import Path
+import pandas as pd
+
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 
@@ -51,22 +53,28 @@ def get_merge_calls_input(suffix):
 
     return inner
 
-#original
-# def get_strain_accessions_from_txt(file):
-#     with open(file, 'r') as f:
-#         strain_accessions = f.read().splitlines()
-#     strain_accessions.remove('id')
-#     return list(strain_accessions)[:100] # TODO clip at first 100 covid samples
 
-#variant with DL
-def get_strain_accessions_from_txt(file):
-    if not os.path.exists(file):
-        # get_strain_accessions  # doesn't work, is there a better/correct way?
-        os.system("curl -sSL https://www.ncbi.nlm.nih.gov/sars-cov-2/download-nuccore-ids > " + file)  # works
-    with open(file, 'r') as f:
-        strain_accessions = f.read().splitlines()
-    strain_accessions.remove('id')
-    return list(strain_accessions)[:100] # TODO clip at first 100 covid samples
+def get_strain_accessions(wildcards):
+    with checkpoints.get_strain_accessions.get().output[0].open() as f:
+        accessions = pd.read_csv(f)
+        try:
+            accessions = accessions[: config["limit-strain-genomes"]]
+        except KeyError:
+            # take all strain genomes
+            pass
+        return accessions
+
+
+def get_strain_genomes(wildcards):
+    accessions = get_strain_accessions(wildcards)
+    return expand("resources/genomes/{accession}.fasta", accession=accessions)
+
+
+def get_strain_signatures(wildcards):
+    expand(
+        "resources/genomes/{accession}.sig", accession=get_strain_accessions(wildcards),
+    )
+
 
 wildcard_constraints:
     sample="|".join(get_samples()),

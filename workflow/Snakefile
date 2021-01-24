@@ -22,3 +22,4 @@ rule all:
         "results/qc/multiqc.html",
         # expand("results/vcf-report/{target}", target=["all"] + get_samples()), # TODO report needs to be fixed to handle missing CLIN_SIG
         expand("results/calls/{sample}.bcf", sample=get_samples()),
+        expand("results/sourmash/gather-{sample}.csv", sample=get_samples()),

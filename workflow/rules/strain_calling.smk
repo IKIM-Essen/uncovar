@@ -1,12 +1,14 @@
-rule cat_covid_genomes:
+rule cat_genomes:
     input:
-        # TODO how to not use the string "resources/strain-accessions.txt"? Problematic if .txt is not ava. from start
-        # DONE in common.smk, not sure if it is the correct way with curl, could reach the get_strain_accessions rule in ref.smk
+        get_strain_genomes,
     output:
-        "resources/covid-genomes.fasta"
-    threads: 4
+        "resources/strain-genomes.fasta",
+    log:
+        "logs/cat-genomes.log",
+    conda:
+        "../envs/unix.yaml"
     shell:
-        "cat {input.genomes} > {output}"
+        "cat {input} > {output}"
 
 
 # # NOT needed, if rule sourmash_compute_samples takes two fast qs
@@ -19,28 +21,25 @@ rule cat_covid_genomes:
 #         "cat {input} > {output}"
 
 
-rule sourmash_compute_covid_genomes:
+rule sourmash_compute_genomes:
     input:
-        "resources/covid-genomes.fasta", # All downloaded genomes (see common.smk -> limitation of covid genomes to download)
-        # "resources/genomic.fna", # Static data from NCBI datasets downloader
-        # "resources/covid-genomes/genome.fasta" # Wuhan genome
+        "resources/strain-genomes.fasta",
     output:
-        "resources/sourmash/covid-genomes.sig",
+        "resources/sourmash/genomes.sig",
     log:
         "logs/sourmash/sourmash-compute.log",
     threads: 4
     params:
         k="31",
         scaled="1000",
-        extra="--singleton", # --singleton flag needed here?
+        extra="--singleton",  # compute signature for each sequence record individually
     wrapper:
-        "v0.69.0/bio/sourmash/compute"
+        "0.70.0/bio/sourmash/compute"
 
-# TODO Adjust for 2 fastqs, singleton flag?
-# DONE
+
 rule sourmash_compute_samples:
     input:
-        expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2])
+        expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
     output:
         "resources/sourmash/{sample}.sig",
     log:
@@ -51,14 +50,15 @@ rule sourmash_compute_samples:
         scaled="1000",
         extra="--merge {sample}",
     wrapper:
-        "v0.69.0/bio/sourmash/compute"
+        "0.70.0/bio/sourmash/compute"
 
-# makes .sig from whole all single covid genomes .fasta
-rule sourmash_compute_covids:
+
+# makes .sig from whole all single genomes .fasta
+rule sourmash_compute:
     input:
-        "resources/covid-genomes/{accession}.fasta"
+        "resources/genomes/{accession}.fasta",
     output:
-        "resources/covid-genomes/{accession}.sig",
+        "resources/genomes/{accession}.sig",
     log:
         "logs/sourmash/sourmash-compute-acc-{accession}.log",
     threads: 4
@@ -67,15 +67,17 @@ rule sourmash_compute_covids:
         scaled="1000",
         extra="",
     wrapper:
-        "v0.69.0/bio/sourmash/compute"
+        "0.70.0/bio/sourmash/compute"
 
 
 # db for smash search
 rule smash_index:
     input:
-        genomes = expand("resources/covid-genomes/{accession}.sig", accession=get_strain_accessions_from_txt("resources/strain-accessions.txt")),
+        genomes=get_strain_signatures,
     output:
-        "resources/sourmash/covid-db.sbt.json"
+        "resources/sourmash/db.sbt.json",
+    log:
+        "logs/sourmash/index.log",
     conda:
         "../envs/sourmash.yaml"
     shell:
@@ -84,10 +86,12 @@ rule smash_index:
 
 rule sourmash_search:
     input:
-        read = "resources/sourmash/{sample}.sig",
-        db = "resources/sourmash/covid-db.sbt.json"
+        read="resources/sourmash/{sample}.sig",
+        db="resources/sourmash/db.sbt.json",
     output:
-        "results/sourmash/search-{sample}.csv"
+        "results/sourmash/search-{sample}.csv",
+    log:
+        "logs/sourmash/search-{sample}.log",
     conda:
         "../envs/sourmash.yaml"
     shell:
@@ -96,19 +100,20 @@ rule sourmash_search:
 
 rule sourmash_gather:
     input:
-        read = "resources/sourmash/{sample}.sig",
-        metagenome = "resources/sourmash/covid-genomes.sig" # also vs single strain genome sig's?
+        read="resources/sourmash/{sample}.sig",
+        metagenome="resources/sourmash/genomes.sig",  # also vs single strain genome sig's?
     output:
-        "results/sourmash/gather-{sample}.csv"
+        "results/sourmash/gather-{sample}.csv",
     log:
-        "logs/sourmash/gather-{sample}.log"
+        "logs/sourmash/gather-{sample}.log",
     conda:
         "../envs/sourmash.yaml"
     shell:
         "(sourmash gather -k 31 {input.read} {input.metagenome} -o {output} --threshold-bp 1000) 2> {log}"
 
+
 # TODO
-# 1.√at compute handover of two fastq files, dont use cat_trimmed_samples 
+# 1.√at compute handover of two fastq files, dont use cat_trimmed_samples
 # 2. the entrez rule get_genome also downloads partial reads of covid genomes (e.g. MW368461) or empty genome files (e.g. MW454604). Add rule to exiculde those rules "faulty" covid genomes
 # 3.√Fix get_strain_accessions_from_txt - txt file must be in folder before staring the workflow -> questionable
 # 3. clean up logging / add proper logging

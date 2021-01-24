@@ -1,4 +1,4 @@
-rule get_strain_accessions:
+checkpoint get_strain_accessions:
     output:
         "resources/strain-accessions.txt",
     log:
@@ -11,7 +11,7 @@ rule get_strain_accessions:
 
 rule get_genome:
     output:
-        "resources/covid-genomes/{accession}.fasta",
+        "resources/genomes/{accession}.fasta",
     params:
         accession=lambda w: "NC_045512.2" if w.accession == "genome" else w.accession,
     log:
@@ -25,7 +25,7 @@ rule get_genome:
 
 rule genome_faidx:
     input:
-        "resources/covid-genomes/genome.fasta",
+        "resources/genomes/genome.fasta",
     output:
         "resources/genome.fasta.fai",
     log:

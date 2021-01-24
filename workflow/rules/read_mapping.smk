@@ -1,6 +1,6 @@
 rule bwa_index:
     input:
-        "resources/covid-genomes/genome.fasta",
+        "resources/genomes/genome.fasta",
     output:
         multiext("resources/genome.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa"),
     log:
