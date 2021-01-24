@@ -13,7 +13,7 @@ rule get_genome:
     output:
         "resources/genomes/{accession}.fasta",
     params:
-        accession=lambda w: "NC_045512.2" if w.accession == "genome" else w.accession,
+        accession=lambda w: "NC_045512.2" if w.accession == "main" else w.accession,
     log:
         "logs/genomes/get-genome/{accession}.log",
     conda:
