@@ -28,4 +28,4 @@ rule all:
 
 rule benchmark:
     input:
-        "results/benchmarking.csv"
+        "results/benchmarking.csv",
