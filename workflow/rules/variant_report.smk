@@ -1,6 +1,6 @@
 rule vcf_report:
     input:
-        ref="resources/genome.fasta",
+        ref="resources/genomes/main.fasta",
         bams=get_report_input("results/recal/{sample}.bam"),
         bais=get_report_input("results/recal/{sample}.bam.bai"),
         bcfs=get_report_input("results/filtered-calls/{sample}.bcf"),

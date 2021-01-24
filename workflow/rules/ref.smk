@@ -25,9 +25,9 @@ rule get_genome:
 
 rule genome_faidx:
     input:
-        "resources/genomes/genome.fasta",
+        "resources/genomes/main.fasta",
     output:
-        "resources/genome.fasta.fai",
+        "resources/genomes/main.fasta.fai",
     log:
         "logs/genomes/genome-faidx.log",
     wrapper:
