@@ -106,10 +106,12 @@ rule sourmash_gather:
         "results/sourmash/gather-{sample}.csv",
     log:
         "logs/sourmash/gather-{sample}.log",
+    params:
+        min_bp=config["strain-calling"]["min-bp"],
     conda:
         "../envs/sourmash.yaml"
     shell:
-        "(sourmash gather -k 31 {input.read} {input.metagenome} -o {output} --threshold-bp 1000) > {log} 2>&1"
+        "(sourmash gather -k 31 {input.read} {input.metagenome} -o {output} --threshold-bp {params.min_bp}) > {log} 2>&1"
 
 
 # TODO

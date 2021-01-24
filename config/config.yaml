@@ -11,3 +11,7 @@ variant-calling:
   report:
     # downsample loci to this read depth for visualization in report
     max-read-depth: 100
+  
+strain-calling:
+  # minimum projected match size in bp
+  min-bp: 30000
