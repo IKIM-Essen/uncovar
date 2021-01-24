@@ -80,16 +80,8 @@ def get_strain_genomes(wildcards):
 
 
 def get_strain_signatures(wildcards):
-    expand(
+    return expand(
         "resources/genomes/{accession}.sig", accession=get_strain_accessions(wildcards),
-    )
-
-
-def get_strain_simulated_reads(wildcards):
-    expand(
-        "resources/benchmarking/{accession}/reads.{read}.fastq.gz",
-        read=[1, 2],
-        accession=get_strain_accessions(wildcards),
     )
 
 
