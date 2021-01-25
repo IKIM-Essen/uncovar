@@ -3,9 +3,9 @@ rule assembly:
         fastq1="results/trimmed/{sample}.1.fastq.gz",
         fastq2="results/trimmed/{sample}.2.fastq.gz",
     output:
-        directory("results/assembly/{sample}_assembly.out")
+        directory("results/assembly/{sample}_assembly.out"),
     log:
-        "logs/megahit/{sample}.log"
+        "logs/megahit/{sample}.log",
     threads: 8
     conda:
         "../envs/megahit.yaml"
