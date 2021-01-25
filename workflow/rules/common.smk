@@ -94,5 +94,5 @@ def get_benchmark_results(wildcards):
 
 
 wildcard_constraints:
-    sample="[^/]+",
+    sample="[^/.]+",
     vartypes="|".join(VARTYPES),
