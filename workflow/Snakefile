@@ -9,16 +9,25 @@ include: "rules/utils.smk"
 include: "rules/ref.smk"
 include: "rules/qc.smk"
 include: "rules/read_trimming.smk"
+include: "rules/assembly.smk"
 include: "rules/strain_calling.smk"
 include: "rules/read_mapping.smk"
 include: "rules/variant_calling.smk"
 include: "rules/variant_annotation.smk"
 include: "rules/variant_filtration.smk"
 include: "rules/variant_report.smk"
+include: "rules/benchmarking.smk"
 
 
 rule all:
     input:
         "results/qc/multiqc.html",
-        expand("results/vcf-report/{target}", target=["all"] + get_samples()),
+        # expand("results/vcf-report/{target}", target=["all"] + get_samples()), # TODO activate once report properly handles intergenic variants.
         expand("results/calls/{sample}.bcf", sample=get_samples()),
+        expand("results/tables/strain-calls/{sample}.strains.tsv", sample=get_samples()),
+        expand("results/plots/strain-calls/{sample}.strains.svg", sample=get_samples()),
+
+
+rule benchmark:
+    input:
+        "results/benchmarking.csv",

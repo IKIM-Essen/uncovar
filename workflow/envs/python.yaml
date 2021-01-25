@@ -1,0 +1,8 @@
+channels:
+  - conda-forge
+dependencies:
+  - python =3.9
+  - pandas =1.2
+  - jupyter =1.0
+  - altair =4.1
+  - altair_saver =0.5

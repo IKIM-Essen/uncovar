@@ -1,6 +1,6 @@
-rule get_strain_accessions:
+checkpoint get_strain_accessions:
     output:
-        temp("resources/strain-accessions.txt"),
+        "resources/strain-accessions.txt",
     log:
         "logs/get-accessions.log",
     conda:
@@ -11,13 +11,15 @@ rule get_strain_accessions:
 
 rule get_genome:
     output:
-        "resources/{accession}.fasta",
+        "resources/genomes/{accession}.fasta",
     params:
-        accession=lambda w: "NC_045512.2" if w.accession == "genome" else w.accession,
+        accession=lambda w: "NC_045512.2" if w.accession == "main" else w.accession,
     log:
-        "logs/get-genome/{accession}.log",
+        "logs/genomes/get-genome/{accession}.log",
     conda:
         "../envs/entrez.yaml"
+    resources:
+        ncbi_api_requests=1,
     shell:
         "(esearch -db nucleotide -query '{params.accession}' |"
         "efetch -format fasta > {output}) 2> {log}"
@@ -25,11 +27,11 @@ rule get_genome:
 
 rule genome_faidx:
     input:
-        "resources/genome.fasta",
+        "resources/genomes/main.fasta",
     output:
-        "resources/genome.fasta.fai",
+        "resources/genomes/main.fasta.fai",
     log:
-        "logs/genome-faidx.log",
+        "logs/genomes/genome-faidx.log",
     wrapper:
         "0.59.2/bio/samtools/faidx"
 
@@ -58,6 +60,3 @@ rule get_problematic_sites:
     shell:
         "curl -sSL https://raw.githubusercontent.com/W-L/ProblematicSites_SARS-CoV2/"
         "master/problematic_sites_sarsCov2.vcf | bgzip -c > {output} 2> {log}"
-
-
-# TODO Alexander + Thomas add rules to retrieve strain sequences (I currently don't yet know from where)

@@ -1,17 +1,78 @@
-rule sourmash_compute:
+rule cat_genomes:
     input:
-        "refs/strains.fa.gz",
+        get_strain_genomes,
     output:
-        "sourmash/strains.sig",
+        "resources/strain-genomes.fasta",
     log:
-        "logs/sourmash/sourmash-compute.log",
-    threads: 2
+        "logs/cat-genomes.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "cat {input} > {output}"
+
+
+rule kallisto_index:
+    input:
+        fasta="resources/strain-genomes.fasta",
+    output:
+        index="resources/strain-genomes.idx",
     params:
-        k="31",
-        scaled="1000",
         extra="",
+    log:
+        "logs/kallisto-index.log",
+    threads: 8
     wrapper:
-        "v0.69.0/bio/sourmash/compute"
+        "0.70.0/bio/kallisto/index"
 
 
-# TODO Alexander and Thomas: add sourmash gather rule
+rule kallisto_quant:
+    input:
+        fastq=expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
+        index="resources/strain-genomes.idx",
+    output:
+        directory("results/quant/{sample}"),
+    params:
+        extra="",
+    log:
+        "logs/kallisto_quant/{sample}.log",
+    threads: 1
+    wrapper:
+        "0.70.0/bio/kallisto/quant"
+
+
+rule call_strains:
+    input:
+        "results/quant/{sample}",
+    output:
+        "results/tables/strain-calls/{sample}.strains.tsv",
+    log:
+        "logs/call-strains/{sample}.log",
+    params:
+        min_fraction=config["strain-calling"]["min-fraction"],
+    conda:
+        "../envs/python.yaml"
+    notebook:
+        "../notebooks/call-strains.py.ipynb"
+
+
+rule plot_strains:
+    input:
+        "results/tables/strain-calls/{sample}.strains.tsv",
+    output:
+        report(
+            "results/plots/strain-calls/{sample}.strains.svg",
+            caption="../report/strain-calls.rst",
+            category="Strain calls",
+        ),
+    log:
+        "logs/plot-strains/{sample}.log",
+    params:
+        min_fraction=config["strain-calling"]["min-fraction"],
+    conda:
+        "../envs/python.yaml"
+    notebook:
+        "../notebooks/plot-strains.py.ipynb"
+
+
+# TODO
+# 1. the entrez rule get_genome also downloads partial reads of covid genomes (e.g. MW368461) or empty genome files (e.g. MW454604). Add rule to exiculde those rules "faulty" covid genomes
