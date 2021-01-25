@@ -13,13 +13,13 @@ rule cat_genomes:
 
 rule kallisto_index:
     input:
-        fasta = "resources/strain-genomes.fasta"
+        fasta="resources/strain-genomes.fasta",
     output:
-        index = "resources/strain-genomes.idx"
+        index="resources/strain-genomes.idx",
     params:
-        extra = ""
+        extra="",
     log:
-        "logs/kallisto-index.log"
+        "logs/kallisto-index.log",
     threads: 8
     wrapper:
         "0.70.0/bio/kallisto/index"
@@ -27,14 +27,14 @@ rule kallisto_index:
 
 rule kallisto_quant:
     input:
-        fastq = expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
-        index = "resources/strain-genomes.idx"
+        fastq=expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
+        index="resources/strain-genomes.idx",
     output:
-        directory("results/quant/{sample}")
+        directory("results/quant/{sample}"),
     params:
-        extra = ""
+        extra="",
     log:
-        "logs/kallisto_quant/{sample}.log"
+        "logs/kallisto_quant/{sample}.log",
     threads: 1
     wrapper:
         "0.70.0/bio/kallisto/quant"
@@ -42,32 +42,32 @@ rule kallisto_quant:
 
 rule call_strains:
     input:
-        "results/quant/{sample}"
+        "results/quant/{sample}",
     output:
-        "results/tables/strain-calls/{sample}.strains.tsv"
+        "results/tables/strain-calls/{sample}.strains.tsv",
     log:
-        "logs/call-strains/{sample}.log"
+        "logs/call-strains/{sample}.log",
     params:
-        min_fraction=config["strain-calling"]["min-fraction"]
+        min_fraction=config["strain-calling"]["min-fraction"],
     conda:
         "../envs/python.yaml"
     notebook:
-        "../notebooks/call-strains.py.ipynb"        
+        "../notebooks/call-strains.py.ipynb"
 
 
 rule plot_strains:
     input:
-        "results/tables/strain-calls/{sample}.strains.tsv"
+        "results/tables/strain-calls/{sample}.strains.tsv",
     output:
         report(
             "results/plots/strain-calls/{sample}.strains.svg",
             caption="../report/strain-calls.rst",
             category="Strain calls",
-        )
+        ),
     log:
-        "logs/plot-strains/{sample}.log"
+        "logs/plot-strains/{sample}.log",
     params:
-        min_fraction=config["strain-calling"]["min-fraction"]
+        min_fraction=config["strain-calling"]["min-fraction"],
     conda:
         "../envs/python.yaml"
     notebook:

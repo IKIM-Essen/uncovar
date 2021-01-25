@@ -89,7 +89,7 @@ def get_benchmark_results(wildcards):
     accessions = get_strain_accessions(wildcards)
     return expand(
         "results/tables/strain-calls/benchmark-sample-{accession}.strains.tsv",
-        accession=accessions
+        accession=accessions,
     )
 
 
