@@ -23,8 +23,8 @@ rule all:
         "results/qc/multiqc.html",
         # expand("results/vcf-report/{target}", target=["all"] + get_samples()), # TODO report needs to be fixed to handle missing CLIN_SIG
         expand("results/calls/{sample}.bcf", sample=get_samples()),
-        expand("results/tables/strain-calls/{sample}.tsv", sample=get_samples()),
-        expand("results/plots/strain-calls/{sample}.svg", sample=get_samples()),
+        expand("results/tables/strain-calls/{sample}.strains.tsv", sample=get_samples()),
+        expand("results/plots/strain-calls/{sample}.strains.svg", sample=get_samples()),
 
 
 rule benchmark:
