@@ -58,7 +58,7 @@ jobs:
           directory: .tests
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
-          args: "--use-conda --show-failed-logs --cores 1 --conda-cleanup-pkgs cache --conda-frontend mamba"
+          args: "--use-conda --show-failed-logs --cores 1 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
 
       - name: Test report
         uses: snakemake/snakemake-github-action@v1.15.0
@@ -88,7 +88,7 @@ jobs:
           directory: .tests
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
-          args: "benchmark --use-conda --show-failed-logs --cores 1 --conda-cleanup-pkgs cache --conda-frontend mamba"
+          args: "benchmark --use-conda --show-failed-logs --cores 1 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
       
       - name: Check strain calling
         run: |
