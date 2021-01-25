@@ -13,7 +13,5 @@ variant-calling:
     max-read-depth: 100
 
 strain-calling:
-  # minimum projected match size in bp
-  min-bp: 20000
-  # k-mer sizes to use
-  k: "31"
+  # minimum reported strain fraction after quantification
+  min-fraction: 0.01

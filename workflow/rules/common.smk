@@ -88,7 +88,8 @@ def get_strain_signatures(wildcards):
 def get_benchmark_results(wildcards):
     accessions = get_strain_accessions(wildcards)
     return expand(
-        "results/sourmash/gather-benchmark-sample-{accession}.csv", accession=accessions
+        "results/tables/strain-calls/benchmark-sample-{accession}.strains.tsv",
+        accession=accessions
     )
 
 
