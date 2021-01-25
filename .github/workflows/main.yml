@@ -43,6 +43,7 @@ jobs:
         with:
           path: |
             .tests/data
+            .tests/resources/genomes
           key: "testdata" # TODO update key once we cache more than the data
 
       - name: Download test data
@@ -57,7 +58,7 @@ jobs:
           directory: .tests
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
-          args: "--use-conda --show-failed-logs -j 10 --conda-cleanup-pkgs cache --conda-frontend mamba"
+          args: "--use-conda --show-failed-logs --cores 1 --conda-cleanup-pkgs cache --conda-frontend mamba"
 
       - name: Test report
         uses: snakemake/snakemake-github-action@v1.15.0
@@ -78,6 +79,7 @@ jobs:
         with:
           path: |
             .tests/data
+            .tests/resources/genomes
           key: "testdata-benchmarking" # TODO update key once we cache more than the data
       
       - name: Test workflow
@@ -86,7 +88,7 @@ jobs:
           directory: .tests
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
-          args: "benchmark --use-conda --show-failed-logs -j 10 --conda-cleanup-pkgs cache --conda-frontend mamba"
+          args: "benchmark --use-conda --show-failed-logs --cores 1 --conda-cleanup-pkgs cache --conda-frontend mamba"
       
       - name: Check strain calling
         run: |
