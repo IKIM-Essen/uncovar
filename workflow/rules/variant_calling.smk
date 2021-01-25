@@ -1,7 +1,7 @@
 rule freebayes:
     input:
-        ref="resources/genome.fasta",
-        ref_idx="resources/genome.fasta.fai",
+        ref="resources/genomes/main.fasta",
+        ref_idx="resources/genomes/main.fasta.fai",
         # you can have a list of samples here
         samples="results/recal/{sample}.bam",
         index="results/recal/{sample}.bam.bai",
@@ -39,8 +39,8 @@ rule render_scenario:
 
 rule varlociraptor_preprocess:
     input:
-        ref="resources/genome.fasta",
-        ref_idx="resources/genome.fasta.fai",
+        ref="resources/genomes/main.fasta",
+        ref_idx="resources/genomes/main.fasta.fai",
         candidates="results/candidate-calls/{sample}.bcf",
         bam="results/recal/{sample}.bam",
         bai="results/recal/{sample}.bam.bai",

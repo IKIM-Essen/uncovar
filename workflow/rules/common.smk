@@ -1,4 +1,6 @@
 from pathlib import Path
+import pandas as pd
+
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 
@@ -7,7 +9,16 @@ def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
 
-def get_fastqs(wildcards):
+def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
+    if wildcards.sample.startswith(benchmark_prefix):
+        # this is a simulated benchmark sample, do not look up FASTQs in the sample sheet
+        accession = wildcards.sample[len(benchmark_prefix) :]
+        return expand(
+            "resources/benchmarking/{accession}/reads.{read}.fastq.gz",
+            accession=accession,
+            read=[1, 2],
+        )
+    # default case, look up FASTQs in the sample sheet
     return pep.sample_table.loc[wildcards.sample][["fq1", "fq2"]]
 
 
@@ -52,6 +63,36 @@ def get_merge_calls_input(suffix):
     return inner
 
 
+def get_strain_accessions(wildcards):
+    with checkpoints.get_strain_accessions.get().output[0].open() as f:
+        accessions = pd.read_csv(f, squeeze=True)
+        try:
+            accessions = accessions[: config["limit-strain-genomes"]]
+        except KeyError:
+            # take all strain genomes
+            pass
+        return accessions
+
+
+def get_strain_genomes(wildcards):
+    accessions = get_strain_accessions(wildcards)
+    return expand("resources/genomes/{accession}.fasta", accession=accessions)
+
+
+def get_strain_signatures(wildcards):
+    return expand(
+        "resources/genomes/{accession}.sig", accession=get_strain_accessions(wildcards)
+    )
+
+
+def get_benchmark_results(wildcards):
+    accessions = get_strain_accessions(wildcards)
+    return expand(
+        "results/tables/strain-calls/benchmark-sample-{accession}.strains.tsv",
+        accession=accessions,
+    )
+
+
 wildcard_constraints:
-    sample="|".join(get_samples()),
+    sample="[^/.]+",
     vartypes="|".join(VARTYPES),

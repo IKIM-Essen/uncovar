@@ -1,8 +1,8 @@
 rule bwa_index:
     input:
-        "resources/genome.fasta",
+        "resources/genomes/main.fasta",
     output:
-        multiext("resources/genome.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa"),
+        multiext("resources/genomes/main.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa"),
     log:
         "logs/bwa-index.log",
     resources:
@@ -46,7 +46,7 @@ rule mark_duplicates:
 rule samtools_calmd:
     input:
         aln="results/dedup/{sample}.bam",
-        ref="resources/genome.fasta",
+        ref="resources/genomes/main.fasta",
     output:
         "results/recal/{sample}.bam",
     log:

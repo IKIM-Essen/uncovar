@@ -1,2 +1,5 @@
 Variant calls for {{ "all samples" if snakemake.wildcards.target == "all" else snakemake.wildcards.target }}, 
-with false discovery rate controlled at {{ snakemake.config["variant-calling"]["fdr"] }}.
+with false discovery rate (FDR) controlled at {{ snakemake.config["variant-calling"]["fdr"] }}.
+
+Candidate variants were obtained with `Freebayes <https://github.com/freebayes/freebayes>`_.
+Variant calling and FDR control was performed with `Varlociraptor <https://varlociraptor.github.io>`_, configured by the following scenario: {{ snakemake.wildcards.sample }}.yaml_.

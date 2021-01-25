@@ -1,5 +1,8 @@
 pepfile: config/pep/config.yaml
 
+# for testing, uncomment to limit to n strain genomes
+limit-strain-genomes: 10
+
 variant-calling:
   # false discovery rate to control for
   fdr: 0.05
@@ -8,3 +11,7 @@ variant-calling:
   report:
     # downsample loci to this read depth for visualization in report
     max-read-depth: 100
+
+strain-calling:
+  # minimum reported strain fraction after quantification
+  min-fraction: 0.02

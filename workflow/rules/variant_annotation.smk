@@ -13,8 +13,8 @@ rule annotate_variants:
     input:
         calls="results/calls/{sample}.bcf",
         plugins="resources/vep/plugins",
-        fasta="resources/genome.fasta",
-        fai="resources/genome.fasta.fai",
+        fasta="resources/genomes/main.fasta",
+        fai="resources/genomes/main.fasta.fai",
         gff="resources/annotation.gff.gz",
         csi="resources/annotation.gff.gz.tbi",
         problematic="resources/problematic-sites.vcf.gz",
