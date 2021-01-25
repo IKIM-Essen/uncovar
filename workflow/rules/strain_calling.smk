@@ -11,16 +11,6 @@ rule cat_genomes:
         "cat {input} > {output}"
 
 
-# # NOT needed, if rule sourmash_compute_samples takes two fast qs
-# rule cat_trimmed_samples:
-#     input:
-#         expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2])
-#     output:
-#         "results/trimmed/{sample}.both.fastq.gz"
-#     shell:
-#         "cat {input} > {output}"
-
-
 rule sourmash_compute_genomes:
     input:
         "resources/strain-genomes.fasta",
