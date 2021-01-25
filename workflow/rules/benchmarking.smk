@@ -9,7 +9,7 @@ rule simulate_strain_reads:
     conda:
         "../envs/mason.yaml"
     shell:
-        "mason_simulator -ir {input} -n 30424 -o {output.left} -or {output.right} 2> {log}"
+        "mason_simulator -ir {input} -n 300424 -o {output.left} -or {output.right} 2> {log}"
 
 
 rule test_benchmark_results:

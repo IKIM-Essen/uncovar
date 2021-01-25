@@ -30,7 +30,7 @@ rule sourmash_compute_genomes:
         "logs/sourmash/sourmash-compute.log",
     threads: 4
     params:
-        k="31",
+        k=config["strain-calling"]["k"],
         scaled="1000",
         extra="--singleton --track-abundance",  # compute signature for each sequence record individually
     wrapper:
@@ -46,7 +46,7 @@ rule sourmash_compute_samples:
         "logs/sourmash/sourmash-compute-{sample}.log",
     threads: 4
     params:
-        k="31",
+        k=config["strain-calling"]["k"],
         scaled="1000",
         extra="--merge {sample} --track-abundance",
     wrapper:
@@ -63,7 +63,7 @@ rule sourmash_compute:
         "logs/sourmash/sourmash-compute-acc-{accession}.log",
     threads: 4
     params:
-        k="31",
+        k=config["strain-calling"]["k"],
         scaled="1000",
         extra="",
     wrapper:
@@ -78,10 +78,12 @@ rule smash_index:
         "resources/sourmash/db.sbt.json",
     log:
         "logs/sourmash/index.log",
+    params:
+        k=config["strain-calling"]["k"],
     conda:
         "../envs/sourmash.yaml"
     shell:
-        "sourmash index -k 31 {output} {input.genomes}"
+        "sourmash index -k {params.k} {output} {input.genomes}"
 
 
 rule sourmash_search:
@@ -108,10 +110,11 @@ rule sourmash_gather:
         "logs/sourmash/gather-{sample}.log",
     params:
         min_bp=config["strain-calling"]["min-bp"],
+        k=config["strain-calling"]["k"],
     conda:
         "../envs/sourmash.yaml"
     shell:
-        "(sourmash gather -k 31 {input.read} {input.metagenome} -o {output} --threshold-bp {params.min_bp}) > {log} 2>&1"
+        "(sourmash gather -k {params.k} {input.read} {input.metagenome} -o {output} --threshold-bp {params.min_bp}) > {log} 2>&1"
 
 
 # TODO

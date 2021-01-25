@@ -15,3 +15,5 @@ variant-calling:
 strain-calling:
   # minimum projected match size in bp
   min-bp: 20000
+  # k-mer sizes to use
+  k: "31"
