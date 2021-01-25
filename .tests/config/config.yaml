@@ -14,4 +14,4 @@ variant-calling:
 
 strain-calling:
   # minimum reported strain fraction after quantification
-  min-fraction: 0.01
+  min-fraction: 0.02
