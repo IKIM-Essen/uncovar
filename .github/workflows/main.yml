@@ -93,7 +93,7 @@ jobs:
       - name: Check strain calling
         run: |
           cat .tests/results/benchmarking.csv
-          if grep mismatch .tests/results/benchmarking.csv
+          if (tail -n+2 .tests/results/benchmarking.csv | grep mismatch > /dev/null)
           then
             echo "Strain calling failed in some cases (see above)."
             exit 1
