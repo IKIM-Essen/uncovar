@@ -15,3 +15,7 @@ variant-calling:
 strain-calling:
   # minimum reported strain fraction after quantification
   min-fraction: 0.02
+
+adapters:
+  #  Illumina TruSeq adapters
+  illumina: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
