@@ -10,9 +10,10 @@ checkpoint cat_genomes:
     shell:
         "cat {input} > {output}"
 
+
 rule cat_whitelisted_genomes:
     input:
-        whitelisted = get_whitelisted_strain_genomes
+        whitelisted=get_whitelisted_strain_genomes,
     output:
         temp("resources/strain-genomes-whitelisted.fasta"),
     log:

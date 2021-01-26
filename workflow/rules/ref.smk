@@ -19,7 +19,7 @@ rule get_genome:
     conda:
         "../envs/entrez.yaml"
     resources:
-        ncbi_api_requests=1
+        ncbi_api_requests=1,
     shell:
         "(esearch -db nucleotide -query '{params.accession}' |"
         "efetch -format fasta > {output}) 2> {log}"
