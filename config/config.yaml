@@ -1,7 +1,7 @@
 pepfile: config/pep/config.yaml
 
 # for testing, uncomment to limit to n strain genomes
-limit-strain-genomes: 20
+# limit-strain-genomes: 20
 
 whitelisting:
   # genomes of which lineage to whitelist
