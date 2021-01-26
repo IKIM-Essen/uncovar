@@ -2,7 +2,7 @@ checkpoint cat_genomes:
     input:
         get_strain_genomes,
     output:
-        "resources/strain-genomes.fasta",
+        temp("resources/strain-genomes.fasta"),
     log:
         "logs/cat-genomes.log",
     conda:
@@ -14,7 +14,7 @@ rule cat_whitelisted_genomes:
     input:
         whitelisted = get_whitelisted_strain_genomes
     output:
-        "resources/strain-genomes-whitelisted.fasta"
+        temp("resources/strain-genomes-whitelisted.fasta"),
     log:
         "logs/cat-whitelisted-genomes.log",
     conda:

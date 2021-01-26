@@ -1,6 +1,6 @@
 checkpoint get_strain_accessions:
     output:
-        "resources/strain-accessions.txt",
+        temp("resources/strain-accessions.txt"),
     log:
         "logs/get-accessions.log",
     conda:
