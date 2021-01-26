@@ -1,2 +1,0 @@
-adapter_name,seq1,seq2
-Illumina_TruSeq_adapters,--adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA,adapter_sequence_r2=AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
