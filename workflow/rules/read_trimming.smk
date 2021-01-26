@@ -2,11 +2,14 @@ rule fastp_pe:
     input:
         sample=get_fastqs,
     output:
-        trimmed=["results/trimmed/{sample}.1.fastq.gz", "results/trimmed/{sample}.2.fastq.gz"],
+        trimmed=[
+            "results/trimmed/{sample}.1.fastq.gz",
+            "results/trimmed/{sample}.2.fastq.gz",
+        ],
         html="results/trimmed/{sample}.html",
-        json="results/trimmed/{sample}.json"
+        json="results/trimmed/{sample}.json",
     log:
-        "logs/fastp/{sample}.log"
+        "logs/fastp/{sample}.log",
     params:
         # adapters=get_adapters,
         adapters="",
