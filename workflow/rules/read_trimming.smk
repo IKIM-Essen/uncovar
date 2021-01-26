@@ -12,7 +12,7 @@ rule fastp_pe:
         "logs/fastp/{sample}.log",
     params:
         # adapters=get_adapters,
-        adapters="",
+        adapters=config["adapters"]["illumina"],
         extra="",
     threads: 8
     wrapper:
