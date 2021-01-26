@@ -19,8 +19,11 @@ def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
             read=[1, 2],
         )
     # default case, look up FASTQs in the sample sheet
+    # question: what does the .loc do?
     return pep.sample_table.loc[wildcards.sample][["fq1", "fq2"]]
 
+# def get_adapters(adapter)
+#     return pep.adapter_table.loc[adapter]["seq1", "seq2"]
 
 def get_resource(name):
     return str((Path(workflow.snakefile).parent.parent / "resources") / name)
