@@ -84,6 +84,38 @@ def get_strain_signatures(wildcards):
         "resources/genomes/{accession}.sig", accession=get_strain_accessions(wildcards)
     )
 
+def get_whitelist_strain_accessions(wildcards):
+    with checkpoints.cat_genomes.get().output[0].open() as f:
+        whitelist = config['whitelisting']['whitelist-lineage']
+
+        # downloadable from https://www.epicov.org/epi3 / EpiCoV™ / Downloads / nextmeta. Must first register
+        # TODO automate download of metadata file
+        metadata = pd.read_csv("resources/metadata.tsv", delimiter='\t', low_memory=False)
+        metadata.replace('?', float('NaN'), inplace=True)
+        metadata = metadata[metadata.pangolin_lineage.isin(whitelist)]
+        metadata['cut_strain'] = metadata.strain.str.extract(r"(\/(.*)\/\d{4}$)")[1]
+        metadata.set_index('strain', drop=True, inplace=True)
+
+        whitelisted_accessions = []
+        for genome in expand("resources/genomes/{accession}.fasta", accession=wildcards):
+            with open(genome, 'r') as f:
+                first_line = f.readline()
+                if any(strain in first_line for strain in metadata.cut_strain.to_list()):
+                    whitelisted_accessions.append(first_line)
+        whitelisted_accessions = pd.Series(whitelisted_accessions).str.extract(r">([^\s]+)\.").dropna()[0].unique()
+        return list(whitelisted_accessions)
+
+
+def get_whitelisted_strain_genomes(wildcards):
+    accessions = get_strain_accessions(wildcards)
+    accessions = get_whitelist_strain_accessions(accessions)
+    return expand("resources/genomes/{accession}.fasta", accession=accessions)
+
+def get_concatenated_genomes(wildcards):
+    if config['whitelisting']['use-whitelist']:
+        return 'resources/strain-genomes-whitelisted.fasta'
+    else:
+        return 'resources/strain-genomes.fasta'
 
 def get_benchmark_results(wildcards):
     accessions = get_strain_accessions(wildcards)
