@@ -30,11 +30,11 @@ rule test_benchmark_results:
 rule test_assembly_results:
     input:
         "resources/genomes/{accession}.fasta",
-        "results/assembly/benchmark-sample-{accession}/final.contigs.fa"
+        "results/assembly/benchmark-sample-{accession}/final.contigs.fa",
     output:
-        "results/benchmarking/assembly/{accession}.bam"
+        "results/benchmarking/assembly/{accession}.bam",
     log:
-        "logs/test-assembly-results/{accession}.log"
+        "logs/test-assembly-results/{accession}.log",
     conda:
         "../envs/minimap2.yaml"
     shell:
