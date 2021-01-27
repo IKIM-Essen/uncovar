@@ -18,7 +18,7 @@ rule vcf_report:
         max_read_depth=config["variant-calling"]["report"]["max-read-depth"],
         js_files="{math} {template}".format(
             math=get_resource("math.min.js"),
-            template=get_resource("custom-table-report.js")
+            template=get_resource("custom-table-report.js"),
         ),
     log:
         "logs/vcf-report/{target}.log",
