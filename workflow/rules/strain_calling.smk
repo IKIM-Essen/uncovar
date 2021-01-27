@@ -1,4 +1,4 @@
-checkpoint cat_genomes:
+rule cat_genomes:
     input:
         get_strain_genomes,
     output:
@@ -11,22 +11,9 @@ checkpoint cat_genomes:
         "cat {input} > {output}"
 
 
-rule cat_whitelisted_genomes:
-    input:
-        whitelisted=get_whitelisted_strain_genomes,
-    output:
-        temp("resources/strain-genomes-whitelisted.fasta"),
-    log:
-        "logs/cat-whitelisted-genomes.log",
-    conda:
-        "../envs/unix.yaml"
-    shell:
-        "cat {input} > {output}"
-
-
 rule kallisto_index:
     input:
-        fasta=get_concatenated_genomes,
+        fasta="resources/strain-genomes.fasta",
     output:
         index="resources/strain-genomes.idx",
     params:

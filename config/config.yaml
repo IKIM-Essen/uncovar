@@ -4,8 +4,8 @@ pepfile: config/pep/config.yaml
 # limit-strain-genomes: 20
 
 whitelisting:
-  # genomes of which lineage to whitelist
-  whitelist-lineage: ['B.1.1.7', 'B.1.351', 'B.1.1.248', 'B.1.1.28']
+  # genomes to whitelist
+  whitelist: ['MT704070', 'MT385484', 'MT385490', 'MT438726', 'MT873106', 'MT873106', 'MW280538', 'MW280539', 'asd']
   # use only whitelisted genomes
   use-whitelist: True
 
