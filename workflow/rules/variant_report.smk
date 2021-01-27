@@ -16,7 +16,10 @@ rule vcf_report:
         bams=get_report_bams,
         format_field="DP AF OBS",
         max_read_depth=config["variant-calling"]["report"]["max-read-depth"],
-        js_files="{math} {template}".format(math=get_resource("math.min.js"), template=get_resource("custom-table-report.js")),
+        js_files="{math} {template}".format(
+            math=get_resource("math.min.js"),
+            template=get_resource("custom-table-report.js")
+        ),
     log:
         "logs/vcf-report/{target}.log",
     conda:
