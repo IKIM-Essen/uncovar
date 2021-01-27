@@ -125,11 +125,5 @@ jobs:
 
       - name: Check assembly
         run: |
-          cat .tests/results/benchmarking/strain-calling.csv
-          if (tail -n+2 .tests/results/benchmarking/strain-calling.csv | grep mismatch > /dev/null)
-          then
-            echo "Strain calling failed in some cases (see above)."
-            exit 1
-          else
-            echo "Strain calling was successful in all cases."
-          fi
+          echo "Benchmark assembly failed."
+          exit 1
