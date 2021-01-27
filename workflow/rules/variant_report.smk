@@ -24,4 +24,4 @@ rule vcf_report:
         "../envs/rbt.yaml"
     shell:
         "rbt vcf-report {input.ref} --bams {params.bams} --vcfs {params.bcfs} --formats {params.format_field} "
-        "--infos PROB_* -j {params.template} -d {params.max_read_depth} -l {params.js_files} -- {output} 2> {log}"
+        "--infos PROB_* -d {params.max_read_depth} -l {params.js_files} {params.template} -- {output} 2> {log}"
