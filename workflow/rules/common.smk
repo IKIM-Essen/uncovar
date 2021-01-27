@@ -76,9 +76,11 @@ def get_strain_accessions(wildcards):
 
 def get_strain_genomes(wildcards):
     accessions = get_strain_accessions(wildcards)
-    if config['whitelisting']['use-whitelist']:
-        whitelist = config['whitelisting']['whitelist']
-        accessions = [accession for accession in whitelist if accession in accessions.to_list()]
+    if config["whitelisting"]["use-whitelist"]:
+        whitelist = config["whitelisting"]["whitelist"]
+        accessions = [
+            accession for accession in whitelist if accession in accessions.to_list()
+        ]
         if len(accessions) == 0:
             raise BaseException
         return expand("resources/genomes/{accession}.fasta", accession=accessions)
