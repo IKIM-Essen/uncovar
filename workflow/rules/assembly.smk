@@ -13,4 +13,3 @@ rule assembly:
         "../envs/megahit.yaml"
     shell:
         "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f) 2> {log}"
-
