@@ -63,6 +63,7 @@ rule plot_strains:
             "results/plots/strain-calls/{sample}.strains.svg",
             caption="../report/strain-calls.rst",
             category="Strain calls",
+            subcategory="Per sample",
         ),
     log:
         "logs/plot-strains/{sample}.log",
@@ -72,6 +73,24 @@ rule plot_strains:
         "../envs/python.yaml"
     notebook:
         "../notebooks/plot-strains.py.ipynb"
+
+
+rule plot_all_strains:
+    input:
+        expand("results/tables/strain-calls/{sample}.strains.tsv", sample=get_samples()),
+    output:
+        report(
+            "results/plots/strain-calls/all.{mode,(major|any)}-strain.strains.svg",
+            caption="../report/all-strain-calls.rst",
+            category="Strain calls",
+            subcategory="Overview",
+        ),
+    log:
+        "logs/plot-strains/all.{mode}.log",
+    conda:
+        "../envs/python.yaml"
+    notebook:
+        "../notebooks/plot-all-strains.py.ipynb"
 
 
 # TODO

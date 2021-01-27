@@ -26,6 +26,10 @@ rule all:
         expand("results/calls/{sample}.bcf", sample=get_samples()),
         expand("results/tables/strain-calls/{sample}.strains.tsv", sample=get_samples()),
         expand("results/plots/strain-calls/{sample}.strains.svg", sample=get_samples()),
+        expand(
+            "results/plots/strain-calls/all.{mode}-strain.strains.svg",
+            mode=["major", "any"],
+        ),
 
 
 rule benchmark:
