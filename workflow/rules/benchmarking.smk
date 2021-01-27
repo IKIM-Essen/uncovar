@@ -46,4 +46,9 @@ rule summarize_assembly_results:
         get_assembly_comparisons,
     output:
         "results/benchmarking/assembly.csv",
-    ...
+    log:
+        "logs/assembly/assembly-results.log",
+    conda:
+        "../envs/python.yaml"
+    notebook:
+        "../notebooks/assembly-benchmark-results.py.ipynb"
