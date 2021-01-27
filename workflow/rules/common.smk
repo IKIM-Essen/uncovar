@@ -93,6 +93,13 @@ def get_benchmark_results(wildcards):
     )
 
 
+def get_assembly_comparisons(wildcards):
+    accessions = get_strain_accessions(wildcards)
+    return expand(
+        "results/benchmarking/assembly/{accession}.bam", accession=accessions,
+    )
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartypes="|".join(VARTYPES),

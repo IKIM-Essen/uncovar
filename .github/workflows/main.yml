@@ -68,7 +68,7 @@ jobs:
           stagein: mamba install -n snakemake -c conda-forge peppy
           args: "--report report.zip"
 
-  Benchmarking:
+  Benchmark-Strain-Calling:
     runs-on: ubuntu-latest
     needs: Testing
     steps:
@@ -88,12 +88,12 @@ jobs:
           directory: .tests
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
-          args: "benchmark --use-conda --show-failed-logs --cores 1 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
-      
+          args: "benchmark_strain_calling --use-conda --show-failed-logs --cores 1 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
+
       - name: Check strain calling
         run: |
-          cat .tests/results/benchmarking.csv
-          if (tail -n+2 .tests/results/benchmarking.csv | grep mismatch > /dev/null)
+          cat .tests/results/benchmarking/strain-calling.csv
+          if (tail -n+2 .tests/results/benchmarking/strain-calling.csv | grep mismatch > /dev/null)
           then
             echo "Strain calling failed in some cases (see above)."
             exit 1
