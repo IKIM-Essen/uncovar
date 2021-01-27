@@ -1,8 +1,3 @@
-// customize column_values to display the attributes of your choice to the sidebar
-let column_values = ['id', 'position', 'reference', 'alternatives', 'type'];
-// customize which parts of the annotation field to display at the sidebar
-let ann_values = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-
 let score_thresholds = {}
 score_thresholds["PolyPhen"] = { "Benign": [0, 0.149], "Possibly Damaging": [0.15, 0.849], "Probably Damaging": [0.85, 1] }
 score_thresholds["SIFT"] = {"Benign": [0, 0.05], "Damaging": [0.051, 1] }
@@ -13,112 +8,8 @@ score_scales["PolyPhen"] = { "colors": ["#2ba6cb", "#ffa3a3", "#ff5555"], "entri
 
 $(document).ready(function () {
     $("html").on('click', '.variant-row', function () {
-        $(this).siblings().children().removeClass("active-row");
-        $(this).children().addClass("active-row");
-        let vis_len = $(this).data('vislen');
-
-        for (let t = 1; t <= vis_len; t++) {
-            $(this).data('index');
-            let compressed_specs = plots[0][$(this).data('idx') + "_" + t.toString()];
-            let decompressed = LZString.decompressFromUTF16(compressed_specs);
-            let unpacker = new jsonm.Unpacker();
-            unpacker.setMaxDictSize(100000);
-            $(this).data('vis' + t.toString(), unpacker.unpack(JSON.parse(decompressed)));
-        }
-
-        let d = $(this).data('description')
-        d = d.replace(/, /g,"\",\"");
-        d = d.replace("[","[\"");
-        d = d.replace("]","\"]")
-        let description = JSON.parse(d);
-
-        for (let t = 1; t <= vis_len; t++) {
-            let specs = $(this).data('vis' + t.toString());
-            specs.data[1].values.forEach(function(a) {
-                if (a.row > 0 && Array.isArray(a.flags)) {
-                    let flags = {};
-                    a.flags.forEach(function(b) {
-                        if (b === 1) {
-                            flags[b] = "template having multiple segments in sequencing";
-                        } else if (b === 2) {
-                            flags[b] = "each segment properly aligned according to the aligner";
-                        } else if (b === 4) {
-                            flags[b] = "segment unmapped";
-                        } else if (b === 8) {
-                            flags[b] = "next segment in the template unmapped";
-                        } else if (b === 16) {
-                            flags[b] = "SEQ being reverse complemented";
-                        } else if (b === 32) {
-                            flags[b] = "SEQ of the next segment in the template being reverse complemented";
-                        } else if (b === 64) {
-                            flags[b] = "the first segment in the template";
-                        } else if (b === 128) {
-                            flags[b] = "the last segment in the template";
-                        } else if (b === 256) {
-                            flags[b] = "secondary alignment";
-                        } else if (b === 512) {
-                            flags[b] = "not passing filters, such as platform/vendor quality controls";
-                        } else if (b === 1024) {
-                            flags[b] = "PCR or optical duplicate";
-                        } else if (b === 2048) {
-                            flags[b] = "vega lite lines";
-                        }
-                    });
-                    a.flags = flags;
-                }
-            });
-            specs.title = 'Sample: ' + $(this).data('vis-sample' + t.toString());
-            specs.width = $('#vis1').width() - 40;
-            vegaEmbed('#vis' + t.toString(), specs);
-        }
-
-        $('.spinner-border').hide();
-
-        $("#sidebar").empty();
-        $.each($(this).data(), function(i, v) {
-            if (i !== 'index' && !i.includes("ann") && column_values.includes(i)) {
-                $('#sidebar').append('<tr><th class="thead-dark">' + i + '</th><td>' + v + '</td></tr>');
-            }
-        });
-        $("#ann-sidebar").empty();
         let ann_length = $(this).data('annlen');
         let that = this;
-        ann_values.forEach(function (x) {
-            let name = description[x];
-            $('#ann-sidebar').append('<tr>');
-            $('#ann-sidebar').append('<th class="thead-dark" style="position: sticky; left:-1px;">' + name + '</th>');
-            for (let j = 1; j <= ann_length; j++) {
-                let ix = x + 1;
-                let field = 'ann[' + j + '][' + ix + ']';
-                let vl = $(that).data(field);
-                if (name === "Existing_variation" && vl !== "") {
-                    let fields = vl.split('&');
-                    let result = "";
-                    for (var o = 0; o < fields.length; o++) {
-                        let val = fields[o];
-                        if (val.startsWith("rs")) {
-                            result = result + "<a href='https://www.ncbi.nlm.nih.gov/snp/" + val + "'>" + val + "</a>";
-                        } else if (val.startsWith("COSM")) {
-                            let num = val.replace( /^\D+/g, '');
-                            result = result + "<a href='https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=" + num + "'>" + val + "</a>";
-                        } else if (val.startsWith("COSN")) {
-                            let num = val.replace( /^\D+/g, '');
-                            result = result + "<a href='https://cancer.sanger.ac.uk/cosmic/ncv/overview?id=" + num + "'>" + val + "</a>";
-                        } else {
-                            result = result + val;
-                        }
-                        if (!(o === fields.length - 1)) {
-                            result = result + ", ";
-                        }
-                    }
-                    vl = result;
-                }
-                $('#ann-sidebar').append('<td>' + vl + '</td>');
-            }
-            $('#ann-sidebar').append('</tr>');
-        });
-
-
         $('#ann-sidebar').append('<tr>');
         $('#ann-sidebar').append('<th class="thead-dark" style="position: sticky; left:-1px; z-index: 1; background: white">Linkouts</th>');
         var sift_scores = []
@@ -126,13 +17,13 @@ $(document).ready(function () {
         for (let j = 1; j <= ann_length; j++) {
             var transcript = $(that).data('ann[' + j + '][7]')
             sift_score = $(that).data('ann[' + j + '][35]')
-            if (sift_score != "") {
+            if (sift_score != "" && sift_score !== undefined) {
                 sift_score = sift_score.split("(")[1].slice(0, -1)
                 sift_scores = parse_score(sift_scores, sift_score, "SIFT", transcript)
             }
 
             polyphen_score = $(that).data('ann[' + j + '][36]')
-            if (polyphen_score != "") {
+            if (polyphen_score != "" && polyphen_score !== undefined) {
                 polyphen_score = polyphen_score.split("(")[1].slice(0, -1)
                 polyphen_scores = parse_score(polyphen_scores, polyphen_score, "PolyPhen", transcript)
             }
@@ -182,10 +73,10 @@ $(document).ready(function () {
                         "calculate": "datum.prob < 0.01 ? 1 : 0",
                         "as": "alpha"
                     },
-                    {
-                        "calculate": "datum.prob < 0.01 ? datum.prob : 0.01",
-                        "as": "prob"
-                    }
+                        {
+                            "calculate": "datum.prob < 0.01 ? datum.prob : 0.01",
+                            "as": "prob"
+                        }
                     ],
                     "mark": {
                         "type": "circle",
@@ -230,52 +121,52 @@ $(document).ready(function () {
                         }]
                     }
                 },
-                {
-                    "transform": [{
-                        "calculate": "datum.prob >= 0.01 ? 1 : 0",
-                        "as": "alpha"
-                    },
                     {
-                        "calculate": "datum.prob >= 0.01 ? datum.prob : 0.01",
-                        "as": "prob"
-                    }
-                    ],
-                    "mark": "circle",
-                    "encoding": {
-                        "y": {
-                            "field": "prob_type",
-                            "type": "nominal",
-                            "axis": null,
-                            "sort": "ascending"
+                        "transform": [{
+                            "calculate": "datum.prob >= 0.01 ? 1 : 0",
+                            "as": "alpha"
                         },
-                        "x": {
-                            "field": "prob",
-                            "type": "quantitative",
-                            "title": "Probability",
-                            "scale": {
-                                "type": "log"
+                            {
+                                "calculate": "datum.prob >= 0.01 ? datum.prob : 0.01",
+                                "as": "prob"
                             }
-                        },
-                        "color": {
-                            "type": "nominal",
-                            "field": "alpha",
-                            "scale": {
-                                "domain": [0, 1],
-                                "range": ["#00000000", "#32a852"]
+                        ],
+                        "mark": "circle",
+                        "encoding": {
+                            "y": {
+                                "field": "prob_type",
+                                "type": "nominal",
+                                "axis": null,
+                                "sort": "ascending"
                             },
-                            "legend": null
-                        },
-                        "tooltip": [{
-                            "field": "prob_type",
-                            "type": "nominal",
-                            "title": "Type"
-                        }, {
-                            "field": "prob",
-                            "type": "quantitative",
-                            "title": "Probability"
-                        }]
+                            "x": {
+                                "field": "prob",
+                                "type": "quantitative",
+                                "title": "Probability",
+                                "scale": {
+                                    "type": "log"
+                                }
+                            },
+                            "color": {
+                                "type": "nominal",
+                                "field": "alpha",
+                                "scale": {
+                                    "domain": [0, 1],
+                                    "range": ["#00000000", "#32a852"]
+                                },
+                                "legend": null
+                            },
+                            "tooltip": [{
+                                "field": "prob_type",
+                                "type": "nominal",
+                                "title": "Type"
+                            }, {
+                                "field": "prob",
+                                "type": "quantitative",
+                                "title": "Probability"
+                            }]
+                        }
                     }
-                }
                 ],
                 "config": {
                     "view": {
@@ -329,11 +220,11 @@ $(document).ready(function () {
                 observations.push({
                     "sample": sample_name,
                     "strand": strand,
-                    "strand_orientation": strand + ' ' + orientation[result[5]], 
+                    "strand_orientation": strand + ' ' + orientation[result[5]],
                     "effect": effect,
                     "times": parseFloat(result[1]),
                     "quality": quality,
-                    "orientation": orientation[result[5]] 
+                    "orientation": orientation[result[5]]
                 })
             }
         })
@@ -594,5 +485,4 @@ $(document).ready(function () {
             vegaEmbed(`#${cell_id}`, ScoreSpec)
         }
     })
-    $('#variant1').trigger('click');
 })
