@@ -75,6 +75,12 @@ def get_strain_accessions(wildcards):
 
 
 def get_strain_genomes(wildcards):
+    # Case 1: take custom genomes from config
+    custom_genomes = config["strain-calling"].get("genomes", [])
+    if custom_genomes:
+        return custom_genomes
+
+    # Case 2: take genomes from genbank
     accessions = get_strain_accessions(wildcards)
     return expand("resources/genomes/{accession}.fasta", accession=accessions)
 

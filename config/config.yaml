@@ -15,3 +15,11 @@ variant-calling:
 strain-calling:
   # minimum reported strain fraction after quantification
   min-fraction: 0.02
+  # paths to strain genomes that shall be used for quantification
+  genomes:
+    - resources/genomes/main.fasta
+    - ../strain-genomes/hCoV-19BrazilSP-142020.fasta
+    - ../strain-genomes/hCoV-19EnglandMILK-9E2FE02020.fasta
+    - ../strain-genomes/hCoV-19JapanIC-05612021.fasta
+    - ../strain-genomes/hCoV-19South_AfricaKRISP-K0043122020.fasta
+
