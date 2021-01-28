@@ -65,13 +65,13 @@ rule plot_strains_kallisto:
             category="Strain calls",
         ),
     log:
-        "logs/plot-strains/{sample}.log",
+        "logs/plot-strains-kallisto/{sample}.log",
     params:
         min_fraction=config["strain-calling"]["min-fraction"],
     conda:
         "../envs/python.yaml"
     notebook:
-        "../notebooks/plot-strains.py.ipynb"
+        "../notebooks/plot-strains-kallisto.py.ipynb"
 
 
 rule pangolin:
@@ -86,3 +86,20 @@ rule pangolin:
         "../envs/pangolin.yaml"
     shell:
         "pangolin {input} --outfile {output}"
+
+
+rule plot_strains_pangolin:
+    input:
+        "results/tables/strain-calls/{sample}.strains.pangolin.csv"
+    output:
+        report(
+            "results/plots/strain-calls/{sample}.strains.pangolin.svg",
+            caption="../report/strain-calls-pangolin.rst",
+            category="Pangolin strain calls",
+        )
+    log:
+        "logs/plot-strains-pangolin/{sample}.log"
+    conda:
+        "../envs/python.yaml"
+    notebook:
+        "../notebooks/plot-strains-pangolin.py.ipynb"
