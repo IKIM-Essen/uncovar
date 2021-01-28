@@ -49,6 +49,6 @@ rule summarize_assembly_results:
     log:
         "logs/assembly/assembly-results.log",
     conda:
-        "../envs/python.yaml"
+        "../envs/pysam.yaml"
     notebook:
         "../notebooks/assembly-benchmark-results.py.ipynb"
