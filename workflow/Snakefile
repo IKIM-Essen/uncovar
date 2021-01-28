@@ -29,6 +29,10 @@ rule all:
             sample=get_samples(),
         ),
         expand(
+            "results/plots/strain-calls/all.{mode}-strain.strains.kallisto.svg",
+            mode=["major", "any"],
+        ),
+        expand(
             "results/tables/strain-calls/{sample}.strains.pangolin.csv",
             sample=get_samples(),
         ),

@@ -61,7 +61,7 @@ rule plot_strains_kallisto:
     output:
         report(
             "results/plots/strain-calls/{sample}.strains.kallisto.svg",
-            caption="../report/strain-calls.rst",
+            caption="../report/strain-calls-kallisto.rst",
             category="Strain calls",
         ),
     log:
@@ -72,6 +72,24 @@ rule plot_strains_kallisto:
         "../envs/python.yaml"
     notebook:
         "../notebooks/plot-strains-kallisto.py.ipynb"
+
+
+rule plot_all_strains_kallisto:
+    input:
+        expand("results/tables/strain-calls/{sample}.strains.tsv", sample=get_samples()),
+    output:
+        report(
+            "results/plots/strain-calls/all.{mode,(major|any)}-strain.strains.kallisto.svg",
+            caption="../report/all-strain-calls-kallisto.rst",
+            category="Strain calls",
+            subcategory="Overview",
+        ),
+    log:
+        "logs/plot-strains/all.{mode}.log",
+    conda:
+        "../envs/python.yaml"
+    notebook:
+        "../notebooks/plot-all-strains.py.ipynb"
 
 
 rule pangolin:
