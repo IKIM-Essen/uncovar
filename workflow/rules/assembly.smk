@@ -12,12 +12,13 @@ rule megahit_assembly:
     shell:
         "megahit -1 {input.fastq1} -2 {input.fastq2} -o {output}"
 
+
 rule metaSPAdes_assembly:
     input:
         fastq1="results/trimmed/{sample}.1.fastq.gz",
         fastq2="results/trimmed/{sample}.2.fastq.gz",
     output:
-            "results/assembly/metaSPAdes/{sample}/contigs.fasta"
+        "results/assembly/metaSPAdes/{sample}/contigs.fasta",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
     log:
