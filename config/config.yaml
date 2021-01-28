@@ -1,7 +1,7 @@
 pepfile: config/pep/config.yaml
 
 # for testing, uncomment to limit to n strain genomes
-# limit-strain-genomes: 100
+limit-strain-genomes: 10
 
 variant-calling:
   # false discovery rate to control for
@@ -15,3 +15,7 @@ variant-calling:
 strain-calling:
   # minimum reported strain fraction after quantification
   min-fraction: 0.02
+
+adapters:
+  #  Illumina TruSeq adapters
+  illumina: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
