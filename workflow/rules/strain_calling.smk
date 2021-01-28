@@ -89,7 +89,7 @@ rule plot_all_strains_kallisto:
     conda:
         "../envs/python.yaml"
     notebook:
-        "../notebooks/plot-all-strains.py.ipynb"
+        "../notebooks/plot-all-strains-kallisto.py.ipynb"
 
 
 rule pangolin:
@@ -114,6 +114,7 @@ rule plot_strains_pangolin:
             "results/plots/strain-calls/{sample}.strains.pangolin.svg",
             caption="../report/strain-calls-pangolin.rst",
             category="Pangolin strain calls",
+            subcategory="Per sample",
         ),
     log:
         "logs/plot-strains-pangolin/{sample}.log",
@@ -121,3 +122,21 @@ rule plot_strains_pangolin:
         "../envs/python.yaml"
     notebook:
         "../notebooks/plot-strains-pangolin.py.ipynb"
+
+
+rule plot_all_strains_pangolin:
+    input:
+        expand("results/tables/strain-calls/{sample}.strains.pangolin.csv", sample=get_samples()),
+    output:
+        report(
+            "results/plots/strain-calls/all.strains.pangolin.svg",
+            caption="../report/all-strain-calls-pangolin.rst",
+            category="Pangolin strain calls",
+            subcategory="Overview",
+        ),
+    log:
+        "logs/plot-strains-pangolin/all.log",
+    conda:
+        "../envs/python.yaml"
+    notebook:
+        "../notebooks/plot-all-strains-pangolin.py.ipynb"
