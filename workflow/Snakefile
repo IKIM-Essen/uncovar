@@ -34,7 +34,12 @@ rule all:
         ),
         expand(
             "results/plots/strain-calls/{sample}.strains.kallisto.svg",
-            sample=get_samples(),
+            sample=get_samples()),
+        expand("results/tables/strain-calls/{sample}.strains.tsv", sample=get_samples()),
+        expand("results/plots/strain-calls/{sample}.strains.svg", sample=get_samples()),
+        expand(
+            "results/plots/strain-calls/all.{mode}-strain.strains.svg",
+            mode=["major", "any"],
         ),
 
 

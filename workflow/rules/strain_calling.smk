@@ -63,6 +63,7 @@ rule plot_strains_kallisto:
             "results/plots/strain-calls/{sample}.strains.kallisto.svg",
             caption="../report/strain-calls.rst",
             category="Strain calls",
+            subcategory="Per sample",
         ),
     log:
         "logs/plot-strains/{sample}.log",
@@ -72,6 +73,7 @@ rule plot_strains_kallisto:
         "../envs/python.yaml"
     notebook:
         "../notebooks/plot-strains.py.ipynb"
+
 
 
 rule pangolin:
@@ -86,3 +88,25 @@ rule pangolin:
         "../envs/pangolin.yaml"
     shell:
         "pangolin {input} --outfile {output}"
+
+rule plot_all_strains:
+    input:
+        expand("results/tables/strain-calls/{sample}.strains.tsv", sample=get_samples()),
+    output:
+        report(
+            "results/plots/strain-calls/all.{mode,(major|any)}-strain.strains.svg",
+            caption="../report/all-strain-calls.rst",
+            category="Strain calls",
+            subcategory="Overview",
+        ),
+    log:
+        "logs/plot-strains/all.{mode}.log",
+    conda:
+        "../envs/python.yaml"
+    notebook:
+        "../notebooks/plot-all-strains.py.ipynb"
+
+
+# TODO
+# 1. the entrez rule get_genome also downloads partial reads of covid genomes (e.g. MW368461) or empty genome files (e.g. MW454604). Add rule to exiculde those rules "faulty" covid genomes
+
