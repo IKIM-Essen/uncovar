@@ -126,7 +126,10 @@ rule plot_strains_pangolin:
 
 rule plot_all_strains_pangolin:
     input:
-        expand("results/tables/strain-calls/{sample}.strains.pangolin.csv", sample=get_samples()),
+        expand(
+            "results/tables/strain-calls/{sample}.strains.pangolin.csv",
+            sample=get_samples(),
+        ),
     output:
         report(
             "results/plots/strain-calls/all.strains.pangolin.svg",
