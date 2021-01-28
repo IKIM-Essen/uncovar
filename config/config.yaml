@@ -23,6 +23,3 @@ strain-calling:
     - ../strain-genomes/hCoV-19JapanIC-05612021.fasta
     - ../strain-genomes/hCoV-19South_AfricaKRISP-K0043122020.fasta
 
-adapters:
-  #  Illumina TruSeq adapters
-  illumina: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
