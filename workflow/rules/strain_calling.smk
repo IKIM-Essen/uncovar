@@ -90,15 +90,15 @@ rule pangolin:
 
 rule plot_strains_pangolin:
     input:
-        "results/tables/strain-calls/{sample}.strains.pangolin.csv"
+        "results/tables/strain-calls/{sample}.strains.pangolin.csv",
     output:
         report(
             "results/plots/strain-calls/{sample}.strains.pangolin.svg",
             caption="../report/strain-calls-pangolin.rst",
             category="Pangolin strain calls",
-        )
+        ),
     log:
-        "logs/plot-strains-pangolin/{sample}.log"
+        "logs/plot-strains-pangolin/{sample}.log",
     conda:
         "../envs/python.yaml"
     notebook:
