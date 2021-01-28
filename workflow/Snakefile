@@ -38,8 +38,9 @@ rule all:
             sample=get_samples(),
         ),
         expand(
-            "results/plots/strain-calls/{sample}.strains.kallisto.svg",
+            "results/plots/strain-calls/{sample}.strains.{method}.svg",
             sample=get_samples(),
+            method=["kallisto", "pangolin"],
         ),
 
 

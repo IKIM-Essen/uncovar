@@ -76,7 +76,10 @@ rule plot_strains_kallisto:
 
 rule plot_all_strains_kallisto:
     input:
-        expand("results/tables/strain-calls/{sample}.strains.tsv", sample=get_samples()),
+        expand(
+            "results/tables/strain-calls/{sample}.strains.kallisto.tsv",
+            sample=get_samples(),
+        ),
     output:
         report(
             "results/plots/strain-calls/all.{mode,(major|any)}-strain.strains.kallisto.svg",
