@@ -17,4 +17,3 @@ rule fastp_pe:
     threads: 8
     wrapper:
         "0.70.0/bio/fastp"
-        
