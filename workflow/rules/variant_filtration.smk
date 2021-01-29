@@ -8,7 +8,7 @@ rule filter_odds:
     conda:
         "../envs/varlociraptor.yaml"
     shell:
-        "varlociraptor filter-calls posterior-odds --events PRESENT PRESENT_LOW --odds barely < {input} > {output} 2> {log}"
+        "varlociraptor filter-calls posterior-odds --events PRESENT --odds barely < {input} > {output} 2> {log}"
 
 
 rule control_fdr:
@@ -24,7 +24,7 @@ rule control_fdr:
         "../envs/varlociraptor.yaml"
     shell:
         "varlociraptor filter-calls control-fdr {input} --var {wildcards.vartype} "
-        "--events PRESENT PRESENT_LOW --fdr {params.fdr} > {output} 2> {log}"
+        "--events PRESENT --fdr {params.fdr} > {output} 2> {log}"
 
 
 rule bcf_index:

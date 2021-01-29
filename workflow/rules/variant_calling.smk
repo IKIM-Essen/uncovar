@@ -15,7 +15,6 @@ rule freebayes:
         extra=(
             "--pooled-continuous --min-alternate-count 1 --min-alternate-fraction 0.01"
         ),
-    threads: workflow.cores
     wrapper:
         "0.68.0/bio/freebayes"
 
