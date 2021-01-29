@@ -14,5 +14,6 @@ rule assembly:
     shell:
         "rm -r {params.outdir}; megahit -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} 2> {log}"
 
+
 # TODO add plot that visualizes assembly quality
 # TODO blast smaller contigs to determine contamination?
