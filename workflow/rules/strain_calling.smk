@@ -40,11 +40,11 @@ rule kallisto_quant:
         "0.70.0/bio/kallisto/quant"
 
 
-rule call_strains:
+rule call_strains_kallisto:
     input:
         "results/quant/{sample}",
     output:
-        "results/tables/strain-calls/{sample}.strains.tsv",
+        "results/tables/strain-calls/{sample}.strains.kallisto.tsv",
     log:
         "logs/call-strains/{sample}.log",
     params:
@@ -55,33 +55,35 @@ rule call_strains:
         "../notebooks/call-strains.py.ipynb"
 
 
-rule plot_strains:
+rule plot_strains_kallisto:
     input:
-        "results/tables/strain-calls/{sample}.strains.tsv",
+        "results/tables/strain-calls/{sample}.strains.kallisto.tsv",
     output:
         report(
-            "results/plots/strain-calls/{sample}.strains.svg",
-            caption="../report/strain-calls.rst",
+            "results/plots/strain-calls/{sample}.strains.kallisto.svg",
+            caption="../report/strain-calls-kallisto.rst",
             category="Strain calls",
-            subcategory="Per sample",
         ),
     log:
-        "logs/plot-strains/{sample}.log",
+        "logs/plot-strains-kallisto/{sample}.log",
     params:
         min_fraction=config["strain-calling"]["min-fraction"],
     conda:
         "../envs/python.yaml"
     notebook:
-        "../notebooks/plot-strains.py.ipynb"
+        "../notebooks/plot-strains-kallisto.py.ipynb"
 
 
-rule plot_all_strains:
+rule plot_all_strains_kallisto:
     input:
-        expand("results/tables/strain-calls/{sample}.strains.tsv", sample=get_samples()),
+        expand(
+            "results/tables/strain-calls/{sample}.strains.kallisto.tsv",
+            sample=get_samples(),
+        ),
     output:
         report(
-            "results/plots/strain-calls/all.{mode,(major|any)}-strain.strains.svg",
-            caption="../report/all-strain-calls.rst",
+            "results/plots/strain-calls/all.{mode,(major|any)}-strain.strains.kallisto.svg",
+            caption="../report/all-strain-calls-kallisto.rst",
             category="Strain calls",
             subcategory="Overview",
         ),
@@ -90,8 +92,57 @@ rule plot_all_strains:
     conda:
         "../envs/python.yaml"
     notebook:
-        "../notebooks/plot-all-strains.py.ipynb"
+        "../notebooks/plot-all-strains-kallisto.py.ipynb"
 
 
-# TODO
-# 1. the entrez rule get_genome also downloads partial reads of covid genomes (e.g. MW368461) or empty genome files (e.g. MW454604). Add rule to exiculde those rules "faulty" covid genomes
+rule plot_strains_pangolin:
+    input:
+        "results/tables/strain-calls/{sample}.strains.pangolin.csv",
+    output:
+        report(
+            "results/plots/strain-calls/{sample}.strains.pangolin.svg",
+            caption="../report/strain-calls-pangolin.rst",
+            category="Pangolin strain calls",
+            subcategory="Per sample",
+        ),
+    log:
+        "logs/plot-strains-pangolin/{sample}.log",
+    conda:
+        "../envs/python.yaml"
+    notebook:
+        "../notebooks/plot-strains-pangolin.py.ipynb"
+
+
+rule pangolin:
+    input:
+        "results/assembly/{sample}/final.contigs.fa",
+    output:
+        "results/tables/strain-calls/{sample}.strains.pangolin.csv",
+    log:
+        "logs/pangolin/{sample}.log",
+    threads: 8
+    conda:
+        "../envs/pangolin.yaml"
+    shell:
+        "pangolin {input} --outfile {output} > {log} 2>&1"
+
+
+rule plot_all_strains_pangolin:
+    input:
+        expand(
+            "results/tables/strain-calls/{sample}.strains.pangolin.csv",
+            sample=get_samples(),
+        ),
+    output:
+        report(
+            "results/plots/strain-calls/all.strains.pangolin.svg",
+            caption="../report/all-strain-calls-pangolin.rst",
+            category="Pangolin strain calls",
+            subcategory="Overview",
+        ),
+    log:
+        "logs/plot-strains-pangolin/all.log",
+    conda:
+        "../envs/python.yaml"
+    notebook:
+        "../notebooks/plot-all-strains-pangolin.py.ipynb"

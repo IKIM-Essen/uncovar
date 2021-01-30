@@ -19,7 +19,6 @@ def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
             read=[1, 2],
         )
     # default case, look up FASTQs in the sample sheet
-    # question: what does the .loc do?
     return pep.sample_table.loc[wildcards.sample][["fq1", "fq2"]]
 
 
@@ -95,7 +94,7 @@ def get_strain_signatures(wildcards):
 def get_benchmark_results(wildcards):
     accessions = get_strain_accessions(wildcards)
     return expand(
-        "results/tables/strain-calls/benchmark-sample-{accession}.strains.tsv",
+        "results/tables/strain-calls/benchmark-sample-{accession}.strains.kallisto.tsv",
         accession=accessions,
     )
 
