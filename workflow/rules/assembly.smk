@@ -26,10 +26,9 @@ rule order_contigs:
     params:
         outdir=lambda x, output: os.path.dirname(os.path.dirname(output[0])),
     threads: 8
-    shell:
+    shell:  # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
         "(mkdir -p {params.outdir} && cd {params.outdir} && "
         "ragoo.py ../../../{input.contigs} ../../../{input.reference}) 2> {log}"
-        # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
 
 
 # TODO add plot that visualizes assembly quality
