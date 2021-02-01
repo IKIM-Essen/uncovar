@@ -8,7 +8,7 @@ rule simulate_strain_reads:
         "logs/mason/{accession}.log",
     conda:
         "../envs/mason.yaml"
-    shell: # median reads in data: 584903
+    shell:  # median reads in data: 584903
         "mason_simulator -ir {input} -n 584903 -o {output.left} -or {output.right} 2> {log}"
 
 
