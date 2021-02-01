@@ -22,13 +22,14 @@ rule order_contigs:
     output:
         "results/ordered_contigs/{sample}/ragoo_output/ragoo.fasta",
     log:
-        "logs/ragoo/{sample}.log"
+        "logs/ragoo/{sample}.log",
     params:
         outdir=lambda x, output: os.path.dirname(os.path.dirname(output[0])),
     threads: 8
     shell:
         "(mkdir -p {params.outdir} && cd {params.outdir} && "
-        "ragoo.py ../../../{input.contigs} ../../../{input.reference}) 2> {log}" # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
+        "ragoo.py ../../../{input.contigs} ../../../{input.reference}) 2> {log}"
+        # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
 
 
 # TODO add plot that visualizes assembly quality
