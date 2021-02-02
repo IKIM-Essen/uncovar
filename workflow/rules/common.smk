@@ -109,7 +109,7 @@ def get_reference(suffix=""):
             return "resources/genomes/main.fasta{suffix}".format(suffix=suffix)
         else:
             # return assembly result
-            return "results/ordered_contigs/{reference}.fasta.{suffix}".format(
+            return "results/ordered-contigs/{reference}.fasta.{suffix}".format(
                 suffix=suffix, **wildcards
             )
 
