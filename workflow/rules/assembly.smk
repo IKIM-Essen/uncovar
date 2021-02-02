@@ -64,19 +64,17 @@ rule align_contigs:
 rule quast:
     input:
         reference="resources/genomes/main.fasta",
-        bams=get_aligned_contigs,
-        fastas=get_assembly_contigs,
+        bam="results/ordered_contigs/{sample}/{sample}.bam",
+        fastas="results/assembly/{sample}/final.contigs.fa",
     output:
-        directory("results/quast"),
+        directory("results/quast/{sample}"),
     log:
-        "logs/quast.log",
-    params:
-        bam_list=lambda x, input: ",".join(input.bams),
+        "logs/quast/{sample}.log",
     conda:
         "../envs/quast.yaml"
     threads: 8
     shell:
-        "(quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {params.bam_list} {input.fastas}) 2> {log}"
+        "(quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {input.bam} {input.fastas}) 2> {log}"
 
 
 # TODO blast smaller contigs to determine contamination?
