@@ -1,0 +1,4 @@
+channels:
+  - imperial-college-research-computing
+dependencies:
+  - rragoo
