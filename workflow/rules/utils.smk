@@ -22,6 +22,19 @@ rule bam_index:
         "0.70.0/bio/samtools/index"
 
 
+rule bcf_index:
+    input:
+        "{prefix}.bcf",
+    output:
+        "{prefix}.bcf.csi",
+    log:
+        "logs/bcf-index/{prefix}.log",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        "bcftools index {input} 2> {log}"
+
+
 rule faidx:
     input:
         "{prefix}.fasta",

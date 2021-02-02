@@ -30,19 +30,6 @@ rule control_fdr:
         "--events {params.events} --fdr {params.fdr} > {output} 2> {log}"
 
 
-rule bcf_index:
-    input:
-        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{vartype}.fdr-controlled.bcf",
-    output:
-        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{vartype}.fdr-controlled.bcf.csi",
-    log:
-        "logs/bcf-index/ref~{reference}/{sample}.{clonality}.{vartype}.log",
-    conda:
-        "../envs/bcftools.yaml"
-    shell:
-        "bcftools index {input} 2> {log}"
-
-
 rule merge_calls:
     input:
         calls=get_merge_calls_input(".bcf"),

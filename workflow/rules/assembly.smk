@@ -50,6 +50,7 @@ rule polish_contigs:
     input:
         fasta="results/ordered_contigs/{sample}.fasta",
         bcf="results/filtered-calls/ref~{sample}/{sample}.clonal.bcf",
+        bcfidx="results/filtered-calls/ref~{sample}/{sample}.clonal.bcf.csi",
     output:
         report(
             "results/polished-contigs/{sample}.fasta",
