@@ -32,13 +32,16 @@ rule order_contigs:
         "(mkdir -p {params.outdir} && cd {params.outdir} && "
         "ragoo.py ../../../{input.contigs} ../../../{input.reference}) 2> {log}"
 
+
 rule move_ordered_contigs:
     input:
         "results/ordered_contigs/{sample}/ragoo_output/ragoo.fasta",
     output:
-        "results/ordered_contigs/{sample}.fasta"
+        "results/ordered_contigs/{sample}.fasta",
     log:
-        "logs/ragoo/{sample}_move.log"
+        "logs/ragoo/{sample}_move.log",
+    conda:
+        "../envs/unix.yaml"
     shell:
         "mv {input} {output}"
 
@@ -62,19 +65,18 @@ rule quast:
     input:
         reference="resources/genomes/main.fasta",
         bams=get_aligned_contigs,
-        fastas=get_assembly_contigs
+        fastas=get_assembly_contigs,
     output:
-        directory('results/quast')
+        directory("results/quast"),
     log:
-        "logs/quast.log"
+        "logs/quast.log",
     params:
-        bam_list = lambda x, input: ",".join(input.bams)
+        bam_list=lambda x, input: ",".join(input.bams),
     conda:
         "../envs/quast.yaml"
     threads: 8
     shell:
         "(quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {params.bam_list} {input.fastas}) 2> {log}"
-
 
 
 # TODO blast smaller contigs to determine contamination?

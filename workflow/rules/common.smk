@@ -100,10 +100,11 @@ def get_benchmark_results(wildcards):
 
 
 def get_aligned_contigs(wildcards):
-    return expand("results/ordered_contigs/{sample}/{sample}.bam", sample = get_samples())
+    return expand("results/ordered_contigs/{sample}/{sample}.bam", sample=get_samples())
+
 
 def get_assembly_contigs(wildcards):
-    return expand("results/assembly/{sample}/final.contigs.fa", sample = get_samples())
+    return expand("results/assembly/{sample}/final.contigs.fa", sample=get_samples())
 
 
 wildcard_constraints:
