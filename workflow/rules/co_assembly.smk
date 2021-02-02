@@ -78,7 +78,7 @@ rule samtools_index:
 rule generate_consensus:
     input:
         bam="results/hisat2_mapped/{sample}.sorted.bam",
-        reference_genome="resources/genomes/main.fasta"
+        reference_genome="resources/genomes/main.fasta",
     output:
         "results/calls/{sample}_consensus.fq",
     log:
@@ -88,14 +88,14 @@ rule generate_consensus:
     shell:
         "(samtools mpileup -uf {input.reference_genome} {input.bam} |bcftools call -c |vcfutils.pl vcf2fq > {output}) &> {log}"
 
-    
+
 rule seqtk:
     input:
-        "results/calls/{sample}_consensus.fq"
+        "results/calls/{sample}_consensus.fq",
     output:
-        "results/calls/{sample}_consensus.fa"
+        "results/calls/{sample}_consensus.fa",
     log:
-        "logs/seqtk/{sample}.log"
+        "logs/seqtk/{sample}.log",
     conda:
         "../envs/seqtk.yaml"
     shell:
@@ -105,7 +105,7 @@ rule seqtk:
 rule call_variants:
     input:
         bam="results/hisat2_mapped/{sample}.sorted.bam",
-        reference_genome="resources/genomes/main.fasta"
+        reference_genome="resources/genomes/main.fasta",
     output:
         "results/calls/{sample}_variants.vcf",
     log:
@@ -114,7 +114,7 @@ rule call_variants:
         "../envs/sam+bcftools.yaml"
     shell:
         "(samtools mpileup -uf {input.reference_genome} {input.bam} |bcftools call -cv -Ob |bcftools view > {output}) &> {log}"
-    
+
 
 # evaluate the alignment statistics samtools flagstat
 # samtools sort
