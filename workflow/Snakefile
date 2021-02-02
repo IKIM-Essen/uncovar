@@ -38,7 +38,7 @@ rule all:
             sample=get_samples(),
             method=["kallisto", "pangolin"],
         ),
-        "results/quast",
+        expand("results/quast/{sample}", sample=get_samples()),
 
 
 rule benchmark:
