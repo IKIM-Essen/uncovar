@@ -32,37 +32,41 @@ rule order_contigs:
         "(mkdir -p {params.outdir} && cd {params.outdir} && "
         "ragoo.py ../../../{input.contigs} ../../../{input.reference}) 2> {log}"
 
-# rule align_ordered_contigs:
-#     input:
-#         "resources/genomes/main.fasta",
-#         "results/ordered_contigs/{sample}/ragoo_output/ragoo.fasta",
-#     output:
-#         "results/ordered_contigs/{sample}/{sample}.bam",
-#     log:
-#         "logs/test_ragoo/{sample}.log",
-#     conda:
-#         "../envs/minimap2.yaml"
-#     shell:
-#         "minimap2 -ax asm5 {input} -o {output} 2> {log}"
 
-# Which contigs to vis? ordered or unordered?
-# rule quast:
-#     input:
-#         reference="resources/genomes/main.fasta",
-#         bams=get_all_ordered_samples_as_bams,
-#         fastas=get_all_ordered_samples_as_fastas
-#     output:
-#         directory('results/quast')
-#     log:
-#         "logs/quast.log"
-#     params:
-#         bam_list = lambda x, input: ",".join(input.bams)
-#     conda:
-#         "../envs/quast.yaml"
-#     threads: 8
-#     shell:
-#         "(quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {params.bam_list} {input.fastas}) 2> {log}"
+
+
+rule align_contigs:
+    input:
+        "resources/genomes/main.fasta",
+        "results/assembly/{sample}/final.contigs.fa",
+    output:
+        "results/ordered_contigs/{sample}/{sample}.bam",
+    log:
+        "logs/minimap2/{sample}.log",
+    conda:
+        "../envs/minimap2.yaml"
+    shell:
+        "minimap2 -ax asm5 {input} -o {output} 2> {log}"
 
 
 # TODO add plot that visualizes assembly quality
+rule quast:
+    input:
+        reference="resources/genomes/main.fasta",
+        bams=get_aligned_contigs,
+        fastas=get_assembly_contigs
+    output:
+        directory('results/quast')
+    log:
+        "logs/quast.log"
+    params:
+        bam_list = lambda x, input: ",".join(input.bams)
+    conda:
+        "../envs/quast.yaml"
+    threads: 8
+    shell:
+        "(quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {params.bam_list} {input.fastas}) 2> {log}"
+
+
+
 # TODO blast smaller contigs to determine contamination?

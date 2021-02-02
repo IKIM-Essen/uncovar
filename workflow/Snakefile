@@ -38,6 +38,7 @@ rule all:
             sample=get_samples(),
             method=["kallisto", "pangolin"],
         ),
+        'results/quast'
 
 
 rule benchmark:

@@ -98,12 +98,12 @@ def get_benchmark_results(wildcards):
         accession=accessions,
     )
 
-# for quast vis
-# def get_all_ordered_samples_as_bams(wildcards):
-#     return expand("results/ordered_contigs/{sample}/{sample}.bam", sample = get_samples())
 
-# def get_all_ordered_samples_as_fastas(wildcards):
-#     return expand("results/ordered_contigs/{sample}/ragoo_output/ragoo.fasta", sample = get_samples())
+def get_aligned_contigs(wildcards):
+    return expand("results/ordered_contigs/{sample}/{sample}.bam", sample = get_samples())
+
+def get_assembly_contigs(wildcards):
+    return expand("results/assembly/{sample}/final.contigs.fa", sample = get_samples())
 
 
 wildcard_constraints:
