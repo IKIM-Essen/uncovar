@@ -46,6 +46,24 @@ rule move_ordered_contigs:
         "mv {input} {output}"
 
 
+rule polish_contigs:
+    input:
+        fasta="results/ordered_contigs/{sample}.fasta",
+        bcf="results/filtered-calls/ref~{sample}/{sample}.clonal.bcf",
+    output:
+        report(
+            "results/polished-contigs/{sample}.fasta",
+            category="Assembly",
+            caption="../report/assembly.rst",
+        )
+    log:
+        "logs/bcftools-consensus/{sample}.log"
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"
+
+
 rule align_contigs:
     input:
         "resources/genomes/main.fasta",

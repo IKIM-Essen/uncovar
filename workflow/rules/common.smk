@@ -55,7 +55,7 @@ def get_report_samples(wildcards):
 def get_merge_calls_input(suffix):
     def inner(wildcards):
         return expand(
-            "results/filtered-calls/{{sample}}.{vartype}{suffix}",
+            "results/filtered-calls/ref~{{reference}}/{{sample}}.{{clonality}}.{vartype}.fdr-controlled{suffix}",
             suffix=suffix,
             vartype=VARTYPES,
         )
@@ -107,6 +107,34 @@ def get_assembly_contigs(wildcards):
     return expand("results/assembly/{sample}/final.contigs.fa", sample=get_samples())
 
 
+def get_reference(suffix=""):
+    def inner(wildcards):
+        if wildcards.reference == "main":
+            # return reference genome
+            return "resources/genomes/main.fasta" + suffix
+        else:
+            # return assembly result
+            return "results/ordered_contigs/{reference}.fasta.{suffix}".format(suffix=suffix, **wildcards)
+    return inner
+
+
+def get_target_events(wildcards):
+    if wildcards.reference == "main" or wildcards.clonality != "clonal":
+        # calling variants against the wuhan reference or we are explicitly interested in subclonal as well
+        return "SUBCLONAL CLONAL"
+    else:
+        # only keep clonal variants
+        return "CLONAL"
+
+
+def get_filter_odds_input(wildcards):
+    if wildcards.reference == "main":
+        return "results/annotated-calls/ref~main/{sample}.bcf"
+    else:
+        return "results/calls/ref~main/{sample}.bcf"
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartypes="|".join(VARTYPES),
+    clonality="subclonal|clonal"
