@@ -64,17 +64,6 @@ rule samtools_sort:
         "0.70.0/bio/samtools/sort"
 
 
-rule samtools_index:
-    input:
-        "resources/genomes/main.fasta",
-    output:
-        "resources/genomes/main.fasta.fai",
-    params:
-        "",  # optional params string
-    wrapper:
-        "0.70.0/bio/samtools/faidx"
-
-
 rule generate_consensus:
     input:
         bam="results/hisat2_mapped/{sample}.sorted.bam",
