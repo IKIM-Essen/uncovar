@@ -42,7 +42,8 @@ rule quast:
         "../envs/quast.yaml"
     threads: 8
     shell:
-        "(quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {input.bam} {input.fastas}) 2> {log}"
+        "quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {input.bam} {input.fastas} 2> {log}"
+
 
 rule order_contigs:
     input:
@@ -53,7 +54,7 @@ rule order_contigs:
     log:
         "logs/ragoo/{sample}.log",
     params:
-        outdir =lambda x, output: os.path.dirname(output[0]),
+        outdir=lambda x, output: os.path.dirname(output[0]),
     threads: 8
     conda:
         "../envs/ragoo.yaml"
@@ -61,5 +62,25 @@ rule order_contigs:
         "(mkdir -p {params.outdir}/{wildcards.sample} && cd {params.outdir}/{wildcards.sample} && "
         "ragoo.py ../../../{input.contigs} ../../../{input.reference} && "
         "cd ../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) 2> {log}"
+
+
+rule polish_contigs:
+    input:
+        fasta="results/ordered-contigs/{sample}.fasta",
+        bcf="results/filtered-calls/ref~{sample}/{sample}.clonal.bcf",
+        bcfidx="results/filtered-calls/ref~{sample}/{sample}.clonal.bcf.csi",
+    output:
+        report(
+            "results/polished-contigs/{sample}.fasta",
+            category="Assembly",
+            caption="../report/assembly.rst",
+        ),
+    log:
+        "logs/bcftools-consensus/{sample}.log",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"
+
 
 # TODO blast smaller contigs to determine contamination?
