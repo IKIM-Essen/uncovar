@@ -15,5 +15,72 @@ rule assembly:
         "rm -r {params.outdir}; megahit -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} 2> {log}"
 
 
-# TODO add plot that visualizes assembly quality
+rule align_contigs:
+    input:
+        "resources/genomes/main.fasta",
+        "results/assembly/{sample}/final.contigs.fa",
+    output:
+        "results/ordered-contigs/{sample}.bam",
+    log:
+        "logs/minimap2/{sample}.log",
+    conda:
+        "../envs/minimap2.yaml"
+    shell:
+        "minimap2 -ax asm5 {input} -o {output} 2> {log}"
+
+
+rule quast:
+    input:
+        reference="resources/genomes/main.fasta",
+        bam="results/ordered-contigs/{sample}.bam",
+        fastas="results/assembly/{sample}/final.contigs.fa",
+    output:
+        directory("results/quast/{sample}"),
+    log:
+        "logs/quast/{sample}.log",
+    conda:
+        "../envs/quast.yaml"
+    threads: 8
+    shell:
+        "quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {input.bam} {input.fastas} 2> {log}"
+
+
+rule order_contigs:
+    input:
+        contigs="results/assembly/{sample}/final.contigs.fa",
+        reference="resources/genomes/main.fasta",
+    output:
+        "results/ordered-contigs/{sample}.fasta",
+    log:
+        "logs/ragoo/{sample}.log",
+    params:
+        outdir=lambda x, output: os.path.dirname(output[0]),
+    threads: 8
+    conda:
+        "../envs/ragoo.yaml"
+    shell:  # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
+        "(mkdir -p {params.outdir}/{wildcards.sample} && cd {params.outdir}/{wildcards.sample} && "
+        "ragoo.py ../../../{input.contigs} ../../../{input.reference} && "
+        "cd ../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) 2> {log}"
+
+
+rule polish_contigs:
+    input:
+        fasta="results/ordered-contigs/{sample}.fasta",
+        bcf="results/filtered-calls/ref~{sample}/{sample}.clonal.bcf",
+        bcfidx="results/filtered-calls/ref~{sample}/{sample}.clonal.bcf.csi",
+    output:
+        report(
+            "results/polished-contigs/{sample}.fasta",
+            category="Assembly",
+            caption="../report/assembly.rst",
+        ),
+    log:
+        "logs/bcftools-consensus/{sample}.log",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"
+
+
 # TODO blast smaller contigs to determine contamination?

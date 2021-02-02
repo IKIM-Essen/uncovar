@@ -1,0 +1,6 @@
+channels:
+  - bioconda
+  - conda-forge
+  - imperial-college-research-computing
+dependencies:
+  - ragoo =1.1

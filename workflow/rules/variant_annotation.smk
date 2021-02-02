@@ -11,7 +11,7 @@ rule get_vep_plugins:
 
 rule annotate_variants:
     input:
-        calls="results/calls/{sample}.bcf",
+        calls="results/calls/ref~main/{sample}.bcf",
         plugins="resources/vep/plugins",
         fasta="resources/genomes/main.fasta",
         fai="resources/genomes/main.fasta.fai",
@@ -20,8 +20,8 @@ rule annotate_variants:
         problematic="resources/problematic-sites.vcf.gz",
         problematic_tbi="resources/problematic-sites.vcf.gz.tbi",
     output:
-        calls="results/annotated-calls/{sample}.bcf",
-        stats="results/annotated-calls/{sample}.html",
+        calls="results/annotated-calls/ref~main/{sample}.bcf",
+        stats="results/annotated-calls/ref~main/{sample}.html",
     params:
         # Pass a list of plugins to use, see https://www.ensembl.org/info/docs/tools/vep/script/vep_plugins.html
         # Plugin args can be added as well, e.g. via an entry "MyPlugin,1,FOO", see docs.

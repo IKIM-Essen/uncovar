@@ -25,17 +25,6 @@ rule get_genome:
         "efetch -format fasta > {output}) 2> {log}"
 
 
-rule genome_faidx:
-    input:
-        "resources/genomes/main.fasta",
-    output:
-        "resources/genomes/main.fasta.fai",
-    log:
-        "logs/genomes/genome-faidx.log",
-    wrapper:
-        "0.59.2/bio/samtools/faidx"
-
-
 rule get_genome_annotation:
     output:
         "resources/annotation.gff.gz",
