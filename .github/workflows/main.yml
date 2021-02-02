@@ -67,6 +67,14 @@ jobs:
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
           args: "--report report.zip"
+       
+      - name: Test workflow (singularity)
+        uses: snakemake/snakemake-github-action@v1.15.0
+        with:
+          directory: .tests
+          snakefile: workflow/Snakefile
+          stagein: mamba install -n snakemake -c conda-forge peppy
+          args: "--use-conda --use-singularity --show-failed-logs --cores 1 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
 
   Benchmark-Strain-Calling:
     runs-on: ubuntu-latest
@@ -89,7 +97,7 @@ jobs:
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
           args: "benchmark_strain_calling --use-conda --show-failed-logs --cores 1 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
-
+      
       - name: Check strain calling
         run: |
           cat .tests/results/benchmarking/strain-calling.csv
