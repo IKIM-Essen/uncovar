@@ -25,7 +25,7 @@ rule all:
         "results/qc/multiqc.html",
         "results/plots/strain-calls/all.strains.pangolin.svg",
         # expand("results/vcf-report/{target}", target=["all"] + get_samples()),  # TODO activate once report properly handles intergenic variants.
-        expand("results/calls/{sample}.bcf", sample=get_samples()),
+        # expand("results/calls/{sample}.bcf", sample=get_samples()),
         expand(
             "results/plots/strain-calls/all.{mode}-strain.strains.kallisto.svg",
             mode=["major", "any"],
@@ -40,13 +40,12 @@ rule all:
             method=["kallisto", "pangolin"],
         ),
         expand(
-            "results/co_assembly_reads/{sample}.fasta",
-            sample=get_samples(),
+            "results/co_assembly_reads/{sample}.fasta", sample=get_samples(),
         ),
         expand(
-            "results/co_assembly_reads/{sample}_variants.vcf",
-            sample=get_samples(),
+            "results/co_assembly_reads/{sample}_variants.vcf", sample=get_samples(),
         ),
+
 
 rule benchmark:
     input:
