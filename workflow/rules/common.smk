@@ -99,9 +99,6 @@ def get_benchmark_results(wildcards):
     )
 
 
-
-
-
 def get_reference(suffix=""):
     def inner(wildcards):
         if wildcards.reference == "main":

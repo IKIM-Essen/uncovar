@@ -14,7 +14,7 @@ rule assembly:
     shell:
         "rm -r {params.outdir}; megahit -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} 2> {log}"
 
-        
+
 rule align_contigs:
     input:
         "resources/genomes/main.fasta",
@@ -54,7 +54,7 @@ rule order_contigs:
     log:
         "logs/ragoo/{sample}.log",
     params:
-        outdir =lambda x, output: os.path.dirname(output[0]),
+        outdir=lambda x, output: os.path.dirname(output[0]),
     threads: 8
     conda:
         "../envs/ragoo.yaml"
