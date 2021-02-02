@@ -94,7 +94,7 @@ rule quast:
         "../envs/quast.yaml"
     threads: 8
     shell:
-        "(quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {params.bam_list} {input.fastas}) 2> {log}"
+        "quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {params.bam_list} {input.fastas} > {log} 2>&1"
 
 
 # TODO blast smaller contigs to determine contamination?
