@@ -111,7 +111,7 @@ def get_reference(suffix=""):
     def inner(wildcards):
         if wildcards.reference == "main":
             # return reference genome
-            return "resources/genomes/main.fasta" + suffix
+            return "resources/genomes/main.fasta{suffix}".format(suffix=suffix)
         else:
             # return assembly result
             return "results/ordered_contigs/{reference}.fasta.{suffix}".format(
