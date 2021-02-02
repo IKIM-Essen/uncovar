@@ -32,7 +32,15 @@ rule order_contigs:
         "(mkdir -p {params.outdir} && cd {params.outdir} && "
         "ragoo.py ../../../{input.contigs} ../../../{input.reference}) 2> {log}"
 
-
+rule move_ordered_contigs:
+    input:
+        "results/ordered_contigs/{sample}/ragoo_output/ragoo.fasta",
+    output:
+        "results/ordered_contigs/{sample}.fasta"
+    log:
+        "logs/ragoo/{sample}_move.log"
+    shell:
+        "mv {input} {output}"
 
 
 rule align_contigs:
