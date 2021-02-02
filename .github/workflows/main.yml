@@ -37,6 +37,9 @@ jobs:
 
   Testing:
     runs-on: ubuntu-latest
+    needs:
+      - Formatting
+      - Linting
     steps:
       - uses: actions/checkout@v1
     
