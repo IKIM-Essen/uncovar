@@ -4,6 +4,9 @@ configfile: "config/config.yaml"
 pepfile: config["pepfile"]
 
 
+container: "condaforge/minimamba"
+
+
 include: "rules/common.smk"
 include: "rules/utils.smk"
 include: "rules/ref.smk"
