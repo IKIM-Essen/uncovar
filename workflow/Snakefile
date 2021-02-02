@@ -39,7 +39,14 @@ rule all:
             sample=get_samples(),
             method=["kallisto", "pangolin"],
         ),
-
+        expand(
+            "results/co_assembly_reads/{sample}.fasta",
+            sample=get_samples(),
+        ),
+        expand(
+            "results/co_assembly_reads/{sample}_variants.vcf",
+            sample=get_samples(),
+        ),
 
 rule benchmark:
     input:

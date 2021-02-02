@@ -93,7 +93,7 @@ rule seqtk:
     input:
         "results/calls/{sample}_consensus.fq",
     output:
-        "results/calls/{sample}_consensus.fa",
+        "results/co_assembly_reads/{sample}.fasta",
     log:
         "logs/seqtk/{sample}.log",
     conda:
@@ -107,7 +107,7 @@ rule call_variants:
         bam="results/hisat2_mapped/{sample}.sorted.bam",
         reference_genome="resources/genomes/main.fasta",
     output:
-        "results/calls/{sample}_variants.vcf",
+        "results/co_assembly_reads/{sample}_variants.vcf",
     log:
         "logs/bcftools_call/{sample}_vcf.log",
     conda:
