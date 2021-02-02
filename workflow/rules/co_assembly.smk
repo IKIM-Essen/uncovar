@@ -29,7 +29,7 @@ rule hisat2_align:
     wrapper:
         "0.70.0/bio/hisat2/align"
 
-
+# not needed, use recal bam instead; see read_mapping; filter for human first
 rule samtools_view:
     input:
         "results/hisat2_mapped/{sample}.bam",
@@ -42,7 +42,7 @@ rule samtools_view:
     wrapper:
         "0.70.0/bio/samtools/view"
 
-
+# not needed for sam, use bam instead; use recal bam; move to qc, add .flagstat into multiqc
 rule samtools_flagstat:
     input:
         "results/hisat2_mapped/{sample}.sam",
@@ -111,10 +111,6 @@ rule call_variants:
         "(samtools mpileup -uf {input.reference_genome} {input.bam} |bcftools call -cv -Ob |bcftools view > {output}) &> {log}"
 
 
-# evaluate the alignment statistics samtools flagstat
-# samtools sort
-# samtools faidx
-# samtools mpileup
-# seqtk
-# samtools mpileup variant calling
-# convert bcf to vcf
+# phasing not included
+# bwa instead of hisat2
+# see read_mapping
