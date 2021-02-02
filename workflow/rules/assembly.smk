@@ -55,9 +55,9 @@ rule polish_contigs:
             "results/polished-contigs/{sample}.fasta",
             category="Assembly",
             caption="../report/assembly.rst",
-        )
+        ),
     log:
-        "logs/bcftools-consensus/{sample}.log"
+        "logs/bcftools-consensus/{sample}.log",
     conda:
         "../envs/bcftools.yaml"
     shell:

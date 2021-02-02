@@ -3,7 +3,9 @@ rule vcf_report:
         ref="resources/genomes/main.fasta",
         bams=get_report_input("results/recal/ref~main/{sample}.bam"),
         bais=get_report_input("results/recal/ref~main/{sample}.bam.bai"),
-        bcfs=get_report_input("results/filtered-calls/ref~main/{sample}.subclonal.bcf"),
+        bcfs=get_report_input(
+            "results/filtered-calls/ref~main/{sample}.subclonal.bcf"
+        ),
     output:
         report(
             directory("results/vcf-report/{target}"),

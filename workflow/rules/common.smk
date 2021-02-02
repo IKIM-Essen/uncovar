@@ -114,7 +114,10 @@ def get_reference(suffix=""):
             return "resources/genomes/main.fasta" + suffix
         else:
             # return assembly result
-            return "results/ordered_contigs/{reference}.fasta.{suffix}".format(suffix=suffix, **wildcards)
+            return "results/ordered_contigs/{reference}.fasta.{suffix}".format(
+                suffix=suffix, **wildcards
+            )
+
     return inner
 
 
@@ -137,4 +140,4 @@ def get_filter_odds_input(wildcards):
 wildcard_constraints:
     sample="[^/.]+",
     vartypes="|".join(VARTYPES),
-    clonality="subclonal|clonal"
+    clonality="subclonal|clonal",

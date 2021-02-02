@@ -2,9 +2,16 @@ rule bwa_index:
     input:
         get_reference(),
     output:
-        multiext("results/bwa/index/ref~{reference}.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa"),
+        multiext(
+            "results/bwa/index/ref~{reference}.fasta",
+            ".amb",
+            ".ann",
+            ".bwt",
+            ".pac",
+            ".sa",
+        ),
     params:
-        prefix=lambda w, output: os.path.splitext(output[0])[0]
+        prefix=lambda w, output: os.path.splitext(output[0])[0],
     log:
         "logs/bwa-index/ref~{reference}.log",
     resources:
