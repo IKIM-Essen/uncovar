@@ -61,7 +61,7 @@ rule order_contigs:
     shell:  # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
         "(mkdir -p {params.outdir}/{wildcards.sample} && cd {params.outdir}/{wildcards.sample} && "
         "ragoo.py ../../../{input.contigs} ../../../{input.reference} && "
-        "cd ../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) 2> {log}"
+        "cd ../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) > {log} 2>&1"
 
 
 rule polish_contigs:
