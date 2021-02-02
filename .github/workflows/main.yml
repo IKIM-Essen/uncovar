@@ -132,5 +132,5 @@ jobs:
             exit 1
           else
             echo "Assembly was successful."
-          if
+          fi
 
