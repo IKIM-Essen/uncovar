@@ -15,43 +15,12 @@ rule assembly:
         "rm -r {params.outdir}; megahit -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} 2> {log}"
 
 
-rule order_contigs:
-    input:
-        contigs="results/assembly/{sample}/final.contigs.fa",
-        reference="resources/genomes/main.fasta",
-    output:
-        "results/ordered_contigs/{sample}/ragoo_output/ragoo.fasta",
-    log:
-        "logs/ragoo/{sample}.log",
-    params:
-        outdir=lambda x, output: os.path.dirname(os.path.dirname(output[0])),
-    threads: 8
-    conda:
-        "../envs/ragoo.yaml"
-    shell:  # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
-        "(mkdir -p {params.outdir} && cd {params.outdir} && "
-        "ragoo.py ../../../{input.contigs} ../../../{input.reference}) 2> {log}"
-
-
-rule move_ordered_contigs:
-    input:
-        "results/ordered_contigs/{sample}/ragoo_output/ragoo.fasta",
-    output:
-        "results/ordered_contigs/{sample}.fasta",
-    log:
-        "logs/ragoo/{sample}_move.log",
-    conda:
-        "../envs/unix.yaml"
-    shell:
-        "mv {input} {output}"
-
-
 rule align_contigs:
     input:
         "resources/genomes/main.fasta",
         "results/assembly/{sample}/final.contigs.fa",
     output:
-        "results/ordered_contigs/{sample}/{sample}.bam",
+        "results/ordered-contigs/{sample}.bam",
     log:
         "logs/minimap2/{sample}.log",
     conda:
@@ -60,11 +29,10 @@ rule align_contigs:
         "minimap2 -ax asm5 {input} -o {output} 2> {log}"
 
 
-# TODO add plot that visualizes assembly quality
 rule quast:
     input:
         reference="resources/genomes/main.fasta",
-        bam="results/ordered_contigs/{sample}/{sample}.bam",
+        bam="results/ordered-contigs/{sample}.bam",
         fastas="results/assembly/{sample}/final.contigs.fa",
     output:
         directory("results/quast/{sample}"),
@@ -76,5 +44,22 @@ rule quast:
     shell:
         "(quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {input.bam} {input.fastas}) 2> {log}"
 
+rule order_contigs:
+    input:
+        contigs="results/assembly/{sample}/final.contigs.fa",
+        reference="resources/genomes/main.fasta",
+    output:
+        "results/ordered-contigs/{sample}.fasta",
+    log:
+        "logs/ragoo/{sample}.log",
+    params:
+        outdir =lambda x, output: os.path.dirname(output[0]),
+    threads: 8
+    conda:
+        "../envs/ragoo.yaml"
+    shell:  # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
+        "(mkdir -p {params.outdir}/{wildcards.sample} && cd {params.outdir}/{wildcards.sample} && "
+        "ragoo.py ../../../{input.contigs} ../../../{input.reference} && "
+        "cd ../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) 2> {log}"
 
 # TODO blast smaller contigs to determine contamination?
