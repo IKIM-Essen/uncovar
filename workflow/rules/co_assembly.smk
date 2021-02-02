@@ -35,6 +35,8 @@ rule samtools_view:
         "results/hisat2_mapped/{sample}.bam",
     output:
         "results/hisat2_mapped/{sample}.sam",
+    log:
+        "logs/samtools/{sample}_view.log"
     params:
         "-h",  # optional params string
     wrapper:
@@ -46,6 +48,8 @@ rule samtools_flagstat:
         "results/hisat2_mapped/{sample}.sam",
     output:
         "results/hisat2_mapped/{sample}.sam.flagstat",
+    log:
+        "logs/samtools/{sample}_flagstat.log"
     wrapper:
         "0.70.0/bio/samtools/flagstat"
 
@@ -55,6 +59,8 @@ rule samtools_sort:
         "results/hisat2_mapped/{sample}.bam",
     output:
         "results/hisat2_mapped/{sample}.sorted.bam",
+    log:
+        "logs/samtools/{sample}_sort.log"
     params:
         extra="-m 16G",
         tmp_dir="/tmp/",
