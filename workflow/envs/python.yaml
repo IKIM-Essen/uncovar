@@ -6,3 +6,4 @@ dependencies:
   - jupyter =1.0
   - altair =4.1
   - altair_saver =0.5
+  - biopython =1.78
