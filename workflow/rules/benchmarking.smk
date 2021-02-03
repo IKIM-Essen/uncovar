@@ -38,12 +38,13 @@ rule test_assembly_results:
     conda:
         "../envs/minimap2.yaml"
     shell:
-        "minimap2 -ax asm5 {input} -o {output} 2> {log}"
+        "minimap2 --MD --eqx -ax asm5 {input} -o {output} 2> {log}"
 
 
 rule summarize_assembly_results:
     input:
-        get_assembly_comparisons,
+        bams=get_assembly_comparisons(bams=True),
+        refs=get_assembly_comparisons(bams=False),
     output:
         "results/benchmarking/assembly.csv",
     log:

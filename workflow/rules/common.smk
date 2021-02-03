@@ -99,11 +99,17 @@ def get_benchmark_results(wildcards):
     )
 
 
-def get_assembly_comparisons(wildcards):
-    accessions = get_strain_accessions(wildcards)
-    return expand(
-        "results/benchmarking/assembly/{accession}.bam", accession=accessions,
-    )
+def get_assembly_comparisons(bams=True):
+    def inner(wildcards):
+        accessions = get_strain_accessions(wildcards)
+        pattern = (
+            "results/benchmarking/assembly/{accession}.bam"
+            if bams
+            else "resources/genomes/{accession}.fasta"
+        )
+        return expand(pattern, accession=accessions,)
+
+    return inner
 
 
 def get_reference(suffix=""):
@@ -113,7 +119,7 @@ def get_reference(suffix=""):
             return "resources/genomes/main.fasta{suffix}".format(suffix=suffix)
         else:
             # return assembly result
-            return "results/ordered-contigs/{reference}.fasta.{suffix}".format(
+            return "results/ordered-contigs/{reference}.fasta{suffix}".format(
                 suffix=suffix, **wildcards
             )
 
@@ -133,7 +139,7 @@ def get_filter_odds_input(wildcards):
     if wildcards.reference == "main":
         return "results/annotated-calls/ref~main/{sample}.bcf"
     else:
-        return "results/calls/ref~main/{sample}.bcf"
+        return "results/calls/ref~{reference}/{sample}.bcf"
 
 
 wildcard_constraints:
