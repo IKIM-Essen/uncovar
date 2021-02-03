@@ -50,7 +50,7 @@ rule order_contigs:
         contigs="results/assembly/{sample}/final.contigs.fa",
         reference="resources/genomes/main.fasta",
     output:
-        "results/ordered-contigs/{sample}_all.fasta",
+        "results/ordered-contigs-all/{sample}.fasta",
     log:
         "logs/ragoo/{sample}.log",
     params:
@@ -66,7 +66,7 @@ rule order_contigs:
 
 rule filter_chr0:
     input:
-        "results/ordered-contigs/{sample}_all.fasta",
+        "results/ordered-contigs-all/{sample}.fasta",
     output:
         "results/ordered-contigs/{sample}.fasta",
     log:
