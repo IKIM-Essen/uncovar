@@ -63,18 +63,20 @@ rule order_contigs:
         "ragoo.py ../../../{input.contigs} ../../../{input.reference} && "
         "cd ../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) 2> {log}"
 
+
 rule filter_chr0:
     input:
         "results/ordered-contigs/{sample}_all.fasta",
     output:
         "results/ordered-contigs/{sample}.fasta",
     log:
-        "logs/ragoo/{sample}_cleaned.log"
+        "logs/ragoo/{sample}_cleaned.log",
     threads: 8
     conda:
         "../envs/python.yaml"
     script:
         "../scripts/ragoo_remove_chr0.py"
+
 
 rule polish_contigs:
     input:
