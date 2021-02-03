@@ -139,7 +139,7 @@ jobs:
       - name: Check assembly
         run: |
           cat .tests/results/benchmarking/assembly.csv
-          if [[ $(tail -1 results/benchmarking/assembly.csv) < 0.8 ]]
+          if [[ $(tail -1 .tests/results/benchmarking/assembly.csv) < 0.8 ]]
           then
             echo "Assembly bechmarking failed. There is at least one assembly where the contigs do not cover 80% of the original sequence (see above)."
             exit 1
