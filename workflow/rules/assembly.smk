@@ -50,7 +50,7 @@ rule order_contigs:
         contigs="results/assembly/{sample}/final.contigs.fa",
         reference="resources/genomes/main.fasta",
     output:
-        "results/ordered-contigs/{sample}.fasta",
+        "results/ordered-contigs/{sample}_all.fasta",
     log:
         "logs/ragoo/{sample}.log",
     params:
@@ -62,6 +62,20 @@ rule order_contigs:
         "(mkdir -p {params.outdir}/{wildcards.sample} && cd {params.outdir}/{wildcards.sample} && "
         "ragoo.py ../../../{input.contigs} ../../../{input.reference} && "
         "cd ../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) 2> {log}"
+
+
+rule filter_chr0:
+    input:
+        "results/ordered-contigs/{sample}_all.fasta",
+    output:
+        "results/ordered-contigs/{sample}.fasta",
+    log:
+        "logs/ragoo/{sample}_cleaned.log",
+    threads: 8
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/ragoo_remove_chr0.py"
 
 
 rule polish_contigs:
