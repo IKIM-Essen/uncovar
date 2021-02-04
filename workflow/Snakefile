@@ -48,6 +48,11 @@ rule all:
         expand("results/polished-contigs/{sample}.fasta", sample=get_samples()),
 
 
-rule benchmark:
+rule benchmark_strain_calling:
     input:
-        "results/benchmarking.csv",
+        "results/benchmarking/strain-calling.csv",
+
+
+rule benchmark_assembly:
+    input:
+        "results/benchmarking/assembly.csv",
