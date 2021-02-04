@@ -12,7 +12,7 @@ rule assembly:
     conda:
         "../envs/megahit.yaml"
     shell:
-        "rm -r {params.outdir}; megahit -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} 2> {log}"
+        "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f) 2> {log}"
 
 
 rule align_contigs:
@@ -50,7 +50,7 @@ rule order_contigs:
         contigs="results/assembly/{sample}/final.contigs.fa",
         reference="resources/genomes/main.fasta",
     output:
-        "results/ordered-contigs/{sample}_all.fasta",
+        "results/ordered-contigs-all/{sample}.fasta",
     log:
         "logs/ragoo/{sample}.log",
     params:
@@ -61,12 +61,12 @@ rule order_contigs:
     shell:  # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
         "(mkdir -p {params.outdir}/{wildcards.sample} && cd {params.outdir}/{wildcards.sample} && "
         "ragoo.py ../../../{input.contigs} ../../../{input.reference} && "
-        "cd ../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) 2> {log}"
+        "cd ../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) > {log} 2>&1"
 
 
 rule filter_chr0:
     input:
-        "results/ordered-contigs/{sample}_all.fasta",
+        "results/ordered-contigs-all/{sample}.fasta",
     output:
         "results/ordered-contigs/{sample}.fasta",
     log:
