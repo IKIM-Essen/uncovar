@@ -25,7 +25,9 @@ rule samtools_flagstat:
 rule multiqc:
     input:
         expand("results/qc/fastqc/{sample}_fastqc.zip", sample=get_samples()),
-        expand("results/qc/samtools_flagstat/{sample}.bam.flagstat", sample=get_samples()),
+        expand(
+            "results/qc/samtools_flagstat/{sample}.bam.flagstat", sample=get_samples()
+        ),
     output:
         "results/qc/multiqc.html",
     params:
