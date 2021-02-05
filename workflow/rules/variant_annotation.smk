@@ -9,6 +9,7 @@ rule get_vep_plugins:
         "0.69.0/bio/vep/plugins"
 
 
+# takes all given information and adds the genome features to the variant calling; estimates effects on proteins (indel etc)
 rule annotate_variants:
     input:
         calls="results/calls/ref~main/{sample}.bcf",

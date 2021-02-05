@@ -1,3 +1,4 @@
+# concat all single strain genome files (manually provided) in one file
 rule cat_genomes:
     input:
         get_strain_genomes,
@@ -11,6 +12,7 @@ rule cat_genomes:
         "cat {input} > {output}"
 
 
+# make kallisto index for abundance based alignment of reads
 rule kallisto_index:
     input:
         fasta="resources/strain-genomes.fasta",
@@ -25,6 +27,7 @@ rule kallisto_index:
         "0.70.0/bio/kallisto/index"
 
 
+# Pseudoalign reads and quantify transcripts using kallisto
 rule kallisto_quant:
     input:
         fastq=expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
@@ -40,6 +43,7 @@ rule kallisto_quant:
         "0.70.0/bio/kallisto/quant"
 
 
+# process table for graph output
 rule call_strains_kallisto:
     input:
         "results/quant/{sample}",
@@ -55,6 +59,7 @@ rule call_strains_kallisto:
         "../notebooks/call-strains.py.ipynb"
 
 
+# output the plotted graphs
 rule plot_strains_kallisto:
     input:
         "results/tables/strain-calls/{sample}.strains.kallisto.tsv",
@@ -74,6 +79,7 @@ rule plot_strains_kallisto:
         "../notebooks/plot-strains-kallisto.py.ipynb"
 
 
+# aggregate all plots
 rule plot_all_strains_kallisto:
     input:
         expand(
@@ -94,7 +100,22 @@ rule plot_all_strains_kallisto:
     notebook:
         "../notebooks/plot-all-strains-kallisto.py.ipynb"
 
+# identify strain of ordered and polished contigs with pangolin
+rule pangolin:
+    input:
+        "results/polished-contigs/{sample}.fasta",
+    output:
+        "results/tables/strain-calls/{sample}.strains.pangolin.csv",
+    log:
+        "logs/pangolin/{sample}.log",
+    threads: 8
+    conda:
+        "../envs/pangolin.yaml"
+    shell:
+        "pangolin {input} --outfile {output} > {log} 2>&1"
 
+
+# plot pangolin outputs
 rule plot_strains_pangolin:
     input:
         "results/tables/strain-calls/{sample}.strains.pangolin.csv",
@@ -113,20 +134,7 @@ rule plot_strains_pangolin:
         "../notebooks/plot-strains-pangolin.py.ipynb"
 
 
-rule pangolin:
-    input:
-        "results/polished-contigs/{sample}.fasta",
-    output:
-        "results/tables/strain-calls/{sample}.strains.pangolin.csv",
-    log:
-        "logs/pangolin/{sample}.log",
-    threads: 8
-    conda:
-        "../envs/pangolin.yaml"
-    shell:
-        "pangolin {input} --outfile {output} > {log} 2>&1"
-
-
+# aggregate pangolin outputs
 rule plot_all_strains_pangolin:
     input:
         expand(

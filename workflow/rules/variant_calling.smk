@@ -1,3 +1,6 @@
+# call candidate variants with random index
+# alternative samtools mpileup / bcftools mpileup
+# freebayes looks at short haplotypes, able to detect MNV -> more informative
 rule freebayes:
     input:
         ref=get_reference(),
