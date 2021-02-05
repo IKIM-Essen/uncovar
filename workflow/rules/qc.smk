@@ -13,7 +13,7 @@ rule fastqc:
 
 rule samtools_flagstat:
     input:
-        "results/recal/{sample}.bam",
+        "results/recal/ref~main/{sample}.bam",
     output:
         "results/qc/samtools_flagstat/{sample}.bam.flagstat",
     log:
