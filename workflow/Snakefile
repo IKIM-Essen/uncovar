@@ -4,6 +4,9 @@ configfile: "config/config.yaml"
 pepfile: config["pepfile"]
 
 
+container: "condaforge/minimamba"
+
+
 include: "rules/common.smk"
 include: "rules/utils.smk"
 include: "rules/ref.smk"
@@ -23,8 +26,11 @@ rule all:
     input:
         "results/qc/multiqc.html",
         "results/plots/strain-calls/all.strains.pangolin.svg",
-        # expand("results/vcf-report/{target}", target=["all"] + get_samples()),  # TODO activate once report properly handles intergenic variants.
-        # expand("results/calls/{sample}.bcf", sample=get_samples()),
+        expand("results/vcf-report/{target}", target=["all"] + get_samples()),  # TODO activate once report properly handles intergenic variants.
+        expand(
+            "results/filtered-calls/ref~main/{sample}.subclonal.bcf",
+            sample=get_samples(),
+        ),
         expand(
             "results/plots/strain-calls/all.{mode}-strain.strains.kallisto.svg",
             mode=["major", "any"],
@@ -38,14 +44,15 @@ rule all:
             sample=get_samples(),
             method=["kallisto", "pangolin"],
         ),
-        expand(
-            "results/co_assembly_reads/{sample}.fasta", sample=get_samples(),
-        ),
-        expand(
-            "results/co_assembly_reads/{sample}_variants.vcf", sample=get_samples(),
-        ),
+        expand("results/quast/{sample}", sample=get_samples()),
+        expand("results/polished-contigs/{sample}.fasta", sample=get_samples()),
 
 
-rule benchmark:
+rule benchmark_strain_calling:
     input:
-        "results/benchmarking.csv",
+        "results/benchmarking/strain-calling.csv",
+
+
+rule benchmark_assembly:
+    input:
+        "results/benchmarking/assembly.csv",

@@ -21,19 +21,8 @@ rule get_genome:
     resources:
         ncbi_api_requests=1,
     shell:
-        "(esearch -db nucleotide -query '{params.accession}' |"
+        "(esearch -db nucleotide -query '{params.accession}' | "
         "efetch -format fasta > {output}) 2> {log}"
-
-
-rule genome_faidx:
-    input:
-        "resources/genomes/main.fasta",
-    output:
-        "resources/genomes/main.fasta.fai",
-    log:
-        "logs/genomes/genome-faidx.log",
-    wrapper:
-        "0.59.2/bio/samtools/faidx"
 
 
 rule get_genome_annotation:

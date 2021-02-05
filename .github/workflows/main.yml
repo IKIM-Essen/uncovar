@@ -2,9 +2,11 @@ name: Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: 
+      - master
   pull_request:
-    branches: [ master ]
+    branches:
+      - "*"
 
 
 jobs:
@@ -35,6 +37,9 @@ jobs:
 
   Testing:
     runs-on: ubuntu-latest
+    needs:
+      - Formatting
+      - Linting
     steps:
       - uses: actions/checkout@v1
     
@@ -67,8 +72,16 @@ jobs:
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
           args: "--report report.zip"
+       
+      - name: Test workflow (singularity)
+        uses: snakemake/snakemake-github-action@v1.15.0
+        with:
+          directory: .tests
+          snakefile: workflow/Snakefile
+          stagein: mamba install -n snakemake -c conda-forge peppy
+          args: "--use-conda --use-singularity --show-failed-logs --cores 1 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
 
-  Benchmarking:
+  Benchmark-Strain-Calling:
     runs-on: ubuntu-latest
     needs: Testing
     steps:
@@ -88,15 +101,49 @@ jobs:
           directory: .tests
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
-          args: "benchmark --use-conda --show-failed-logs --cores 1 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
+          args: "benchmark_strain_calling --use-conda --show-failed-logs --cores 1 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
       
       - name: Check strain calling
         run: |
-          cat .tests/results/benchmarking.csv
-          if (tail -n+2 .tests/results/benchmarking.csv | grep mismatch > /dev/null)
+          cat .tests/results/benchmarking/strain-calling.csv
+          if (tail -n+2 .tests/results/benchmarking/strain-calling.csv | grep mismatch > /dev/null)
           then
             echo "Strain calling failed in some cases (see above)."
             exit 1
           else
             echo "Strain calling was successful in all cases."
           fi
+
+  Benchmark-Assembly:
+    runs-on: ubuntu-latest
+    needs: Testing
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Cache data
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/data
+            .tests/resources/genomes
+          key: "testdata-benchmarking" # TODO update key once we cache more than the data
+      
+      - name: Test workflow
+        uses: snakemake/snakemake-github-action@v1.15.0
+        with:
+          directory: .tests
+          snakefile: workflow/Snakefile
+          stagein: mamba install -n snakemake -c conda-forge peppy
+          args: "benchmark_assembly --use-conda --show-failed-logs --cores 1 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
+
+      - name: Check assembly
+        run: |
+          cat .tests/results/benchmarking/assembly.csv
+          if [[ $(tail -1 .tests/results/benchmarking/assembly.csv) < 0.8 ]]
+          then
+            echo "Assembly bechmarking failed. There is at least one assembly where the contigs do not cover 80% of the original sequence (see above)."
+            exit 1
+          else
+            echo "Assembly was successful."
+          fi
+

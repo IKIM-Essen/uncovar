@@ -1,7 +1,7 @@
 pepfile: config/pep/config.yaml
 
 # for testing, uncomment to limit to n strain genomes
-# limit-strain-genomes: 100
+limit-strain-genomes: 10
 
 variant-calling:
   # false discovery rate to control for
@@ -15,6 +15,7 @@ variant-calling:
 strain-calling:
   # minimum reported strain fraction after quantification
   min-fraction: 0.02
+
   # paths to strain genomes that shall be used for quantification
   genomes:
     - resources/genomes/main.fasta

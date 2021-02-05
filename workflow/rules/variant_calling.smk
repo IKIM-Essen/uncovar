@@ -1,14 +1,14 @@
 rule freebayes:
     input:
-        ref="resources/genomes/main.fasta",
-        ref_idx="resources/genomes/main.fasta.fai",
+        ref=get_reference(),
+        ref_idx=get_reference(".fai"),
         # you can have a list of samples here
-        samples="results/recal/{sample}.bam",
-        index="results/recal/{sample}.bam.bai",
+        samples="results/recal/ref~{reference}/{sample}.bam",
+        index="results/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        "results/candidate-calls/{sample}.bcf",
+        "results/candidate-calls/ref~{reference}/{sample}.bcf",
     log:
-        "logs/freebayes/{sample}.log",
+        "logs/freebayes/ref~{reference}/{sample}.log",
     params:
         # genotyping is performed by varlociraptor, hence we deactivate it in freebayes by 
         # always setting --pooled-continuous
@@ -38,17 +38,17 @@ rule render_scenario:
 
 rule varlociraptor_preprocess:
     input:
-        ref="resources/genomes/main.fasta",
-        ref_idx="resources/genomes/main.fasta.fai",
-        candidates="results/candidate-calls/{sample}.bcf",
-        bam="results/recal/{sample}.bam",
-        bai="results/recal/{sample}.bam.bai",
+        ref=get_reference(),
+        ref_idx=get_reference(".fai"),
+        candidates="results/candidate-calls/ref~{reference}/{sample}.bcf",
+        bam="results/recal/ref~{reference}/{sample}.bam",
+        bai="results/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        "results/observations/{sample}.bcf",
+        "results/observations/ref~{reference}/{sample}.bcf",
     params:
         depth=config["variant-calling"]["max-read-depth"],
     log:
-        "logs/varlociraptor/preprocess/{sample}.log",
+        "logs/varlociraptor/preprocess/ref~{reference}/{sample}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
@@ -58,12 +58,12 @@ rule varlociraptor_preprocess:
 
 rule varlociraptor_call:
     input:
-        obs="results/observations/{sample}.bcf",
+        obs="results/observations/ref~{reference}/{sample}.bcf",
         scenario="results/scenarios/{sample}.yaml",
     output:
-        "results/calls/{sample}.bcf",
+        "results/calls/ref~{reference}/{sample}.bcf",
     log:
-        "logs/varlociraptor/call/{sample}.log",
+        "logs/varlociraptor/call/ref~{reference}/{sample}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
