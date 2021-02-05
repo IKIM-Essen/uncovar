@@ -1,3 +1,4 @@
+# visualize quality of reads before trimming
 rule fastqc:
     input:
         get_fastqs,
@@ -10,7 +11,7 @@ rule fastqc:
     wrapper:
         "0.69.0/bio/fastqc"
 
-
+# aggregate different qc outputs for all samples used
 rule multiqc:
     input:
         expand("results/qc/fastqc/{sample}_fastqc.zip", sample=get_samples()),

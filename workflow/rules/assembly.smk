@@ -1,3 +1,4 @@
+# de novo assembly of the trimmed reads with megahit
 rule assembly:
     input:
         fastq1="results/trimmed/{sample}.1.fastq.gz",
@@ -14,7 +15,7 @@ rule assembly:
     shell:
         "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f) 2> {log}"
 
-
+# align contigs with reference genome
 rule align_contigs:
     input:
         "resources/genomes/main.fasta",
@@ -29,6 +30,7 @@ rule align_contigs:
         "minimap2 -ax asm5 {input} -o {output} 2> {log}"
 
 
+# visualize quality of the alignment of contigs with reference
 rule quast:
     input:
         reference="resources/genomes/main.fasta",
@@ -41,10 +43,12 @@ rule quast:
     conda:
         "../envs/quast.yaml"
     threads: 8
+    # TODO --eukaryote flag most go!
     shell:
-        "quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {input.bam} {input.fastas} 2> {log}"
+        "quast.py --threads {threads} -o {output} -r {input.reference} --bam {input.bam} {input.fastas} 2> {log}"
 
 
+# order contigs based on the reference genome and save in fasta file
 rule order_contigs:
     input:
         contigs="results/assembly/{sample}/final.contigs.fa",
@@ -64,6 +68,7 @@ rule order_contigs:
         "cd ../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) > {log} 2>&1"
 
 
+# just take localized and remove unlocalized
 rule filter_chr0:
     input:
         "results/ordered-contigs-all/{sample}.fasta",
@@ -78,6 +83,7 @@ rule filter_chr0:
         "../scripts/ragoo_remove_chr0.py"
 
 
+# polish contigs based on variance calling with varlociraptor ????????
 rule polish_contigs:
     input:
         fasta="results/ordered-contigs/{sample}.fasta",
@@ -97,4 +103,4 @@ rule polish_contigs:
         "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"
 
 
-# TODO blast smaller contigs to determine contamination?
+# TODO blast smaller contigs to determine contamination with kraken as in the paper or other method?

@@ -1,3 +1,4 @@
+# bwa index for alignments
 rule bwa_index:
     input:
         get_reference(),
@@ -20,6 +21,7 @@ rule bwa_index:
         "0.69.0/bio/bwa/index"
 
 
+# bwa mem alignment (local; based on smith-waterman with random seeding)
 rule map_reads:
     input:
         reads=expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
@@ -38,6 +40,7 @@ rule map_reads:
         "0.69.0/bio/bwa/mem"
 
 
+# ?????????????
 rule mark_duplicates:
     input:
         "results/mapped/ref~{reference}/{sample}.bam",
@@ -52,6 +55,7 @@ rule mark_duplicates:
         "0.69.0/bio/picard/markduplicates"
 
 
+# calculate md sum for alignment ????????????
 rule samtools_calmd:
     input:
         aln="results/dedup/ref~{reference}/{sample}.bam",
