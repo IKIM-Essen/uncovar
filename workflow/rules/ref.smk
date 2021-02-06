@@ -49,3 +49,24 @@ rule get_problematic_sites:
     shell:
         "curl -sSL https://raw.githubusercontent.com/W-L/ProblematicSites_SARS-CoV2/"
         "master/problematic_sites_sarsCov2.vcf | bgzip -c > {output} 2> {log}"
+
+rule get_genome_database_for_kraken:
+    output:
+        directory("resources/minikraken-8GB")
+    log:
+        "logs/get-kraken-db.log"
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "mkdir {output} && curl -SL ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/minikraken_8GB_202003.tgz | tar zxvf - -C {output} --strip 1 2> {log}"
+
+
+rule get_taxonomie_db_for_krona:
+    output:
+        directory("resources/krona/")
+    log:
+        "logs/get-krona-db.log"
+    conda:
+        "../envs/kraken.yaml"
+    shell:
+        "ktUpdateTaxonomy.sh {output} 2> {log}"
