@@ -10,15 +10,17 @@ rule fastqc:
     wrapper:
         "0.69.0/bio/fastqc"
 
-
-rule multiqc:
+# TODO include kraken after filtering, Kallisto
+rule multiqc: 
     input:
         expand("results/qc/fastqc/{sample}_fastqc.zip", sample=get_samples()),
         expand("results/species-diversity/{sample}/{sample}.kreport2", sample=get_samples()),
+        expand("results/trimmed/{sample}.fastp.json", sample=get_samples()),
+        expand("results/quast/{sample}/report.tsv" , sample=get_samples())
     output:
         "results/qc/multiqc.html",
     params:
-        "",  # Optional: extra parameters for multiqc.
+        "--config config/multiqc_config.yaml",  # Optional: extra parameters for multiqc.
     log:
         "logs/multiqc.log",
     wrapper:
@@ -49,16 +51,16 @@ rule species_diversity:
 # Plot Korna charts
 rule create_krona_chart:
     input:
-        kraken_output = "results/species-diversity/{sample}/{sample}.kraken",
+        kraken_output = "results/species-diversity/{sample}/{sample}.kreport2",
         taxonomy_database =  directory("resources/krona/")
     output:
-        "results/species-diversity/{sample}/{sample}.html"
+        "results/species-diversity/{sample}/{sample}.html",
     log:
         "logs/krona/{sample}.log"
     conda:
         "../envs/kraken.yaml"
     shell:
-        "ktImportTaxonomy -s 3 -t 4 -tax {input.taxonomy_database} -o {output} {input} 2> {log}"
+        "ktImportTaxonomy -m 3 -t 5 -tax {input.taxonomy_database} -o {output} {input} 2> {log}"
 
 
 # TODO Alexander and Thomas: add rules to detect contamination and perform QC

@@ -1,0 +1,16 @@
+custom_logo: "/Users/btf/Projects/snakemake-workflow-sars-cov2/resources/IKIM.png"
+custom_logo_url: "https://www.ikim.uk-essen.de/"
+custom_logo_title: "Institut für Künstliche Intelligenz in der Medizin"
+
+report_header_info:
+  - Authors: Alexander Thomas, Thomas Battenfeld, Folker Meyer, Johannes Köster
+  - Project: "SARS-Cov-2 strain and variant calling pipeline"
+  - Contact E-mail: "to.decide@uk-essen.de"
+
+module_order:
+  - fastqc
+  - fastp
+  - kraken
+  - quast
+
+

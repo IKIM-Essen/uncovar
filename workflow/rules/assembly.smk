@@ -3,7 +3,7 @@ rule assembly:
         fastq1="results/trimmed/{sample}.1.fastq.gz",
         fastq2="results/trimmed/{sample}.2.fastq.gz",
     output:
-        "results/assembly/{sample}/final.contigs.fa",
+        "results/assembly/{sample}/{sample}.contigs.fa",
     log:
         "logs/megahit/{sample}.log",
     params:
@@ -12,13 +12,13 @@ rule assembly:
     conda:
         "../envs/megahit.yaml"
     shell:
-        "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f) 2> {log}"
+        "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f && mv {params.outdir}/final.contigs.fa {output} ) 2> {log}"
 
 
 rule align_contigs:
     input:
         "resources/genomes/main.fasta",
-        "results/assembly/{sample}/final.contigs.fa",
+        "results/assembly/{sample}/{sample}.contigs.fa",
     output:
         "results/ordered-contigs/{sample}.bam",
     log:
@@ -33,16 +33,18 @@ rule quast:
     input:
         reference="resources/genomes/main.fasta",
         bam="results/ordered-contigs/{sample}.bam",
-        fastas="results/assembly/{sample}/final.contigs.fa",
+        fastas="results/assembly/{sample}/{sample}.contigs.fa",
     output:
-        directory("results/quast/{sample}"),
+        "results/quast/{sample}/report.tsv",
+    params:
+        outdir = lambda x, output: os.path.dirname(output[0])
     log:
         "logs/quast/{sample}.log",
     conda:
         "../envs/quast.yaml"
     threads: 8
     shell:
-        "quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {input.bam} {input.fastas} 2> {log}"
+        "quast.py --threads {threads} -o {params.outdir} -r {input.reference} --eukaryote --bam {input.bam} {input.fastas} 2> {log}"
 
 
 rule order_contigs:
