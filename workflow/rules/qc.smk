@@ -10,13 +10,16 @@ rule fastqc:
     wrapper:
         "0.69.0/bio/fastqc"
 
+
 # TODO include kraken after filtering, Kallisto
-rule multiqc: 
+rule multiqc:
     input:
         expand("results/qc/fastqc/{sample}_fastqc.zip", sample=get_samples()),
-        expand("results/species-diversity/{sample}/{sample}.kreport2", sample=get_samples()),
+        expand(
+            "results/species-diversity/{sample}/{sample}.kreport2", sample=get_samples()
+        ),
         expand("results/trimmed/{sample}.fastp.json", sample=get_samples()),
-        expand("results/quast/{sample}/report.tsv" , sample=get_samples())
+        expand("results/quast/{sample}/report.tsv", sample=get_samples()),
     output:
         "results/qc/multiqc.html",
     params:
@@ -30,33 +33,44 @@ rule multiqc:
 # Analysis of species diversity present
 rule species_diversity:
     input:
-        db = "resources/minikraken-8GB",
-        reads = expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2])
+        db="resources/minikraken-8GB",
+        reads=expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
     output:
-        classified_reads = expand("results/species-diversity/{{sample}}/{{sample}}_{read}.classified.fasta", read=[1,2]),
-        unclassified_reads = expand("results/species-diversity/{{sample}}/{{sample}}_{read}.unclassified.fasta", read=[1,2]), 
-        kraken_output = "results/species-diversity/{sample}/{sample}.kraken",
-        report = "results/species-diversity/{sample}/{sample}.kreport2"
+        classified_reads=expand(
+            "results/species-diversity/{{sample}}/{{sample}}_{read}.classified.fasta",
+            read=[1, 2],
+        ),
+        unclassified_reads=expand(
+            "results/species-diversity/{{sample}}/{{sample}}_{read}.unclassified.fasta",
+            read=[1, 2],
+        ),
+        kraken_output="results/species-diversity/{sample}/{sample}.kraken",
+        report="results/species-diversity/{sample}/{sample}.kreport2",
     log:
-        "logs/kraken/{sample}.log"
+        "logs/kraken/{sample}.log",
     params:
-        classified = lambda w, output: "#".join(output.classified_reads[0].rsplit('_1', 1)),
-        unclassified = lambda w, output: "#".join(output.unclassified_reads[0].rsplit('_1', 1))
+        classified=lambda w, output: "#".join(
+            output.classified_reads[0].rsplit("_1", 1)
+        ),
+        unclassified=lambda w, output: "#".join(
+            output.unclassified_reads[0].rsplit("_1", 1)
+        ),
     threads: 8
     conda:
         "../envs/kraken.yaml"
     shell:
         "(kraken2 --db {input.db} --threads {threads} --unclassified-out {params.unclassified} --classified-out {params.classified} --report {output.report} --gzip-compressed --paired {input.reads} > {output.kraken_output}) 2> {log}"
 
+
 # Plot Korna charts
 rule create_krona_chart:
     input:
-        kraken_output = "results/species-diversity/{sample}/{sample}.kreport2",
-        taxonomy_database =  directory("resources/krona/")
+        kraken_output="results/species-diversity/{sample}/{sample}.kreport2",
+        taxonomy_database="resources/krona/",
     output:
         "results/species-diversity/{sample}/{sample}.html",
     log:
-        "logs/krona/{sample}.log"
+        "logs/krona/{sample}.log",
     conda:
         "../envs/kraken.yaml"
     shell:

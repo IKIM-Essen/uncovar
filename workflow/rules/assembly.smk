@@ -37,7 +37,7 @@ rule quast:
     output:
         "results/quast/{sample}/report.tsv",
     params:
-        outdir = lambda x, output: os.path.dirname(output[0])
+        outdir=lambda x, output: os.path.dirname(output[0]),
     log:
         "logs/quast/{sample}.log",
     conda:

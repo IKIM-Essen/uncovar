@@ -50,11 +50,12 @@ rule get_problematic_sites:
         "curl -sSL https://raw.githubusercontent.com/W-L/ProblematicSites_SARS-CoV2/"
         "master/problematic_sites_sarsCov2.vcf | bgzip -c > {output} 2> {log}"
 
+
 rule get_genome_database_for_kraken:
     output:
-        directory("resources/minikraken-8GB")
+        directory("resources/minikraken-8GB"),
     log:
-        "logs/get-kraken-db.log"
+        "logs/get-kraken-db.log",
     conda:
         "../envs/unix.yaml"
     shell:
@@ -63,9 +64,9 @@ rule get_genome_database_for_kraken:
 
 rule get_taxonomie_db_for_krona:
     output:
-        directory("resources/krona/")
+        directory("resources/krona/"),
     log:
-        "logs/get-krona-db.log"
+        "logs/get-krona-db.log",
     conda:
         "../envs/kraken.yaml"
     shell:
