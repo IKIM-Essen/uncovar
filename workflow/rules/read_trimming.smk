@@ -1,7 +1,10 @@
 # trimming of 5' and 3' end
 # trimming of bad reads (low qual, too short, too many N)
 # cutout adapters
+<<<<<<< HEAD
 # able to parallelize
+=======
+>>>>>>> 854ea3a94eb445f00424836fd7e4c526e069173a
 rule fastp_pe:
     input:
         # takes both reads per sample

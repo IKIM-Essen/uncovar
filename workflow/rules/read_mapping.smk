@@ -40,7 +40,11 @@ rule map_reads:
         "0.69.0/bio/bwa/mem"
 
 
+<<<<<<< HEAD
 # remove pcr duplicates
+=======
+# ?????????????
+>>>>>>> 854ea3a94eb445f00424836fd7e4c526e069173a
 rule mark_duplicates:
     input:
         "results/mapped/ref~{reference}/{sample}.bam",
@@ -55,7 +59,11 @@ rule mark_duplicates:
         "0.69.0/bio/picard/markduplicates"
 
 
+<<<<<<< HEAD
 # recalibration of base quality (remove systematic misestimations, given by the sequencer)
+=======
+# calculate md sum for alignment ????????????
+>>>>>>> 854ea3a94eb445f00424836fd7e4c526e069173a
 rule samtools_calmd:
     input:
         aln="results/dedup/ref~{reference}/{sample}.bam",

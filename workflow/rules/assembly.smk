@@ -16,8 +16,11 @@ rule assembly:
         "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f) 2> {log}"
 
 # align contigs with reference genome
+<<<<<<< HEAD
 # minimap2 most efficient aligner for long vs long seqs
 # also assembly vs ref mode
+=======
+>>>>>>> 854ea3a94eb445f00424836fd7e4c526e069173a
 rule align_contigs:
     input:
         "resources/genomes/main.fasta",
@@ -47,7 +50,11 @@ rule quast:
     threads: 8
     # TODO --eukaryote flag most go!
     shell:
+<<<<<<< HEAD
         "quast.py --threads {threads} -o {output} -r {input.reference} --bam {input.bam} {input.fastas} 2>&1 > {log}"
+=======
+        "quast.py --threads {threads} -o {output} -r {input.reference} --bam {input.bam} {input.fastas} 2> {log}"
+>>>>>>> 854ea3a94eb445f00424836fd7e4c526e069173a
 
 
 # order contigs based on the reference genome and save in fasta file
@@ -71,7 +78,10 @@ rule order_contigs:
 
 
 # just take localized and remove unlocalized
+<<<<<<< HEAD
 # seqtk as alternative
+=======
+>>>>>>> 854ea3a94eb445f00424836fd7e4c526e069173a
 rule filter_chr0:
     input:
         "results/ordered-contigs-all/{sample}.fasta",
