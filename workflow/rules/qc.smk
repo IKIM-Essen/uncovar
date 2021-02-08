@@ -11,9 +11,23 @@ rule fastqc:
         "0.69.0/bio/fastqc"
 
 
+rule samtools_flagstat:
+    input:
+        "results/recal/ref~main/{sample}.bam",
+    output:
+        "results/qc/samtools_flagstat/{sample}.bam.flagstat",
+    log:
+        "logs/samtools/{sample}_flagstat.log",
+    wrapper:
+        "0.70.0/bio/samtools/flagstat"
+
+
 rule multiqc:
     input:
         expand("results/qc/fastqc/{sample}_fastqc.zip", sample=get_samples()),
+        expand(
+            "results/qc/samtools_flagstat/{sample}.bam.flagstat", sample=get_samples()
+        ),
     output:
         "results/qc/multiqc.html",
     params:
