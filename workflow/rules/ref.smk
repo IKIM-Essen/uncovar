@@ -71,3 +71,16 @@ rule get_taxonomie_db_for_krona:
         "../envs/kraken.yaml"
     shell:
         "ktUpdateTaxonomy.sh {output} 2> {log}"
+
+
+rule get_human_genome:
+    output:
+        "resources/human-genome/GCF_000001405.39_GRCh38.p13_genomic.fna.gz",
+    log:
+        "logs/get-human-genome.log",
+    params:
+        outdir = lambda w, output: os.path.dirname(output[0])
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "(curl -o ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.28_GRCh38.p13/GCA_000001405.28_GRCh38.p13_genomic.fna.gz | gunzip > {params.outdir}) 2> {log}"
