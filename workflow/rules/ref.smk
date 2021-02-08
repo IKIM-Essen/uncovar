@@ -79,7 +79,7 @@ rule get_human_genome:
     log:
         "logs/get-human-genome.log",
     params:
-        outdir = lambda w, output: os.path.dirname(output[0])
+        outdir=lambda w, output: os.path.dirname(output[0]),
     conda:
         "../envs/unix.yaml"
     shell:
