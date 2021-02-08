@@ -3,14 +3,25 @@ custom_logo_url: "https://www.ikim.uk-essen.de/"
 custom_logo_title: "Institut für Künstliche Intelligenz in der Medizin"
 
 report_header_info:
-  - Authors: Alexander Thomas, Thomas Battenfeld, Folker Meyer, Johannes Köster
+  - Authors: "Alexander Thomas, Thomas Battenfeld, Folker Meyer, Johannes Köster"
   - Project: "SARS-Cov-2 strain and variant calling pipeline"
   - Contact E-mail: "to.decide@uk-essen.de"
 
 module_order:
   - fastqc
   - fastp
-  - kraken
+  - kraken:
+    name: "Species Diversity (raw)"
+        anchor: "kraken_raw"
+        info: "This section of the report shows Kraken2 results BEFORE removal of human reads."
+        path_filters:
+          - "*.uncleaned.kreport2"
+  - kraken:
+    name: "Species Diversity (cleaned)"
+        anchor: "kraken_cleaned"
+        info: "This section of the report shows Kraken2 results AFTER removal of human reads."
+        path_filters:
+          - "*.cleaned.kreport2"
   - quast
 
 

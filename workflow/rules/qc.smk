@@ -16,7 +16,10 @@ rule multiqc:
     input:
         expand("results/qc/fastqc/{sample}_fastqc.zip", sample=get_samples()),
         expand(
-            "results/species-diversity/{sample}/{sample}.kreport2", sample=get_samples()
+            "results/species-diversity/{sample}/{sample}.uncleaned.kreport2", sample=get_samples()
+        ),
+        expand(
+            "results/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2", sample=get_samples()
         ),
         expand("results/trimmed/{sample}.fastp.json", sample=get_samples()),
         expand("results/quast/{sample}/report.tsv", sample=get_samples()),
@@ -45,7 +48,7 @@ rule species_diversity_before:
             read=[1, 2],
         ),
         kraken_output="results/species-diversity/{sample}/{sample}.kraken",
-        report="results/species-diversity/{sample}/{sample}.kreport2",
+        report="results/species-diversity/{sample}/{sample}.uncleaned.kreport2",
     log:
         "logs/kraken/{sample}.log",
     params:
@@ -65,7 +68,7 @@ rule species_diversity_before:
 # Plot Korna charts
 rule create_krona_chart:
     input:
-        kraken_output="results/species-diversity/{sample}/{sample}.kreport2",
+        kraken_output="results/species-diversity/{sample}/{sample}.uncleaned.kreport2",
         taxonomy_database="resources/krona/",
     output:
         "results/species-diversity/{sample}/{sample}.html",
@@ -85,60 +88,52 @@ rule align_against_human:
         "results/ordered-contigs-human/{sample}.bam",
     log:
         "logs/minimap2/{sample}.log",
-    conda:
+    # TODO ask Johannes for usage if -x flag. Is "sr" ok?
+    conda: 
         "../envs/minimap2.yaml"
     shell:
-        "minimap2 -ax asm5 {input} -o {output} 2> {log}"
+        "minimap2 -ax sr -o {output} {input} 2> {log}"
 
 
 rule extract_unmapped:
     input:
         "results/ordered-contigs-human/{sample}.bam",
     output:
-        filtered="results/ordered-contigs-nonhuman/{sample}.bam",
-        t=temp("results/ordered-contigs-nonhuman/{sample}/temp1.bam"),
-        t2=temp("results/ordered-contigs-nonhuman/{sample}/temp2.bam"),
-        t3=temp("results/ordered-contigs-nonhuman/{sample}/temp3.bam"),
+        fq1="results/ordered-contigs-nonhuman/{sample}.1.fastq.gz",
+        fq2="results/ordered-contigs-nonhuman/{sample}.2.fastq.gz",
+        sorted=temp("results/ordered-contigs-nonhuman/{sample}.bam"),
+        unsorted=temp("results/ordered-contigs-nonhuman/{sample}.unsorted.bam"),
+        t1=temp("results/ordered-contigs-nonhuman/{sample}.temp1.bam"),
+        t2=temp("results/ordered-contigs-nonhuman/{sample}.temp2.bam"),
+        t3=temp("results/ordered-contigs-nonhuman/{sample}.temp3.bam"),
     log:
         "logs/filter_human/{sample}.log",
     conda:
         "../envs/samtools.yaml"
+    threads: 8
     shell:
         """
-        samtools view -u -f 4 -F 264 {input} > {output.t1}
-        samtools view -u -f 8 -F 260 {input} > {output.t2}
-        samtools view -u -f 12 -F 256 {input} > {output.t3}
-        samtools merge -u - {output.t1} {output.t2} {output.t3} | samtools sort -n -o {output.filtered}
+        samtools view  -@ {threads} -u -f 4 -F 264 {input} > {output.t1}
+        samtools view  -@ {threads} -u -f 8 -F 260 {input} > {output.t2}
+        samtools view  -@ {threads} -u -f 12 -F 256 {input} > {output.t3}
+        samtools sort  -@ {threads} -n -o {output.t1} {output.t1}
+        samtools sort  -@ {threads} -n -o {output.t2} {output.t2}
+        samtools sort  -@ {threads} -n -o {output.t3} {output.t3}
+        samtools merge -@ {threads} -n {output.unsorted} {output.t1} {output.t2} {output.t3}
+        samtools sort  -@ {threads} -n {output.unsorted} -o {output.sorted}
+        samtools fastq -@ {threads} {output.sorted} -1 {output.fq1} -2 {output.fq2}
         """
-
-
-rule merge_unmapped:
-    
-
-
-rule bamToFastq:
-    input:
-        "results/ordered-contigs-nonhuman/{sample}.bam",
-    output:
-        fq1="results/ordered-contigs-nonhuman/{sample}.1.fastq",
-        fq2="results/ordered-contigs-nonhuman/{sample}.2.fastq",
-    log:
-        "logs/bamToFastq/{sample}.log",
-    conda:
-        "../envs/bedtools.yaml"
-    shell:
-        "bamtofastq -i {input} -fq {output.fq1} -fq2 {output.fq2}"
 
 
 rule species_diversity_after:
     input:
         db="resources/minikraken-8GB",
         reads=expand(
-            "results/ordered-contigs-nonhuman/{{sample}}.{read}.fastq", read=[1, 2]
+            "results/ordered-contigs-nonhuman/{{sample}}.{read}.fastq.gz", read=[1, 2]
         ),
     output:
         kraken_output="results/species-diversity-nonhuman/{sample}/{sample}.kraken",
-        report="results/species-diversity-nonhuman/{sample}/{sample}.kreport2",
+        report="results/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
     log:
         "logs/kraken/{sample}_nonhuman.log",
     params:
@@ -151,7 +146,7 @@ rule species_diversity_after:
 
 rule create_krona_chart_after:
     input:
-        kraken_output="results/species-diversity-nonhuman/{sample}/{sample}.kreport2",
+        kraken_output="results/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
         taxonomy_database="resources/krona/",
     output:
         "results/species-diversity-nonhuman/{sample}/{sample}.html",
