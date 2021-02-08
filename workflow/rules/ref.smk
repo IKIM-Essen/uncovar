@@ -75,7 +75,7 @@ rule get_taxonomie_db_for_krona:
 
 rule get_human_genome:
     output:
-        "resources/human-genome/GCF_000001405.39_GRCh38.p13_genomic.fna.gz",
+        "resources/genomes/human-genome.fna.gz",
     log:
         "logs/get-human-genome.log",
     params:
@@ -83,4 +83,4 @@ rule get_human_genome:
     conda:
         "../envs/unix.yaml"
     shell:
-        "(curl -o ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.28_GRCh38.p13/GCA_000001405.28_GRCh38.p13_genomic.fna.gz | gunzip > {params.outdir}) 2> {log}"
+        "curl -SL -o {output} ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.28_GRCh38.p13/GCA_000001405.28_GRCh38.p13_genomic.fna.gz 2> {log}"

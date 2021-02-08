@@ -79,7 +79,7 @@ rule create_krona_chart:
 
 rule align_against_human:
     input:
-        "resources/genome_assemblies_genome_fasta/ncbi-genomes-2021-02-08/GCF_000001405.39_GRCh38.p13_genomic.fna.gz",
+        "resources/genomes/human-genome.fna.gz",
         expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
     output:
         "results/ordered-contigs-human/{sample}.bam",
