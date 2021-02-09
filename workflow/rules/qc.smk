@@ -1,20 +1,33 @@
 rule fastqc_R1:
     input:
-        get_fastqs,
+        lambda wildcards: pep.sample_table.loc[wildcards.sample][["fq1"]]
     output:
-        html="results/qc/fastqc/{sample}.html",
-        zip="results/qc/fastqc/{sample}_fastqc.zip",
+        html="results/qc/fastqc/{sample}.1.html",
+        zip="results/qc/fastqc/{sample}.1_fastqc.zip",
     log:
-        "logs/fastqc/{sample}.log",
-    threads: 1
+        "logs/fastqc/{sample}.1.log",
+    threads: 8
     wrapper:
         "0.69.0/bio/fastqc"
 
 
-# TODO include kraken after filtering, Kallisto
+rule fastqc_R2:
+    input:
+        lambda wildcards: pep.sample_table.loc[wildcards.sample][["fq2"]]
+    output:
+        html="results/qc/fastqc/{sample}.2.html",
+        zip="results/qc/fastqc/{sample}.2_fastqc.zip",
+    log:
+        "logs/fastqc/{sample}.2.log",
+    threads: 8
+    wrapper:
+        "0.69.0/bio/fastqc"
+
+
+# TODO include Kallisto
 rule multiqc:
     input:
-        expand("results/qc/fastqc/{sample}_fastqc.zip", sample=get_samples()),
+        expand("results/qc/fastqc/{sample}.{read}_fastqc.zip", sample=get_samples(), read=[1,2]),
         expand(
             "results/species-diversity/{sample}/{sample}.uncleaned.kreport2", sample=get_samples()
         ),
@@ -33,7 +46,7 @@ rule multiqc:
         "0.69.0/bio/multiqc"
 
 
-# Analysis of species diversity present
+# analysis of species diversity present BEFORE removing human contamination
 rule species_diversity_before:
     input:
         db="resources/minikraken-8GB",
@@ -65,7 +78,7 @@ rule species_diversity_before:
         "(kraken2 --db {input.db} --threads {threads} --unclassified-out {params.unclassified} --classified-out {params.classified} --report {output.report} --gzip-compressed --paired {input.reads} > {output.kraken_output}) 2> {log}"
 
 
-# Plot Korna charts
+# plot Korna charts BEFORE removing human contamination
 rule create_krona_chart:
     input:
         kraken_output="results/species-diversity/{sample}/{sample}.uncleaned.kreport2",
@@ -80,6 +93,7 @@ rule create_krona_chart:
         "ktImportTaxonomy -m 3 -t 5 -tax {input.taxonomy_database} -o {output} {input} 2> {log}"
 
 
+# align trimmed reads against the human genome
 rule align_against_human:
     input:
         "resources/genomes/human-genome.fna.gz",
@@ -98,6 +112,7 @@ rule align_against_human:
         "minimap2 -ax sr -o {output} {input} 2> {log}"
 
 
+# filter out human contamination
 rule extract_unmapped:
     input:
         "results/ordered-contigs-human/{sample}.bam",
@@ -128,6 +143,7 @@ rule extract_unmapped:
         """
 
 
+# analysis of species diversity present AFTER removing human contamination
 rule species_diversity_after:
     input:
         db="resources/minikraken-8GB",
@@ -147,6 +163,7 @@ rule species_diversity_after:
         "(kraken2 --db {input.db} --threads {threads} --report {output.report} --gzip-compressed --paired {input.reads} > {output.kraken_output}) 2> {log}"
 
 
+# plotting Krona charts AFTER removing human contamination
 rule create_krona_chart_after:
     input:
         kraken_output="results/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
