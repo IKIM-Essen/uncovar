@@ -1,6 +1,6 @@
 rule fastqc_R1:
     input:
-        lambda wildcards: pep.sample_table.loc[wildcards.sample][["fq1"]]
+        lambda wildcards: pep.sample_table.loc[wildcards.sample][["fq1"]],
     output:
         html="results/qc/fastqc/{sample}.1.html",
         zip="results/qc/fastqc/{sample}.1_fastqc.zip",
@@ -13,7 +13,7 @@ rule fastqc_R1:
 
 rule fastqc_R2:
     input:
-        lambda wildcards: pep.sample_table.loc[wildcards.sample][["fq2"]]
+        lambda wildcards: pep.sample_table.loc[wildcards.sample][["fq2"]],
     output:
         html="results/qc/fastqc/{sample}.2.html",
         zip="results/qc/fastqc/{sample}.2_fastqc.zip",
@@ -27,12 +27,18 @@ rule fastqc_R2:
 # TODO include Kallisto
 rule multiqc:
     input:
-        expand("results/qc/fastqc/{sample}.{read}_fastqc.zip", sample=get_samples(), read=[1,2]),
         expand(
-            "results/species-diversity/{sample}/{sample}.uncleaned.kreport2", sample=get_samples()
+            "results/qc/fastqc/{sample}.{read}_fastqc.zip",
+            sample=get_samples(),
+            read=[1, 2],
         ),
         expand(
-            "results/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2", sample=get_samples()
+            "results/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+            sample=get_samples(),
+        ),
+        expand(
+            "results/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
+            sample=get_samples(),
         ),
         expand("results/trimmed/{sample}.fastp.json", sample=get_samples()),
         expand("results/quast/{sample}/report.tsv", sample=get_samples()),
@@ -104,9 +110,9 @@ rule align_against_human:
         "logs/minimap2/{sample}.log",
     threads: 8
     resources:
-        max_jobs = 1
+        max_jobs=1,
     # TODO ask Johannes for usage if -x flag. Is "sr" ok?
-    conda: 
+    conda:
         "../envs/minimap2.yaml"
     shell:
         "minimap2 -ax sr -o {output} {input} 2> {log}"
@@ -155,7 +161,6 @@ rule species_diversity_after:
         report="results/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
     log:
         "logs/kraken/{sample}_nonhuman.log",
-    params:
     threads: 8
     conda:
         "../envs/kraken.yaml"
@@ -166,7 +171,9 @@ rule species_diversity_after:
 # plotting Krona charts AFTER removing human contamination
 rule create_krona_chart_after:
     input:
-        kraken_output="results/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
+        kraken_output=(
+            "results/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2"
+        ),
         taxonomy_database="resources/krona/",
     output:
         "results/species-diversity-nonhuman/{sample}/{sample}.html",
