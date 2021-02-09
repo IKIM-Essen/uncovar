@@ -8,7 +8,7 @@ rule fastqc_R1:
         "logs/fastqc/{sample}.1.log",
     threads: 8
     wrapper:
-        "0.69.0/bio/fastqc"
+        "0.70.0/bio/fastqc"
 
 
 rule fastqc_R2:
@@ -21,7 +21,7 @@ rule fastqc_R2:
         "logs/fastqc/{sample}.2.log",
     threads: 8
     wrapper:
-        "0.69.0/bio/fastqc"
+        "0.70.0/bio/fastqc"
 
 
 # TODO include Kallisto
