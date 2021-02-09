@@ -44,7 +44,7 @@ rule quast:
         "../envs/quast.yaml"
     threads: 8
     shell:
-        "quast.py --threads {threads} -o {params.outdir} -r {input.reference} --bam {input.bam} {input.fastas} 2> {log}"
+        "quast.py --threads {threads} -o {params.outdir} -r {input.reference} --bam {input.bam} {input.fastas} &> {log}"
 
 
 rule order_contigs:
@@ -63,7 +63,7 @@ rule order_contigs:
     shell:  # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
         "(mkdir -p {params.outdir}/{wildcards.sample} && cd {params.outdir}/{wildcards.sample} && "
         "ragoo.py ../../../{input.contigs} ../../../{input.reference} && "
-        "cd ../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) > {log} 2>&1"
+        "cd ../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) &> {log} "
 
 
 rule filter_chr0:

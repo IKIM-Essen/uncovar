@@ -137,15 +137,15 @@ rule extract_unmapped:
     threads: 8
     shell:
         """
-        samtools view  -@ {threads} -u -f 4 -F 264 {input} > {output.t1}
-        samtools view  -@ {threads} -u -f 8 -F 260 {input} > {output.t2}
-        samtools view  -@ {threads} -u -f 12 -F 256 {input} > {output.t3}
-        samtools sort  -@ {threads} -n -o {output.t1} {output.t1}
-        samtools sort  -@ {threads} -n -o {output.t2} {output.t2}
-        samtools sort  -@ {threads} -n -o {output.t3} {output.t3}
-        samtools merge -@ {threads} -n {output.unsorted} {output.t1} {output.t2} {output.t3}
-        samtools sort  -@ {threads} -n {output.unsorted} -o {output.sorted}
-        samtools fastq -@ {threads} {output.sorted} -1 {output.fq1} -2 {output.fq2}
+        samtools view  -@ {threads} -u -f 4 -F 264 {input} > {output.t1} 2> {log}
+        samtools view  -@ {threads} -u -f 8 -F 260 {input} > {output.t2} 2>> {log}
+        samtools view  -@ {threads} -u -f 12 -F 256 {input} > {output.t3} 2>> {log}
+        samtools sort  -@ {threads} -n -o {output.t1} {output.t1} &>> {log}
+        samtools sort  -@ {threads} -n -o {output.t2} {output.t2} &>> {log}
+        samtools sort  -@ {threads} -n -o {output.t3} {output.t3} &>> {log}
+        samtools merge -@ {threads} -n {output.unsorted} {output.t1} {output.t2} {output.t3} &>> {log}
+        samtools sort  -@ {threads} -n {output.unsorted} -o {output.sorted} &>> {log}
+        samtools fastq -@ {threads} {output.sorted} -1 {output.fq1} -2 {output.fq2} &>> {log}
         """
 
 
