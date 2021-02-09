@@ -8,11 +8,12 @@ rule assembly:
         "logs/megahit/{sample}.log",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
+        sample = lambda wildcards: wildcards.sample
     threads: 8
     conda:
         "../envs/megahit.yaml"
     shell:
-        "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f && mv {params.outdir}/{sample}.contigs.fa {output} ) 2> {log}"
+        "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f && mv {params.outdir}/{params.sample}.contigs.fa {output} ) 2> {log}"
 
 
 rule align_contigs:
