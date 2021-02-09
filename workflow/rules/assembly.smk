@@ -1,7 +1,7 @@
 rule assembly:
     input:
-        fastq1="results/trimmed/{sample}.1.fastq.gz",
-        fastq2="results/trimmed/{sample}.2.fastq.gz",
+        fastq1="results/ordered-contigs-nonhuman/{sample}.1.fastq.gz",
+        fastq2="results/ordered-contigs-nonhuman/{sample}.2.fastq.gz",
     output:
         "results/assembly/{sample}/{sample}.contigs.fa",
     log:
