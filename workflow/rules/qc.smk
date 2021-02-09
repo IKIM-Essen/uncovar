@@ -1,4 +1,4 @@
-rule fastqc:
+rule fastqc_R1:
     input:
         get_fastqs,
     output:
@@ -88,6 +88,9 @@ rule align_against_human:
         "results/ordered-contigs-human/{sample}.bam",
     log:
         "logs/minimap2/{sample}.log",
+    threads: 8
+    resources:
+        max_jobs = 1
     # TODO ask Johannes for usage if -x flag. Is "sr" ok?
     conda: 
         "../envs/minimap2.yaml"
