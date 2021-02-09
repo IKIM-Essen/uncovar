@@ -42,6 +42,9 @@ rule multiqc:
         ),
         expand("results/trimmed/{sample}.fastp.json", sample=get_samples()),
         expand("results/quast/{sample}/report.tsv", sample=get_samples()),
+        expand(
+            "results/qc/samtools_flagstat/{sample}.bam.flagstat", sample=get_samples()
+        ),
     output:
         "results/qc/multiqc.html",
     params:
@@ -51,7 +54,16 @@ rule multiqc:
     wrapper:
         "0.69.0/bio/multiqc"
 
-
+rule samtools_flagstat:
+    input:
+        "results/recal/ref~main/{sample}.bam",
+    output:
+        "results/qc/samtools_flagstat/{sample}.bam.flagstat",
+    log:
+        "logs/samtools/{sample}_flagstat.log",
+    wrapper:
+        "0.70.0/bio/samtools/flagstat"
+        
 # analysis of species diversity present BEFORE removing human contamination
 rule species_diversity_before:
     input:
