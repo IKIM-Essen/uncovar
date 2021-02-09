@@ -1,27 +1,48 @@
+# general info
 custom_logo: "/Users/btf/Projects/snakemake-workflow-sars-cov2/resources/IKIM.png"
 custom_logo_url: "https://www.ikim.uk-essen.de/"
 custom_logo_title: "Institut für Künstliche Intelligenz in der Medizin"
-
+show_analysis_time: True
 report_header_info:
   - Authors: "Alexander Thomas, Thomas Battenfeld, Folker Meyer, Johannes Köster"
   - Project: "SARS-Cov-2 strain and variant calling pipeline"
   - Contact E-mail: "to.decide@uk-essen.de"
 
+# order of report
 module_order:
-  - fastqc
-  - fastp
+  - fastqc:
+      name: "Reads Quality Control"
+      target: "FastQC"
+  - fastp:
+      name: "Reads Preprocessing"
+      target: "fastp"
   - kraken:
-    name: "Species Diversity (raw)"
-        anchor: "kraken_raw"
-        info: "This section of the report shows Kraken2 results BEFORE removal of human reads."
-        path_filters:
-          - "*.uncleaned.kreport2"
+      name: "Species Diversity (raw)"
+      target: "Kraken2"
+      anchor: "kraken_raw"
+      path_filters:
+        - "*.uncleaned.kreport2"
   - kraken:
-    name: "Species Diversity (cleaned)"
-        anchor: "kraken_cleaned"
-        info: "This section of the report shows Kraken2 results AFTER removal of human reads."
-        path_filters:
-          - "*.cleaned.kreport2"
-  - quast
+      name: "Species Diversity (cleaned)"
+      anchor: "kraken_cleaned"
+      target: "Kraken2"
+      info: "Kraken2 results AFTER removal of human contamination."
+      path_filters:
+        - "*.cleaned.kreport2"
+  - quast:
+      name: "Contigs (assembly)"
+      target: "Quast"
+  # - quast:
+      # name: "Contigs (consensus)"
+      # target: "Quast"
 
-
+# sample name cleaning
+fn_clean_exts:
+  - ".kreport2"
+  - ".uncleaned"
+  - ".cleaned"
+  - ".contigs"
+  - ".fastp"
+  - ".trimmed"
+  - ".fastq"
+  - ".gz"
