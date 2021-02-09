@@ -51,7 +51,7 @@ rule get_problematic_sites:
         "master/problematic_sites_sarsCov2.vcf | bgzip -c > {output} 2> {log}"
 
 
-rule get_genome_database_for_kraken:
+rule get_genome_db_for_kraken:
     output:
         directory("resources/minikraken-8GB"),
     log:

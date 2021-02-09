@@ -44,7 +44,7 @@ rule quast:
         "../envs/quast.yaml"
     threads: 8
     shell:
-        "quast.py --threads {threads} -o {params.outdir} -r {input.reference} --eukaryote --bam {input.bam} {input.fastas} 2> {log}"
+        "quast.py --threads {threads} -o {params.outdir} -r {input.reference} --bam {input.bam} {input.fastas} 2> {log}"
 
 
 rule order_contigs:
@@ -100,3 +100,4 @@ rule polish_contigs:
 
 
 # TODO blast smaller contigs to determine contamination?
+# TODO add Quast for polished contigs?
