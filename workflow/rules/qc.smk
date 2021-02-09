@@ -54,6 +54,7 @@ rule multiqc:
     wrapper:
         "0.69.0/bio/multiqc"
 
+
 rule samtools_flagstat:
     input:
         "results/recal/ref~main/{sample}.bam",
@@ -63,7 +64,8 @@ rule samtools_flagstat:
         "logs/samtools/{sample}_flagstat.log",
     wrapper:
         "0.70.0/bio/samtools/flagstat"
-        
+
+
 # analysis of species diversity present BEFORE removing human contamination
 rule species_diversity_before:
     input:
