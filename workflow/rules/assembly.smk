@@ -8,7 +8,7 @@ rule assembly:
         "logs/megahit/{sample}.log",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
-        sample = lambda wildcards: wildcards.sample
+        sample=lambda wildcards: wildcards.sample,
     threads: 8
     conda:
         "../envs/megahit.yaml"
