@@ -40,6 +40,15 @@ rule all:
             sample=get_samples(),
             method=["kallisto", "pangolin"],
         ),
+        expand(
+            "results/species-diversity/{sample}/{sample}.html",
+            sample=get_samples(),
+        ),
+        expand(
+            "results/species-diversity-nonhuman/{sample}/{sample}.html",
+            sample=get_samples(),
+        ),
+        
 
 
 rule benchmark_strain_calling:
