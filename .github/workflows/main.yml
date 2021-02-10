@@ -56,6 +56,13 @@ jobs:
           mkdir -p .tests/data
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_1.fastq.gz > .tests/data/ERR4861412_1.fastq.gz
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_2.fastq.gz > .tests/data/ERR4861412_2.fastq.gz
+      
+      - name: Download large data files
+        run: |
+          mkdir -p .tests/resources/minikraken-8GB
+          curl -SL ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/minikraken_8GB_202003.tgz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
+          mkdir -p .tests/resources/genomes
+          curl -SL -o .tests/resources/genomes/human-genome.fna.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.28_GRCh38.p13/GCA_000001405.28_GRCh38.p13_genomic.fna.gz
 
       - name: Test workflow
         uses: snakemake/snakemake-github-action@v1.15.0
@@ -146,4 +153,3 @@ jobs:
           else
             echo "Assembly was successful."
           fi
-
