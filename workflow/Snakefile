@@ -41,12 +41,10 @@ rule all:
             method=["kallisto", "pangolin"],
         ),
         expand(
-            "results/species-diversity/{sample}/{sample}.html", sample=get_samples(),
-        ),
-        expand(
-            "results/species-diversity-nonhuman/{sample}/{sample}.html",
+            "results/tables/strain-calls/{sample}.strains.pangolin.csv",
             sample=get_samples(),
         ),
+        expand("results/polished-contigs/{sample}.fasta", sample=get_samples()),
 
 
 rule benchmark_strain_calling:
