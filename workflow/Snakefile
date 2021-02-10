@@ -4,7 +4,7 @@ configfile: "config/config.yaml"
 pepfile: config["pepfile"]
 
 
-container: "condaforge/minimamba"
+container: "docker://condaforge/mambaforge"
 
 
 include: "rules/common.smk"
