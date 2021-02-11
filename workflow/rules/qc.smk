@@ -1,36 +1,21 @@
-rule fastqc_R1:
+rule fastqc:
     input:
-        lambda wildcards: pep.sample_table.loc[wildcards.sample][["fq1"]],
+        get_fastqs,
     output:
-        html="results/qc/fastqc/{sample}.1.html",
-        zip="results/qc/fastqc/{sample}.1_fastqc.zip",
+        html="results/qc/fastqc/{sample}.html",
+        zip="results/qc/fastqc/{sample}_fastqc.zip",
     log:
-        "logs/fastqc/{sample}.1.log",
-    threads: 8
+        "logs/fastqc/{sample}.log",
+    threads: 1
     wrapper:
-        "0.70.0/bio/fastqc"
-
-
-rule fastqc_R2:
-    input:
-        lambda wildcards: pep.sample_table.loc[wildcards.sample][["fq2"]],
-    output:
-        html="results/qc/fastqc/{sample}.2.html",
-        zip="results/qc/fastqc/{sample}.2_fastqc.zip",
-    log:
-        "logs/fastqc/{sample}.2.log",
-    threads: 8
-    wrapper:
-        "0.70.0/bio/fastqc"
+        "0.69.0/bio/fastqc"
 
 
 # TODO include Kallisto
 rule multiqc:
     input:
         expand(
-            "results/qc/fastqc/{sample}.{read}_fastqc.zip",
-            sample=get_samples(),
-            read=[1, 2],
+            "results/qc/fastqc/{sample}_fastqc.zip", sample=get_samples(),
         ),
         expand(
             "results/species-diversity/{sample}/{sample}.uncleaned.kreport2",
@@ -41,7 +26,12 @@ rule multiqc:
             sample=get_samples(),
         ),
         expand("results/trimmed/{sample}.fastp.json", sample=get_samples()),
-        expand("results/quast/{sample}/report.tsv", sample=get_samples()),
+        expand(
+            "results/quast-unpolished/{sample}/report.tsv", sample=get_samples(),
+        ),
+        expand(
+            "results/quast-polished/{sample}/report.tsv", sample=get_samples(),
+        ),
         expand(
             "results/qc/samtools_flagstat/{sample}.bam.flagstat", sample=get_samples()
         ),
@@ -133,7 +123,7 @@ rule align_against_human:
 
 
 # filter out human contamination
-rule extract_unmapped:
+rule extract_nonhuman_contigs:
     input:
         "results/ordered-contigs-human/{sample}.bam",
     output:

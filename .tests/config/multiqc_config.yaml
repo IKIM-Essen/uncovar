@@ -31,18 +31,30 @@ module_order:
         - "*.cleaned.kreport2"
   - quast:
       name: "Contigs (assembly)"
-      target: "Quast"
-  # - quast:
-      # name: "Contigs (consensus)"
-      # target: "Quast"
+      anchor: "quast_assembly"
+      path_filters:
+        - "*quast-unpolished/*/report.tsv"
+  - samtools
+  - quast:
+      name: "Contigs (consensus)"
+      anchor: "quast_consensus"
+      path_filters:
+        - "*quast-polished/*/report.tsv"
+
 
 # sample name cleaning
 fn_clean_exts:
   - ".kreport2"
-  - ".uncleaned"
-  - ".cleaned"
   - ".contigs"
   - ".fastp"
   - ".trimmed"
   - ".fastq"
   - ".gz"
+  - ".bam"
+  - ".flagstat"
+  - ".uncleaned"
+  - ".cleaned"
+  - "_L001_R1_001"
+  - "_L001_R2_001"
+  - "_S"
+

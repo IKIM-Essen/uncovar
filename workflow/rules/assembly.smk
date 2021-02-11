@@ -16,12 +16,12 @@ rule assembly:
         "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f && mv {params.outdir}/final.contigs.fa {output} ) 2> {log}"
 
 
-rule align_contigs:
+rule align_unpolished_contigs:
     input:
         "resources/genomes/main.fasta",
         "results/assembly/{sample}/{sample}.contigs.fa",
     output:
-        "results/ordered-contigs/{sample}.bam",
+        "results/aligned-unpolished-contigs/{sample}.bam",
     log:
         "logs/minimap2/{sample}.log",
     conda:
@@ -30,13 +30,13 @@ rule align_contigs:
         "minimap2 -ax asm5 {input} -o {output} 2> {log}"
 
 
-rule quast:
+rule quast_unpolished_contigs:
     input:
         reference="resources/genomes/main.fasta",
-        bam="results/ordered-contigs/{sample}.bam",
+        bam="results/aligned-unpolished-contigs/{sample}.bam",
         fastas="results/assembly/{sample}/{sample}.contigs.fa",
     output:
-        "results/quast/{sample}/report.tsv",
+        "results/quast-unpolished/{sample}/report.tsv",
     params:
         outdir=lambda x, output: os.path.dirname(output[0]),
     log:
@@ -100,5 +100,36 @@ rule polish_contigs:
         "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"
 
 
+rule align_polished_contigs:
+    input:
+        "resources/genomes/main.fasta",
+        "results/polished-contigs/{sample}.fasta",
+    output:
+        "results/aligned-polished-contigs/{sample}.bam",
+    log:
+        "logs/minimap2/{sample}.log",
+    conda:
+        "../envs/minimap2.yaml"
+    shell:
+        "minimap2 -ax asm5 {input} -o {output} 2> {log}"
+
+
+rule quast_polished_contigs:
+    input:
+        reference="resources/genomes/main.fasta",
+        bam="results/aligned-polished-contigs/{sample}.bam",
+        fastas="results/polished-contigs/{sample}.fasta",
+    output:
+        "results/quast-polished/{sample}/report.tsv",
+    params:
+        outdir=lambda x, output: os.path.dirname(output[0]),
+    log:
+        "logs/quast/{sample}.log",
+    conda:
+        "../envs/quast.yaml"
+    threads: 8
+    shell:
+        "quast.py --threads {threads} -o {params.outdir} -r {input.reference} --bam {input.bam} {input.fastas} > {log} 2>&1"
+
+
 # TODO blast smaller contigs to determine contamination?
-# TODO add Quast for polished contigs?
