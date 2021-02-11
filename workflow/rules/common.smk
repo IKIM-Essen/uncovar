@@ -150,4 +150,4 @@ wildcard_constraints:
     sample="[^/.]+",
     vartypes="|".join(VARTYPES),
     clonality="subclonal|clonal",
-    filter="|".join(config["variant-calling"]["filters"])
+    filter="|".join(config["variant-calling"]["filters"]),

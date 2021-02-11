@@ -26,7 +26,11 @@ rule all:
     input:
         "results/qc/multiqc.html",
         "results/plots/strain-calls/all.strains.pangolin.svg",
-        expand("results/vcf-report/{target}.{filter}", target=["all"] + get_samples(), filter=config["variant-calling"]["filters"]),
+        expand(
+            "results/vcf-report/{target}.{filter}",
+            target=["all"] + get_samples(),
+            filter=config["variant-calling"]["filters"],
+        ),
         expand(
             "results/filtered-calls/ref~main/{sample}.subclonal.bcf",
             sample=get_samples(),
