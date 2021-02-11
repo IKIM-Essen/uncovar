@@ -34,7 +34,8 @@ module_order:
       anchor: "quast_assembly"
       path_filters:
         - "*quast-unpolished/*/report.tsv"
-  - samtools
+  - samtools:
+      name: "Samtools (?)"
   - quast:
       name: "Contigs (consensus)"
       anchor: "quast_consensus"
@@ -58,3 +59,58 @@ fn_clean_exts:
   - "_L001_R2_001"
   - "_S"
 
+table_columns_visible:
+  samtools-flagstat: False
+  Samtools: False
+  samtools: False
+  
+# customising general Statistics
+table_columns_visible:
+  Reads Quality Control:
+    percent_duplicates: False
+    percent_gc: False
+    avg_sequence_length: 
+    percent_fails: False
+    total_sequences: True
+  Reads Preprocessing:
+    pct_duplication: False
+    after_filtering_q30_rate: False
+    after_filtering_q30_bases: False
+    after_filtering_gc_content: False
+    total_sequencpct_survivinges: False
+    pct_surviving: True
+    pct_adapter: False
+  Species Diversity (raw):
+    "% Severe acute respiratory syndrome-related coronavirus": True
+    "% Top 5": False
+    "% Unclassified": False
+  Species Diversity (cleaned):
+    "% Severe acute respiratory syndrome-related coronavirus": False
+    "% Top 5": False
+    "% Unclassified": False
+  Contigs (assembly):
+    N50: True
+    Total length: False
+    Largest contig: True
+  Samtools (?):
+    flagstat_total: False
+    mapped_passed: False
+  Contigs (consensus):
+    N50: True
+    Total length: False
+    Largest contig: False
+    Genome fraction (%): False
+
+
+# number formatting
+read_count_multiplier: 0.001
+read_count_prefix: "K"
+read_count_desc: "thousands"
+
+base_count_multiplier: 0.001
+base_count_prefix: "K"
+base_count_desc: "thousands"
+
+long_read_count_multiplier: 0.001
+long_read_count_prefix: "K"
+long_read_count_desc: "thousands"
