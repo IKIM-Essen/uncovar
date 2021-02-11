@@ -137,7 +137,7 @@ def get_target_events(wildcards):
 
 def get_filter_odds_input(wildcards):
     if wildcards.reference == "main":
-        return "results/filtered-calls/ref~{reference}/{sample}.filter~{filter}.bcf"
+        return "results/filtered-calls/ref~{reference}/{sample}.{filter}.bcf"
     else:
         return "results/calls/ref~{reference}/{sample}.bcf"
 
@@ -150,3 +150,4 @@ wildcard_constraints:
     sample="[^/.]+",
     vartypes="|".join(VARTYPES),
     clonality="subclonal|clonal",
+    filter="|".join(config["variant-calling"]["filters"])
