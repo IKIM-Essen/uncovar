@@ -28,7 +28,7 @@ def get_resource(name):
 
 def get_report_input(pattern):
     def inner(wildcards):
-        return expand(pattern, sample=get_report_samples(wildcards))
+        return expand(pattern, sample=get_report_samples(wildcards), **wildcards)
 
     return inner
 
@@ -55,7 +55,7 @@ def get_report_samples(wildcards):
 def get_merge_calls_input(suffix):
     def inner(wildcards):
         return expand(
-            "results/filtered-calls/ref~{{reference}}/{{sample}}.{{clonality}}.{vartype}.fdr-controlled{suffix}",
+            "results/filtered-calls/ref~{{reference}}/{{sample}}.{{clonality}}.{{filter}}.{vartype}.fdr-controlled{suffix}",
             suffix=suffix,
             vartype=VARTYPES,
         )
@@ -137,9 +137,13 @@ def get_target_events(wildcards):
 
 def get_filter_odds_input(wildcards):
     if wildcards.reference == "main":
-        return "results/annotated-calls/ref~main/{sample}.bcf"
+        return "results/filtered-calls/ref~{reference}/{sample}.filter~{filter}.bcf"
     else:
         return "results/calls/ref~{reference}/{sample}.bcf"
+
+
+def get_vembrane_expression(wildcards):
+    return config["variant-calling"]["filters"][wildcards.filter]
 
 
 wildcard_constraints:

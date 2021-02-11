@@ -32,4 +32,4 @@ rule annotate_variants:
     log:
         "logs/vep/{sample}.log",
     wrapper:
-        "cbffd55f53599cda5f96e651d7e233fd43c571ba/bio/vep/annotate"
+        "vep-nocache/bio/vep/annotate"
