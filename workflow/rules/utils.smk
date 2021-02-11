@@ -1,4 +1,4 @@
-rule tabix_gff:
+rule tabix_index:
     input:
         "{prefix}.{fmt}.gz",
     output:
