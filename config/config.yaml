@@ -12,8 +12,8 @@ variant-calling:
     # downsample loci to this read depth for visualization in report
     max-read-depth: 100
   filters:
-    non-high-impact: 'ANN["IMPACT"] != "HIGH"'
-    high-impact: 'ANN["IMPACT"] == "HIGH"'
+    low-impact: 'ANN["IMPACT"] in ["LOW", "MODIFIER"]'
+    high+moderate-impact: 'ANN["IMPACT"] in ["HIGH", "MODERATE"]'
     
   
 strain-calling:
