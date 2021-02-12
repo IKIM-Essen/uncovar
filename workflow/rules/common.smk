@@ -151,4 +151,6 @@ wildcard_constraints:
     sample="[^/.]+",
     vartypes="|".join(VARTYPES),
     clonality="subclonal|clonal",
-    filter="|".join(map(re.escape, config["variant-calling"]["filters"])),
+    filter="|".join(
+        list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
+    ),

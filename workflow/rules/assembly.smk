@@ -81,8 +81,8 @@ rule filter_chr0:
 rule polish_contigs:
     input:
         fasta="results/ordered-contigs/{sample}.fasta",
-        bcf="results/filtered-calls/ref~{sample}/{sample}.clonal.bcf",
-        bcfidx="results/filtered-calls/ref~{sample}/{sample}.clonal.bcf.csi",
+        bcf="results/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf",
+        bcfidx="results/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf.csi",
     output:
         report(
             "results/polished-contigs/{sample}.fasta",

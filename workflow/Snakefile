@@ -32,8 +32,9 @@ rule all:
             filter=config["variant-calling"]["filters"],
         ),
         expand(
-            "results/filtered-calls/ref~main/{sample}.subclonal.bcf",
+            "results/filtered-calls/ref~main/{sample}.subclonal.{filter}.bcf",
             sample=get_samples(),
+            filter=config["variant-calling"]["filters"],
         ),
         expand(
             "results/plots/strain-calls/all.{mode}-strain.strains.kallisto.svg",
