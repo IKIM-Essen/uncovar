@@ -1,12 +1,26 @@
+rule vembrane_filter:
+    input:
+        "results/annotated-calls/ref~main/{sample}.bcf",
+    output:
+        "results/filtered-calls/ref~main/{sample}.{filter}.bcf",
+    params:
+        expression=get_vembrane_expression,
+        extra="",
+    log:
+        "logs/vembrane/{sample}.{filter}.log",
+    wrapper:
+        "0.71.1/bio/vembrane/filter"
+
+
 rule filter_odds:
     input:
         get_filter_odds_input,
     output:
-        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.odds.bcf",
+        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.odds.bcf",
     params:
         events=get_target_events,
     log:
-        "logs/filter-calls/odds/ref~{reference}/{sample}.{clonality}.log",
+        "logs/filter-calls/odds/ref~{reference}/{sample}.{clonality}.{filter}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
@@ -15,14 +29,14 @@ rule filter_odds:
 
 rule control_fdr:
     input:
-        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.odds.bcf",
+        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.odds.bcf",
     output:
-        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{vartype}.fdr-controlled.bcf",
+        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.{vartype}.fdr-controlled.bcf",
     params:
         fdr=config["variant-calling"]["fdr"],
         events=get_target_events,
     log:
-        "logs/control-fdr/ref~{reference}/{sample}.{clonality}.{vartype}.log",
+        "logs/control-fdr/ref~{reference}/{sample}.{clonality}.{filter}.{vartype}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
@@ -35,9 +49,9 @@ rule merge_calls:
         calls=get_merge_calls_input(".bcf"),
         idx=get_merge_calls_input(".bcf.csi"),
     output:
-        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.bcf",
+        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.bcf",
     log:
-        "logs/merge-calls/ref~{reference}/{sample}.{clonality}.log",
+        "logs/merge-calls/ref~{reference}/{sample}.{clonality}.{filter}.log",
     params:
         "-a -Ob",
     wrapper:

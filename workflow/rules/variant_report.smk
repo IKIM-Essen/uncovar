@@ -4,14 +4,15 @@ rule vcf_report:
         bams=get_report_input("results/recal/ref~main/{sample}.bam"),
         bais=get_report_input("results/recal/ref~main/{sample}.bam.bai"),
         bcfs=get_report_input(
-            "results/filtered-calls/ref~main/{sample}.subclonal.bcf"
+            "results/filtered-calls/ref~main/{sample}.subclonal.{filter}.bcf"
         ),
     output:
         report(
-            directory("results/vcf-report/{target}"),
+            directory("results/vcf-report/{target}.{filter}"),
             htmlindex="index.html",
             caption="../report/variant-calls.rst",
             category="Variant calls",
+            subcategory="{filter}",
         ),
     params:
         bcfs=get_report_bcfs,
@@ -23,7 +24,7 @@ rule vcf_report:
             template=get_resource("custom-table-report.js"),
         ),
     log:
-        "logs/vcf-report/{target}.log",
+        "logs/vcf-report/{target}.{filter}.log",
     conda:
         "../envs/rbt.yaml"
     shell:
