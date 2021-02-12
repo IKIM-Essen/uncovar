@@ -26,10 +26,15 @@ rule all:
     input:
         "results/qc/multiqc.html",
         "results/plots/strain-calls/all.strains.pangolin.svg",
-        expand("results/vcf-report/{target}", target=["all"] + get_samples()),  # TODO activate once report properly handles intergenic variants.
         expand(
-            "results/filtered-calls/ref~main/{sample}.subclonal.bcf",
+            "results/vcf-report/{target}.{filter}",
+            target=["all"] + get_samples(),
+            filter=config["variant-calling"]["filters"],
+        ),
+        expand(
+            "results/filtered-calls/ref~main/{sample}.subclonal.{filter}.bcf",
             sample=get_samples(),
+            filter=config["variant-calling"]["filters"],
         ),
         expand(
             "results/plots/strain-calls/all.{mode}-strain.strains.kallisto.svg",

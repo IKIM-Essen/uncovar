@@ -11,6 +11,10 @@ variant-calling:
   report:
     # downsample loci to this read depth for visualization in report
     max-read-depth: 100
+  filters:
+    low-impact: 'ANN["IMPACT"] in ["LOW", "MODIFIER"]'
+    high+moderate-impact: 'ANN["IMPACT"] in ["HIGH", "MODERATE"]'
+    
   
 strain-calling:
   # minimum reported strain fraction after quantification
