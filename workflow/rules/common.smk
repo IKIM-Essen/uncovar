@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import pandas as pd
 
 
@@ -150,4 +151,4 @@ wildcard_constraints:
     sample="[^/.]+",
     vartypes="|".join(VARTYPES),
     clonality="subclonal|clonal",
-    filter="|".join(config["variant-calling"]["filters"]),
+    filter="|".join(map(re.escape, config["variant-calling"]["filters"])),
