@@ -103,29 +103,10 @@ rule create_krona_chart:
         "ktImportTaxonomy -m 3 -t 5 -tax {input.taxonomy_database} -o {output} {input} 2> {log}"
 
 
-# align trimmed reads against the human genome
-rule align_against_human:
-    input:
-        "resources/genomes/human-genome.fna.gz",
-        expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
-    output:
-        "results/ordered-contigs-human/{sample}.bam",
-    log:
-        "logs/minimap2/{sample}.log",
-    threads: 8
-    resources:
-        max_jobs=1,
-    # TODO ask Johannes for usage if -x flag. Is "sr" ok?
-    conda:
-        "../envs/minimap2.yaml"
-    shell:
-        "minimap2 -ax sr -o {output} {input} 2> {log}"
-
-
 # filter out human contamination
 rule extract_nonhuman_contigs:
     input:
-        "results/ordered-contigs-human/{sample}.bam",
+        "results/mapped/ref~human/{sample}.bam",
     output:
         fq1="results/ordered-contigs-nonhuman/{sample}.1.fastq.gz",
         fq2="results/ordered-contigs-nonhuman/{sample}.2.fastq.gz",
