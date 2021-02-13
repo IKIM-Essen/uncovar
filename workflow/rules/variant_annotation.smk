@@ -31,6 +31,5 @@ rule annotate_variants:
         ),
     log:
         "logs/vep/{sample}.log",
-    threads: 4
     wrapper:
         "master/bio/vep/annotate"
