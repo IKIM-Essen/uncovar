@@ -28,7 +28,7 @@ rule kallisto_index:
 rule kallisto_quant:
     input:
         fastq=expand(
-            "results/ordered-contigs-nonhuman/{{sample}}.{read}.fastq.gz", read=[1, 2]
+            "results/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]
         ),
         index="resources/strain-genomes.idx",
     output:

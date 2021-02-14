@@ -141,7 +141,7 @@ def get_reads(wildcards):
     else:
         # other reference (e.g. the covid reference genome, are done with contigs) that do not contain human contaminations
         return expand(
-            "results/ordered-contigs-nonhuman/{sample}.{read}.fastq.gz",
+            "results/nonhuman-reads/{sample}.{read}.fastq.gz",
             read=[1, 2],
             sample=wildcards.sample,
         )

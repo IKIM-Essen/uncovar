@@ -108,13 +108,13 @@ rule extract_nonhuman_contigs:
     input:
         "results/mapped/ref~human/{sample}.bam",
     output:
-        fq1="results/ordered-contigs-nonhuman/{sample}.1.fastq.gz",
-        fq2="results/ordered-contigs-nonhuman/{sample}.2.fastq.gz",
-        sorted=temp("results/ordered-contigs-nonhuman/{sample}.bam"),
-        unsorted=temp("results/ordered-contigs-nonhuman/{sample}.unsorted.bam"),
-        t1=temp("results/ordered-contigs-nonhuman/{sample}.temp1.bam"),
-        t2=temp("results/ordered-contigs-nonhuman/{sample}.temp2.bam"),
-        t3=temp("results/ordered-contigs-nonhuman/{sample}.temp3.bam"),
+        fq1="results/nonhuman-reads/{sample}.1.fastq.gz",
+        fq2="results/nonhuman-reads/{sample}.2.fastq.gz",
+        sorted=temp("results/nonhuman-reads/{sample}.bam"),
+        unsorted=temp("results/nonhuman-reads/{sample}.unsorted.bam"),
+        t1=temp("results/nonhuman-reads/{sample}.temp1.bam"),
+        t2=temp("results/nonhuman-reads/{sample}.temp2.bam"),
+        t3=temp("results/nonhuman-reads/{sample}.temp3.bam"),
     log:
         "logs/filter_human/{sample}.log",
     conda:
@@ -136,7 +136,7 @@ rule species_diversity_after:
     input:
         db="resources/minikraken-8GB",
         reads=expand(
-            "results/ordered-contigs-nonhuman/{{sample}}.{read}.fastq.gz", read=[1, 2]
+            "results/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]
         ),
     output:
         kraken_output="results/species-diversity-nonhuman/{sample}/{sample}.kraken",
