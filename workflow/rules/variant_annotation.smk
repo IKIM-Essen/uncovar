@@ -32,4 +32,4 @@ rule annotate_variants:
     log:
         "logs/vep/{sample}.log",
     wrapper:
-        "master/bio/vep/annotate"
+        "0.72.0/bio/vep/annotate"
