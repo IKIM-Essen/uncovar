@@ -135,9 +135,7 @@ rule extract_nonhuman_contigs:
 rule species_diversity_after:
     input:
         db="resources/minikraken-8GB",
-        reads=expand(
-            "results/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]
-        ),
+        reads=expand("results/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]),
     output:
         kraken_output="results/species-diversity-nonhuman/{sample}/{sample}.kraken",
         report="results/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
