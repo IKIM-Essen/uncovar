@@ -1,7 +1,7 @@
 pepfile: config/pep/config.yaml
 
 # for testing, uncomment to limit to n strain genomes
-limit-strain-genomes: 10
+limit-strain-genomes: 5
 
 variant-calling:
   # false discovery rate to control for

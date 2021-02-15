@@ -7,7 +7,7 @@ rule fastp_pe:
             "results/trimmed/{sample}.2.fastq.gz",
         ],
         html="results/trimmed/{sample}.html",
-        json="results/trimmed/{sample}.json",
+        json="results/trimmed/{sample}.fastp.json",
     log:
         "logs/fastp/{sample}.log",
     params:
