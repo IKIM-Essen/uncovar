@@ -21,7 +21,7 @@ rule align_unpolished_contigs:
         "resources/genomes/main.fasta",
         "results/assembly/{sample}/{sample}.contigs.fa",
     output:
-        temp("results/ordered-contigs/{sample}.bam"),
+        temp("results/aligned-unpolished-contigs/{sample}.bam"),
     log:
         "logs/minimap2/{sample}.log",
     conda:
