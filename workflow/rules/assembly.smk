@@ -4,7 +4,6 @@ rule assembly:
         fastq2="results/nonhuman-reads/{sample}.2.fastq.gz",
     output:
         temp("results/assembly/{sample}/final.contigs.fa"),
-
     log:
         "logs/megahit/{sample}.log",
     params:
@@ -23,7 +22,6 @@ rule align_unpolished_contigs:
         "results/assembly/{sample}/{sample}.contigs.fa",
     output:
         temp("results/ordered-contigs/{sample}.bam"),
-
     log:
         "logs/minimap2/{sample}.log",
     conda:
