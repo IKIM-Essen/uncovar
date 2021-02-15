@@ -2,7 +2,7 @@ rule cat_genomes:
     input:
         get_strain_genomes,
     output:
-        "resources/strain-genomes.fasta",
+        temp("resources/strain-genomes.fasta"),
     log:
         "logs/cat-genomes.log",
     conda:
@@ -15,7 +15,7 @@ rule kallisto_index:
     input:
         fasta="resources/strain-genomes.fasta",
     output:
-        index="resources/strain-genomes.idx",
+        index=temp("resources/strain-genomes.idx"),
     params:
         extra="",
     log:
