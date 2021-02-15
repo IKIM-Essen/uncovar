@@ -116,8 +116,11 @@ def get_assembly_comparisons(bams=True):
 def get_reference(suffix=""):
     def inner(wildcards):
         if wildcards.reference == "main":
-            # return reference genome
+            # return covid reference genome
             return "resources/genomes/main.fasta{suffix}".format(suffix=suffix)
+        elif wildcards.reference == "human":
+            # return human reference genome
+            return "resources/genomes/human-genome.fna.gz"
         else:
             # return assembly result
             return "results/ordered-contigs/{reference}.fasta{suffix}".format(
@@ -125,6 +128,23 @@ def get_reference(suffix=""):
             )
 
     return inner
+
+
+def get_reads(wildcards):
+    if wildcards.reference == "human":
+        # alignment against the human reference genome must be done with trimmed reads, since this alignment is used to generate the ordered, non human contigs
+        return expand(
+            "results/trimmed/{sample}.{read}.fastq.gz",
+            read=[1, 2],
+            sample=wildcards.sample,
+        )
+    else:
+        # other reference (e.g. the covid reference genome, are done with contigs) that do not contain human contaminations
+        return expand(
+            "results/nonhuman-reads/{sample}.{read}.fastq.gz",
+            read=[1, 2],
+            sample=wildcards.sample,
+        )
 
 
 def get_target_events(wildcards):
