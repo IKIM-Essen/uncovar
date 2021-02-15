@@ -3,7 +3,7 @@ rule assembly:
         fastq1="results/nonhuman-reads/{sample}.1.fastq.gz",
         fastq2="results/nonhuman-reads/{sample}.2.fastq.gz",
     output:
-        temp("results/assembly/{sample}/final.contigs.fa"),
+        temp("results/assembly/{sample}/{sample}.contigs.fa"),
     log:
         "logs/megahit/{sample}.log",
     params:
