@@ -1,26 +1,29 @@
 rule assembly:
     input:
-        fastq1="results/trimmed/{sample}.1.fastq.gz",
-        fastq2="results/trimmed/{sample}.2.fastq.gz",
+        fastq1="results/nonhuman-reads/{sample}.1.fastq.gz",
+        fastq2="results/nonhuman-reads/{sample}.2.fastq.gz",
     output:
         temp("results/assembly/{sample}/final.contigs.fa"),
+
     log:
         "logs/megahit/{sample}.log",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
+        sample=lambda wildcards: wildcards.sample,
     threads: 8
     conda:
         "../envs/megahit.yaml"
     shell:
-        "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f) 2> {log}"
+        "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f && mv {params.outdir}/final.contigs.fa {output} ) 2> {log}"
 
 
-rule align_contigs:
+rule align_unpolished_contigs:
     input:
         "resources/genomes/main.fasta",
-        "results/assembly/{sample}/final.contigs.fa",
+        "results/assembly/{sample}/{sample}.contigs.fa",
     output:
         temp("results/ordered-contigs/{sample}.bam"),
+
     log:
         "logs/minimap2/{sample}.log",
     conda:
@@ -29,25 +32,27 @@ rule align_contigs:
         "minimap2 -ax asm5 {input} -o {output} 2> {log}"
 
 
-rule quast:
+rule quast_unpolished_contigs:
     input:
         reference="resources/genomes/main.fasta",
-        bam="results/ordered-contigs/{sample}.bam",
-        fastas="results/assembly/{sample}/final.contigs.fa",
+        bam="results/aligned-unpolished-contigs/{sample}.bam",
+        fastas="results/assembly/{sample}/{sample}.contigs.fa",
     output:
-        directory("results/quast/{sample}"),
+        "results/quast-unpolished/{sample}/report.tsv",
+    params:
+        outdir=lambda x, output: os.path.dirname(output[0]),
     log:
         "logs/quast/{sample}.log",
     conda:
         "../envs/quast.yaml"
     threads: 8
     shell:
-        "quast.py --threads {threads} -o {output} -r {input.reference} --eukaryote --bam {input.bam} {input.fastas} 2> {log}"
+        "quast.py --threads {threads} -o {params.outdir} -r {input.reference} --bam {input.bam} {input.fastas} > {log} 2>&1"
 
 
 rule order_contigs:
     input:
-        contigs="results/assembly/{sample}/final.contigs.fa",
+        contigs="results/assembly/{sample}/{sample}.contigs.fa",
         reference="resources/genomes/main.fasta",
     output:
         temp("results/ordered-contigs-all/{sample}.fasta"),
@@ -95,6 +100,38 @@ rule polish_contigs:
         "../envs/bcftools.yaml"
     shell:
         "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"
+
+
+rule align_polished_contigs:
+    input:
+        "resources/genomes/main.fasta",
+        "results/polished-contigs/{sample}.fasta",
+    output:
+        "results/aligned-polished-contigs/{sample}.bam",
+    log:
+        "logs/minimap2/{sample}.log",
+    conda:
+        "../envs/minimap2.yaml"
+    shell:
+        "minimap2 -ax asm5 {input} -o {output} 2> {log}"
+
+
+rule quast_polished_contigs:
+    input:
+        reference="resources/genomes/main.fasta",
+        bam="results/aligned-polished-contigs/{sample}.bam",
+        fastas="results/polished-contigs/{sample}.fasta",
+    output:
+        "results/quast-polished/{sample}/report.tsv",
+    params:
+        outdir=lambda x, output: os.path.dirname(output[0]),
+    log:
+        "logs/quast/{sample}.log",
+    conda:
+        "../envs/quast.yaml"
+    threads: 8
+    shell:
+        "quast.py --threads {threads} -o {params.outdir} -r {input.reference} --bam {input.bam} {input.fastas} > {log} 2>&1"
 
 
 # TODO blast smaller contigs to determine contamination?
