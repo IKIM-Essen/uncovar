@@ -62,14 +62,18 @@ rule species_diversity_before:
         db="resources/minikraken-8GB",
         reads=expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
     output:
-        classified_reads=temp(expand(
-            "results/species-diversity/{{sample}}/{{sample}}_{read}.classified.fasta",
-            read=[1, 2],
-        )),
-        unclassified_reads=temp(expand(
-            "results/species-diversity/{{sample}}/{{sample}}_{read}.unclassified.fasta",
-            read=[1, 2],
-        )),
+        classified_reads=temp(
+            expand(
+                "results/species-diversity/{{sample}}/{{sample}}_{read}.classified.fasta",
+                read=[1, 2],
+            )
+        ),
+        unclassified_reads=temp(
+            expand(
+                "results/species-diversity/{{sample}}/{{sample}}_{read}.unclassified.fasta",
+                read=[1, 2],
+            )
+        ),
         kraken_output="results/species-diversity/{sample}/{sample}.kraken",
         report="results/species-diversity/{sample}/{sample}.uncleaned.kreport2",
     log:
