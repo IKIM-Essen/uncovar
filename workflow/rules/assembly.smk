@@ -3,7 +3,7 @@ rule assembly:
         fastq1="results/nonhuman-reads/{sample}.1.fastq.gz",
         fastq2="results/nonhuman-reads/{sample}.2.fastq.gz",
     output:
-        "results/assembly/{sample}/{sample}.contigs.fa",
+        temp("results/assembly/{sample}/{sample}.contigs.fa"),
     log:
         "logs/megahit/{sample}.log",
     params:
@@ -21,7 +21,7 @@ rule align_unpolished_contigs:
         "resources/genomes/main.fasta",
         "results/assembly/{sample}/{sample}.contigs.fa",
     output:
-        "results/aligned-unpolished-contigs/{sample}.bam",
+        temp("results/aligned-unpolished-contigs/{sample}.bam"),
     log:
         "logs/minimap2/{sample}.log",
     conda:
@@ -53,7 +53,7 @@ rule order_contigs:
         contigs="results/assembly/{sample}/{sample}.contigs.fa",
         reference="resources/genomes/main.fasta",
     output:
-        "results/ordered-contigs-all/{sample}.fasta",
+        temp("results/ordered-contigs-all/{sample}.fasta"),
     log:
         "logs/ragoo/{sample}.log",
     params:
@@ -71,7 +71,7 @@ rule filter_chr0:
     input:
         "results/ordered-contigs-all/{sample}.fasta",
     output:
-        "results/ordered-contigs/{sample}.fasta",
+        temp("results/ordered-contigs/{sample}.fasta"),
     log:
         "logs/ragoo/{sample}_cleaned.log",
     threads: 8
