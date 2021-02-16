@@ -1,2 +1,3 @@
 *.smk linguist-language=Python
 Snakefile linguist-language=Python
+!preprocessing/update_sample_sheet.py
