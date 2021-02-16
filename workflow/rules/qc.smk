@@ -62,13 +62,17 @@ rule species_diversity_before:
         db="resources/minikraken-8GB",
         reads=expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
     output:
-        classified_reads=expand(
-            "results/species-diversity/{{sample}}/{{sample}}_{read}.classified.fasta",
-            read=[1, 2],
+        classified_reads=temp(
+            expand(
+                "results/species-diversity/{{sample}}/{{sample}}_{read}.classified.fasta",
+                read=[1, 2],
+            )
         ),
-        unclassified_reads=expand(
-            "results/species-diversity/{{sample}}/{{sample}}_{read}.unclassified.fasta",
-            read=[1, 2],
+        unclassified_reads=temp(
+            expand(
+                "results/species-diversity/{{sample}}/{{sample}}_{read}.unclassified.fasta",
+                read=[1, 2],
+            )
         ),
         kraken_output="results/species-diversity/{sample}/{sample}.kraken",
         report="results/species-diversity/{sample}/{sample}.uncleaned.kreport2",
@@ -85,7 +89,9 @@ rule species_diversity_before:
     conda:
         "../envs/kraken.yaml"
     shell:
-        "(kraken2 --db {input.db} --threads {threads} --unclassified-out {params.unclassified} --classified-out {params.classified} --report {output.report} --gzip-compressed --paired {input.reads} > {output.kraken_output}) 2> {log}"
+        "(kraken2 --db {input.db} --threads {threads} --unclassified-out {params.unclassified} "
+        "--classified-out {params.classified} --report {output.report} --gzip-compressed "
+        "--paired {input.reads} > {output.kraken_output}) 2> {log}"
 
 
 # plot Korna charts BEFORE removing human contamination
@@ -104,7 +110,7 @@ rule create_krona_chart:
 
 
 # filter out human contamination
-rule extract_nonhuman_contigs:
+rule extract_nonhuman_reads:
     input:
         "results/mapped/ref~human/{sample}.bam",
     output:
@@ -145,7 +151,8 @@ rule species_diversity_after:
     conda:
         "../envs/kraken.yaml"
     shell:
-        "(kraken2 --db {input.db} --threads {threads} --report {output.report} --gzip-compressed --paired {input.reads} > {output.kraken_output}) 2> {log}"
+        "(kraken2 --db {input.db} --threads {threads} --report {output.report} --gzip-compressed "
+        "--paired {input.reads} > {output.kraken_output}) 2> {log}"
 
 
 # plotting Krona charts AFTER removing human contamination
