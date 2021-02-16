@@ -14,4 +14,4 @@ rule generate_rki:
         "logs/rki.log",
     threads: 1
     script:
-        "/home/alex/repo/snakemake-workflow-sars-cov2/processing_scripts/generate_rki_output.py"
+        "../scripts/generate_rki_output.py"
