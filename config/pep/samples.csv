@@ -1,4 +1,4 @@
-sample_name,fq1,fq2
-a,/Users/alex/sciebo/Covid-Genom_MiSeq120121/1-13412_S1_L001_R1_001.fastq.gz,/Users/alex/sciebo/Covid-Genom_MiSeq120121/1-13412_S1_L001_R2_001.fastq.gz
-b,.tests/data/ERR4861412_1.fastq.gz,.tests/data/ERR4861412_2.fastq.gz
-c,/Users/alex/sciebo/Covid-Genom_MiSeq120121/2-17070_S2_L001_R1_001.fastq.gz,/Users/alex/sciebo/Covid-Genom_MiSeq120121/2-17070_S2_L001_R2_001.fastq.gz
+sample_name,fq1,fq2,run_id
+E-21-20803,/home/alex/repo/snakemake-workflow-sars-cov2/data/E-21-20803_S17_L001_R1_001.fastq.gz,/home/alex/repo/snakemake-workflow-sars-cov2/data/E-21-20803_S17_L001_R2_001.fastq.gz,2021-02-16
+E-21-20806,/home/alex/repo/snakemake-workflow-sars-cov2/data/E-21-20806_S18_L001_R1_001.fastq.gz,/home/alex/repo/snakemake-workflow-sars-cov2/data/E-21-20806_S18_L001_R2_001.fastq.gz,2021-02-16
+E-21-20810,/home/alex/repo/snakemake-workflow-sars-cov2/data/E-21-20810_S19_L001_R1_001.fastq.gz,/home/alex/repo/snakemake-workflow-sars-cov2/data/E-21-20810_S19_L001_R2_001.fastq.gz,2021-02-16
