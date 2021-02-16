@@ -10,6 +10,16 @@ def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
 
+def get_samples_latest_run():
+    df = pep.sample_table
+    df = df[df["run_id"] == max(df.run_id)]
+    return list(df["sample_name"].values)
+
+
+def get_latest_run_date():
+    return pep.sample_table.run_id.max()
+
+
 def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
     if wildcards.sample.startswith(benchmark_prefix):
         # this is a simulated benchmark sample, do not look up FASTQs in the sample sheet
