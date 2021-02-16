@@ -2,7 +2,7 @@ rule vembrane_filter:
     input:
         "results/annotated-calls/ref~main/{sample}.bcf",
     output:
-        "results/filtered-calls/ref~main/{sample}.{filter}.bcf",
+        temp("results/filtered-calls/ref~main/{sample}.{filter}.bcf"),
     params:
         expression=get_vembrane_expression,
         extra="",
@@ -16,7 +16,9 @@ rule filter_odds:
     input:
         get_filter_odds_input,
     output:
-        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.odds.bcf",
+        temp(
+            "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.odds.bcf"
+        ),
     params:
         events=get_target_events,
     log:
@@ -31,7 +33,9 @@ rule control_fdr:
     input:
         "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.odds.bcf",
     output:
-        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.{vartype}.fdr-controlled.bcf",
+        temp(
+            "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.{vartype}.fdr-controlled.bcf"
+        ),
     params:
         fdr=config["variant-calling"]["fdr"],
         events=get_target_events,

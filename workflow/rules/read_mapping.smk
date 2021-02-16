@@ -42,7 +42,7 @@ rule mark_duplicates:
     input:
         "results/mapped/ref~{reference}/{sample}.bam",
     output:
-        bam="results/dedup/ref~{reference}/{sample}.bam",
+        bam=temp("results/dedup/ref~{reference}/{sample}.bam"),
         metrics="results/qc/dedup/ref~{reference}/{sample}.metrics.txt",
     log:
         "logs/picard/dedup/ref~{reference}/{sample}.log",

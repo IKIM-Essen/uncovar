@@ -6,7 +6,7 @@ rule freebayes:
         samples="results/recal/ref~{reference}/{sample}.bam",
         index="results/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        "results/candidate-calls/ref~{reference}/{sample}.bcf",
+        temp("results/candidate-calls/ref~{reference}/{sample}.bcf"),
     log:
         "logs/freebayes/ref~{reference}/{sample}.log",
     params:
@@ -61,7 +61,7 @@ rule varlociraptor_call:
         obs="results/observations/ref~{reference}/{sample}.bcf",
         scenario="results/scenarios/{sample}.yaml",
     output:
-        "results/calls/ref~{reference}/{sample}.bcf",
+        temp("results/calls/ref~{reference}/{sample}.bcf"),
     log:
         "logs/varlociraptor/call/ref~{reference}/{sample}.log",
     conda:
