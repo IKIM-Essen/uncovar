@@ -21,3 +21,4 @@
 !.travis.yml
 !.tests
 !.tests/data
+!preprocessing/update_sample_sheet.py
