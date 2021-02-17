@@ -1,17 +1,13 @@
 rule generate_rki:
     input:
-        expand(
-            "results/polished-contigs/{sample}.fasta", sample=get_samples_latest_run(),
-        ),
+        get_samples_for_date,
     output:
-        fasta=expand(
-            "results/rki/{date}_uk-essen_rki.fasta", date=get_latest_run_date()
-        ),
-        table=expand(
-            "results/rki/{date}_uk-essen_rki.csv", date=get_latest_run_date()
-        ),
+        fasta="results/rki/{date}_uk-essen_rki.fasta",
+        table="results/rki/{date}_uk-essen_rki.csv",
+    params:
+        min_length=config["rki-output"]["minimum-length"],
     log:
-        "logs/rki.log",
+        "logs/{date}_rki.log",
     threads: 1
     script:
         "../scripts/generate_rki_output.py"
