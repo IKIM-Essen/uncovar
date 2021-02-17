@@ -50,6 +50,7 @@ jobs:
           path: |
             .tests/data
             .tests/resources
+            .tests/.snakemake
           key: ${{ runner.os }}-testdata # TODO update key once we cache more than the data
 
       - name: Download test data
@@ -110,6 +111,7 @@ jobs:
           path: |
             .tests/data
             .tests/resources
+            .tests/.snakemake
           key: ${{ runner.os }}-benchmark-strain-calling # TODO update key once we cache more than the data
       
       - name: Benchmarking the strain calls
@@ -119,7 +121,21 @@ jobs:
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
           args: "benchmark_strain_calling --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
-      
+
+      - name: Get report
+        uses: snakemake/snakemake-github-action@v1.15.0
+        with:
+          directory: .tests
+          snakefile: workflow/Snakefile
+          stagein: mamba install -n snakemake -c conda-forge peppy
+          args: "--report report.zip"
+
+      - name: Upload report
+        uses: actions/upload-artifact@v2
+        with:
+          name: strain-calling-benchmark-report
+          path: .tests/report.zip
+
       - name: Check strain calling
         run: |
           cat .tests/results/benchmarking/strain-calling.csv
@@ -144,6 +160,7 @@ jobs:
           path: |
             .tests/data
             .tests/resources
+            .tests/.snakemake
           key: ${{ runner.os }}-benchmark-assembly # TODO update key once we cache more than the data
       
       - name: Benchmarking the assembly
@@ -153,6 +170,20 @@ jobs:
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
           args: "benchmark_assembly --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
+
+      - name: Get report
+        uses: snakemake/snakemake-github-action@v1.15.0
+        with:
+          directory: .tests
+          snakefile: workflow/Snakefile
+          stagein: mamba install -n snakemake -c conda-forge peppy
+          args: "--report report.zip"
+
+      - name: Upload report
+        uses: actions/upload-artifact@v2
+        with:
+          name: assembly-benchmark-report
+          path: .tests/report.zip
 
       - name: Check assembly
         run: |
