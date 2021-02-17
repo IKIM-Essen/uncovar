@@ -6,13 +6,7 @@ min_length = int(snakemake.params.get("min_length"))
 
 sys.stderr = open(snakemake.log[0], "w")
 sys.stdout = open(snakemake.log[0], "a")
-# today = date.today()
 
-
-# current_date = today.strftime("%Y-%m-%d")
-# input = snakemake.input[0]
-
-# all_final_contigs = os.listdir(in_path)
 length = 0
 
 header2seq = {}
@@ -28,8 +22,6 @@ for file in snakemake.input:
                         length += len(line)
         infile.close()
 
-#outfile = open(out_path + current_date + "_uk-essen_rki.fasta", "a")
-# outtab_path = out_path + current_date + "_uk-essen_rki.csv"
 outtab = open(snakemake.output.table, "a")
 outfile = open(snakemake.output.fasta, "a")
 
