@@ -73,7 +73,7 @@ jobs:
         with:
           directory: .tests
           snakefile: workflow/Snakefile
-          stagein: mamba install -n snakemake -c conda-forge mamba peppy -y
+          stagein: mamba install -n snakemake -c conda-forge peppy -y
           args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
 
       - name: Test report
@@ -106,6 +106,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Cache data
+        id: benchmark-strain-calling
         uses: actions/cache@v2
         with:
           path: |
@@ -113,7 +114,14 @@ jobs:
             .tests/resources
             .tests/.snakemake
           key: ${{ runner.os }}-benchmark-strain-calling # TODO update key once we cache more than the data
-      
+
+      - name: Download test data
+        if: steps.benchmark-strain-calling.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .tests/data
+          curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_1.fastq.gz > .tests/data/ERR4861412_1.fastq.gz
+          curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_2.fastq.gz > .tests/data/ERR4861412_2.fastq.gz
+
       - name: Benchmarking the strain calls
         uses: snakemake/snakemake-github-action@v1.15.0
         with:
@@ -155,6 +163,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Cache data
+        id: benchmark-assembly
         uses: actions/cache@v2
         with:
           path: |
@@ -162,6 +171,13 @@ jobs:
             .tests/resources
             .tests/.snakemake
           key: ${{ runner.os }}-benchmark-assembly # TODO update key once we cache more than the data
+      
+      - name: Download test data
+        if: steps.benchmark-assembly.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .tests/data
+          curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_1.fastq.gz > .tests/data/ERR4861412_1.fastq.gz
+          curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_2.fastq.gz > .tests/data/ERR4861412_2.fastq.gz
       
       - name: Benchmarking the assembly
         uses: snakemake/snakemake-github-action@v1.15.0
