@@ -73,13 +73,13 @@ jobs:
           mkdir -p .tests/resources/genomes
           curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
 
-      # - name: Test workflow
-      #   uses: snakemake/snakemake-github-action@v1.15.0
-      #   with:
-      #     directory: .tests
-      #     snakefile: workflow/Snakefile
-      #     stagein: mamba install -n snakemake -c conda-forge peppy -y
-      #     args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
+      - name: Test workflow
+        uses: snakemake/snakemake-github-action@v1.15.0
+        with:
+          directory: .tests
+          snakefile: workflow/Snakefile
+          stagein: mamba install -n snakemake -c conda-forge peppy -y
+          args: "fastqc --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
 
       # - name: Test report
       #   uses: snakemake/snakemake-github-action@v1.15.0
