@@ -118,7 +118,7 @@ rule pangolin:
     conda:
         "../envs/pangolin.yaml"
     shell:
-        "pangolin {input.contigs} --threads {threads} --outfile {output} > {log} 2>&1"
+        "pangolin {input.contigs} --threads 1 --outfile {output} > {log} 2>&1"
 
 
 rule plot_strains_pangolin:
