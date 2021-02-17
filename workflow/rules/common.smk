@@ -19,13 +19,16 @@ def get_samples_latest_run():
 def get_samples_for_date(wildcards):
     df = pep.sample_table
     df = df[df["run_id"] == wildcards.date]
-    return expand("results/polished-contigs/{sample}.fasta", sample=df["sample_name"].values)
+    return expand(
+        "results/polished-contigs/{sample}.fasta", sample=df["sample_name"].values
+    )
 
 
 def get_all_run_dates():
     sorted_list = list(pep.sample_table["run_id"].unique())
     sorted_list.sort()
     return sorted_list
+
 
 def get_run_date(wildcards):
     return pep.sample_table.loc[wildcards.sample]["run_id"]
