@@ -95,6 +95,32 @@ rule plot_all_strains_kallisto:
         "../notebooks/plot-all-strains-kallisto.py.ipynb"
 
 
+rule update_pangolin_db:
+    output:
+        temp(touch("resources/pangolin-update.done")),
+    log:
+        "logs/pangolin/update.log",
+    conda:
+        "../envs/pangolin.yaml"
+    shell:
+        "(pangolin --update) > {log} 2>&1"
+
+
+rule pangolin:
+    input:
+        contigs="results/polished-contigs/{sample}.fasta",
+        update="resources/pangolin-update.done",
+    output:
+        "results/tables/strain-calls/{sample}.strains.pangolin.csv",
+    log:
+        "logs/pangolin/{sample}.log",
+    threads: 8
+    conda:
+        "../envs/pangolin.yaml"
+    shell:
+        "pangolin {input.contigs} --threads {threads} --outfile {output} > {log} 2>&1"
+
+
 rule plot_strains_pangolin:
     input:
         "results/tables/strain-calls/{sample}.strains.pangolin.csv",
@@ -111,20 +137,6 @@ rule plot_strains_pangolin:
         "../envs/python.yaml"
     notebook:
         "../notebooks/plot-strains-pangolin.py.ipynb"
-
-
-rule pangolin:
-    input:
-        "results/polished-contigs/{sample}.fasta",
-    output:
-        "results/tables/strain-calls/{sample}.strains.pangolin.csv",
-    log:
-        "logs/pangolin/{sample}.log",
-    threads: 8
-    conda:
-        "../envs/pangolin.yaml"
-    shell:
-        "pangolin {input} --outfile {output} > {log} 2>&1"
 
 
 rule plot_all_strains_pangolin:
