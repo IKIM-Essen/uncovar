@@ -3,6 +3,14 @@ pepfile: config/pep/config.yaml
 # for testing, uncomment to limit to n strain genomes
 limit-strain-genomes: 5
 
+data-handling:
+  # path of incoming data
+  incoming: ../incoming/
+  # path to store data in the workflow
+  data: data/
+  # path to archive data from incoming to
+  archive: ../archive/
+
 variant-calling:
   # false discovery rate to control for
   fdr: 0.05
