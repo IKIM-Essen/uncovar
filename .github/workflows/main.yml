@@ -150,13 +150,13 @@ jobs:
           directory: .tests
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
-          args: "--report report.zip"
+          args: "benchmark_strain_calling --report benchmark-strain-calling-report.zip"
 
       - name: Upload report
         uses: actions/upload-artifact@v2
         with:
           name: strain-calling-benchmark-report
-          path: .tests/report.zip
+          path: .tests/benchmark-strain-calling-report.zip
 
       - name: Check strain calling
         run: |
@@ -168,6 +168,7 @@ jobs:
           else
             echo "Strain calling was successful in all cases."
           fi
+
       - name: Change permissions for caching
         run: sudo chmod -R 755 .tests/.snakemake/conda
 
@@ -214,13 +215,13 @@ jobs:
           directory: .tests
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
-          args: "--report report.zip"
+          args: "benchmark_assembly --report benchmark-assembly-report.zip"
 
       - name: Upload report
         uses: actions/upload-artifact@v2
         with:
           name: assembly-benchmark-report
-          path: .tests/report.zip
+          path: .tests/benchmark-assembly-report.zip
 
       - name: Check assembly
         run: |
