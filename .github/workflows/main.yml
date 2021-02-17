@@ -80,7 +80,12 @@ jobs:
           stagein: mamba install -n snakemake -c conda-forge peppy
           args: "--report report.zip"
 
-      
+      - name: Upload report
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-report
+          path: .tests/report.zip
+
       - name: Test workflow (singularity)
         uses: snakemake/snakemake-github-action@v1.15.0
         with:
