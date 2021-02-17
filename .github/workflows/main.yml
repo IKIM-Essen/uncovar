@@ -44,20 +44,23 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Cache data
+        id: cache-data
         uses: actions/cache@v2
         with:
           path: |
             .tests/data
-            .tests/resources/genomes
-          key: "testdata" # TODO update key once we cache more than the data
+            .tests/resources
+          key: ${{ runner.os }}-testdata # TODO update key once we cache more than the data
 
       - name: Download test data
+        if: steps.cache-data.outputs.cache-hit != 'true'
         run: |
           mkdir -p .tests/data
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_1.fastq.gz > .tests/data/ERR4861412_1.fastq.gz
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_2.fastq.gz > .tests/data/ERR4861412_2.fastq.gz
       
       - name: Use smaller reference files for testing
+        if: steps.cache-data.outputs.cache-hit != 'true'
         run: |
           mkdir -p .tests/resources/minikraken-8GB
           curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
