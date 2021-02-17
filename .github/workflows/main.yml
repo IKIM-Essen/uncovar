@@ -8,12 +8,11 @@ on:
     branches:
       - "*"
 
-
 jobs:
   Formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Formatting
         uses: github/super-linter@v3
         env:
@@ -26,7 +25,7 @@ jobs:
   Linting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Lint workflow
         uses: snakemake/snakemake-github-action@v1.15.0
         with:
@@ -35,13 +34,14 @@ jobs:
           stagein: mamba install -n snakemake -c conda-forge peppy
           args: "--lint"
 
+
   Testing:
     runs-on: ubuntu-latest
     needs:
       - Formatting
       - Linting
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
       - name: Cache data
         uses: actions/cache@v2
@@ -88,11 +88,12 @@ jobs:
           stagein: mamba install -n snakemake -c conda-forge peppy
           args: "--use-conda --use-singularity --show-failed-logs --cores 1 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
 
+
   Benchmark-Strain-Calling:
     runs-on: ubuntu-latest
     needs: Testing
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
       - name: Cache data
         uses: actions/cache@v2
@@ -121,11 +122,12 @@ jobs:
             echo "Strain calling was successful in all cases."
           fi
 
+
   Benchmark-Assembly:
     runs-on: ubuntu-latest
     needs: Testing
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
       - name: Cache data
         uses: actions/cache@v2
