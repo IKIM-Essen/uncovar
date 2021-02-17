@@ -103,6 +103,9 @@ jobs:
           stagein: mamba install -n snakemake -c conda-forge peppy
           args: "--use-conda --use-singularity --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
 
+      - name: Change permissions for caching
+        run: sudo chmod -R 755 .tests/.snakemake/conda
+
 
   Benchmark-Strain-Calling:
     runs-on: ubuntu-latest
@@ -165,6 +168,8 @@ jobs:
           else
             echo "Strain calling was successful in all cases."
           fi
+      - name: Change permissions for caching
+        run: sudo chmod -R 755 .tests/.snakemake/conda
 
 
   Benchmark-Assembly:
@@ -227,3 +232,6 @@ jobs:
           else
             echo "Assembly was successful."
           fi
+
+      - name: Change permissions for caching
+        run: sudo chmod -R 755 .tests/.snakemake/conda
