@@ -51,9 +51,9 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: testdata-${{ runner.os }}-${{ hashFiles('**/.snakemake/conda') }}
+          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
           restore-keys: |
-            testdata-${{ runner.os }}-${{ hashFiles('**/.snakemake/conda') }}
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
             testdata-${{ runner.os }}-
             testdata-
 
@@ -121,9 +121,9 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: testdata-benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**/.snakemake/conda') }}
+          key: testdata-benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
           restore-keys: |
-            testdata-benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**/.snakemake/conda') }}
+            testdata-benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
             testdata-benchmark-strain-calling-${{ runner.os }}-
             testdata-benchmark-strain-calling-
             testdata-
@@ -187,9 +187,9 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: testdata-benchmark-assembly-${{ runner.os }}-${{ hashFiles('**/.snakemake/conda') }}
+          key: testdata-benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
           restore-keys: |
-            testdata-benchmark-assembly-${{ runner.os }}-${{ hashFiles('**/.snakemake/conda') }}
+            testdata-benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
             testdata-benchmark-assembly-${{ runner.os }}-
             testdata-benchmark-assembly-
             testdata-
