@@ -44,24 +44,29 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Cache data
-        id: cache-testdata
+        id: testdata
         uses: actions/cache@v2
         with:
           path: |
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: ${{ runner.os }}-testdata # TODO update key once we cache more than the data
+          key: testdata-${{ runner.os }}-${{ hashFiles('**/.snakemake/conda') }}
+          restore-keys: |
+            testdata-${{ runner.os }}-${{ hashFiles('**/.snakemake/conda') }}
+            testdata-${{ runner.os }}-
+            testdata-
+
 
       - name: Download test data
-        if: steps.cache-testdata.outputs.cache-hit != 'true'
+        if: steps.testdata.outputs.cache-hit != 'true'
         run: |
           mkdir -p .tests/data
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_1.fastq.gz > .tests/data/ERR4861412_1.fastq.gz
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_2.fastq.gz > .tests/data/ERR4861412_2.fastq.gz
       
       - name: Use smaller reference files for testing
-        if: steps.cache-testdata.outputs.cache-hit != 'true'
+        if: steps.testdata.outputs.cache-hit != 'true'
         run: |
           mkdir -p .tests/resources/minikraken-8GB
           curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
@@ -113,7 +118,13 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: ${{ runner.os }}-benchmark-strain-calling # TODO update key once we cache more than the data
+          key: testdata-benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**/.snakemake/conda') }}
+          restore-keys: |
+            testdata-benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**/.snakemake/conda') }}
+            testdata-benchmark-strain-calling-${{ runner.os }}-
+            testdata-benchmark-strain-calling-
+            testdata-
+
 
       - name: Download test data
         if: steps.benchmark-strain-calling.outputs.cache-hit != 'true'
@@ -170,7 +181,12 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: ${{ runner.os }}-benchmark-assembly # TODO update key once we cache more than the data
+          key: testdata-benchmark-assembly-${{ runner.os }}-${{ hashFiles('**/.snakemake/conda') }}
+          restore-keys: |
+            testdata-benchmark-assembly-${{ runner.os }}-${{ hashFiles('**/.snakemake/conda') }}
+            testdata-benchmark-assembly-${{ runner.os }}-
+            testdata-benchmark-assembly-
+            testdata-
       
       - name: Download test data
         if: steps.benchmark-assembly.outputs.cache-hit != 'true'
