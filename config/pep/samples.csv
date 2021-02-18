@@ -1,4 +1,2 @@
 sample_name,fq1,fq2,run_id
-E-21-20803,/home/alex/repo/snakemake-workflow-sars-cov2/data/E-21-20803_S17_L001_R1_001.fastq.gz,/home/alex/repo/snakemake-workflow-sars-cov2/data/E-21-20803_S17_L001_R2_001.fastq.gz,2021-02-16
-E-21-20806,/home/alex/repo/snakemake-workflow-sars-cov2/data/E-21-20806_S18_L001_R1_001.fastq.gz,/home/alex/repo/snakemake-workflow-sars-cov2/data/E-21-20806_S18_L001_R2_001.fastq.gz,2021-02-16
-E-21-20810,/home/alex/repo/snakemake-workflow-sars-cov2/data/E-21-20810_S19_L001_R1_001.fastq.gz,/home/alex/repo/snakemake-workflow-sars-cov2/data/E-21-20810_S19_L001_R2_001.fastq.gz,2021-02-16
+a,data/ERR4861412_1.fastq.gz,data/ERR4861412_1.fastq.gz,2021-01-01
