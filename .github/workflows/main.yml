@@ -51,6 +51,7 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
+            .tests/.snakemake/conda
           key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
           restore-keys: |
             testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
