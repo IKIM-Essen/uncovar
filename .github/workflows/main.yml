@@ -60,16 +60,67 @@ jobs:
             testdata-${{ runner.os }}-
             testdata-
 
+      - name: Cache data
+        id: test-data
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/data
+          key: test-data-${{ runner.os }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
+          restore-keys: |
+            test-data-${{ runner.os }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
+            test-data-${{ runner.os }}-
+            test-data-
+            test-
+
+      - name: Cache resources
+        id: test-resources
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/resources
+          key: test-resources-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+          restore-keys: |
+            test-resources-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+            test-resources-${{ runner.os }}-
+            test-resources-
+            test-
+
+      - name: Cache dependencies
+        id: test-dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/.snakemake
+          key: test-dependencies-${{ runner.os }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+          restore-keys: |
+            test-dependencies-${{ runner.os }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            test-dependencies-${{ runner.os }}-
+            test-dependencies-
+            test-
+
+      - name: Cache results
+        id: test-results
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/results
+          key: test-results-${{ runner.os }}-${{ hashFiles('*.tests/results/**.svg') }}
+          restore-keys: |
+            test-results-${{ runner.os }}-${{ hashFiles('*.tests/results/**.svg') }}
+            test-results-${{ runner.os }}-
+            test-results-
+            test-
 
       - name: Download test data
-        if: steps.testdata.outputs.cache-hit != 'true'
+        if: steps.test-data.outputs.cache-hit != 'true'
         run: |
           mkdir -p .tests/data
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_1.fastq.gz > .tests/data/ERR4861412_1.fastq.gz
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_2.fastq.gz > .tests/data/ERR4861412_2.fastq.gz
       
       - name: Use smaller reference files for testing
-        if: steps.testdata.outputs.cache-hit != 'true'
+        if: steps.test-resources.outputs.cache-hit != 'true'
         run: |
           mkdir -p .tests/resources/minikraken-8GB
           curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
