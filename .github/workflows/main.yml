@@ -50,12 +50,13 @@ jobs:
           path: |
             .tests/data
             .tests/resources
+            .test/results
             .tests/.snakemake
-          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
+          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
           restore-keys: |
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-
             testdata-${{ runner.os }}-
             testdata-
 
@@ -75,13 +76,38 @@ jobs:
           mkdir -p .tests/resources/genomes
           curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
 
-      - name: Test workflow
+      - name: Test whole workflow
         uses: snakemake/snakemake-github-action@v1.15.0
         with:
           directory: .tests
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy -y
           args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
+
+      - name: Test input changes
+        uses: snakemake/snakemake-github-action@v1.15.0
+        with:
+          directory: .tests
+          snakefile: workflow/Snakefile
+          stagein: mamba install -n snakemake -c conda-forge peppy -y
+          args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba -R `snakemake --list-input-changes`"
+      
+      - name: Test code changes
+        uses: snakemake/snakemake-github-action@v1.15.0
+        with:
+          directory: .tests
+          snakefile: workflow/Snakefile
+          stagein: mamba install -n snakemake -c conda-forge peppy -y
+          args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba -R `snakemake --list-code-changes`"
+
+      - name: Test params changes
+        uses: snakemake/snakemake-github-action@v1.15.0
+        with:
+          directory: .tests
+          snakefile: workflow/Snakefile
+          stagein: mamba install -n snakemake -c conda-forge peppy -y
+          args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba -R `snakemake --list-params-changes`"
+
 
       - name: Test report
         uses: snakemake/snakemake-github-action@v1.15.0
@@ -131,11 +157,11 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
+          key: benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
           restore-keys: |
-            benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
-            benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-
-            benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-
+            benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
+            benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-
+            benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-
             benchmark-strain-calling-${{ runner.os }}-
             benchmark-strain-calling-
 
@@ -197,11 +223,11 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
+          key: benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
           restore-keys: |
-            benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
-            benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-
-            benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-
+            benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
+            benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-
+            benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-
             benchmark-assembly-${{ runner.os }}-
             benchmark-assembly-
       
