@@ -51,11 +51,11 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
+          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
           restore-keys: |
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}-${{ hashFiles('**.tests/data') }}-
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-
             testdata-${{ runner.os }}-
             testdata-
 
@@ -131,14 +131,13 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
+          key: benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
           restore-keys: |
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
-            testdata-${{ runner.os }}-
-            testdata-
-
+            benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
+            benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-
+            benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-
+            benchmark-strain-calling-${{ runner.os }}-
+            benchmark-strain-calling-
 
       - name: Download test data
         if: steps.benchmark-strain-calling.outputs.cache-hit != 'true'
@@ -198,13 +197,13 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
+          key: benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
           restore-keys: |
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
-            testdata-${{ runner.os }}-
-            testdata-
+            benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
+            benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}-
+            benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/data') }}-
+            benchmark-assembly-${{ runner.os }}-
+            benchmark-assembly-
       
       - name: Download test data
         if: steps.benchmark-assembly.outputs.cache-hit != 'true'
