@@ -51,8 +51,10 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
+          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources/') }}
           restore-keys: |
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources/') }}
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-
             testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
             testdata-${{ runner.os }}-
             testdata-
@@ -129,11 +131,12 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: testdata-benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
+          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources/') }}
           restore-keys: |
-            testdata-benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
-            testdata-benchmark-strain-calling-${{ runner.os }}-
-            testdata-benchmark-strain-calling-
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources/') }}
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
+            testdata-${{ runner.os }}-
             testdata-
 
 
@@ -195,11 +198,12 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: testdata-benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
+          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources/') }}
           restore-keys: |
-            testdata-benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
-            testdata-benchmark-assembly-${{ runner.os }}-
-            testdata-benchmark-assembly-
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources/') }}
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
+            testdata-${{ runner.os }}-
             testdata-
       
       - name: Download test data
