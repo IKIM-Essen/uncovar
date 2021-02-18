@@ -94,6 +94,7 @@ rule plot_all_strains_kallisto:
     notebook:
         "../notebooks/plot-all-strains-kallisto.py.ipynb"
 
+
 rule pangolin:
     input:
         contigs="results/polished-contigs/{sample}.fasta",
@@ -105,7 +106,7 @@ rule pangolin:
         "logs/pangolin/{sample}.log",
     threads: 8
     params:
-        pango_data_path = lambda x, input: os.path.dirname(input.pangoLEARN)
+        pango_data_path=lambda x, input: os.path.dirname(input.pangoLEARN),
     conda:
         "../envs/pangolin.yaml"
     shell:
