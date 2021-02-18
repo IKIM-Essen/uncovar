@@ -51,9 +51,9 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources/') }}
+          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
           restore-keys: |
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources/') }}
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
             testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-
             testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
             testdata-${{ runner.os }}-
@@ -131,9 +131,9 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources/') }}
+          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
           restore-keys: |
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources/') }}
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
             testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-
             testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
             testdata-${{ runner.os }}-
@@ -198,9 +198,9 @@ jobs:
             .tests/data
             .tests/resources
             .tests/.snakemake
-          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources/') }}
+          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
           restore-keys: |
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources/') }}
+            testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-${{ hashFiles('**.tests/resources') }}
             testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}-${{ hashFiles('**.tests/data') }}-
             testdata-${{ runner.os }}-${{ hashFiles('**.tests/.snakemake/conda') }}
             testdata-${{ runner.os }}-
