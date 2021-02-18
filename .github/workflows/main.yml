@@ -44,34 +44,16 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Cache data
-        id: testdata
-        uses: actions/cache@v2
-        with:
-          path: |
-            .tests/data
-            .tests/resources
-            .test/results
-            .tests/.snakemake
-          key: testdata-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
-          restore-keys: |
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-
-            testdata-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-
-            testdata-${{ runner.os }}-
-            testdata-
-
-      - name: Cache data
         id: test-data
         uses: actions/cache@v2
         with:
           path: |
             .tests/data
-          key: test-data-${{ runner.os }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
+          key: ${{ runner.os }}-test-data-${{ hashFiles('**.tests/data/*.fastq.gz') }}
           restore-keys: |
-            test-data-${{ runner.os }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
-            test-data-${{ runner.os }}-
-            test-data-
-            test-
+            ${{ runner.os }}-test-data-${{ runner.os }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
+            ${{ runner.os }}-test-data-
+            ${{ runner.os }}-test-
 
       - name: Cache resources
         id: test-resources
@@ -79,12 +61,11 @@ jobs:
         with:
           path: |
             .tests/resources
-          key: test-resources-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+          key: ${{ runner.os }}-test-resources-${{ hashFiles('**.tests/resources**taxo.k2d') }}
           restore-keys: |
-            test-resources-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
-            test-resources-${{ runner.os }}-
-            test-resources-
-            test-
+            ${{ runner.os }}-test-resources-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+            ${{ runner.os }}-test-resources-
+            ${{ runner.os }}-test-
 
       - name: Cache dependencies
         id: test-dependencies
@@ -92,12 +73,11 @@ jobs:
         with:
           path: |
             .tests/.snakemake
-          key: test-dependencies-${{ runner.os }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+          key: ${{ runner.os }}-test-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
           restore-keys: |
-            test-dependencies-${{ runner.os }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-            test-dependencies-${{ runner.os }}-
-            test-dependencies-
-            test-
+            ${{ runner.os }}-test-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            ${{ runner.os }}-test-dependencies-
+            ${{ runner.os }}-test-
 
       - name: Cache results
         id: test-results
@@ -105,12 +85,11 @@ jobs:
         with:
           path: |
             .tests/results
-          key: test-results-${{ runner.os }}-${{ hashFiles('*.tests/results/**.svg') }}
+          key: ${{ runner.os }}-test-results-${{ hashFiles('*.tests/results/**.svg') }}
           restore-keys: |
-            test-results-${{ runner.os }}-${{ hashFiles('*.tests/results/**.svg') }}
-            test-results-${{ runner.os }}-
-            test-results-
-            test-
+            ${{ runner.os }}-test-results-${{ hashFiles('*.tests/results/**.svg') }}
+            ${{ runner.os }}-test-results-
+            ${{ runner.os }}-test-
 
       - name: Download test data
         if: steps.test-data.outputs.cache-hit != 'true'
