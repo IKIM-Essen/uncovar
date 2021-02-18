@@ -83,3 +83,24 @@ rule get_human_genome:
         "../envs/unix.yaml"
     shell:
         "curl -SL -o {output} ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.28_GRCh38.p13/GCA_000001405.28_GRCh38.p13_genomic.fna.gz 2> {log}"
+
+rule update_pangoLEARN:
+    output:
+        temp(directory("resources/pangolin/pangoLEARN")),
+    log:
+        "logs/pangolin/update.log",
+    conda:
+        "../envs/svn.yaml"
+    shell:
+        "(svn export https://github.com/cov-lineages/pangoLEARN/trunk/ {output}) > {log} 2>&1"
+
+
+rule update_lineages:
+    output:
+        temp(directory("resources/pangolin/lineages")),
+    log:
+        "logs/pangolin/update.log",
+    conda:
+        "../envs/svn.yaml"
+    shell:
+        "(svn export https://github.com/cov-lineages/lineages/trunk/ {output}) > {log} 2>&1"
