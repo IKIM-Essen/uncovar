@@ -43,6 +43,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Cache dependencies
+        id: test-dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/.snakemake
+          key: ${{ runner.os }}-test-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-test-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            ${{ runner.os }}-test-dependencies-
+
       - name: Cache data
         id: test-data
         uses: actions/cache@v2
@@ -51,9 +62,8 @@ jobs:
             .tests/data
           key: ${{ runner.os }}-test-data-${{ hashFiles('**.tests/data/*.fastq.gz') }}
           restore-keys: |
-            ${{ runner.os }}-test-data-${{ runner.os }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
+            ${{ runner.os }}-test-data-${{ hashFiles('**.tests/data/*.fastq.gz') }}
             ${{ runner.os }}-test-data-
-            ${{ runner.os }}-test-
 
       - name: Cache resources
         id: test-resources
@@ -65,19 +75,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-test-resources-${{ hashFiles('**.tests/resources**taxo.k2d') }}
             ${{ runner.os }}-test-resources-
-            ${{ runner.os }}-test-
-
-      - name: Cache dependencies
-        id: test-dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            .tests/.snakemake
-          key: ${{ runner.os }}-test-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-test-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-            ${{ runner.os }}-test-dependencies-
-            ${{ runner.os }}-test-
 
       - name: Cache results
         id: test-results
@@ -89,7 +86,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-test-results-${{ hashFiles('*.tests/results/**.svg') }}
             ${{ runner.os }}-test-results-
-            ${{ runner.os }}-test-
 
       - name: Download test data
         if: steps.test-data.outputs.cache-hit != 'true'
@@ -179,24 +175,52 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Cache dependencies
+        id: benchmark-strain-calling-dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/.snakemake
+          key: ${{ runner.os }}-benchmark-strain-calling-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-benchmark-strain-calling-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            ${{ runner.os }}-benchmark-strain-calling-dependencies-
+
       - name: Cache data
-        id: benchmark-strain-calling
+        id: benchmark-strain-calling-data
         uses: actions/cache@v2
         with:
           path: |
             .tests/data
-            .tests/resources
-            .tests/.snakemake
-          key: benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
+          key: ${{ runner.os }}-benchmark-strain-calling-data-${{ hashFiles('**.tests/data/*.fastq.gz') }}
           restore-keys: |
-            benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
-            benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-
-            benchmark-strain-calling-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-
-            benchmark-strain-calling-${{ runner.os }}-
-            benchmark-strain-calling-
+            ${{ runner.os }}-benchmark-strain-calling-data-${{ hashFiles('**.tests/data/*.fastq.gz') }}
+            ${{ runner.os }}-benchmark-strain-calling-data-
+
+      - name: Cache resources
+        id: benchmark-strain-calling-resources
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/resources
+          key: ${{ runner.os }}-benchmark-strain-calling-resources-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+          restore-keys: |
+            ${{ runner.os }}-benchmark-strain-calling-resources-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+            ${{ runner.os }}-benchmark-strain-calling-resources-
+
+      - name: Cache results
+        id: benchmark-strain-calling-results
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/results
+          key: ${{ runner.os }}-benchmark-strain-calling-results-${{ hashFiles('*.tests/results/**.svg') }}
+          restore-keys: |
+            ${{ runner.os }}-benchmark-strain-calling-results-${{ hashFiles('*.tests/results/**.svg') }}
+            ${{ runner.os }}-benchmark-strain-calling-results-
 
       - name: Download test data
-        if: steps.benchmark-strain-calling.outputs.cache-hit != 'true'
+        if: steps.benchmark-strain-calling-data.outputs.cache-hit != 'true'
         run: |
           mkdir -p .tests/data
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_1.fastq.gz > .tests/data/ERR4861412_1.fastq.gz
@@ -245,24 +269,52 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Cache dependencies
+        id: benchmark-assembly-dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/.snakemake
+          key: ${{ runner.os }}-benchmark-assembly-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-benchmark-assembly-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            ${{ runner.os }}-benchmark-assembly-dependencies-
+
       - name: Cache data
-        id: benchmark-assembly
+        id: benchmark-assembly-data
         uses: actions/cache@v2
         with:
           path: |
             .tests/data
-            .tests/resources
-            .tests/.snakemake
-          key: benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
+          key: ${{ runner.os }}-benchmark-assembly-data-${{ hashFiles('**.tests/data/*.fastq.gz') }}
           restore-keys: |
-            benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-${{ hashFiles('**.tests/.snakemake/conda/*.yaml') }}
-            benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}-
-            benchmark-assembly-${{ runner.os }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-
-            benchmark-assembly-${{ runner.os }}-
-            benchmark-assembly-
+            ${{ runner.os }}-benchmark-assembly-data-${{ hashFiles('**.tests/data/*.fastq.gz') }}
+            ${{ runner.os }}-benchmark-assembly-data-
+
+      - name: Cache resources
+        id: benchmark-assembly-resources
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/resources
+          key: ${{ runner.os }}-benchmark-assembly-resources-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+          restore-keys: |
+            ${{ runner.os }}-benchmark-assembly-resources-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+            ${{ runner.os }}-benchmark-assembly-resources-
+
+      - name: Cache results
+        id: benchmark-assembly-results
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/results
+          key: ${{ runner.os }}-benchmark-assembly-results-${{ hashFiles('*.tests/results/**.svg') }}
+          restore-keys: |
+            ${{ runner.os }}-benchmark-assembly-results-${{ hashFiles('*.tests/results/**.svg') }}
+            ${{ runner.os }}-benchmark-assembly-results-
       
       - name: Download test data
-        if: steps.benchmark-assembly.outputs.cache-hit != 'true'
+        if: steps.benchmark-assembly-data.outputs.cache-hit != 'true'
         run: |
           mkdir -p .tests/data
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_1.fastq.gz > .tests/data/ERR4861412_1.fastq.gz
