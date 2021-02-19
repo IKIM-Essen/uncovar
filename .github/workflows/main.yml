@@ -226,7 +226,7 @@ jobs:
         run: sudo chmod -R 755 .tests/.snakemake/conda
 
 
-Assembly-Benchmark:
+  Assembly-Benchmark:
     runs-on: ubuntu-latest
     needs:
       - Formatting
