@@ -88,7 +88,6 @@ def get_strain_genomes(wildcards):
         with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
             strain_genomes = pd.read_csv(f, squeeze=True).to_list()
             strain_genomes.append("resources/genomes/main.fasta")
-            print(strain_genomes)
             return expand("{strains}", strains=strain_genomes)
 
     # Case 2: for benchmarking (no strain-calling/genomes in config file)
