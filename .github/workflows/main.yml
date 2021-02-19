@@ -163,7 +163,6 @@ jobs:
     needs:
       - Formatting
       - Linting
-      - Testing
     steps:
       - uses: actions/checkout@v2
 
@@ -232,7 +231,6 @@ jobs:
     needs:
       - Formatting
       - Linting
-      - Testing
     steps:
       - uses: actions/checkout@v2
 
