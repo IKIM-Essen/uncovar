@@ -75,7 +75,7 @@ rule filter_chr0:
     log:
         "logs/ragoo/{sample}_cleaned.log",
     params:
-        sample=lambda wildcards: wildcards.sample
+        sample=lambda wildcards: wildcards.sample,
     conda:
         "../envs/python.yaml"
     script:
