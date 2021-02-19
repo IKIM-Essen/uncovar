@@ -11,6 +11,23 @@ data-handling:
   # path to archive data from incoming to
   archive: ../archive/
 
+RKI-quality-criteria:
+  # minimal length of acceptable reads
+  min-length-reads: 30
+  # average quality of acceptable reads (PHRED)
+  min-PHRED: 20
+  # identity to NC_045512.22 of reconstructed genome
+  min-identity: 0.9
+  # share N in the reconstructed genome
+  max-n: 0.05
+  # minimum local sequencing depth without filtering of PCR duplicates
+  min-depth-with-PCR-duplicates: 20
+  # minimum local sequencing depth after filtering PCR duplicates
+  min-depth-without-PCR-duplicates: 10
+  # minimum informative allele frequency
+  min-allele: 0.9
+  # frameshift-Mutationen
+
 variant-calling:
   # false discovery rate to control for
   fdr: 0.05

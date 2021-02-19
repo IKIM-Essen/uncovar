@@ -13,7 +13,11 @@ rule fastp_pe:
     params:
         # adapters=get_adapters,
         adapters=config["adapters"]["illumina"],
-        extra="",
-    threads: 8
+        extra="--qualified_quality_phred {} ".format(
+            config["RKI-quality-criteria"]["min-PHRED"]
+        ) + "--length_required {}".format(
+            config["RKI-quality-criteria"]["min-length-reads"]
+        ),
+    threads: 2
     wrapper:
         "0.70.0/bio/fastp"
