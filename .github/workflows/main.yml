@@ -70,11 +70,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            .tests/.snakemake
-          key: ${{ runner.os }}-sars-cov2-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            .tests/.snakemake/conda
+          key: ${{ runner.os }}-sars-cov-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-sars-cov2-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-            ${{ runner.os }}-sars-cov2-dependencies-
+            ${{ runner.os }}-sars-cov-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            ${{ runner.os }}-sars-cov-dependencies-
 
       - name: Download test data
         if: steps.test-data.outputs.cache-hit != 'true'
@@ -184,11 +184,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            .tests/.snakemake
-          key: ${{ runner.os }}-sars-cov2-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            .tests/.snakemake/conda
+          key: ${{ runner.os }}-sars-cov-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-sars-cov2-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-            ${{ runner.os }}-sars-cov2-dependencies-
+            ${{ runner.os }}-sars-cov-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            ${{ runner.os }}-sars-cov-dependencies-
 
       - name: Benchmarking the strain calls
         uses: snakemake/snakemake-github-action@v1.15.0
@@ -253,11 +253,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            .tests/.snakemake
-          key: ${{ runner.os }}-sars-cov2-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            .tests/.snakemake/conda
+          key: ${{ runner.os }}-sars-cov-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-sars-cov2-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-            ${{ runner.os }}-sars-cov2-dependencies-
+            ${{ runner.os }}-sars-cov-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            ${{ runner.os }}-sars-cov-dependencies-
            
       - name: Benchmarking the assembly
         uses: snakemake/snakemake-github-action@v1.15.0
