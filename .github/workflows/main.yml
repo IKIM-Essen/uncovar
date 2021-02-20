@@ -51,6 +51,12 @@ jobs:
       - name: Get disk space
         run: sudo df -h
 
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+        shell: bash
+
       - name: Cache results
         if: matrix.rule == 'all'
         id: test-results
@@ -58,9 +64,10 @@ jobs:
         with:
           path: |
             .tests/results
-          key: ${{ runner.os }}-test-results-${{ hashFiles('**results/qc/multiqc.html') }}
+          key: ${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/qc/multiqc.html') }}
           restore-keys: |
-            ${{ runner.os }}-test-results-${{ hashFiles('**results/qc/multiqc.html') }}
+            ${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/qc/multiqc.html') }}
+            ${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-
             ${{ runner.os }}-test-results-
 
       - name: Cache resources
@@ -69,9 +76,10 @@ jobs:
         with:
           path: |
             .tests/resources
-          key: ${{ runner.os }}-test-resources-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+          key: ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
           restore-keys: |
-            ${{ runner.os }}-test-resources-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+            ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+            ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-
             ${{ runner.os }}-test-resources-
 
       - name: Cache data
@@ -80,9 +88,10 @@ jobs:
         with:
           path: |
             .tests/data
-          key: ${{ runner.os }}-test-data-${{ hashFiles('**.tests/data/*.fastq.gz') }}
+          key: ${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
           restore-keys: |
-            ${{ runner.os }}-test-data-${{ hashFiles('**.tests/data/*.fastq.gz') }}
+            ${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
+            ${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-
             ${{ runner.os }}-test-data-
 
       - name: Cache dependencies
@@ -91,9 +100,10 @@ jobs:
         with:
           path: |
             .tests/.snakemake/conda
-          key: ${{ runner.os }}-sars-cov-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+          key: ${{ runner.os }}-sars-cov-dependencies-${{ steps.get-date.outputs.date }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-sars-cov-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            ${{ runner.os }}-sars-cov-dependencies-${{ steps.get-date.outputs.date }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            ${{ runner.os }}-sars-cov-dependencies-${{ steps.get-date.outputs.date }}-
             ${{ runner.os }}-sars-cov-dependencies-
 
       - name: Download test data
