@@ -50,7 +50,7 @@ jobs:
 
       - name: Cache results
         if: matrix.os == all
-        id: test-resources
+        id: test-results
         uses: actions/cache@v2
         with:
           path: |
