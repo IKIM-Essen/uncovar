@@ -147,7 +147,7 @@ jobs:
           directory: .tests
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
-          args: "--report report.zip"
+          args: "${{ matrix.rule }} --report report.zip"
 
       - name: Upload report
         uses: actions/upload-artifact@v2
