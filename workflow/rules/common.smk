@@ -82,12 +82,17 @@ def get_strain_accessions(wildcards):
 
 
 def get_strain_genomes(wildcards):
-    # Case 1: take custom genomes from config
-    custom_genomes = config["strain-calling"].get("genomes", [])
+    # Case 1: take custom genomes from gisaid
+    custom_genomes = config["strain-calling"]["use-gisaid"]
     if custom_genomes:
-        return custom_genomes
+        with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
+            strain_genomes = pd.read_csv(f, squeeze=True).to_list()
+            strain_genomes.append("resources/genomes/main.fasta")
+            print(strain_genomes)
+            return expand("{strains}", strains=strain_genomes)
 
-    # Case 2: take genomes from genbank
+    # Case 2: for benchmarking (no strain-calling/genomes in config file)
+    # take genomes from genbank
     accessions = get_strain_accessions(wildcards)
     return expand("resources/genomes/{accession}.fasta", accession=accessions)
 

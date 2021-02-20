@@ -1,3 +1,21 @@
+checkpoint extract_strain_genomes_from_gisaid:
+    input:
+        metadata=lambda wildcards: config["strain-calling"]["gisaid-metadata"],
+        sequences=lambda wildcards: config["strain-calling"]["gisaid-metafasta"],
+    output:
+        temp("resources/gisaid/strain-genomes.txt"),
+    log:
+        "logs/extract-strain-genomes.log",
+    params:
+        save_strains_to=lambda wildcards: config["strain-calling"][
+            "extracted-strain-genomes"
+        ],
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/extract-strain-genomes.py"
+
+
 rule cat_genomes:
     input:
         get_strain_genomes,
