@@ -44,7 +44,7 @@ jobs:
     
     strategy:
       matrix:
-        rule: [all, benchmark_assembly]
+        rule: [all, benchmark_strain_calling, benchmark_assembly]
     steps:
       - uses: actions/checkout@v2
 
@@ -56,6 +56,18 @@ jobs:
         run: |
           echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
         shell: bash
+
+      - name: Cache resources
+        id: test-resources
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/resources
+          key: ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+          restore-keys: |
+            ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+            ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-
+            ${{ runner.os }}-test-resources-
 
       - name: Cache results
         if: matrix.rule == 'all'
@@ -70,19 +82,8 @@ jobs:
             ${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-
             ${{ runner.os }}-test-results-
 
-      - name: Cache resources
-        id: test-resources
-        uses: actions/cache@v2
-        with:
-          path: |
-            .tests/resources
-          key: ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
-          restore-keys: |
-            ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
-            ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-
-            ${{ runner.os }}-test-resources-
-
       - name: Cache data
+        if: matrix.rule == 'all'
         id: test-data
         uses: actions/cache@v2
         with:
