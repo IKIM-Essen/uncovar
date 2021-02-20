@@ -44,12 +44,12 @@ jobs:
     
     strategy:
       matrix:
-        rule: ['all', 'benchmark_strain_calling', 'benchmark_assembly']
+        rule: [all, benchmark_strain_calling, benchmark_assembly]
     steps:
       - uses: actions/checkout@v2
 
       - name: Cache results
-        if: matrix.os == 'all'
+        if: matrix.rule == 'all'
         id: test-results
         uses: actions/cache@v2
         with:
