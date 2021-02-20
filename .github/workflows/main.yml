@@ -48,6 +48,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Get disk space
+        run: sudo df -h
+
       - name: Cache results
         if: matrix.rule == 'all'
         id: test-results
@@ -107,6 +110,9 @@ jobs:
           curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
           mkdir -p .tests/resources/genomes
           curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
+
+      - name: Get disk space
+        run: sudo df -h
 
       - name: Test workflow
         uses: snakemake/snakemake-github-action@v1.15.0
@@ -173,6 +179,9 @@ jobs:
 
       - name: Change permissions for caching
         run: sudo chmod -R 755 .tests/.snakemake/conda
+
+      - name: Get disk space
+        run: sudo df -h
 
 
   # Strain-Calling-Benchmark:
