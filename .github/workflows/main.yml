@@ -48,6 +48,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Cache results
+        if: matrix.os == all
+        id: test-resources
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/results
+          key: ${{ runner.os }}-test-results-${{ hashFiles('**results/qc/multiqc.html') }}
+          restore-keys: |
+            ${{ runner.os }}-test-results-${{ hashFiles('**results/qc/multiqc.html') }}
+            ${{ runner.os }}-test-results-
+
       - name: Cache resources
         id: test-resources
         uses: actions/cache@v2
@@ -140,7 +152,7 @@ jobs:
       - name: Upload report
         uses: actions/upload-artifact@v2
         with:
-          name: test-report
+          name: report-${{ matrix.rule }}
           path: .tests/report.zip
 
       # - name: Unit test
