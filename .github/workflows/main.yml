@@ -44,7 +44,7 @@ jobs:
     
     strategy:
       matrix:
-        rule: [all, benchmark_strain_calling, benchmark_assembly, all -R `snakemake --list-input-changes`]
+        rule: [all, benchmark_strain_calling, benchmark_assembly, all -R `snakemake --list-input-changes `]
 
     steps:
       - uses: actions/checkout@v2
