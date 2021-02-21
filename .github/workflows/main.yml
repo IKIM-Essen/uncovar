@@ -103,7 +103,7 @@ jobs:
 
       - name: Cache benchmark data
         if: matrix.rule != 'all'
-        id: test-resources
+        id: benchmark-resources
         uses: actions/cache@v2
         with:
           path: |
