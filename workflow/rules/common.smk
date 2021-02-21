@@ -91,6 +91,11 @@ def get_strain_genomes(wildcards):
             print(strain_genomes)
             return expand("{strains}", strains=strain_genomes)
 
+    # Case 2: Get genomes for benchmarking from config
+    strain_genomes = config.get("benchmark-genomes", [])
+    if strain_genomes:
+        return expand("resources/genomes/{strain_genomes}.fasta", strain_genomes=strain_genomes)
+
     # Case 2: for benchmarking (no strain-calling/genomes in config file)
     # take genomes from genbank
     accessions = get_strain_accessions(wildcards)
