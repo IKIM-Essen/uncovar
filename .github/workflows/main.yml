@@ -71,7 +71,6 @@ jobs:
             .tests/results/bwa/index/ref~human.fasta.*
           key: DEVTEST-${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
           restore-keys: |
-            DEVTEST-${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
             DEVTEST-${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-
             DEVTEST-${{ runner.os }}-test-resources-
 
@@ -84,7 +83,6 @@ jobs:
             .tests/results
           key: DEVTEST-${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/qc/multiqc.html') }}
           restore-keys: |
-            DEVTEST-${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/qc/multiqc.html') }}
             DEVTEST-${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-
             DEVTEST-${{ runner.os }}-test-results-
 
@@ -97,7 +95,6 @@ jobs:
             .tests/data
           key: DEVTEST-${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
           restore-keys: |
-            DEVTEST-${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
             DEVTEST-${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-
             DEVTEST-${{ runner.os }}-test-data-
 
@@ -110,7 +107,6 @@ jobs:
             .tests/resources/benchmarking
           key: DEVTEST-${{ runner.os }}-test-benchmark-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources/benchmarking/**/reads.1.fastq.gz') }}
           restore-keys: |
-            DEVTEST-${{ runner.os }}-test-benchmark-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources/benchmarking/**/reads.1.fastq.gz') }}
             DEVTEST-${{ runner.os }}-test-benchmark-${{ steps.get-date.outputs.date }}-
             DEVTEST-${{ runner.os }}-test-benchmark-
 
@@ -122,12 +118,11 @@ jobs:
             .tests/.snakemake/conda
           key: DEVTEST-${{ runner.os }}-sars-cov-dependencies-${{ steps.get-date.outputs.date }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
           restore-keys: |
-            DEVTEST-${{ runner.os }}-sars-cov-dependencies-${{ steps.get-date.outputs.date }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
             DEVTEST-${{ runner.os }}-sars-cov-dependencies-${{ steps.get-date.outputs.date }}-
             DEVTEST-${{ runner.os }}-sars-cov-dependencies-
 
       - name: Download test data
-        if: steps.test-data.outputs.cache-hit != 'true'
+        if: steps.test-data.outputs.cache-hit != 'true' && matrix.rule == 'all'
         run: |
           mkdir -p .tests/data
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_1.fastq.gz > .tests/data/ERR4861412_1.fastq.gz
