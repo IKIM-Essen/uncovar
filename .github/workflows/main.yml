@@ -44,16 +44,13 @@ jobs:
     
     strategy:
       matrix:
-        rule: [all, benchmark_strain_calling, benchmark_assembly]
+        rule: [all, benchmark_strain_calling, benchmark_assembly, all --use-singularity]
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Install tree
         run: sudo apt-get install tree
-
-      - name: Print tree
-        run: tree .tests/ -C
 
       - name: Get date
         id: get-date
@@ -75,7 +72,7 @@ jobs:
             DEVTEST-${{ runner.os }}-test-resources-
 
       - name: Cache results
-        if: matrix.rule == 'all'
+        if: startsWith(matrix.rule, 'all')
         id: test-results
         uses: actions/cache@v2
         with:
@@ -87,7 +84,7 @@ jobs:
             DEVTEST-${{ runner.os }}-test-results-
 
       - name: Cache data
-        if: matrix.rule == 'all'
+        if: startsWith(matrix.rule, 'all')
         id: test-data
         uses: actions/cache@v2
         with:
@@ -99,7 +96,7 @@ jobs:
             DEVTEST-${{ runner.os }}-test-data-
 
       - name: Cache benchmark data
-        if: matrix.rule != 'all'
+        if: startsWith(matrix.rule, 'all') != true
         id: benchmark-resources
         uses: actions/cache@v2
         with:
@@ -122,7 +119,7 @@ jobs:
             DEVTEST-${{ runner.os }}-sars-cov-dependencies-
 
       - name: Download test data
-        if: steps.test-data.outputs.cache-hit != 'true' && matrix.rule == 'all'
+        if: steps.test-data.outputs.cache-hit != 'true' && startsWith(matrix.rule, 'all')
         run: |
           mkdir -p .tests/data
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR486/002/ERR4861412/ERR4861412_1.fastq.gz > .tests/data/ERR4861412_1.fastq.gz
