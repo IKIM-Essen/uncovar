@@ -137,6 +137,7 @@ jobs:
         run: tree .tests/ -C
 
       - name: snakemake --list-input-changes
+        if: startsWith(matrix.rule, 'all')
         uses: snakemake/snakemake-github-action@v1.15.0
         with:
           directory: .tests
@@ -153,6 +154,7 @@ jobs:
           args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
 
       - name: snakemake --list-input-changes
+        if: startsWith(matrix.rule, 'all')
         uses: snakemake/snakemake-github-action@v1.15.0
         with:
           directory: .tests
