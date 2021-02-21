@@ -44,7 +44,7 @@ jobs:
     
     strategy:
       matrix:
-        rule: [all, benchmark_strain_calling -f, benchmark_assembly -f]
+        rule: [all, benchmark_strain_calling -F, benchmark_assembly -F]
 
     steps:
       - uses: actions/checkout@v2
