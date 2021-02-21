@@ -73,8 +73,8 @@ def get_merge_calls_input(suffix):
 def get_strain_accessions(wildcards):
     with checkpoints.get_strain_accessions.get().output[0].open() as f:
         # Get genomes for benchmarking from config
-        strain_genomes = config.get("benchmark-genomes", [])
-        if not strain_genomes:
+        accessions = config.get("benchmark-genomes", [])
+        if not accessions:
             accessions = pd.read_csv(f, squeeze=True)
         try:
             accessions = accessions[: config["limit-strain-genomes"]]
