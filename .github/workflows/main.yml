@@ -44,10 +44,16 @@ jobs:
     
     strategy:
       matrix:
-        rule: [all, benchmark_strain_calling -F, benchmark_assembly -F]
+        rule: [all, benchmark_strain_calling, benchmark_assembly]
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install tree
+        run: sudo apt-get install tree
+
+      - name: Print tree
+        run: tree
 
       - name: Get Date
         id: get-date
@@ -62,11 +68,12 @@ jobs:
           path: |
             .tests/resources/minikraken-8GB
             .tests/resources/genomes/human-genome.fna.gz
-          key: ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+            .tests/results/bwa/index/ref~human.fasta.*
+          key: DEVTEST-${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
           restore-keys: |
-            ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
-            ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-
-            ${{ runner.os }}-test-resources-
+            DEVTEST-${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+            DEVTEST-${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-
+            DEVTEST-${{ runner.os }}-test-resources-
 
       - name: Cache results
         if: matrix.rule == 'all'
@@ -75,11 +82,11 @@ jobs:
         with:
           path: |
             .tests/results
-          key: ${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/qc/multiqc.html') }}
+          key: DEVTEST-${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/qc/multiqc.html') }}
           restore-keys: |
-            ${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/qc/multiqc.html') }}
-            ${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-
-            ${{ runner.os }}-test-results-
+            DEVTEST-${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/qc/multiqc.html') }}
+            DEVTEST-${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-
+            DEVTEST-${{ runner.os }}-test-results-
 
       - name: Cache data
         if: matrix.rule == 'all'
@@ -88,11 +95,24 @@ jobs:
         with:
           path: |
             .tests/data
-          key: ${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
+          key: DEVTEST-${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
           restore-keys: |
-            ${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
-            ${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-
-            ${{ runner.os }}-test-data-
+            DEVTEST-${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
+            DEVTEST-${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-
+            DEVTEST-${{ runner.os }}-test-data-
+
+      - name: Cache benchmark data
+        if: matrix.rule != 'all'
+        id: test-resources
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/resources/benchmarking
+          key: DEVTEST-${{ runner.os }}-test-benchmark-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources/benchmarking/**/reads.1.fastq.gz') }}
+          restore-keys: |
+            DEVTEST-${{ runner.os }}-test-benchmark-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources/benchmarking/**/reads.1.fastq.gz') }}
+            DEVTEST-${{ runner.os }}-test-benchmark-${{ steps.get-date.outputs.date }}-
+            DEVTEST-${{ runner.os }}-test-benchmark-
 
       - name: Cache dependencies
         id: test-dependencies
@@ -100,11 +120,11 @@ jobs:
         with:
           path: |
             .tests/.snakemake/conda
-          key: ${{ runner.os }}-sars-cov-dependencies-${{ steps.get-date.outputs.date }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+          key: DEVTEST-${{ runner.os }}-sars-cov-dependencies-${{ steps.get-date.outputs.date }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-sars-cov-dependencies-${{ steps.get-date.outputs.date }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-            ${{ runner.os }}-sars-cov-dependencies-${{ steps.get-date.outputs.date }}-
-            ${{ runner.os }}-sars-cov-dependencies-
+            DEVTEST-${{ runner.os }}-sars-cov-dependencies-${{ steps.get-date.outputs.date }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+            DEVTEST-${{ runner.os }}-sars-cov-dependencies-${{ steps.get-date.outputs.date }}-
+            DEVTEST-${{ runner.os }}-sars-cov-dependencies-
 
       - name: Download test data
         if: steps.test-data.outputs.cache-hit != 'true'
@@ -130,29 +150,11 @@ jobs:
           args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
 
       # - name: Test input changes
-      #   uses: snakemake/snakemake-github-action@v1.15.0
-      #   with:
-      #     directory: .tests
-      #     snakefile: workflow/Snakefile
-      #     stagein: mamba install -n snakemake -c conda-forge peppy -y
-      #     args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba -R `snakemake --list-input-changes`"
-      
+      #     args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba -R `snakemake --list-input-changes`"      
       # - name: Test code changes
-      #   uses: snakemake/snakemake-github-action@v1.15.0
-      #   with:
-      #     directory: .tests
-      #     snakefile: workflow/Snakefile
-      #     stagein: mamba install -n snakemake -c conda-forge peppy -y
       #     args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba -R `snakemake --list-code-changes`"
-
       # - name: Test params changes
-      #   uses: snakemake/snakemake-github-action@v1.15.0
-      #   with:
-      #     directory: .tests
-      #     snakefile: workflow/Snakefile
-      #     stagein: mamba install -n snakemake -c conda-forge peppy -y
       #     args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba -R `snakemake --list-params-changes`"
-
 
       - name: Test report
         uses: snakemake/snakemake-github-action@v1.15.0
@@ -169,22 +171,12 @@ jobs:
           path: .tests/report.zip
 
       # - name: Unit test
-      #   uses: snakemake/snakemake-github-action@v1.15.0
-      #   with:
-      #     directory: .tests
-      #     snakefile: workflow/Snakefile
-      #     stagein: mamba install -n snakemake -c conda-forge peppy
       #     args: "--generate-unit-tests"
 
       # - name: Test workflow (singularity)
-      #   uses: snakemake/snakemake-github-action@v1.15.0
-      #   with:
-      #     directory: .tests
-      #     snakefile: workflow/Snakefile
-      #     stagein: mamba install -n snakemake -c conda-forge peppy
       #     args: "--use-conda --use-singularity --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
       
-      - name: Check strain calling
+      - name: Check strain calling bechmark
         if: matrix.rule == 'benchmark_strain_calling'
         run: |
           cat .tests/results/benchmarking/strain-calling.csv
@@ -196,7 +188,7 @@ jobs:
             echo "Strain calling was successful in all cases."
           fi
 
-      - name: Check assembly
+      - name: Check assembly bechmark
         if: matrix.rule == 'benchmark_assembly'
         run: |
           cat .tests/results/benchmarking/assembly.csv
@@ -207,9 +199,9 @@ jobs:
           else
             echo "Assembly was successful."
           fi
-          
-      - name: Change permissions for caching
-        run: sudo chmod -R 755 .tests/.snakemake/conda
 
       - name: Print disk space
         run: sudo df -h
+
+      - name: Change permissions for caching
+        run: sudo chmod -R 755 .tests/.snakemake/conda
