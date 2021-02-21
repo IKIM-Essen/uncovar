@@ -45,11 +45,9 @@ jobs:
     strategy:
       matrix:
         rule: [all, benchmark_strain_calling, benchmark_assembly]
+        
     steps:
       - uses: actions/checkout@v2
-
-      - name: Get disk space
-        run: sudo df -h
 
       - name: Get Date
         id: get-date
@@ -121,9 +119,6 @@ jobs:
           curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
           mkdir -p .tests/resources/genomes
           curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
-
-      - name: Get disk space
-        run: sudo df -h
 
       - name: Test rule ${{ matrix.rule }}
         uses: snakemake/snakemake-github-action@v1.15.0
@@ -215,142 +210,5 @@ jobs:
       - name: Change permissions for caching
         run: sudo chmod -R 755 .tests/.snakemake/conda
 
-      - name: Get disk space
+      - name: Print disk space
         run: sudo df -h
-
-
-
-  # Strain-Calling-Benchmark:
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - Formatting
-  #     - Linting
-  #   steps:
-  #     - uses: actions/checkout@v2
-
-  #     - name: Cache resources
-  #       id: benchmark-strain-calling-resources
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: |
-  #           .tests/resources
-  #         key: ${{ runner.os }}-benchmark-resources-${{ hashFiles('**.tests/resources**taxo.k2d') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-benchmark-resources-${{ hashFiles('**.tests/resources**taxo.k2d') }}
-  #           ${{ runner.os }}-benchmark-resources-
-
-
-  #     - name: Cache dependencies
-  #       id: benchmark-strain-calling-dependencies
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: |
-  #           .tests/.snakemake/conda
-  #         key: ${{ runner.os }}-sars-cov-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-sars-cov-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-  #           ${{ runner.os }}-sars-cov-dependencies-
-
-  #     - name: Benchmarking the strain calls
-  #       uses: snakemake/snakemake-github-action@v1.15.0
-  #       with:
-  #         directory: .tests
-  #         snakefile: workflow/Snakefile
-  #         stagein: mamba install -n snakemake -c conda-forge peppy
-  #         args: "benchmark_strain_calling --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
-
-  #     - name: Get report
-  #       uses: snakemake/snakemake-github-action@v1.15.0
-  #       with:
-  #         directory: .tests
-  #         snakefile: workflow/Snakefile
-  #         stagein: mamba install -n snakemake -c conda-forge peppy
-  #         args: "benchmark_strain_calling --report benchmark-strain-calling-report.zip"
-
-  #     - name: Upload report
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: strain-calling-benchmark-report
-  #         path: .tests/benchmark-strain-calling-report.zip
-
-  #     - name: Check strain calling
-  #       run: |
-  #         cat .tests/results/benchmarking/strain-calling.csv
-  #         if (tail -n+2 .tests/results/benchmarking/strain-calling.csv | grep mismatch > /dev/null)
-  #         then
-  #           echo "Strain calling failed in some cases (see above)."
-  #           exit 1
-  #         else
-  #           echo "Strain calling was successful in all cases."
-  #         fi
-
-  #     - name: Change permissions for caching
-  #       run: sudo chmod -R 755 .tests/.snakemake/conda
-
-
-  # Assembly-Benchmark:
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - Formatting
-  #     - Linting
-  #   steps:
-  #     - uses: actions/checkout@v2
-
-  #     - name: Cache resources
-  #       id: benchmark-assembly-resources
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: |
-  #           .tests/resources
-  #         key: ${{ runner.os }}-benchmark-resources-${{ hashFiles('**.tests/resources**taxo.k2d') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-benchmark-resources-${{ hashFiles('**.tests/resources**taxo.k2d') }}
-  #           ${{ runner.os }}-benchmark-resources-
-
-
-  #     - name: Cache dependencies
-  #       id: benchmark-assembly-dependencies
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: |
-  #           .tests/.snakemake/conda
-  #         key: ${{ runner.os }}-sars-cov-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-sars-cov-dependencies-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-  #           ${{ runner.os }}-sars-cov-dependencies-
-           
-  #     - name: Benchmarking the assembly
-  #       uses: snakemake/snakemake-github-action@v1.15.0
-  #       with:
-  #         directory: .tests
-  #         snakefile: workflow/Snakefile
-  #         stagein: mamba install -n snakemake -c conda-forge peppy
-  #         args: "benchmark_assembly --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
-
-  #     - name: Get report
-  #       uses: snakemake/snakemake-github-action@v1.15.0
-  #       with:
-  #         directory: .tests
-  #         snakefile: workflow/Snakefile
-  #         stagein: mamba install -n snakemake -c conda-forge peppy
-  #         args: "benchmark_assembly --report benchmark-assembly-report.zip"
-
-  #     - name: Upload report
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: assembly-benchmark-report
-  #         path: .tests/benchmark-assembly-report.zip
-
-  #     - name: Check assembly
-  #       run: |
-  #         cat .tests/results/benchmarking/assembly.csv
-  #         if [[ $(tail -1 .tests/results/benchmarking/assembly.csv) < 0.8 ]]
-  #         then
-  #           echo "Assembly bechmarking failed. There is at least one assembly where the contigs do not cover 80% of the original sequence (see above)."
-  #           exit 1
-  #         else
-  #           echo "Assembly was successful."
-  #         fi
-
-  #     - name: Change permissions for caching
-  #       run: sudo chmod -R 755 .tests/.snakemake/conda
