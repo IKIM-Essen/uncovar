@@ -31,7 +31,7 @@ jobs:
         with:
           directory: .
           snakefile: workflow/Snakefile
-          stagein: mamba install -n snakemake -c conda-forge peppy
+          # stagein: mamba install -n snakemake -c conda-forge peppy
           args: "--lint"
 
 
