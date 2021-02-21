@@ -60,7 +60,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            .tests/resources
+            .tests/resources/minikraken-8GB
+            .tests/resources/genomes/human-genome.fna.gz
           key: ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
           restore-keys: |
             ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
