@@ -132,6 +132,8 @@ def get_reference(suffix=""):
         elif wildcards.reference == "human":
             # return human reference genome
             return "resources/genomes/human-genome.fna.gz"
+        elif wildcards.reference == "main+human":
+            return "resources/genomes/main-and-human-genome.fna.gz"
         else:
             # return assembly result
             return "results/ordered-contigs/{reference}.fasta{suffix}".format(
@@ -142,7 +144,7 @@ def get_reference(suffix=""):
 
 
 def get_reads(wildcards):
-    if wildcards.reference == "human":
+    if wildcards.reference == "human" or wildcards.reference == "main+human":
         # alignment against the human reference genome must be done with trimmed reads, since this alignment is used to generate the ordered, non human contigs
         return expand(
             "results/trimmed/{sample}.{read}.fastq.gz",
