@@ -14,9 +14,9 @@ rule fastp_pe:
         # adapters=get_adapters,
         adapters=config["adapters"]["illumina"],
         extra="--qualified_quality_phred {} ".format(
-            config["RKI-quality-criteria"]["min-PHRED"]
+            config["RKI-quality-criteria"]["illumina"]["min-PHRED"]
         ) + "--length_required {}".format(
-            config["RKI-quality-criteria"]["min-length-reads"]
+            config["RKI-quality-criteria"]["illumina"]["min-length-reads"]
         ),
     threads: 2
     wrapper:
