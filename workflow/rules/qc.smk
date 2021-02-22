@@ -35,6 +35,8 @@ rule multiqc:
         expand(
             "results/qc/samtools_flagstat/{sample}.bam.flagstat", sample=get_samples()
         ),
+        expand("results/qc/dedup/ref~main/{sample}.metrics.txt", sample=get_samples()),
+        expand("logs/kallisto_quant/{sample}.log", sample=get_samples()),
     output:
         "results/qc/multiqc.html",
     params:
