@@ -137,7 +137,6 @@ rule extract_nonhuman_reads:
         samtools sort  -@ {threads} -n {output.unsorted} -o {output.sorted} >> {log} 2>&1
         samtools fastq -@ {threads} {output.sorted} -1 {output.fq1} -2 {output.fq2} >> {log} 2>&1
         """
-        
 
 
 # analysis of species diversity present AFTER removing human contamination
@@ -177,6 +176,7 @@ rule create_krona_chart_after:
 
 # TODO Alexander and Thomas: add rules to detect contamination and perform QC
 
+
 rule combine_references:
     input:
         "resources/genomes/main.fasta",
@@ -184,7 +184,7 @@ rule combine_references:
     output:
         "resources/genomes/main-and-human-genome.fna.gz",
     log:
-        "../logs/combine-reference-genomes.log"
+        "../logs/combine-reference-genomes.log",
     conda:
         "../envs/unix.yaml"
     shell:
