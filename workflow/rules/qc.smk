@@ -189,4 +189,3 @@ rule create_krona_chart_after:
 
 
 # TODO Alexander and Thomas: add rules to detect contamination and perform QC
-
