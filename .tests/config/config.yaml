@@ -2,6 +2,12 @@ pepfile: config/pep/config.yaml
 
 # for testing, uncomment to limit to n strain genomes
 limit-strain-genomes: 5
+benchmark-genomes:
+  - MT971460
+  - MT810976
+  - MW184368
+  - MT470120
+  - MT451810
 
 data-handling:
   # path of incoming data
