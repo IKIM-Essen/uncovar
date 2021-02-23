@@ -128,7 +128,7 @@ rule combine_references:
 # filter out human contamination
 rule extract_nonhuman_reads:
     input:
-        "results/mapped/ref~main+human/{sample}.bam",
+        "results/mapped/ref~human/{sample}.bam",
     output:
         fq1="results/nonhuman-reads/{sample}.1.fastq.gz",
         fq2="results/nonhuman-reads/{sample}.2.fastq.gz",
