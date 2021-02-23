@@ -74,7 +74,8 @@ rule filter_chr0:
         temp("results/ordered-contigs/{sample}.fasta"),
     log:
         "logs/ragoo/{sample}_cleaned.log",
-    threads: 8
+    params:
+        sample=lambda wildcards: wildcards.sample,
     conda:
         "../envs/python.yaml"
     script:
@@ -129,7 +130,7 @@ rule quast_polished_contigs:
         "../envs/quast.yaml"
     threads: 8
     shell:
-        "quast.py --threads {threads} -o {params.outdir} -r {input.reference} --bam {input.bam} {input.fastas} > {log} 2>&1"
+        "quast.py --min-contig 1 --threads {threads} -o {params.outdir} -r {input.reference} --bam {input.bam} {input.fastas} > {log} 2>&1"
 
 
 # TODO blast smaller contigs to determine contamination?
