@@ -20,6 +20,7 @@ include: "rules/variant_annotation.smk"
 include: "rules/variant_filtration.smk"
 include: "rules/variant_report.smk"
 include: "rules/benchmarking.smk"
+include: "rules/generate_output.smk"
 
 
 rule all:
