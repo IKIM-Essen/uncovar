@@ -6,6 +6,7 @@ import pandas as pd
 from os import path
 from typing import List
 
+
 def get_identity(quast_report_paths: List[str]) -> dict:
     """Extracts genome fraction form quast reports
 
@@ -20,20 +21,23 @@ def get_identity(quast_report_paths: List[str]) -> dict:
 
     for report_path in quast_report_paths:
         # extract sample name
-        sample = path.dirname(report_path).split('/')[-1]
-        
+        sample = path.dirname(report_path).split("/")[-1]
+
         # load report
-        report_df = pd.read_csv(report_path, delimiter="\t", index_col=0, squeeze=True, names=["value"])
+        report_df = pd.read_csv(
+            report_path, delimiter="\t", index_col=0, squeeze=True, names=["value"]
+        )
 
         # select genome fraction (%)
-        fraction = float(report_df.at['Genome fraction (%)'])/100
+        fraction = float(report_df.at["Genome fraction (%)"]) / 100
 
         # store in dict
         identity_dict[sample] = fraction
-    
+
     return identity_dict
 
-def get_n_share(polished_contig_paths: List[str])-> dict:
+
+def get_n_share(polished_contig_paths: List[str]) -> dict:
     """Extracts share of Ns in given contigs.
 
     Args:
@@ -47,20 +51,23 @@ def get_n_share(polished_contig_paths: List[str])-> dict:
     seq_dict = {}
 
     for contig_path in polished_contig_paths:
-        with  open(contig_path, "r") as handle:
+        with open(contig_path, "r") as handle:
             for line in handle.read().splitlines():
                 if line.startswith(">"):
-                    key = line.replace(">","").split(" ")[0].split(".")[0]
+                    key = line.replace(">", "").split(" ")[0].split(".")[0]
                     seq_dict[key] = ""
                 else:
                     seq_dict[key] += line
-    
+
     for key, value in seq_dict.items():
-        n_share_dict[key] = value.count('N') / len(value)
+        n_share_dict[key] = value.count("N") / len(value)
 
     return n_share_dict
 
-def filter_and_save(identity: dict, n_share: dict, min_identity: float, max_n: float, save_path: str):
+
+def filter_and_save(
+    identity: dict, n_share: dict, min_identity: float, max_n: float, save_path: str
+):
     """Filters and saves sample names
 
     Args:
@@ -72,18 +79,21 @@ def filter_and_save(identity: dict, n_share: dict, min_identity: float, max_n: f
     """
 
     # aggregate all result into one df
-    agg_df = pd.DataFrame({"identity" : identity, "n_share" : n_share})
+    agg_df = pd.DataFrame({"identity": identity, "n_share": n_share})
 
     # print agg_df to stderr for logging
     print(agg_df, file=sys.stderr)
 
     # filter this accordingly to the given params
-    filtered_df = agg_df[(agg_df["identity"] > min_identity) & (agg_df["n_share"] < max_n)]
+    filtered_df = agg_df[
+        (agg_df["identity"] > min_identity) & (agg_df["n_share"] < max_n)
+    ]
 
     # save accepted samples
     with open(save_path, "w") as snakemake_output:
         for sample in filtered_df.index.values:
             snakemake_output.write("%s\n" % sample)
+
 
 identity_dict = get_identity(snakemake.input.quast_polished_contigs)
 n_share_dict = get_n_share(snakemake.input.polished_contigs)
