@@ -35,6 +35,8 @@ rule multiqc:
         expand(
             "results/qc/samtools_flagstat/{sample}.bam.flagstat", sample=get_samples()
         ),
+        expand("results/qc/dedup/ref~main/{sample}.metrics.txt", sample=get_samples()),
+        expand("logs/kallisto_quant/{sample}.log", sample=get_samples()),
     output:
         "results/qc/multiqc.html",
     params:
@@ -109,10 +111,24 @@ rule create_krona_chart:
         "ktImportTaxonomy -m 3 -t 5 -tax {input.taxonomy_database} -o {output} {input} 2> {log}"
 
 
+rule combine_references:
+    input:
+        "resources/genomes/main.fasta",
+        "resources/genomes/human-genome.fna.gz",
+    output:
+        "resources/genomes/main-and-human-genome.fna.gz",
+    log:
+        "../logs/combine-reference-genomes.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "zcat -f {input} > {output}"
+
+
 # filter out human contamination
 rule extract_nonhuman_reads:
     input:
-        "results/mapped/ref~human/{sample}.bam",
+        "results/mapped/ref~main+human/{sample}.bam",
     output:
         fq1="results/nonhuman-reads/{sample}.1.fastq.gz",
         fq2="results/nonhuman-reads/{sample}.2.fastq.gz",
@@ -121,6 +137,7 @@ rule extract_nonhuman_reads:
         t1=temp("results/nonhuman-reads/{sample}.temp1.bam"),
         t2=temp("results/nonhuman-reads/{sample}.temp2.bam"),
         t3=temp("results/nonhuman-reads/{sample}.temp3.bam"),
+        t4=temp("results/nonhuman-reads/{sample}.temp4.bam"),
     log:
         "logs/filter_human/{sample}.log",
     conda:
@@ -131,7 +148,8 @@ rule extract_nonhuman_reads:
         (samtools view  -@ {threads} -u -f 4 -F 264 {input} > {output.t1}) 2> {log}
         (samtools view  -@ {threads} -u -f 8 -F 260 {input} > {output.t2}) 2>> {log}
         (samtools view  -@ {threads} -u -f 12 -F 256 {input} > {output.t3}) 2>> {log}
-        samtools merge -@ {threads} -n {output.unsorted} {output.t1} {output.t2} {output.t3} >> {log} 2>&1
+        (samtools view  -@ {threads} -h -f 2 -F 12 {input} | grep 'NC_045512.2' | samtools view -u > {output.t4}) 2> {log}
+        samtools merge -@ {threads} -n {output.unsorted} {output.t1} {output.t2} {output.t3} {output.t4} >> {log} 2>&1
         samtools sort  -@ {threads} -n {output.unsorted} -o {output.sorted} >> {log} 2>&1
         samtools fastq -@ {threads} {output.sorted} -1 {output.fq1} -2 {output.fq2} >> {log} 2>&1
         """

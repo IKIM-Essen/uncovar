@@ -84,7 +84,10 @@ def get_merge_calls_input(suffix):
 
 def get_strain_accessions(wildcards):
     with checkpoints.get_strain_accessions.get().output[0].open() as f:
-        accessions = pd.read_csv(f, squeeze=True)
+        # Get genomes for benchmarking from config
+        accessions = config.get("benchmark-genomes", [])
+        if not accessions:
+            accessions = pd.read_csv(f, squeeze=True)
         try:
             accessions = accessions[: config["limit-strain-genomes"]]
         except KeyError:
@@ -94,12 +97,16 @@ def get_strain_accessions(wildcards):
 
 
 def get_strain_genomes(wildcards):
-    # Case 1: take custom genomes from config
-    custom_genomes = config["strain-calling"].get("genomes", [])
+    # Case 1: take custom genomes from gisaid
+    custom_genomes = config["strain-calling"]["use-gisaid"]
     if custom_genomes:
-        return custom_genomes
+        with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
+            strain_genomes = pd.read_csv(f, squeeze=True).to_list()
+            strain_genomes.append("resources/genomes/main.fasta")
+            return expand("{strains}", strains=strain_genomes)
 
-    # Case 2: take genomes from genbank
+    # Case 2: for benchmarking (no strain-calling/genomes in config file)
+    # take genomes from genbank
     accessions = get_strain_accessions(wildcards)
     return expand("resources/genomes/{accession}.fasta", accession=accessions)
 
@@ -139,6 +146,8 @@ def get_reference(suffix=""):
         elif wildcards.reference == "human":
             # return human reference genome
             return "resources/genomes/human-genome.fna.gz"
+        elif wildcards.reference == "main+human":
+            return "resources/genomes/main-and-human-genome.fna.gz"
         else:
             # return assembly result
             return "results/ordered-contigs/{reference}.fasta{suffix}".format(
@@ -149,7 +158,7 @@ def get_reference(suffix=""):
 
 
 def get_reads(wildcards):
-    if wildcards.reference == "human":
+    if wildcards.reference == "human" or wildcards.reference == "main+human":
         # alignment against the human reference genome must be done with trimmed reads, since this alignment is used to generate the ordered, non human contigs
         return expand(
             "results/trimmed/{sample}.{read}.fastq.gz",

@@ -2,6 +2,13 @@ pepfile: config/pep/config.yaml
 
 # for testing, uncomment to limit to n strain genomes
 limit-strain-genomes: 5
+benchmark-genomes:
+  - MT971460
+  - MT810976
+  - MW184368
+  - MT470120
+  - MT451810
+
 
 data-handling:
   # path of incoming data
@@ -26,6 +33,14 @@ variant-calling:
 strain-calling:
   # minimum reported strain fraction after quantification
   min-fraction: 0.02
+  # flag for using gisaid or genbank 
+  use-gisaid: False
+  # path to meta data from GISAID
+  gisaid-metadata: resources/gisaid/metadata_2021-02-09_18-08.tsv
+  # path to sequences fasta from GISAID
+  gisaid-metafasta: resources/gisaid/sequences_2021-02-09_08-13.fasta
+  # paths to store genomes that are extracted from the full GISAID data
+  extracted-strain-genomes: resources/genomes
 
 adapters:
   #  Illumina TruSeq adapters

@@ -1,3 +1,21 @@
+checkpoint extract_strain_genomes_from_gisaid:
+    input:
+        metadata=lambda wildcards: config["strain-calling"]["gisaid-metadata"],
+        sequences=lambda wildcards: config["strain-calling"]["gisaid-metafasta"],
+    output:
+        temp("resources/gisaid/strain-genomes.txt"),
+    log:
+        "logs/extract-strain-genomes.log",
+    params:
+        save_strains_to=lambda wildcards: config["strain-calling"][
+            "extracted-strain-genomes"
+        ],
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/extract-strain-genomes.py"
+
+
 rule cat_genomes:
     input:
         get_strain_genomes,
@@ -95,6 +113,24 @@ rule plot_all_strains_kallisto:
         "../notebooks/plot-all-strains-kallisto.py.ipynb"
 
 
+rule pangolin:
+    input:
+        contigs="results/polished-contigs/{sample}.fasta",
+        pangoLEARN="resources/pangolin/pangoLEARN",
+        lineages="resources/pangolin/lineages",
+    output:
+        "results/tables/strain-calls/{sample}.strains.pangolin.csv",
+    log:
+        "logs/pangolin/{sample}.log",
+    threads: 8
+    params:
+        pango_data_path=lambda x, input: os.path.dirname(input.pangoLEARN),
+    conda:
+        "../envs/pangolin.yaml"
+    shell:
+        "pangolin {input.contigs} --data {params.pango_data_path} --outfile {output} > {log} 2>&1"
+
+
 rule plot_strains_pangolin:
     input:
         "results/tables/strain-calls/{sample}.strains.pangolin.csv",
@@ -111,20 +147,6 @@ rule plot_strains_pangolin:
         "../envs/python.yaml"
     notebook:
         "../notebooks/plot-strains-pangolin.py.ipynb"
-
-
-rule pangolin:
-    input:
-        "results/polished-contigs/{sample}.fasta",
-    output:
-        "results/tables/strain-calls/{sample}.strains.pangolin.csv",
-    log:
-        "logs/pangolin/{sample}.log",
-    threads: 8
-    conda:
-        "../envs/pangolin.yaml"
-    shell:
-        "pangolin {input} --outfile {output} > {log} 2>&1"
 
 
 rule plot_all_strains_pangolin:
