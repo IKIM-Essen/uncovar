@@ -10,12 +10,6 @@ def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
 
-def get_samples_latest_run():
-    df = pep.sample_table
-    df = df[df["run_id"] == max(df.run_id)]
-    return list(df["sample_name"].values)
-
-
 def get_samples_for_date(wildcards):
     df = pep.sample_table
     df = df[df["run_id"] == wildcards.date]
