@@ -18,6 +18,31 @@ data-handling:
   # path to archive data from incoming to
   archive: ../archive/
 
+
+RKI-quality-criteria:
+  illumina:
+    # minimal length of acceptable reads
+    min-length-reads: 30
+    # average quality of acceptable reads (PHRED)
+    min-PHRED: 20
+  ont:
+    # minimal length of acceptable reads
+    min-length-reads: 200
+    # average quality of acceptable reads (PHRED)
+    min-PHRED: 10
+  # identity to NC_045512.22 of reconstructed genome
+  min-identity: 0.9
+  # share N in the reconstructed genome
+  max-n: 0.05
+  # minimum local sequencing depth without filtering of PCR duplicates
+  min-depth-with-PCR-duplicates: 20
+  # minimum local sequencing depth after filtering PCR duplicates
+  min-depth-without-PCR-duplicates: 10
+  # minimum informative allele frequency
+  min-allele: 0.9
+  # frameshift-Mutationen
+
+
 variant-calling:
   # false discovery rate to control for
   fdr: 0.05
@@ -30,6 +55,7 @@ variant-calling:
     low-impact: 'ANN["IMPACT"] in ["LOW", "MODIFIER"]'
     high+moderate-impact: 'ANN["IMPACT"] in ["HIGH", "MODERATE"]'
 
+
 strain-calling:
   # minimum reported strain fraction after quantification
   min-fraction: 0.02
@@ -41,6 +67,7 @@ strain-calling:
   gisaid-metafasta: resources/gisaid/sequences_2021-02-09_08-13.fasta
   # paths to store genomes that are extracted from the full GISAID data
   extracted-strain-genomes: resources/genomes
+
 
 adapters:
   #  Illumina TruSeq adapters
