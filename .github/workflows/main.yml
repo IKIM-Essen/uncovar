@@ -9,7 +9,7 @@ on:
       - "*"
 
 jobs:
-  Cancel previous jobs:
+  Cancel-previous-jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: khan/pull-request-workflow-cancel@1.0.0
