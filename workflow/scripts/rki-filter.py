@@ -29,7 +29,11 @@ def get_identity(quast_report_paths: List[str]) -> dict:
         )
 
         # select genome fraction (%)
-        fraction = float(report_df.at["Genome fraction (%)"]) / 100
+        try:
+            fraction = float(report_df.at["Genome fraction (%)"]) / 100
+        except:
+            # no "Genome fraction (%)" in quast report. Case for not assemblable samples
+            fraction = 0.0
 
         # store in dict
         identity_dict[sample] = fraction
@@ -82,12 +86,23 @@ def filter_and_save(
     agg_df = pd.DataFrame({"identity": identity, "n_share": n_share})
 
     # print agg_df to stderr for logging
+    print("Aggregated data of all samples", file=sys.stderr)
     print(agg_df, file=sys.stderr)
 
     # filter this accordingly to the given params
     filtered_df = agg_df[
         (agg_df["identity"] > min_identity) & (agg_df["n_share"] < max_n)
     ]
+
+    # print filtered to stderr for logging
+    print("", file=sys.stderr)
+    print("Filtered data", file=sys.stderr)
+    print(filtered_df, file=sys.stderr)
+
+    # print accepted samples to stderr for logging
+    print("", file=sys.stderr)
+    print("Accepted samples", file=sys.stderr)
+    print(filtered_df.index.values, file=sys.stderr)
 
     # save accepted samples
     with open(save_path, "w") as snakemake_output:
