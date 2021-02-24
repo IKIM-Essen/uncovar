@@ -139,7 +139,6 @@ rule extract_nonhuman_reads:
         t1=temp("results/nonhuman-reads/{sample}.temp1.bam"),
         t2=temp("results/nonhuman-reads/{sample}.temp2.bam"),
         t3=temp("results/nonhuman-reads/{sample}.temp3.bam"),
-
         t4=temp("results/nonhuman-reads/{sample}.temp4.bam"),
     log:
         "logs/filter_human/{sample}.log",
