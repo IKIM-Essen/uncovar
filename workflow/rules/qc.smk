@@ -146,7 +146,7 @@ rule order_nonhuman_reads:
     output:
         fq1="results/nonhuman-reads/{sample}.1.fastq.gz",
         fq2="results/nonhuman-reads/{sample}.2.fastq.gz",
-        bam_sorted=temp("results/nonhuman-reads/{sample}.sorted.bam")
+        bam_sorted=temp("results/nonhuman-reads/{sample}.sorted.bam"),
     log:
         "logs/order_nonhuman_reads/{sample}.log",
     conda:
@@ -157,7 +157,6 @@ rule order_nonhuman_reads:
         samtools sort  -@ {threads} -n {input} -o {output.bam_sorted} > {log} 2>&1
         samtools fastq -@ {threads} {output.bam_sorted} -1 {output.fq1} -2 {output.fq2} >> {log} 2>&1
         """
-
 
 
 # analysis of species diversity present AFTER removing human contamination
