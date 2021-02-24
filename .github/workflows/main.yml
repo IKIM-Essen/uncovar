@@ -129,7 +129,7 @@ jobs:
             ${{ runner.os }}-sars-cov-test-dependencies-${{ steps.get-date.outputs.date }}-
             ${{ runner.os }}-sars-cov-test-dependencies-
 
-        - name: Cache benchmark dependencies
+      - name: Cache benchmark dependencies
         if: startsWith(matrix.rule, 'all') != true
         id: benchmark-dependencies
         uses: actions/cache@v2
