@@ -10,10 +10,22 @@ def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
 
-def get_samples_latest_run():
+def get_samples_for_date(wildcards):
     df = pep.sample_table
-    df = df[df["run_id"] == max(df.run_id)]
-    return list(df["sample_name"].values)
+    df = df[df["run_id"] == wildcards.date]
+    return expand(
+        "results/polished-contigs/{sample}.fasta", sample=df["sample_name"].values
+    )
+
+
+def get_all_run_dates():
+    sorted_list = list(pep.sample_table["run_id"].unique())
+    sorted_list.sort()
+    return sorted_list
+
+
+def get_run_date(wildcards):
+    return pep.sample_table.loc[wildcards.sample]["run_id"]
 
 
 def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
@@ -134,6 +146,8 @@ def get_reference(suffix=""):
         elif wildcards.reference == "human":
             # return human reference genome
             return "resources/genomes/human-genome.fna.gz"
+        elif wildcards.reference == "main+human":
+            return "resources/genomes/main-and-human-genome.fna.gz"
         else:
             # return assembly result
             return "results/ordered-contigs/{reference}.fasta{suffix}".format(
@@ -144,7 +158,7 @@ def get_reference(suffix=""):
 
 
 def get_reads(wildcards):
-    if wildcards.reference == "human":
+    if wildcards.reference == "human" or wildcards.reference == "main+human":
         # alignment against the human reference genome must be done with trimmed reads, since this alignment is used to generate the ordered, non human contigs
         return expand(
             "results/trimmed/{sample}.{read}.fastq.gz",
