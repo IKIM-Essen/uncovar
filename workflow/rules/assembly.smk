@@ -45,7 +45,7 @@ rule quast_unpolished_contigs:
         "../envs/quast.yaml"
     threads: 8
     shell:
-        "quast.py --threads {threads} -o {params.outdir} -r {input.reference} --bam {input.bam} {input.fastas} > {log} 2>&1"
+        "quast.py --min-contig 1 --threads {threads} -o {params.outdir} -r {input.reference} --bam {input.bam} {input.fastas} > {log} 2>&1"
 
 
 rule order_contigs:

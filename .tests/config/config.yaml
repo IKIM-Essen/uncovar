@@ -72,3 +72,7 @@ strain-calling:
 adapters:
   #  Illumina TruSeq adapters
   illumina: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+
+rki-output:
+# minimum contig length
+  minimum-length: 20000

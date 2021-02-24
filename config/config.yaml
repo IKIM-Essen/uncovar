@@ -63,6 +63,10 @@ strain-calling:
   extracted-strain-genomes: resources/genomes
 
 
+rki-output:
+  # minimum contig length
+  minimum-length: 20000
+
 adapters:
   #  Illumina TruSeq adapters
   illumina: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
