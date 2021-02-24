@@ -128,6 +128,7 @@ rule combine_references:
 # filter out human contamination
 rule extract_nonhuman_reads:
     input:
+        #new
         "results/mapped/ref~main+human/{sample}.bam",
         "results/mapped/ref~main+human/{sample}.bam.bai",
     output:
@@ -149,7 +150,7 @@ rule extract_nonhuman_reads:
         (samtools view  -@ {threads} -u -f 4 -F 264 {input} > {output.t1}) 2> {log}
         (samtools view  -@ {threads} -u -f 8 -F 260 {input} > {output.t2}) 2>> {log}
         (samtools view  -@ {threads} -u -f 12 -F 256 {input} > {output.t3}) 2>> {log}
-        (samtools view -b -@ {threads} -f 2 {input} NC_045512.2 > {output.t4}) 2>> {log}
+        (samtools view -b -@ {threads} -f 1 {input} NC_045512.2 > {output.t4}) 2>> {log}
         samtools merge -@ {threads} -n {output.unsorted} {output.t1} {output.t2} {output.t3} {output.t4} >> {log} 2>&1
         samtools sort  -@ {threads} -n {output.unsorted} -o {output.sorted} >> {log} 2>&1
         samtools fastq -@ {threads} {output.sorted} -1 {output.fq1} -2 {output.fq2} >> {log} 2>&1
