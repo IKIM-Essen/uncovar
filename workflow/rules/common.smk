@@ -15,23 +15,26 @@ def get_samples_for_date(date, filtered=False):
     df = pep.sample_table
     df = df[df["run_id"] == date]
 
+    samples_of_run = list(df["sample_name"].values)
+
     # filter
     if filtered:
         with checkpoints.rki_filter.get(date=date).output[0].open() as f:
-        
-            passend_samples = []
-            samples_of_run = list(df["sample_name"].values)
 
+            passend_samples = []
             for line in f:
                 passend_samples.append(line.strip())
 
-            filtered_samples = [sample for sample in samples_of_run if sample in passend_samples]
+        filtered_samples = [sample for sample in samples_of_run if sample in passend_samples]
 
-            if not filtered_samples:
-                raise ValueError('Filtered samples list is emtpy')
-            return filtered_samples
+        if not filtered_samples:
+            raise ValueError('List of filtered samples is empty. Perhaps no samples of run {} passed the quality criteria.'.format(date))
+
+        return filtered_samples
+    
+    # unfiltered
     else:
-        return df["sample_name"].values
+        return samples_of_run
 
 
 def get_all_run_dates():
