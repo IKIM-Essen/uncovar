@@ -35,7 +35,7 @@ rule bwa_large_index:
     params:
         prefix=lambda w, output: os.path.splitext(output[0])[0],
     log:
-        "logs/{date}/bwa-index/ref~{reference}.log",
+        "logs/bwa-index/ref~{reference}.log",
     resources:
         mem_mb=369000,
     wrapper:
@@ -45,7 +45,7 @@ rule bwa_large_index:
 rule map_reads:
     input:
         reads=get_reads,
-        idx=rules.bwa_index.output,
+        idx=get_bwa_index,
     output:
         temp("results/{date}/mapped/ref~{reference}/{sample}.bam"),
     log:
