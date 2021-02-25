@@ -89,10 +89,10 @@ jobs:
         with:
           path: |
             .tests/results
-          key: ${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/qc/multiqc.html') }}
+          key: ${{ runner.os }}-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/qc/multiqc.html') }}
           restore-keys: |
-            ${{ runner.os }}-test-results-${{ steps.get-date.outputs.date }}-
-            ${{ runner.os }}-test-results-
+            ${{ runner.os }}-results-${{ steps.get-date.outputs.date }}-
+            ${{ runner.os }}-results-
 
       - name: Cache data
         if: startsWith(matrix.rule, 'all')
