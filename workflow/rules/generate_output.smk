@@ -1,18 +1,20 @@
-rule rki_filter:
+checkpoint rki_filter:
     input:
-        quast_polished_contigs=expand(
-            "results/quast-polished/{sample}/report.tsv", sample=get_samples()
+        quast_polished_contigs=lambda wildcards: expand(
+            "results/quast-polished/{sample}/report.tsv",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        polished_contigs=expand(
-            "results/polished-contigs/{sample}.fasta", sample=get_samples()
+        polished_contigs=lambda wildcards: expand(
+            "results/polished-contigs/{sample}.fasta",
+            sample=get_samples_for_date(wildcards.date),
         ),
     output:
-        "results/rki-filter/run.txt",
+        "results/rki-filter/{date}.txt",
     params:
         min_identity=config["RKI-quality-criteria"]["min-identity"],
         max_n=config["RKI-quality-criteria"]["max-n"],
     log:
-        "logs/rki-filter/run.log",
+        "logs/rki-filter/{date}.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -21,7 +23,10 @@ rule rki_filter:
 
 rule generate_rki:
     input:
-        get_samples_for_date,
+        lambda wildcards: expand(
+            "results/polished-contigs/{sample}.fasta",
+            sample=get_samples_for_date(wildcards.date, filtered=True),
+        ),
     output:
         fasta="results/rki/{date}_uk-essen_rki.fasta",
         table="results/rki/{date}_uk-essen_rki.csv",
@@ -29,6 +34,5 @@ rule generate_rki:
         min_length=config["rki-output"]["minimum-length"],
     log:
         "logs/{date}_rki.log",
-    threads: 1
     script:
         "../scripts/generate_rki_output.py"
