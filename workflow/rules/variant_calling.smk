@@ -3,12 +3,12 @@ rule freebayes:
         ref=get_reference(),
         ref_idx=get_reference(".fai"),
         # you can have a list of samples here
-        samples="results/recal/ref~{reference}/{sample}.bam",
-        index="results/recal/ref~{reference}/{sample}.bam.bai",
+        samples="results/{date}/recal/ref~{reference}/{sample}.bam",
+        index="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        temp("results/candidate-calls/ref~{reference}/{sample}.bcf"),
+        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.bcf"),
     log:
-        "logs/freebayes/ref~{reference}/{sample}.log",
+        "logs/{date}/freebayes/ref~{reference}/{sample}.log",
     params:
         # genotyping is performed by varlociraptor, hence we deactivate it in freebayes by 
         # always setting --pooled-continuous
@@ -24,12 +24,12 @@ rule render_scenario:
         local(get_resource("scenario.yaml")),
     output:
         report(
-            "results/scenarios/{sample}.yaml",
+            "results/{date}/scenarios/{sample}.yaml",
             caption="../report/scenario.rst",
             category="Variant calling scenarios",
         ),
     log:
-        "logs/render-scenario/{sample}.log",
+        "logs/{date}/render-scenario/{sample}.log",
     conda:
         "../envs/unix.yaml"
     shell:
@@ -40,15 +40,15 @@ rule varlociraptor_preprocess:
     input:
         ref=get_reference(),
         ref_idx=get_reference(".fai"),
-        candidates="results/candidate-calls/ref~{reference}/{sample}.bcf",
-        bam="results/recal/ref~{reference}/{sample}.bam",
-        bai="results/recal/ref~{reference}/{sample}.bam.bai",
+        candidates="results/{date}/candidate-calls/ref~{reference}/{sample}.bcf",
+        bam="results/{date}/recal/ref~{reference}/{sample}.bam",
+        bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        "results/observations/ref~{reference}/{sample}.bcf",
+        "results/{date}/observations/ref~{reference}/{sample}.bcf",
     params:
         depth=config["variant-calling"]["max-read-depth"],
     log:
-        "logs/varlociraptor/preprocess/ref~{reference}/{sample}.log",
+        "logs/{date}/varlociraptor/preprocess/ref~{reference}/{sample}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
@@ -58,12 +58,12 @@ rule varlociraptor_preprocess:
 
 rule varlociraptor_call:
     input:
-        obs="results/observations/ref~{reference}/{sample}.bcf",
-        scenario="results/scenarios/{sample}.yaml",
+        obs="results/{date}/observations/ref~{reference}/{sample}.bcf",
+        scenario="results/{date}/scenarios/{sample}.yaml",
     output:
-        temp("results/calls/ref~{reference}/{sample}.bcf"),
+        temp("results/{date}/calls/ref~{reference}/{sample}.bcf"),
     log:
-        "logs/varlociraptor/call/ref~{reference}/{sample}.log",
+        "logs/{date}/varlociraptor/call/ref~{reference}/{sample}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:

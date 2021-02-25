@@ -1,11 +1,15 @@
 checkpoint rki_filter:
     input:
         quast_polished_contigs=lambda wildcards: expand(
-            "results/quast-polished/{sample}/report.tsv",
+            "results/{date}/quast-polished/{sample}/report.tsv",
+            zip,
+            date=[wildcards.date]*len(get_samples_for_date(wildcards.date)),
             sample=get_samples_for_date(wildcards.date),
         ),
         polished_contigs=lambda wildcards: expand(
-            "results/polished-contigs/{sample}.fasta",
+            "results/{date}/polished-contigs/{sample}.fasta",
+            zip,
+            date =[wildcards.date]*len(get_samples_for_date(wildcards.date)),
             sample=get_samples_for_date(wildcards.date),
         ),
     output:
@@ -14,7 +18,7 @@ checkpoint rki_filter:
         min_identity=config["RKI-quality-criteria"]["min-identity"],
         max_n=config["RKI-quality-criteria"]["max-n"],
     log:
-        "logs/rki-filter/{date}.log",
+        "logs/{date}/rki-filter.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -25,7 +29,9 @@ rule generate_rki:
     input:
         filtered_samples="results/rki-filter/{date}.txt",
         polished_contigs=lambda wildcards: expand(
-            "results/polished-contigs/{sample}.fasta",
+            "results/{date}/polished-contigs/{sample}.fasta",
+            zip,
+            date=[wildcards.date]*len(get_samples_for_date(wildcards.date)),
             sample=get_samples_for_date(wildcards.date, filtered=True),
         ),
     output:
@@ -34,6 +40,6 @@ rule generate_rki:
     params:
         min_length=config["rki-output"]["minimum-length"],
     log:
-        "logs/rki-output/{date}.log",
+        "logs/{date}/rki-output/{date}.log",
     script:
         "../scripts/generate_rki_output.py"

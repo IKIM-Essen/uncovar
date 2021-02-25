@@ -25,34 +25,49 @@ include: "rules/generate_output.smk"
 
 rule all:
     input:
-        "results/qc/multiqc.html",
-        "results/plots/strain-calls/all.strains.pangolin.svg",
         expand(
-            "results/vcf-report/{target}.{filter}",
-            target=["all"] + get_samples(),
-            filter=config["variant-calling"]["filters"],
+            "results/{date}/qc/multiqc.html", date=get_dates(),
         ),
         expand(
-            "results/filtered-calls/ref~main/{sample}.subclonal.{filter}.bcf",
+            "results/{date}/plots/strain-calls/all.strains.pangolin.svg",
+            date=get_dates(),
+        ),
+        expand(
+            "results/{date}/polished-contigs/{sample}.fasta",
+            zip,
+            date=get_dates(),
             sample=get_samples(),
-            filter=config["variant-calling"]["filters"],
         ),
-        "results/plots/strain-calls/all.strains.pangolin.svg",
+        expand("results/rki/{date}_uk-essen_rki.fasta", date=get_all_run_dates()),
         expand(
-            "results/plots/strain-calls/all.{mode}-strain.strains.kallisto.svg",
+            "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
+            zip,
+            date=get_dates(),
+            sample=get_samples(),
+        ),
+        expand(
+            "results/{date}/plots/strain-calls/all.{mode}-strain.strains.kallisto.svg",
+            date=get_dates(),
             mode=["major", "any"],
         ),
-        expand(
-            "results/plots/strain-calls/{sample}.strains.{method}.svg",
-            sample=get_samples(),
-            method=["kallisto", "pangolin"],
+        zip_expand(
+            "results/{zip1}/plots/strain-calls/{zip2}.strains.{{exp}}.svg",
+            zip_wildcard_1=get_dates(),
+            zip_wildcard_2=get_samples(),
+            expand_wildcard=["kallisto", "pangolin"],
         ),
-        expand(
-            "results/tables/strain-calls/{sample}.strains.pangolin.csv",
-            sample=get_samples(),
+        zip_expand(
+            "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.bcf",
+            zip_wildcard_1=get_dates(),
+            zip_wildcard_2=get_samples(),
+            expand_wildcard=config["variant-calling"]["filters"],
         ),
-        expand("results/polished-contigs/{sample}.fasta", sample=get_samples()),
-        expand("results/rki/{date}_uk-essen_rki.fasta", date=get_all_run_dates()),
+        # zip_expand(
+        #     "results/{zip1}/vcf-report/{zip2}.{{exp}}",
+        #     zip_wildcard_1=["all"] + get_dates(),
+        #     zip_wildcard_2=["all"] + get_samples(),
+        #     expand_wildcard=config["variant-calling"]["filters"],
+        # ),
 
 
 rule benchmark_strain_calling:

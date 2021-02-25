@@ -1,11 +1,11 @@
 rule assembly:
     input:
-        fastq1="results/nonhuman-reads/{sample}.1.fastq.gz",
-        fastq2="results/nonhuman-reads/{sample}.2.fastq.gz",
+        fastq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
+        fastq2="results/{date}/nonhuman-reads/{sample}.2.fastq.gz",
     output:
-        temp("results/assembly/{sample}/{sample}.contigs.fa"),
+        temp("results/{date}/assembly/{sample}/{sample}.contigs.fa"),
     log:
-        "logs/megahit/{sample}.log",
+        "logs/{date}/megahit/{sample}.log",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
         sample=lambda wildcards: wildcards.sample,
@@ -19,11 +19,11 @@ rule assembly:
 rule align_unpolished_contigs:
     input:
         "resources/genomes/main.fasta",
-        "results/assembly/{sample}/{sample}.contigs.fa",
+        "results/{date}/assembly/{sample}/{sample}.contigs.fa",
     output:
-        temp("results/aligned-unpolished-contigs/{sample}.bam"),
+        temp("results/{date}/aligned-unpolished-contigs/{sample}.bam"),
     log:
-        "logs/minimap2/{sample}.log",
+        "logs/{date}/minimap2/{sample}.log",
     conda:
         "../envs/minimap2.yaml"
     shell:
@@ -33,14 +33,14 @@ rule align_unpolished_contigs:
 rule quast_unpolished_contigs:
     input:
         reference="resources/genomes/main.fasta",
-        bam="results/aligned-unpolished-contigs/{sample}.bam",
-        fastas="results/assembly/{sample}/{sample}.contigs.fa",
+        bam="results/{date}/aligned-unpolished-contigs/{sample}.bam",
+        fastas="results/{date}/assembly/{sample}/{sample}.contigs.fa",
     output:
-        "results/quast-unpolished/{sample}/report.tsv",
+        "results/{date}/quast-unpolished/{sample}/report.tsv",
     params:
         outdir=lambda x, output: os.path.dirname(output[0]),
     log:
-        "logs/quast/{sample}.log",
+        "logs/{date}/quast/{sample}.log",
     conda:
         "../envs/quast.yaml"
     threads: 8
@@ -50,12 +50,12 @@ rule quast_unpolished_contigs:
 
 rule order_contigs:
     input:
-        contigs="results/assembly/{sample}/{sample}.contigs.fa",
+        contigs="results/{date}/assembly/{sample}/{sample}.contigs.fa",
         reference="resources/genomes/main.fasta",
     output:
-        temp("results/ordered-contigs-all/{sample}.fasta"),
+        temp("results/{date}/ordered-contigs-all/{sample}.fasta"),
     log:
-        "logs/ragoo/{sample}.log",
+        "logs/{date}/ragoo/{sample}.log",
     params:
         outdir=lambda x, output: os.path.dirname(output[0]),
     threads: 8
@@ -63,17 +63,17 @@ rule order_contigs:
         "../envs/ragoo.yaml"
     shell:  # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
         "(mkdir -p {params.outdir}/{wildcards.sample} && cd {params.outdir}/{wildcards.sample} && "
-        "ragoo.py ../../../{input.contigs} ../../../{input.reference} && "
-        "cd ../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) > {log} 2>&1"
+        "ragoo.py ../../../../{input.contigs} ../../../../{input.reference} && "
+        "cd ../../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) > {log} 2>&1"
 
 
 rule filter_chr0:
     input:
-        "results/ordered-contigs-all/{sample}.fasta",
+        "results/{date}/ordered-contigs-all/{sample}.fasta",
     output:
-        temp("results/ordered-contigs/{sample}.fasta"),
+        temp("results/{date}/ordered-contigs/{sample}.fasta"),
     log:
-        "logs/ragoo/{sample}_cleaned.log",
+        "logs/{date}/ragoo/{sample}_cleaned.log",
     params:
         sample=lambda wildcards: wildcards.sample,
     conda:
@@ -84,17 +84,17 @@ rule filter_chr0:
 
 rule polish_contigs:
     input:
-        fasta="results/ordered-contigs/{sample}.fasta",
-        bcf="results/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf",
-        bcfidx="results/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf.csi",
+        fasta="results/{date}/ordered-contigs/{sample}.fasta",
+        bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf", 
+        bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf.csi",
     output:
         report(
-            "results/polished-contigs/{sample}.fasta",
+            "results/{date}/polished-contigs/{sample}.fasta",
             category="Assembly",
             caption="../report/assembly.rst",
         ),
     log:
-        "logs/bcftools-consensus/{sample}.log",
+        "logs/{date}/bcftools-consensus/{sample}.log",
     conda:
         "../envs/bcftools.yaml"
     shell:
@@ -104,11 +104,11 @@ rule polish_contigs:
 rule align_polished_contigs:
     input:
         "resources/genomes/main.fasta",
-        "results/polished-contigs/{sample}.fasta",
+        "results/{date}/polished-contigs/{sample}.fasta",
     output:
-        "results/aligned-polished-contigs/{sample}.bam",
+        "results/{date}/aligned-polished-contigs/{sample}.bam",
     log:
-        "logs/minimap2/{sample}.log",
+        "logs/{date}/minimap2/{sample}.log",
     conda:
         "../envs/minimap2.yaml"
     shell:
@@ -118,14 +118,14 @@ rule align_polished_contigs:
 rule quast_polished_contigs:
     input:
         reference="resources/genomes/main.fasta",
-        bam="results/aligned-polished-contigs/{sample}.bam",
-        fastas="results/polished-contigs/{sample}.fasta",
+        bam="results/{date}/aligned-polished-contigs/{sample}.bam",
+        fastas="results/{date}/polished-contigs/{sample}.fasta",
     output:
-        "results/quast-polished/{sample}/report.tsv",
+        "results/{date}/quast-polished/{sample}/report.tsv",
     params:
         outdir=lambda x, output: os.path.dirname(output[0]),
     log:
-        "logs/quast/{sample}.log",
+        "logs/{date}/quast/{sample}.log",
     conda:
         "../envs/quast.yaml"
     threads: 8
