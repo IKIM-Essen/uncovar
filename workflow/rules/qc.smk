@@ -126,34 +126,36 @@ rule combine_references:
 
 
 # filter out human contamination
-rule extract_nonhuman_reads:
+rule extract_reads_of_interest:
     input:
-        #new
         "results/mapped/ref~main+human/{sample}.bam",
-        "results/mapped/ref~main+human/{sample}.bam.bai",
+    output:
+        "results/mapped/ref~main+human/{sample}_nonhuman.bam",
+    log:
+        "logs/extract_reads_of_interest/{sample}.log",
+    threads: 1
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/extract-reads-of-interest.py"
+
+
+rule order_nonhuman_reads:
+    input:
+        "results/mapped/ref~main+human/{sample}_nonhuman.bam",
     output:
         fq1="results/nonhuman-reads/{sample}.1.fastq.gz",
         fq2="results/nonhuman-reads/{sample}.2.fastq.gz",
-        sorted=temp("results/nonhuman-reads/{sample}.bam"),
-        unsorted=temp("results/nonhuman-reads/{sample}.unsorted.bam"),
-        t1=temp("results/nonhuman-reads/{sample}.temp1.bam"),
-        t2=temp("results/nonhuman-reads/{sample}.temp2.bam"),
-        t3=temp("results/nonhuman-reads/{sample}.temp3.bam"),
-        t4=temp("results/nonhuman-reads/{sample}.temp4.bam"),
+        bam_sorted=temp("results/nonhuman-reads/{sample}.sorted.bam"),
     log:
-        "logs/filter_human/{sample}.log",
+        "logs/order_nonhuman_reads/{sample}.log",
     conda:
         "../envs/samtools.yaml"
     threads: 8
     shell:
         """
-        (samtools view  -@ {threads} -u -f 4 -F 264 {input} > {output.t1}) 2> {log}
-        (samtools view  -@ {threads} -u -f 8 -F 260 {input} > {output.t2}) 2>> {log}
-        (samtools view  -@ {threads} -u -f 12 -F 256 {input} > {output.t3}) 2>> {log}
-        (samtools view -b -@ {threads} -f 1 {input} NC_045512.2 > {output.t4}) 2>> {log}
-        samtools merge -@ {threads} -n {output.unsorted} {output.t1} {output.t2} {output.t3} {output.t4} >> {log} 2>&1
-        samtools sort  -@ {threads} -n {output.unsorted} -o {output.sorted} >> {log} 2>&1
-        samtools fastq -@ {threads} {output.sorted} -1 {output.fq1} -2 {output.fq2} >> {log} 2>&1
+        samtools sort  -@ {threads} -n {input} -o {output.bam_sorted} > {log} 2>&1
+        samtools fastq -@ {threads} {output.bam_sorted} -1 {output.fq1} -2 {output.fq2} >> {log} 2>&1
         """
 
 
