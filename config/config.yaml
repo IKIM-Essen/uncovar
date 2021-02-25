@@ -1,7 +1,8 @@
 pepfile: config/pep/config.yaml
 
 # for testing, uncomment to limit to n strain genomes
-limit-strain-genomes: 5
+# limit-strain-genomes: 5
+
 
 data-handling:
   # path of incoming data
@@ -10,6 +11,31 @@ data-handling:
   data: data/
   # path to archive data from incoming to
   archive: ../archive/
+
+
+RKI-quality-criteria:
+  illumina:
+    # minimal length of acceptable reads
+    min-length-reads: 30
+    # average quality of acceptable reads (PHRED)
+    min-PHRED: 20
+  ont:
+    # minimal length of acceptable reads
+    min-length-reads: 200
+    # average quality of acceptable reads (PHRED)
+    min-PHRED: 10
+  # identity to NC_045512.22 of reconstructed genome
+  min-identity: 0.9
+  # share N in the reconstructed genome
+  max-n: 0.05
+  # minimum local sequencing depth without filtering of PCR duplicates
+  min-depth-with-PCR-duplicates: 20
+  # minimum local sequencing depth after filtering PCR duplicates
+  min-depth-without-PCR-duplicates: 10
+  # minimum informative allele frequency
+  min-allele: 0.9
+  # frameshift-Mutationen
+
 
 variant-calling:
   # false discovery rate to control for
