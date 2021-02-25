@@ -9,7 +9,7 @@ checkpoint rki_filter:
             sample=get_samples_for_date(wildcards.date),
         ),
     output:
-        "results/rki-filter/{date}.txt",
+        temp("results/rki-filter/{date}.txt"),
     params:
         min_identity=config["RKI-quality-criteria"]["min-identity"],
         max_n=config["RKI-quality-criteria"]["max-n"],
@@ -23,7 +23,8 @@ checkpoint rki_filter:
 
 rule generate_rki:
     input:
-        lambda wildcards: expand(
+        filtered_samples = "results/rki-filter/{date}.txt",
+        polished_contigs = lambda wildcards: expand(
             "results/polished-contigs/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date, filtered=True),
         ),
