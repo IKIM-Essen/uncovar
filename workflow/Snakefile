@@ -38,7 +38,7 @@ rule all:
             date=get_dates(),
             sample=get_samples(),
         ),
-        expand("results/rki/{date}_uk-essen_rki.fasta", date=get_all_run_dates()),
+        # expand("results/rki/{date}_uk-essen_rki.fasta", date=get_all_run_dates()),
         expand(
             "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
             zip,

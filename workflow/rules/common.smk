@@ -9,8 +9,10 @@ VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
+
 def get_dates():
     return list(pep.sample_table["run_id"].values)
+
 
 def get_samples_for_date(date, filtered=False):
     # select samples with given date
@@ -199,6 +201,13 @@ def get_reads(wildcards):
         )
 
 
+def get_bwa_index(wildcards):
+    if wildcards.reference == "human" or wildcards.reference == "main+human":
+        return rules.bwa_large_index.output
+    else:
+        return rules.bwa_index.output
+
+
 def get_target_events(wildcards):
     if wildcards.reference == "main" or wildcards.clonality != "clonal":
         # calling variants against the wuhan reference or we are explicitly interested in subclonal as well
@@ -229,10 +238,7 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
         [
             expand(ele, exp=expand_wildcard)
             for ele in expand(
-                expand_string,
-                zip,
-                zip1=zip_wildcard_1,
-                zip2=zip_wildcard_2,
+                expand_string, zip, zip1=zip_wildcard_1, zip2=zip_wildcard_2,
             )
         ],
         [],

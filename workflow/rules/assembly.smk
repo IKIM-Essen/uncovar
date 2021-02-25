@@ -85,7 +85,7 @@ rule filter_chr0:
 rule polish_contigs:
     input:
         fasta="results/{date}/ordered-contigs/{sample}.fasta",
-        bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf", 
+        bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf",
         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf.csi",
     output:
         report(

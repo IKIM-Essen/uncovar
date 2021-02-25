@@ -20,6 +20,28 @@ rule bwa_index:
         "0.69.0/bio/bwa/index"
 
 
+rule bwa_large_index:
+    input:
+        get_reference(),
+    output:
+        multiext(
+            "resources/bwa/index/ref~{reference}.fasta",
+            ".amb",
+            ".ann",
+            ".bwt",
+            ".pac",
+            ".sa",
+        ),
+    params:
+        prefix=lambda w, output: os.path.splitext(output[0])[0],
+    log:
+        "logs/{date}/bwa-index/ref~{reference}.log",
+    resources:
+        mem_mb=369000,
+    wrapper:
+        "0.69.0/bio/bwa/index"
+
+
 rule map_reads:
     input:
         reads=get_reads,

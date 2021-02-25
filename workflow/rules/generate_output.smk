@@ -3,13 +3,13 @@ checkpoint rki_filter:
         quast_polished_contigs=lambda wildcards: expand(
             "results/{date}/quast-polished/{sample}/report.tsv",
             zip,
-            date=[wildcards.date]*len(get_samples_for_date(wildcards.date)),
+            date=[wildcards.date] * len(get_samples_for_date(wildcards.date)),
             sample=get_samples_for_date(wildcards.date),
         ),
         polished_contigs=lambda wildcards: expand(
             "results/{date}/polished-contigs/{sample}.fasta",
             zip,
-            date =[wildcards.date]*len(get_samples_for_date(wildcards.date)),
+            date=[wildcards.date] * len(get_samples_for_date(wildcards.date)),
             sample=get_samples_for_date(wildcards.date),
         ),
     output:
@@ -31,7 +31,7 @@ rule generate_rki:
         polished_contigs=lambda wildcards: expand(
             "results/{date}/polished-contigs/{sample}.fasta",
             zip,
-            date=[wildcards.date]*len(get_samples_for_date(wildcards.date)),
+            date=[wildcards.date] * len(get_samples_for_date(wildcards.date)),
             sample=get_samples_for_date(wildcards.date, filtered=True),
         ),
     output:

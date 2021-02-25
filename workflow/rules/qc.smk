@@ -93,7 +93,9 @@ rule samtools_flagstat:
 rule species_diversity_before:
     input:
         db="resources/minikraken-8GB",
-        reads=expand("results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
+        reads=expand(
+            "results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]
+        ),
     output:
         classified_reads=temp(
             expand(
@@ -130,7 +132,9 @@ rule species_diversity_before:
 # plot Korna charts BEFORE removing human contamination
 rule create_krona_chart:
     input:
-        kraken_output="results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+        kraken_output=(
+            "results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2"
+        ),
         taxonomy_database="resources/krona/",
     output:
         "results/{date}/species-diversity/{sample}/{sample}.html",
@@ -194,9 +198,13 @@ rule order_nonhuman_reads:
 rule species_diversity_after:
     input:
         db="resources/minikraken-8GB",
-        reads=expand("results/{{date}}/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]),
+        reads=expand(
+            "results/{{date}}/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]
+        ),
     output:
-        kraken_output="results/{date}/species-diversity-nonhuman/{sample}/{sample}.kraken",
+        kraken_output=(
+            "results/{date}/species-diversity-nonhuman/{sample}/{sample}.kraken"
+        ),
         report="results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
     log:
         "logs/{date}/kraken/{sample}_nonhuman.log",
@@ -211,9 +219,7 @@ rule species_diversity_after:
 # plotting Krona charts AFTER removing human contamination
 rule create_krona_chart_after:
     input:
-        kraken_output=(
-            "results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2"
-        ),
+        kraken_output="results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
         taxonomy_database="resources/krona/",
     output:
         "results/{date}/species-diversity-nonhuman/{sample}/{sample}.html",
