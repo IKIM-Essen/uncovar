@@ -23,8 +23,8 @@ checkpoint rki_filter:
 
 rule generate_rki:
     input:
-        filtered_samples = "results/rki-filter/{date}.txt",
-        polished_contigs = lambda wildcards: expand(
+        filtered_samples="results/rki-filter/{date}.txt",
+        polished_contigs=lambda wildcards: expand(
             "results/polished-contigs/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date, filtered=True),
         ),

@@ -25,13 +25,19 @@ def get_samples_for_date(date, filtered=False):
             for line in f:
                 passend_samples.append(line.strip())
 
-        filtered_samples = [sample for sample in samples_of_run if sample in passend_samples]
+        filtered_samples = [
+            sample for sample in samples_of_run if sample in passend_samples
+        ]
 
         if not filtered_samples:
-            raise ValueError('List of filtered samples is empty. Perhaps no samples of run {} passed the quality criteria.'.format(date))
+            raise ValueError(
+                "List of filtered samples is empty. Perhaps no samples of run {} passed the quality criteria.".format(
+                    date
+                )
+            )
 
         return filtered_samples
-    
+
     # unfiltered
     else:
         return samples_of_run
