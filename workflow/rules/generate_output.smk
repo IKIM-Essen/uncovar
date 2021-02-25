@@ -34,6 +34,6 @@ rule generate_rki:
     params:
         min_length=config["rki-output"]["minimum-length"],
     log:
-        "logs/{date}_rki.log",
+        "logs/rki-output/{date}.log",
     script:
         "../scripts/generate_rki_output.py"
