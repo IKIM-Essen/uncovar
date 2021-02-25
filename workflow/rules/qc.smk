@@ -142,7 +142,7 @@ rule extract_reads_of_interest:
 
 rule order_nonhuman_reads:
     input:
-        "results/mapped/ref~main+human/nonhuman/{sample}_nonhuman.bam",
+        "results/mapped/ref~main+human/nonhuman/{sample}.bam",
     output:
         fq1="results/nonhuman-reads/{sample}.1.fastq.gz",
         fq2="results/nonhuman-reads/{sample}.2.fastq.gz",
