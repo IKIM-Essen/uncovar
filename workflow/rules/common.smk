@@ -10,22 +10,34 @@ def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
 
-def get_samples_for_date(wildcards):
+def get_samples_for_date(date, filtered=False):
+    # select samples with given date
     df = pep.sample_table
-    df = df[df["run_id"] == wildcards.date]
-    return expand(
-        "results/polished-contigs/{sample}.fasta", sample=df["sample_name"].values
-    )
+    df = df[df["run_id"] == date]
+
+    # filter
+    if filtered:
+        with checkpoints.rki_filter.get(date=date).output[0].open() as f:
+        
+            passend_samples = []
+            samples_of_run = list(df["sample_name"].values)
+
+            for line in f:
+                passend_samples.append(line.strip())
+
+            filtered_samples = [sample for sample in samples_of_run if sample in passend_samples]
+
+            if not filtered_samples:
+                raise ValueError('Filtered samples list is emtpy')
+            return filtered_samples
+    else:
+        return df["sample_name"].values
 
 
 def get_all_run_dates():
     sorted_list = list(pep.sample_table["run_id"].unique())
     sorted_list.sort()
     return sorted_list
-
-
-def get_run_date(wildcards):
-    return pep.sample_table.loc[wildcards.sample]["run_id"]
 
 
 def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
