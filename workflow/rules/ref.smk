@@ -89,7 +89,7 @@ rule update_pangoLEARN:
     output:
         directory("results/{date}/pangolin/pangoLEARN"),
     log:
-        "logs/{date}pangolin/update.log",
+        "logs/{date}/pangolin/update.log",
     conda:
         "../envs/svn.yaml"
     shell:

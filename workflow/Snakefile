@@ -64,8 +64,8 @@ rule all:
         ),
         zip_expand(
             "results/{zip1}/vcf-report/{zip2}.{{exp}}",
-            zip_wildcard_1=get_dates(), # ["all"] +
-            zip_wildcard_2=get_samples(),  # ["all"] +
+            zip_wildcard_1=get_dates() + get_all_run_dates(), # ["all"] +
+            zip_wildcard_2=get_samples() + ["all"] * len(get_all_run_dates()),  # ["all"] +
             expand_wildcard=config["variant-calling"]["filters"],
         ),
 
