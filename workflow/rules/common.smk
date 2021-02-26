@@ -145,7 +145,7 @@ def get_strain_signatures(wildcards):
 def get_benchmark_results(wildcards):
     accessions = get_strain_accessions(wildcards)
     return expand(
-        "results/tables/strain-calls/benchmark-sample-{accession}.strains.kallisto.tsv",
+        "results/benchmarking/tables/strain-calls/benchmark-sample-{accession}.strains.kallisto.tsv",
         accession=accessions,
     )
 
