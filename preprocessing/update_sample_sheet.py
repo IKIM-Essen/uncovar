@@ -79,6 +79,11 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
         and ".fastq.gz" in f
     ]
 
+    # add date subfolder in data path
+    DATA_PATH += today
+    if not path.isdir(DATA_PATH):
+            mkdir(DATA_PATH)
+
     # get files that are in outgoing directory
     data_files = [f for f in listdir(DATA_PATH) if path.isfile(path.join(DATA_PATH, f))]
 
@@ -123,7 +128,7 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
         )
 
         # add path of file
-        new_files_df["path"] = DATA_PATH + new_files_df["file"]
+        new_files_df["path"] = DATA_PATH + '/' + new_files_df["file"]
 
         # identify R1 or R2
         new_files_df["read"] = new_files_df["file"].apply(
@@ -152,7 +157,7 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
 
         # save to csv
         if verbose:
-            print("\t{} files added".format(len(new_files_df)))
+            print("\t{} samples added".format(len(new_files_df)))
 
         if not dry_run:
             new_sample_sheet.to_csv("config/pep/samples.csv")
