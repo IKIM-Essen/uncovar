@@ -25,13 +25,18 @@ include: "rules/generate_output.smk"
 
 rule all:
     input:
+        expand(
+            "results/{date}/qc/multiqc.html", date=get_all_run_dates(),
+        ),
         expand("results/rki/{date}_uk-essen_rki.fasta", date=get_all_run_dates()),
         expand(
-            "results/{date}/qc/multiqc.html", date=get_dates(),
+            "results/{date}/plots/strain-calls/all.strains.pangolin.svg",
+            date=get_all_run_dates(),
         ),
         expand(
-            "results/{date}/plots/strain-calls/all.strains.pangolin.svg",
-            date=get_dates(),
+            "results/{date}/plots/strain-calls/all.{mode}-strain.strains.kallisto.svg",
+            date=get_all_run_dates(),
+            mode=["major", "any"],
         ),
         expand(
             "results/{date}/polished-contigs/{sample}.fasta",
@@ -44,11 +49,6 @@ rule all:
             zip,
             date=get_dates(),
             sample=get_samples(),
-        ),
-        expand(
-            "results/{date}/plots/strain-calls/all.{mode}-strain.strains.kallisto.svg",
-            date=get_dates(),
-            mode=["major", "any"],
         ),
         zip_expand(
             "results/{zip1}/plots/strain-calls/{zip2}.strains.{{exp}}.svg",
@@ -64,8 +64,8 @@ rule all:
         ),
         zip_expand(
             "results/{zip1}/vcf-report/{zip2}.{{exp}}",
-            zip_wildcard_1=["all"] + get_dates(),
-            zip_wildcard_2=["all"] + get_samples(),
+            zip_wildcard_1=get_dates(), # ["all"] +
+            zip_wildcard_2=get_samples(),  # ["all"] +
             expand_wildcard=config["variant-calling"]["filters"],
         ),
 

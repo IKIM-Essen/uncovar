@@ -11,67 +11,49 @@ rule fastqc:
         "0.69.0/bio/fastqc"
 
 
-# TODO include Kallisto
 rule multiqc:
     input:
-        expand(
-            "results/{date}/qc/fastqc/{sample}_fastqc.zip",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
+        lambda wildcards:expand(
+            "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand(
-            "results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
+        lambda wildcards:expand(
+            "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand(
-            "results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
+        lambda wildcards:expand(
+            "results/{{date}}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand(
-            "results/{date}/trimmed/{sample}.fastp.json",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
+        lambda wildcards:expand(
+            "results/{{date}}/trimmed/{sample}.fastp.json",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand(
-            "results/{date}/quast-unpolished/{sample}/report.tsv",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
+        lambda wildcards:expand(
+            "results/{{date}}/quast-unpolished/{sample}/report.tsv",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand(
-            "results/{date}/quast-polished/{sample}/report.tsv",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
+        lambda wildcards:expand(
+            "results/{{date}}/quast-polished/{sample}/report.tsv",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand(
-            "results/{date}/qc/samtools_flagstat/{sample}.bam.flagstat",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
+        lambda wildcards:expand(
+            "results/{{date}}/qc/samtools_flagstat/{sample}.bam.flagstat",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand(
-            "results/{date}/qc/dedup/ref~main/{sample}.metrics.txt",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
+        lambda wildcards:expand(
+            "results/{{date}}/qc/dedup/ref~main/{sample}.metrics.txt",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand(
-            "logs/{date}/kallisto_quant/{sample}.log",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
+        lambda wildcards:expand(
+            "logs/{{date}}/kallisto_quant/{sample}.log",
+            sample=get_samples_for_date(wildcards.date),
         ),
     output:
         "results/{date}/qc/multiqc.html",
     params:
-        "--config config/multiqc_config.yaml",  # Optional: extra parameters for multiqc.
+        "--config config/multiqc_config.yaml",
+        "--title 'Results for data from {date}'" # Optional: extra parameters for multiqc.
     log:
         "logs/{date}/multiqc.log",
     wrapper:
