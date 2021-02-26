@@ -13,39 +13,39 @@ rule fastqc:
 
 rule multiqc:
     input:
-        lambda wildcards:expand(
+        lambda wildcards: expand(
             "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
             sample=get_samples_for_date(wildcards.date),
         ),
-        lambda wildcards:expand(
+        lambda wildcards: expand(
             "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
             sample=get_samples_for_date(wildcards.date),
         ),
-        lambda wildcards:expand(
+        lambda wildcards: expand(
             "results/{{date}}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
             sample=get_samples_for_date(wildcards.date),
         ),
-        lambda wildcards:expand(
+        lambda wildcards: expand(
             "results/{{date}}/trimmed/{sample}.fastp.json",
             sample=get_samples_for_date(wildcards.date),
         ),
-        lambda wildcards:expand(
+        lambda wildcards: expand(
             "results/{{date}}/quast-unpolished/{sample}/report.tsv",
             sample=get_samples_for_date(wildcards.date),
         ),
-        lambda wildcards:expand(
+        lambda wildcards: expand(
             "results/{{date}}/quast-polished/{sample}/report.tsv",
             sample=get_samples_for_date(wildcards.date),
         ),
-        lambda wildcards:expand(
+        lambda wildcards: expand(
             "results/{{date}}/qc/samtools_flagstat/{sample}.bam.flagstat",
             sample=get_samples_for_date(wildcards.date),
         ),
-        lambda wildcards:expand(
+        lambda wildcards: expand(
             "results/{{date}}/qc/dedup/ref~main/{sample}.metrics.txt",
             sample=get_samples_for_date(wildcards.date),
         ),
-        lambda wildcards:expand(
+        lambda wildcards: expand(
             "logs/{{date}}/kallisto_quant/{sample}.log",
             sample=get_samples_for_date(wildcards.date),
         ),
@@ -53,7 +53,7 @@ rule multiqc:
         "results/{date}/qc/multiqc.html",
     params:
         "--config config/multiqc_config.yaml",
-        "--title 'Results for data from {date}'" # Optional: extra parameters for multiqc.
+        "--title 'Results for data from {date}'",  # Optional: extra parameters for multiqc.
     log:
         "logs/{date}/multiqc.log",
     wrapper:

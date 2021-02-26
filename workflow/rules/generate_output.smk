@@ -42,4 +42,4 @@ rule generate_rki:
     log:
         "logs/{date}/rki-output/{date}.log",
     script:
-        "../scripts/generate_rki_output.py"
+        "../scripts/generate-rki-output.py"

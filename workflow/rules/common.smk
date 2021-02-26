@@ -93,7 +93,11 @@ def get_report_bams(wildcards, input):
 
 
 def get_report_samples(wildcards):
-    return get_samples_for_date(wildcards.date) if wildcards.target == "all" else [wildcards.target]
+    return (
+        get_samples_for_date(wildcards.date)
+        if wildcards.target == "all"
+        else [wildcards.target]
+    )
 
 
 def get_merge_calls_input(suffix):

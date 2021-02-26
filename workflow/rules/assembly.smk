@@ -79,7 +79,7 @@ rule filter_chr0:
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/ragoo_remove_chr0.py"
+        "../scripts/ragoo-remove-chr0.py"
 
 
 rule polish_contigs:
