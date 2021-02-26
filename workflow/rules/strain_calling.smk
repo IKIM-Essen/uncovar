@@ -120,8 +120,8 @@ rule plot_all_strains_kallisto:
 rule pangolin:
     input:
         contigs="results/{date}/polished-contigs/{sample}.fasta",
-        pangoLEARN="resources/pangolin/pangoLEARN",
-        lineages="resources/pangolin/lineages",
+        pangoLEARN="results/{date}/pangolin/pangoLEARN",
+        lineages="results/{date}/pangolin/lineages",
     output:
         "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
     log:

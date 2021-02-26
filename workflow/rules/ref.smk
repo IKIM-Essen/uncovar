@@ -87,9 +87,9 @@ rule get_human_genome:
 
 rule update_pangoLEARN:
     output:
-        temp(directory("resources/pangolin/pangoLEARN")),
+        directory("results/{date}/pangolin/pangoLEARN"),
     log:
-        "logs/pangolin/update.log",
+        "logs/{date}pangolin/update.log",
     conda:
         "../envs/svn.yaml"
     shell:
@@ -98,9 +98,9 @@ rule update_pangoLEARN:
 
 rule update_lineages:
     output:
-        temp(directory("resources/pangolin/lineages")),
+        directory("results/{date}/pangolin/lineages"),
     log:
-        "logs/pangolin/update.log",
+        "logs/{date}/pangolin/update.log",
     conda:
         "../envs/svn.yaml"
     shell:
