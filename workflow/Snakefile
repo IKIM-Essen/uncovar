@@ -25,16 +25,28 @@ include: "rules/generate_output.smk"
 
 rule save_latest_run:
     input:
-        lambda checkpoints: with checkpoints.all.output.get(): "results/all.done",
+        expand(
+            "results/archive-indicator/{latest_run}.archived",
+            latest_run=get_latest_run_date(),
+        ),
+    output:
+        expand(
+            "".join(
+                (
+                    config["data-handling"]["archive"],
+                    "{latest_run}/results_{latest_run}.tar.gz",
+                )
+            ),
+            latest_run=get_latest_run_date(),
+        ),
     params:
-        archive = config["data-handling"]["archive"]
-        latest_run = get_latest_run_date()
+        latest_run=get_latest_run_date(),
     log:
-        "../logs/save-latest-run.log"
+        expand("logs/save-run/{latest_run}.log", latest_run=get_latest_run_date()),
     conda:
-        "../envs/unix.yaml"
+        "envs/unix.yaml"
     shell:
-        "tar -zcvf {params.archive}/{params.latest_run}/results_{params.latest_run}.tar.gz results/{params.latest_run}"
+        "tar -zcvf {output} results/{params.latest_run} 2> {log} 2>&1"
 
 
 checkpoint all:
@@ -83,7 +95,12 @@ checkpoint all:
             expand_wildcard=config["variant-calling"]["filters"],
         ),
     output:
-        temp(touch("results/all.done"))
+        touch(
+            expand(
+                "results/archive-indicator/{latest_run}.archived",
+                latest_run=get_latest_run_date(),
+            )
+        ),
 
 
 rule benchmark_strain_calling:
