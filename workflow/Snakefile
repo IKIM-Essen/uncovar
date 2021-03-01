@@ -23,7 +23,21 @@ include: "rules/benchmarking.smk"
 include: "rules/generate_output.smk"
 
 
-rule all:
+rule save_latest_run:
+    input:
+        lambda checkpoints: with checkpoints.all.output.get(): "results/all.done",
+    params:
+        archive = config["data-handling"]["archive"]
+        latest_run = get_latest_run_date()
+    log:
+        "../logs/save-latest-run.log"
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "tar -zcvf {params.archive}/{params.latest_run}/results_{params.latest_run}.tar.gz results/{params.latest_run}"
+
+
+checkpoint all:
     input:
         expand(
             "results/{date}/qc/multiqc.html", date=get_all_run_dates(),
@@ -68,6 +82,8 @@ rule all:
             zip_wildcard_2=get_samples() + ["all"] * len(get_all_run_dates()),
             expand_wildcard=config["variant-calling"]["filters"],
         ),
+    output:
+        temp(touch("results/all.done"))
 
 
 rule benchmark_strain_calling:
