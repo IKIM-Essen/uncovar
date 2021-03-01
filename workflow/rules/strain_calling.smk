@@ -96,11 +96,9 @@ rule plot_strains_kallisto:
 
 rule plot_all_strains_kallisto:
     input:
-        expand(
-            "results/{date}/tables/strain-calls/{sample}.strains.kallisto.tsv",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
+        lambda wildcards: expand(
+            "results/{{date}}/tables/strain-calls/{sample}.strains.kallisto.tsv",
+            sample=get_samples_for_date(wildcards.date),
         ),
     output:
         report(
@@ -155,11 +153,9 @@ rule plot_strains_pangolin:
 
 rule plot_all_strains_pangolin:
     input:
-        expand(
-            "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
+        lambda wildcards: expand(
+            "results/{{date}}/tables/strain-calls/{sample}.strains.pangolin.csv",
+            sample=get_samples_for_date(wildcards.date),
         ),
     output:
         report(
