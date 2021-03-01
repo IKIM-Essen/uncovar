@@ -10,6 +10,10 @@ def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
 
+def get_dates():
+    return list(pep.sample_table["run_id"].values)
+
+
 def get_samples_for_date(date, filtered=False):
     # select samples with given date
     df = pep.sample_table
@@ -89,13 +93,17 @@ def get_report_bams(wildcards, input):
 
 
 def get_report_samples(wildcards):
-    return get_samples() if wildcards.target == "all" else [wildcards.target]
+    return (
+        get_samples_for_date(wildcards.date)
+        if wildcards.target == "all"
+        else [wildcards.target]
+    )
 
 
 def get_merge_calls_input(suffix):
     def inner(wildcards):
         return expand(
-            "results/filtered-calls/ref~{{reference}}/{{sample}}.{{clonality}}.{{filter}}.{vartype}.fdr-controlled{suffix}",
+            "results/{{date}}/filtered-calls/ref~{{reference}}/{{sample}}.{{clonality}}.{{filter}}.{vartype}.fdr-controlled{suffix}",
             suffix=suffix,
             vartype=VARTYPES,
         )
@@ -141,7 +149,7 @@ def get_strain_signatures(wildcards):
 def get_benchmark_results(wildcards):
     accessions = get_strain_accessions(wildcards)
     return expand(
-        "results/tables/strain-calls/benchmark-sample-{accession}.strains.kallisto.tsv",
+        "results/benchmarking/tables/strain-calls/benchmark-sample-{accession}.strains.kallisto.tsv",
         accession=accessions,
     )
 
@@ -171,7 +179,7 @@ def get_reference(suffix=""):
             return "resources/genomes/main-and-human-genome.fna.gz"
         else:
             # return assembly result
-            return "results/ordered-contigs/{reference}.fasta{suffix}".format(
+            return "results/{date}/ordered-contigs/{reference}.fasta{suffix}".format(
                 suffix=suffix, **wildcards
             )
 
@@ -182,17 +190,26 @@ def get_reads(wildcards):
     if wildcards.reference == "human" or wildcards.reference == "main+human":
         # alignment against the human reference genome must be done with trimmed reads, since this alignment is used to generate the ordered, non human contigs
         return expand(
-            "results/trimmed/{sample}.{read}.fastq.gz",
+            "results/{date}/trimmed/{sample}.{read}.fastq.gz",
+            date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
         )
     else:
         # other reference (e.g. the covid reference genome, are done with contigs) that do not contain human contaminations
         return expand(
-            "results/nonhuman-reads/{sample}.{read}.fastq.gz",
+            "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
+            date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
         )
+
+
+def get_bwa_index(wildcards):
+    if wildcards.reference == "human" or wildcards.reference == "main+human":
+        return rules.bwa_large_index.output
+    else:
+        return rules.bwa_index.output
 
 
 def get_target_events(wildcards):
@@ -206,13 +223,30 @@ def get_target_events(wildcards):
 
 def get_filter_odds_input(wildcards):
     if wildcards.reference == "main":
-        return "results/filtered-calls/ref~{reference}/{sample}.{filter}.bcf"
+        return "results/{date}/filtered-calls/ref~{reference}/{sample}.{filter}.bcf"
     else:
-        return "results/calls/ref~{reference}/{sample}.bcf"
+        return "results/{date}/calls/ref~{reference}/{sample}.bcf"
 
 
 def get_vembrane_expression(wildcards):
     return config["variant-calling"]["filters"][wildcards.filter]
+
+
+def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
+    """
+    Zip by two wildcards and the expand the zip over another wildcard.
+    expand_string must contain {zip1}, {zip2} and {exp}.
+    """
+
+    return sum(
+        [
+            expand(ele, exp=expand_wildcard)
+            for ele in expand(
+                expand_string, zip, zip1=zip_wildcard_1, zip2=zip_wildcard_2,
+            )
+        ],
+        [],
+    )
 
 
 wildcard_constraints:

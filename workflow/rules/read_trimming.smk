@@ -3,13 +3,13 @@ rule fastp_pe:
         sample=get_fastqs,
     output:
         trimmed=[
-            "results/trimmed/{sample}.1.fastq.gz",
-            "results/trimmed/{sample}.2.fastq.gz",
+            "results/{date}/trimmed/{sample}.1.fastq.gz",
+            "results/{date}/trimmed/{sample}.2.fastq.gz",
         ],
-        html="results/trimmed/{sample}.html",
-        json="results/trimmed/{sample}.fastp.json",
+        html="results/{date}/trimmed/{sample}.html",
+        json="results/{date}/trimmed/{sample}.fastp.json",
     log:
-        "logs/fastp/{sample}.log",
+        "logs/{date}/fastp/{sample}.log",
     params:
         # adapters=get_adapters,
         adapters=config["adapters"]["illumina"],

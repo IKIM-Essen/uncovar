@@ -76,7 +76,6 @@ jobs:
           path: |
             .tests/resources/minikraken-8GB
             .tests/resources/genomes/human-genome.fna.gz
-            .tests/results/bwa/index/ref~human.fasta.*
           key: ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
           restore-keys: |
             ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-
@@ -89,7 +88,7 @@ jobs:
         with:
           path: |
             .tests/results
-          key: ${{ runner.os }}-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/qc/multiqc.html') }}
+          key: ${{ runner.os }}-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/2021-02-01/qc/multiqc.html') }}
           restore-keys: |
             ${{ runner.os }}-results-${{ steps.get-date.outputs.date }}-
             ${{ runner.os }}-results-
