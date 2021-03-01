@@ -77,7 +77,7 @@ rule snakemake_reports:
         "results/reports/{date}.zip",
     params:
         for_testing=(
-            "--snakefile ../workflow/Snakefile"
+            "--unlock --snakefile ../workflow/Snakefile"
             if config.get("benchmark-genomes", [])
             else ""
         ),
