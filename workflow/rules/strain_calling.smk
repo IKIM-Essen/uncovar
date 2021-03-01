@@ -102,7 +102,7 @@ rule plot_all_strains_kallisto:
         ),
     output:
         report(
-            "results/{date}/plots/strain-calls/all.{mode,(major|any)}-strain.strains.kallisto.svg",
+            "results/{date}/plots/all.{mode,(major|any)}-strain.strains.kallisto.svg",
             caption="../report/all-strain-calls-kallisto.rst",
             category="Strain calls",
             subcategory="Overview",
@@ -159,7 +159,7 @@ rule plot_all_strains_pangolin:
         ),
     output:
         report(
-            "results/{date}/plots/strain-calls/all.strains.pangolin.svg",
+            "results/{date}/plots/all.strains.pangolin.svg",
             caption="../report/all-strain-calls-pangolin.rst",
             category="Pangolin strain calls",
             subcategory="Overview",
