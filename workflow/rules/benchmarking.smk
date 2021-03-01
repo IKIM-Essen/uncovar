@@ -30,7 +30,7 @@ rule test_benchmark_results:
 rule test_assembly_results:
     input:
         "resources/genomes/{accession}.fasta",
-        "results/polished-contigs/benchmark-sample-{accession}.fasta",
+        "results/benchmarking/polished-contigs/benchmark-sample-{accession}.fasta",
     output:
         "results/benchmarking/assembly/{accession}.bam",
     log:

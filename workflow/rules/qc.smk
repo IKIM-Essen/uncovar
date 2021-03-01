@@ -2,58 +2,71 @@ rule fastqc:
     input:
         get_fastqs,
     output:
-        html="results/qc/fastqc/{sample}.html",
-        zip="results/qc/fastqc/{sample}_fastqc.zip",
+        html="results/{date}/qc/fastqc/{sample}.html",
+        zip="results/{date}/qc/fastqc/{sample}_fastqc.zip",
     log:
-        "logs/fastqc/{sample}.log",
+        "logs/{date}/fastqc/{sample}.log",
     threads: 1
     wrapper:
         "0.69.0/bio/fastqc"
 
 
-# TODO include Kallisto
 rule multiqc:
     input:
-        expand(
-            "results/qc/fastqc/{sample}_fastqc.zip", sample=get_samples(),
+        lambda wildcards: expand(
+            "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand(
-            "results/species-diversity/{sample}/{sample}.uncleaned.kreport2",
-            sample=get_samples(),
+        lambda wildcards: expand(
+            "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand(
-            "results/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
-            sample=get_samples(),
+        lambda wildcards: expand(
+            "results/{{date}}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand("results/trimmed/{sample}.fastp.json", sample=get_samples()),
-        expand(
-            "results/quast-unpolished/{sample}/report.tsv", sample=get_samples(),
+        lambda wildcards: expand(
+            "results/{{date}}/trimmed/{sample}.fastp.json",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand(
-            "results/quast-polished/{sample}/report.tsv", sample=get_samples(),
+        lambda wildcards: expand(
+            "results/{{date}}/quast-unpolished/{sample}/report.tsv",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand(
-            "results/qc/samtools_flagstat/{sample}.bam.flagstat", sample=get_samples()
+        lambda wildcards: expand(
+            "results/{{date}}/quast-polished/{sample}/report.tsv",
+            sample=get_samples_for_date(wildcards.date),
         ),
-        expand("results/qc/dedup/ref~main/{sample}.metrics.txt", sample=get_samples()),
-        expand("logs/kallisto_quant/{sample}.log", sample=get_samples()),
+        lambda wildcards: expand(
+            "results/{{date}}/qc/samtools_flagstat/{sample}.bam.flagstat",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        lambda wildcards: expand(
+            "results/{{date}}/qc/dedup/ref~main/{sample}.metrics.txt",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        lambda wildcards: expand(
+            "logs/{{date}}/kallisto_quant/{sample}.log",
+            sample=get_samples_for_date(wildcards.date),
+        ),
     output:
-        "results/qc/multiqc.html",
+        "results/{date}/qc/multiqc.html",
     params:
-        "--config config/multiqc_config.yaml",  # Optional: extra parameters for multiqc.
+        "--config config/multiqc_config.yaml",
+        "--title 'Results for data from {date}'",  # Optional: extra parameters for multiqc.
     log:
-        "logs/multiqc.log",
+        "logs/{date}/multiqc.log",
     wrapper:
         "0.69.0/bio/multiqc"
 
 
 rule samtools_flagstat:
     input:
-        "results/recal/ref~main/{sample}.bam",
+        "results/{date}/recal/ref~main/{sample}.bam",
     output:
-        "results/qc/samtools_flagstat/{sample}.bam.flagstat",
+        "results/{date}/qc/samtools_flagstat/{sample}.bam.flagstat",
     log:
-        "logs/samtools/{sample}_flagstat.log",
+        "logs/{date}/samtools/{sample}_flagstat.log",
     wrapper:
         "0.70.0/bio/samtools/flagstat"
 
@@ -62,24 +75,26 @@ rule samtools_flagstat:
 rule species_diversity_before:
     input:
         db="resources/minikraken-8GB",
-        reads=expand("results/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
+        reads=expand(
+            "results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]
+        ),
     output:
         classified_reads=temp(
             expand(
-                "results/species-diversity/{{sample}}/{{sample}}_{read}.classified.fasta",
+                "results/{{date}}/species-diversity/{{sample}}/{{sample}}_{read}.classified.fasta",
                 read=[1, 2],
             )
         ),
         unclassified_reads=temp(
             expand(
-                "results/species-diversity/{{sample}}/{{sample}}_{read}.unclassified.fasta",
+                "results/{{date}}/species-diversity/{{sample}}/{{sample}}_{read}.unclassified.fasta",
                 read=[1, 2],
             )
         ),
-        kraken_output="results/species-diversity/{sample}/{sample}.kraken",
-        report="results/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+        kraken_output="results/{date}/species-diversity/{sample}/{sample}.kraken",
+        report="results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
     log:
-        "logs/kraken/{sample}.log",
+        "logs/{date}/kraken/{sample}.log",
     params:
         classified=lambda w, output: "#".join(
             output.classified_reads[0].rsplit("_1", 1)
@@ -99,12 +114,14 @@ rule species_diversity_before:
 # plot Korna charts BEFORE removing human contamination
 rule create_krona_chart:
     input:
-        kraken_output="results/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+        kraken_output=(
+            "results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2"
+        ),
         taxonomy_database="resources/krona/",
     output:
-        "results/species-diversity/{sample}/{sample}.html",
+        "results/{date}/species-diversity/{sample}/{sample}.html",
     log:
-        "logs/krona/{sample}.log",
+        "logs/{date}/krona/{sample}.log",
     conda:
         "../envs/kraken.yaml"
     shell:
@@ -128,11 +145,11 @@ rule combine_references:
 # filter out human contamination
 rule extract_reads_of_interest:
     input:
-        "results/mapped/ref~main+human/{sample}.bam",
+        "results/{date}/mapped/ref~main+human/{sample}.bam",
     output:
-        "results/mapped/ref~main+human/nonhuman/{sample}.bam",
+        "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
     log:
-        "logs/extract_reads_of_interest/{sample}.log",
+        "logs/{date}/extract_reads_of_interest/{sample}.log",
     threads: 1
     conda:
         "../envs/python.yaml"
@@ -142,13 +159,13 @@ rule extract_reads_of_interest:
 
 rule order_nonhuman_reads:
     input:
-        "results/mapped/ref~main+human/nonhuman/{sample}.bam",
+        "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
     output:
-        fq1="results/nonhuman-reads/{sample}.1.fastq.gz",
-        fq2="results/nonhuman-reads/{sample}.2.fastq.gz",
-        bam_sorted=temp("results/nonhuman-reads/{sample}.sorted.bam"),
+        fq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
+        fq2="results/{date}/nonhuman-reads/{sample}.2.fastq.gz",
+        bam_sorted=temp("results/{date}/nonhuman-reads/{sample}.sorted.bam"),
     log:
-        "logs/order_nonhuman_reads/{sample}.log",
+        "logs/{date}/order_nonhuman_reads/{sample}.log",
     conda:
         "../envs/samtools.yaml"
     threads: 8
@@ -163,12 +180,16 @@ rule order_nonhuman_reads:
 rule species_diversity_after:
     input:
         db="resources/minikraken-8GB",
-        reads=expand("results/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]),
+        reads=expand(
+            "results/{{date}}/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]
+        ),
     output:
-        kraken_output="results/species-diversity-nonhuman/{sample}/{sample}.kraken",
-        report="results/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
+        kraken_output=(
+            "results/{date}/species-diversity-nonhuman/{sample}/{sample}.kraken"
+        ),
+        report="results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
     log:
-        "logs/kraken/{sample}_nonhuman.log",
+        "logs/{date}/kraken/{sample}_nonhuman.log",
     threads: 8
     conda:
         "../envs/kraken.yaml"
@@ -180,14 +201,12 @@ rule species_diversity_after:
 # plotting Krona charts AFTER removing human contamination
 rule create_krona_chart_after:
     input:
-        kraken_output=(
-            "results/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2"
-        ),
+        kraken_output="results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
         taxonomy_database="resources/krona/",
     output:
-        "results/species-diversity-nonhuman/{sample}/{sample}.html",
+        "results/{date}/species-diversity-nonhuman/{sample}/{sample}.html",
     log:
-        "logs/krona/{sample}_nonhuman.log",
+        "logs/{date}/krona/{sample}_nonhuman.log",
     conda:
         "../envs/kraken.yaml"
     shell:

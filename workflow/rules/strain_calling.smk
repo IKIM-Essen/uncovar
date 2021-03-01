@@ -45,14 +45,16 @@ rule kallisto_index:
 
 rule kallisto_quant:
     input:
-        fastq=expand("results/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]),
+        fastq=expand(
+            "results/{{date}}/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]
+        ),
         index="resources/strain-genomes.idx",
     output:
-        directory("results/quant/{sample}"),
+        directory("results/{date}/quant/{sample}"),
     params:
         extra="",
     log:
-        "logs/kallisto_quant/{sample}.log",
+        "logs/{date}/kallisto_quant/{sample}.log",
     threads: 1
     wrapper:
         "0.70.0/bio/kallisto/quant"
@@ -60,11 +62,11 @@ rule kallisto_quant:
 
 rule call_strains_kallisto:
     input:
-        "results/quant/{sample}",
+        "results/{date}/quant/{sample}",
     output:
-        "results/tables/strain-calls/{sample}.strains.kallisto.tsv",
+        "results/{date}/tables/strain-calls/{sample}.strains.kallisto.tsv",
     log:
-        "logs/call-strains/{sample}.log",
+        "logs/{date}/call-strains/{sample}.log",
     params:
         min_fraction=config["strain-calling"]["min-fraction"],
     conda:
@@ -75,15 +77,15 @@ rule call_strains_kallisto:
 
 rule plot_strains_kallisto:
     input:
-        "results/tables/strain-calls/{sample}.strains.kallisto.tsv",
+        "results/{date}/tables/strain-calls/{sample}.strains.kallisto.tsv",
     output:
         report(
-            "results/plots/strain-calls/{sample}.strains.kallisto.svg",
+            "results/{date}/plots/strain-calls/{sample}.strains.kallisto.svg",
             caption="../report/strain-calls-kallisto.rst",
             category="Strain calls",
         ),
     log:
-        "logs/plot-strains-kallisto/{sample}.log",
+        "logs/{date}/plot-strains-kallisto/{sample}.log",
     params:
         min_fraction=config["strain-calling"]["min-fraction"],
     conda:
@@ -95,18 +97,20 @@ rule plot_strains_kallisto:
 rule plot_all_strains_kallisto:
     input:
         expand(
-            "results/tables/strain-calls/{sample}.strains.kallisto.tsv",
+            "results/{date}/tables/strain-calls/{sample}.strains.kallisto.tsv",
+            zip,
+            date=get_dates(),
             sample=get_samples(),
         ),
     output:
         report(
-            "results/plots/strain-calls/all.{mode,(major|any)}-strain.strains.kallisto.svg",
+            "results/{date}/plots/strain-calls/all.{mode,(major|any)}-strain.strains.kallisto.svg",
             caption="../report/all-strain-calls-kallisto.rst",
             category="Strain calls",
             subcategory="Overview",
         ),
     log:
-        "logs/plot-strains/all.{mode}.log",
+        "logs/{date}/plot-strains/all.{mode}.log",
     conda:
         "../envs/python.yaml"
     notebook:
@@ -115,13 +119,13 @@ rule plot_all_strains_kallisto:
 
 rule pangolin:
     input:
-        contigs="results/polished-contigs/{sample}.fasta",
-        pangoLEARN="resources/pangolin/pangoLEARN",
-        lineages="resources/pangolin/lineages",
+        contigs="results/{date}/polished-contigs/{sample}.fasta",
+        pangoLEARN="results/{date}/pangolin/pangoLEARN",
+        lineages="results/{date}/pangolin/lineages",
     output:
-        "results/tables/strain-calls/{sample}.strains.pangolin.csv",
+        "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
     log:
-        "logs/pangolin/{sample}.log",
+        "logs/{date}/pangolin/{sample}.log",
     threads: 8
     params:
         pango_data_path=lambda x, input: os.path.dirname(input.pangoLEARN),
@@ -133,16 +137,16 @@ rule pangolin:
 
 rule plot_strains_pangolin:
     input:
-        "results/tables/strain-calls/{sample}.strains.pangolin.csv",
+        "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
     output:
         report(
-            "results/plots/strain-calls/{sample}.strains.pangolin.svg",
+            "results/{date}/plots/strain-calls/{sample}.strains.pangolin.svg",
             caption="../report/strain-calls-pangolin.rst",
             category="Pangolin strain calls",
             subcategory="Per sample",
         ),
     log:
-        "logs/plot-strains-pangolin/{sample}.log",
+        "logs/{date}/plot-strains-pangolin/{sample}.log",
     conda:
         "../envs/python.yaml"
     notebook:
@@ -152,18 +156,20 @@ rule plot_strains_pangolin:
 rule plot_all_strains_pangolin:
     input:
         expand(
-            "results/tables/strain-calls/{sample}.strains.pangolin.csv",
+            "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
+            zip,
+            date=get_dates(),
             sample=get_samples(),
         ),
     output:
         report(
-            "results/plots/strain-calls/all.strains.pangolin.svg",
+            "results/{date}/plots/strain-calls/all.strains.pangolin.svg",
             caption="../report/all-strain-calls-pangolin.rst",
             category="Pangolin strain calls",
             subcategory="Overview",
         ),
     log:
-        "logs/plot-strains-pangolin/all.log",
+        "logs/{date}/plot-strains-pangolin/all.log",
     conda:
         "../envs/python.yaml"
     notebook:

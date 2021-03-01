@@ -1,14 +1,14 @@
 rule vcf_report:
     input:
         ref="resources/genomes/main.fasta",
-        bams=get_report_input("results/recal/ref~main/{sample}.bam"),
-        bais=get_report_input("results/recal/ref~main/{sample}.bam.bai"),
+        bams=get_report_input("results/{date}/recal/ref~main/{sample}.bam"),
+        bais=get_report_input("results/{date}/recal/ref~main/{sample}.bam.bai"),
         bcfs=get_report_input(
-            "results/filtered-calls/ref~main/{sample}.subclonal.{filter}.bcf"
+            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.{filter}.bcf"
         ),
     output:
         report(
-            directory("results/vcf-report/{target}.{filter}"),
+            directory("results/{date}/vcf-report/{target}.{filter}"),
             htmlindex="index.html",
             caption="../report/variant-calls.rst",
             category="Variant calls",
@@ -24,7 +24,7 @@ rule vcf_report:
             template=get_resource("custom-table-report.js"),
         ),
     log:
-        "logs/vcf-report/{target}.{filter}.log",
+        "logs/{date}/vcf-report/{target}.{filter}.log",
     conda:
         "../envs/rbt.yaml"
     shell:

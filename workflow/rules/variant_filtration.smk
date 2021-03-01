@@ -1,13 +1,13 @@
 rule vembrane_filter:
     input:
-        "results/annotated-calls/ref~main/{sample}.bcf",
+        "results/{date}/annotated-calls/ref~main/{sample}.bcf",
     output:
-        temp("results/filtered-calls/ref~main/{sample}.{filter}.bcf"),
+        temp("results/{date}/filtered-calls/ref~main/{sample}.{filter}.bcf"),
     params:
         expression=get_vembrane_expression,
         extra="",
     log:
-        "logs/vembrane/{sample}.{filter}.log",
+        "logs/{date}/vembrane/{sample}.{filter}.log",
     wrapper:
         "0.71.1/bio/vembrane/filter"
 
@@ -17,12 +17,12 @@ rule filter_odds:
         get_filter_odds_input,
     output:
         temp(
-            "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.odds.bcf"
+            "results/{date}/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.odds.bcf"
         ),
     params:
         events=get_target_events,
     log:
-        "logs/filter-calls/odds/ref~{reference}/{sample}.{clonality}.{filter}.log",
+        "logs/{date}/filter-calls/odds/ref~{reference}/{sample}.{clonality}.{filter}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
@@ -31,16 +31,16 @@ rule filter_odds:
 
 rule control_fdr:
     input:
-        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.odds.bcf",
+        "results/{date}/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.odds.bcf",
     output:
         temp(
-            "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.{vartype}.fdr-controlled.bcf"
+            "results/{date}/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.{vartype}.fdr-controlled.bcf"
         ),
     params:
         fdr=config["variant-calling"]["fdr"],
         events=get_target_events,
     log:
-        "logs/control-fdr/ref~{reference}/{sample}.{clonality}.{filter}.{vartype}.log",
+        "logs/{date}/control-fdr/ref~{reference}/{sample}.{clonality}.{filter}.{vartype}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
@@ -53,9 +53,9 @@ rule merge_calls:
         calls=get_merge_calls_input(".bcf"),
         idx=get_merge_calls_input(".bcf.csi"),
     output:
-        "results/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.bcf",
+        "results/{date}/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.bcf",
     log:
-        "logs/merge-calls/ref~{reference}/{sample}.{clonality}.{filter}.log",
+        "logs/{date}/merge-calls/ref~{reference}/{sample}.{clonality}.{filter}.log",
     params:
         "-a -Ob",
     wrapper:
