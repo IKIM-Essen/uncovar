@@ -31,8 +31,7 @@ rule all:
         expand("results/reports/{date}.zip", date=get_all_run_dates()),
         expand("results/rki/{date}_uk-essen_rki.fasta", date=get_all_run_dates()),
         expand(
-            "results/{date}/plots/all.strains.pangolin.svg",
-            date=get_all_run_dates(),
+            "results/{date}/plots/all.strains.pangolin.svg", date=get_all_run_dates(),
         ),
         expand(
             "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
