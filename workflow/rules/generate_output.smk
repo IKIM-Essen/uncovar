@@ -76,7 +76,11 @@ rule snakemake_reports:
     output:
         "results/reports/{date}.zip",
     params:
-        for_testing = "--snakefile ../workflow/Snakefile" if config.get("benchmark-genomes", []) else ""
+        for_testing=(
+            "--snakefile ../workflow/Snakefile"
+            if config.get("benchmark-genomes", [])
+            else ""
+        ),
     log:
         "../logs/snakemake_reports/{date}.log",
     shell:
