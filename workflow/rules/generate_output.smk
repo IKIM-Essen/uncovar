@@ -70,3 +70,21 @@ rule generate_virologist_output:
     threads: 1
     script:
         "../scripts/generate_virologist_output.py"
+
+
+rule report_virologist:
+    input:
+        "results/{date}/virologist/report.csv",
+    output:
+        report(
+            directory("results/{date}/virologist-report"),
+            htmlindex="index.html",
+            #caption="../report/virologist-report.rst",
+            category="Virologist report",
+        ),
+    conda:
+        "../envs/rbt.yaml"
+    log:
+        "logs/{date}/viro_report_html.log",
+    shell:
+        "(rbt csv-report -s ',' {input} {output}) > {log} 2>&1"
