@@ -13,16 +13,17 @@ def analyize_pangolin(sm_input):
         )
         with open(pango_csv_path, "r") as pango_file:
             pango_df = pd.read_csv(pango_file)
-            if pango_df.loc[0, "status"] == "fail":
+            if pango_df.loc[0, "note"] == "seq_len:1":
+                temp_dict[sample] = "assembly failed"
+            elif pango_df.loc[0, "status"] == "fail":
+                temp_dict[sample] = "is non-sars-cov-2"
+            elif (
+                pango_df.loc[0, "status"] == "pass"
+                and pango_df.loc[0, "lineage"] == "None"
+            ):
                 temp_dict[sample] = "is non-sars-cov-2"
             else:
-                if (
-                    pango_df.loc[0, "status"] == "pass"
-                    and pango_df.loc[0, "lineage"] == "None"
-                ):
-                    temp_dict[sample] = "is non-sars-cov-2"
-                else:
-                    temp_dict[sample] = "is sars-cov-2"
+                temp_dict[sample] = "is sars-cov-2"
     return temp_dict
 
 
