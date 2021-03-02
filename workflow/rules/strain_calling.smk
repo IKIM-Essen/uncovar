@@ -83,6 +83,7 @@ rule plot_strains_kallisto:
             "results/{date}/plots/strain-calls/{sample}.strains.kallisto.svg",
             caption="../report/strain-calls-kallisto.rst",
             category="Strain calls",
+            subcategory="Per sample",
         ),
     log:
         "logs/{date}/plot-strains-kallisto/{sample}.log",
@@ -96,15 +97,13 @@ rule plot_strains_kallisto:
 
 rule plot_all_strains_kallisto:
     input:
-        expand(
-            "results/{date}/tables/strain-calls/{sample}.strains.kallisto.tsv",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
+        lambda wildcards: expand(
+            "results/{{date}}/tables/strain-calls/{sample}.strains.kallisto.tsv",
+            sample=get_samples_for_date(wildcards.date),
         ),
     output:
         report(
-            "results/{date}/plots/strain-calls/all.{mode,(major|any)}-strain.strains.kallisto.svg",
+            "results/{date}/plots/all.{mode,(major|any)}-strain.strains.kallisto.svg",
             caption="../report/all-strain-calls-kallisto.rst",
             category="Strain calls",
             subcategory="Overview",
@@ -155,15 +154,13 @@ rule plot_strains_pangolin:
 
 rule plot_all_strains_pangolin:
     input:
-        expand(
-            "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
+        lambda wildcards: expand(
+            "results/{{date}}/tables/strain-calls/{sample}.strains.pangolin.csv",
+            sample=get_samples_for_date(wildcards.date),
         ),
     output:
         report(
-            "results/{date}/plots/strain-calls/all.strains.pangolin.svg",
+            "results/{date}/plots/all.strains.pangolin.svg",
             caption="../report/all-strain-calls-pangolin.rst",
             category="Pangolin strain calls",
             subcategory="Overview",

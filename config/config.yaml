@@ -5,11 +5,12 @@ pepfile: config/pep/config.yaml
 
 
 data-handling:
-  # path of incoming data
+  # path of incoming data, which is moved to the data directory
   incoming: ../incoming/
   # path to store data in the workflow
   data: data/
-  # path to archive data from incoming to
+  # path to archive data from incoming and 
+  # the results from the latest run to
   archive: ../archive/
 
 

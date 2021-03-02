@@ -53,6 +53,10 @@ def get_all_run_dates():
     return sorted_list
 
 
+def get_latest_run_date():
+    return pep.sample_table["run_id"].max()
+
+
 def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
     if wildcards.sample.startswith(benchmark_prefix):
         # this is a simulated benchmark sample, do not look up FASTQs in the sample sheet

@@ -100,7 +100,7 @@ table_columns_visible:
   Contigs (assembly):
     N50: True
     Total length: False
-    Largest contig: True
+    Largest contig: False
   Samtools (?):
     flagstat_total: False
     mapped_passed: False
