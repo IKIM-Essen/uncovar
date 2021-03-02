@@ -183,21 +183,21 @@ def get_assembly_comparisons(bams=True):
 
     return inner
 
+
 def get_non_cov2_calls(from_caller="pangolin"):
     accessions = get_non_cov2_accessions()
     pattern = (
-        "results/test-cases/tables/strain-calls/non-cov2-{accession}.strains.pangolin.csv" 
-        if from_caller == "pangolin" 
+        "results/test-cases/tables/strain-calls/non-cov2-{accession}.strains.pangolin.csv"
+        if from_caller == "pangolin"
         else "results/test-cases/tables/strain-calls/non-cov2-{accession}.strains.kallisto.tsv"
         if from_caller == "kallisto"
-        else 
-        []
+        else []
     )
 
     if not pattern:
         raise NameError(f"Caller {from_caller} not recognized")
 
-    return expand(pattern, accession = accessions)
+    return expand(pattern, accession=accessions)
 
 
 def get_reference(suffix=""):
