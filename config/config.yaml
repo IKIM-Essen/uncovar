@@ -83,4 +83,4 @@ non_cov2_genomes:
   - NC_006213
   - NC_006577
   - NC_019843
-  # - NC_004718
+  # - NC_004718 # This results in 30246 long (polished) contig, which pangolin can't process
