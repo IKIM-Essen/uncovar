@@ -83,6 +83,7 @@ rule plot_strains_kallisto:
             "results/{date}/plots/strain-calls/{sample}.strains.kallisto.svg",
             caption="../report/strain-calls-kallisto.rst",
             category="Strain calls",
+            subcategory="Per sample",
         ),
     log:
         "logs/{date}/plot-strains-kallisto/{sample}.log",
