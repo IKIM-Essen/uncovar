@@ -2,10 +2,10 @@ rule simulate_strain_reads:
     input:
         "resources/genomes/{accession}.fasta",
     output:
-        left="resources/benchmarking/{accession}/reads.1.fastq.gz",
-        right="resources/benchmarking/{accession}/reads.2.fastq.gz",
+        left="resources/{use_case}/{accession}/reads.1.fastq.gz",
+        right="resources/{use_case}/{accession}/reads.2.fastq.gz",
     log:
-        "logs/mason/{accession}.log",
+        "logs/mason/{use_case}/{accession}.log",
     conda:
         "../envs/mason.yaml"
     shell:  # median reads in data: 584903
