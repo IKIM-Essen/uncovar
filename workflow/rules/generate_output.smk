@@ -67,6 +67,8 @@ rule generate_virologist_output:
         "results/{date}/virologist/report.csv",
     log:
         "logs/{date}/viro_report.log",
+    conda:
+        "../envs/pysam.yaml"
     threads: 1
     script:
         "../scripts/generate_virologist_output.py"
