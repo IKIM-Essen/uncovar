@@ -3,14 +3,9 @@ sys.stderr = open(snakemake.log[0], "w")
 import pandas as pd
 
 
-def analyize_pangolin(sm_input):
+def analyize_pangolin(sm_input, accessions):
     temp_dict = {}
-    for pango_csv_path in sm_input.pangolin:
-        sample = (
-            pango_csv_path.replace("results/test-cases/tables/strain-calls/", "")
-            .replace(".strains.pangolin.csv", "")
-            .replace("non-cov2-", "")
-        )
+    for sample, pango_csv_path in zip(accessions, sm_input.pangolin):
         with open(pango_csv_path, "r") as pango_file:
             pango_df = pd.read_csv(pango_file)
             if pango_df.loc[0, "note"] == "seq_len:1":
