@@ -9,6 +9,8 @@ rule test_non_cov2:
         ),
     output:
         "results/test-cases/non-sars-cov-2.csv",
+    params:
+        accessions=get_non_cov2_accessions(),
     log:
         "../logs/test-cases/summarize_non_cov2.log",
     conda:
