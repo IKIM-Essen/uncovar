@@ -1,3 +1,29 @@
+rule determine_coverage:
+    input:
+        "results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
+    output:
+        "results/{date}/tables/coverage/{sample}.txt",
+    log:
+        "logs/{date}/tables/coverage/{sample}.logs",
+    conda:
+        "../envs/samtools.yaml"
+    shell:
+        "samtools depth -aa -H -o {output} {input} 2> {log}"
+
+
+rule plot_coverage:
+    input:
+        "results/{date}/tables/coverage/{sample}.txt",
+    output:
+        "results/{date}/plots/coverage/{sample}.svg",
+    log:
+        "logs/{date}/plot-coverage/{sample}.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot-coverage.py"
+
+
 checkpoint rki_filter:
     input:
         quast_polished_contigs=lambda wildcards: expand(
