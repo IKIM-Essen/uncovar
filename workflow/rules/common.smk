@@ -66,6 +66,14 @@ def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
             accession=accession,
             read=[1, 2],
         )
+    if wildcards.sample.startswith("non-cov2-"):
+        # this is for testing non-sars-cov2-genomes
+        accession = wildcards.sample[len("non-cov2-") :]
+        return expand(
+            "resources/test-cases/{accession}/reads.{read}.fastq.gz",
+            accession=accession,
+            read=[1, 2],
+        )
     # default case, look up FASTQs in the sample sheet
     return pep.sample_table.loc[wildcards.sample][["fq1", "fq2"]]
 
@@ -129,6 +137,11 @@ def get_strain_accessions(wildcards):
         return accessions
 
 
+def get_non_cov2_accessions():
+    accessions = config.get("non_cov2_genomes", [])
+    return accessions
+
+
 def get_strain_genomes(wildcards):
     # Case 1: take custom genomes from gisaid
     custom_genomes = config["strain-calling"]["use-gisaid"]
@@ -169,6 +182,22 @@ def get_assembly_comparisons(bams=True):
         return expand(pattern, accession=accessions,)
 
     return inner
+
+
+def get_non_cov2_calls(from_caller="pangolin"):
+    accessions = get_non_cov2_accessions()
+    pattern = (
+        "results/test-cases/tables/strain-calls/non-cov2-{accession}.strains.pangolin.csv"
+        if from_caller == "pangolin"
+        else "results/test-cases/tables/strain-calls/non-cov2-{accession}.strains.kallisto.tsv"
+        if from_caller == "kallisto"
+        else []
+    )
+
+    if not pattern:
+        raise NameError(f"Caller {from_caller} not recognized")
+
+    return expand(pattern, accession=accessions)
 
 
 def get_reference(suffix=""):
