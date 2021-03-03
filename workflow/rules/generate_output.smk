@@ -47,7 +47,11 @@ rule generate_rki:
 
 rule generate_virologist_output:
     input:
-        contigs=lambda wildcards: expand(
+        # initial_contigs=lambda wildcards: expand(
+        #     "results/{{date}}/assembly/{sample}/{sample}.contigs.fa",
+        #     sample=get_samples_for_date(wildcards.date),
+        # ),
+        polished_contigs=lambda wildcards: expand(
             "results/{{date}}/polished-contigs/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
         ),

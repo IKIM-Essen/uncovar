@@ -10,7 +10,7 @@ KRAKEN_FILTER_KRITERIA = "D"
 
 
 final_df = pd.DataFrame()
-for file in snakemake.input.contigs:
+for file in snakemake.input.polished_contigs:
     contigs = {}
     sample = file.split("/")[-1].split(".")[0]
     if os.stat(file).st_size == 0:
@@ -69,32 +69,20 @@ table = {}
 for file in snakemake.input.pangolin:
 
     pang_call = open(file, "r")
-    table[file.split("/")[-1].split(".")[0]] = [[],[],[]]
+    table[file.split("/")[-1].split(".")[0]] = [[],[],[],[],[],[],[],[],[],[],[],[]]
     for line in pang_call.read().splitlines():
         if not line.startswith("taxon"):
-            table[file.split("/")[-1].split(".")[0]][0] = [line.split(",")[1] + " " + line.split(",")[-1].split(" ")[0]]
+            if line.split(",")[1].startswith("None"):
+                table[file.split("/")[-1].split(".")[0]][0] = ["no strain called"]
+            else:
+                table[file.split("/")[-1].split(".")[0]][0] = [line.split(",")[1] + " " + "(" + line.split(",")[-1].split(" ")[0]+ ")"]
 
 AS3to1 = {
-    "Gly": "G",
-    "Ala": "A",
-    "Leu": "L",
-    "Met": "M",
-    "Phe": "F",
-    "Trp": "W",
-    "Lys": "K",
-    "Gln": "Q",
-    "Glu": "E",
-    "Ser": "S",
-    "Pro": "P",
-    "Val": "V",
-    "Ile": "I",
-    "Cys": "C",
-    "Tyr": "Y",
-    "His": "H",
-    "Arg": "R",
-    "Asn": "N",
-    "Asp": "D",
-    "Thr": "T",
+    "Gly": "G", "Ala": "A", "Leu": "L", "Met": "M",
+    "Phe": "F", "Trp": "W", "Lys": "K", "Gln": "Q",
+    "Glu": "E", "Ser": "S", "Pro": "P", "Val": "V",
+    "Ile": "I", "Cys": "C", "Tyr": "Y", "His": "H",
+    "Arg": "R", "Asn": "N", "Asp": "D", "Thr": "T",
 }
 
 for file in snakemake.input.bcf:
@@ -118,18 +106,45 @@ for file in snakemake.input.bcf:
                     ("484" in alt and not "6484" in alt ) or\
                     "417" in alt or\
                     "6970" in alt):
-                    hgvsp = f"{feature}:{alt}"
-                    table[file.split("/")[-1].split(".")[0]][1].append(hgvsp + " " + str(round(vaf[0], 3)) + " " + enssast_id)
-                elif vaf[0] > 0.5:
+                    table[file.split("/")[-1].split(".")[0]][1].append(hgvsp + " " + str(round(vaf[0], 3)))
+                elif vaf[0] > 0.5 and feature == "S":
                     table[file.split("/")[-1].split(".")[0]][2].append(hgvsp + " " + str(round(vaf[0], 3)))
+                elif vaf[0] > 0.5 and feature == "M":
+                    table[file.split("/")[-1].split(".")[0]][3].append(hgvsp + " " + str(round(vaf[0], 3)))
+                elif vaf[0] > 0.5 and feature == "E":
+                    table[file.split("/")[-1].split(".")[0]][4].append(hgvsp + " " + str(round(vaf[0], 3)))
+                elif vaf[0] > 0.5 and feature == "ORF1ab":
+                    table[file.split("/")[-1].split(".")[0]][5].append(hgvsp + " " + str(round(vaf[0], 3)))
+                elif vaf[0] > 0.5 and feature == "ORF3a":
+                    table[file.split("/")[-1].split(".")[0]][6].append(hgvsp + " " + str(round(vaf[0], 3)))
+                elif vaf[0] > 0.5 and feature == "ORF6":
+                    table[file.split("/")[-1].split(".")[0]][7].append(hgvsp + " " + str(round(vaf[0], 3)))
+                elif vaf[0] > 0.5 and feature == "ORF7a":
+                    table[file.split("/")[-1].split(".")[0]][8].append(hgvsp + " " + str(round(vaf[0], 3)))
+                elif vaf[0] > 0.5 and feature == "ORF8":
+                    table[file.split("/")[-1].split(".")[0]][9].append(hgvsp + " " + str(round(vaf[0], 3)))
+                elif vaf[0] > 0.5 and feature == "ORF10":
+                    table[file.split("/")[-1].split(".")[0]][10].append(hgvsp + " " + str(round(vaf[0], 3)))
+                elif vaf[0] > 0.5:
+                    table[file.split("/")[-1].split(".")[0]][11].append(hgvsp + " " + str(round(vaf[0], 3)))
+                
 
 var_df = pd.DataFrame()
 for sample in table: 
     var_df = var_df.append(
         {
-            "other variants": " ".join(table[sample][2]),
+            "other variants": " ".join(table[sample][11]),
+            "ORF10 variants": " ".join(table[sample][10]),
+            "ORF8 variants": " ".join(table[sample][9]),
+            "ORF7a variants": " ".join(table[sample][8]),
+            "ORF6 variants": " ".join(table[sample][7]),
+            "ORF3a variants": " ".join(table[sample][6]),
+            "ORF1ab variants": " ".join(table[sample][5]),
+            "E variants": " ".join(table[sample][4]),
+            "M variants": " ".join(table[sample][3]),
+            "other S variants": " ".join(table[sample][2]),
             "variants of interest": " ".join(table[sample][1]),
-            "pangolin strain": " ".join(table[sample][0]),
+            "pangolin strain (#SNPs)": " ".join(table[sample][0]),
             "sample": sample,
         },
         ignore_index=True,
@@ -137,7 +152,7 @@ for sample in table:
     )
 var_df = var_df.set_index("sample")
 print(var_df)
-var_df = var_df[["pangolin strain", "variants of interest", "other variants"]]
+var_df = var_df[["pangolin strain (#SNPs)", "variants of interest", "other S variants", "M variants", "E variants", "ORF1ab variants", "ORF3a variants", "ORF6 variants", "ORF7a variants", "ORF8 variants", "ORF10 variants", "other variants"]]
 
 
 final_df = final_df.merge(
