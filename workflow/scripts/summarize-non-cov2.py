@@ -24,8 +24,8 @@ def analyize_pangolin(sm_input, accessions):
 
 def analyize_kallisto(sm_input, accessions):
     temp_dict = {}
-    for sample, kallisto_csv_path in zip(accessions, sm_input.kallisto):
-        with open(kallisto_csv_path, "r") as kallisto_file:
+    for sample, kallisto_tsv_path in zip(accessions, sm_input.kallisto):
+        with open(kallisto_tsv_path, "r") as kallisto_file:
             kallisto_df = pd.read_csv(kallisto_file, delimiter="\t")
             if kallisto_df.loc[0, "target_id"] == "other":
                 temp_dict[sample] = "is non-sars-cov-2"
@@ -42,7 +42,6 @@ def aggregate_and_save(pangolin_summary, kallisto_summary, sm_output):
     agg_df.to_csv(sm_output, sep="\t")
 
 
-
 pangolin_summary = analyize_pangolin(snakemake.input, snakemake.params.accessions)
-kallisto_summary = analyize_kallisto(snakemake.output, snakemake.params.accessions)
+kallisto_summary = analyize_kallisto(snakemake.input, snakemake.params.accessions)
 aggregate_and_save(pangolin_summary, kallisto_summary, snakemake.output[0])

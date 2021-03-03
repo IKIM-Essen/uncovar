@@ -21,7 +21,6 @@ include: "rules/variant_filtration.smk"
 include: "rules/variant_report.smk"
 include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
-include: "rules/test_cases.smk"
 
 
 rule save_latest_run:
