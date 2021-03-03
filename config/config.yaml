@@ -68,6 +68,19 @@ rki-output:
   # minimum contig length
   minimum-length: 20000
 
+
 adapters:
   #  Illumina TruSeq adapters
   illumina: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+
+
+# NCBI reference sequences of non-SARS-CoV-2 coronavirus. 
+# Used to test whether the pipeline can distinguish between 
+# non-SARS CoV-2 and SARS CoV-2 viruses.
+non_cov2_genomes:
+  - NC_005831
+  - NC_002645
+  - NC_006213
+  - NC_006577
+  - NC_019843
+  # - NC_004718 # This results in 30246 long (polished) contig, which pangolin can't process
