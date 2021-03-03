@@ -42,9 +42,7 @@ def aggregate_and_save(pangolin_summary, kallisto_summary, sm_output):
     agg_df.to_csv(sm_output, sep="\t")
 
 
-sm_input = snakemake.input
-sm_output = snakemake.output[0]
 
-pangolin_summary = analyize_pangolin(sm_input)
-kallisto_summary = analyize_kallisto(sm_input)
-aggregate_and_save(pangolin_summary, kallisto_summary, sm_output)
+pangolin_summary = analyize_pangolin(snakemake.input, snakemake.params.accessions)
+kallisto_summary = analyize_kallisto(snakemake.output, snakemake.params.accessions)
+aggregate_and_save(pangolin_summary, kallisto_summary, snakemake.output[0])
