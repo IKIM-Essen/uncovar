@@ -22,14 +22,9 @@ def analyize_pangolin(sm_input, accessions):
     return temp_dict
 
 
-def analyize_kallisto(sm_input):
+def analyize_kallisto(sm_input, accessions):
     temp_dict = {}
-    for kallisto_csv_path in sm_input.kallisto:
-        sample = (
-            kallisto_csv_path.replace("results/test-cases/tables/strain-calls/", "")
-            .replace(".strains.kallisto.tsv", "")
-            .replace("non-cov2-", "")
-        )
+    for sample, kallisto_csv_path in zip(accessions, sm_input.kallisto):
         with open(kallisto_csv_path, "r") as kallisto_file:
             kallisto_df = pd.read_csv(kallisto_file, delimiter="\t")
             if kallisto_df.loc[0, "target_id"] == "other":
