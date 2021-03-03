@@ -62,7 +62,8 @@ rule kallisto_quant:
 
 rule call_strains_kallisto:
     input:
-        "results/{date}/quant/{sample}",
+        quant="results/{date}/quant/{sample}",
+        fq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
     output:
         "results/{date}/tables/strain-calls/{sample}.strains.kallisto.tsv",
     log:
