@@ -3,7 +3,7 @@ rule assembly:
         fastq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
         fastq2="results/{date}/nonhuman-reads/{sample}.2.fastq.gz",
     output:
-        temp("results/{date}/assembly/{sample}/{sample}.contigs.fa"),
+        "results/{date}/assembly/{sample}/{sample}.contigs.fa",
     log:
         "logs/{date}/megahit/{sample}.log",
     params:
@@ -71,7 +71,7 @@ rule filter_chr0:
     input:
         "results/{date}/ordered-contigs-all/{sample}.fasta",
     output:
-        temp("results/{date}/ordered-contigs/{sample}.fasta"),
+        "results/{date}/ordered-contigs/{sample}.fasta",
     log:
         "logs/{date}/ragoo/{sample}_cleaned.log",
     params:
