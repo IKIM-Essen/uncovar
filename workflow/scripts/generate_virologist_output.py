@@ -10,6 +10,31 @@ KRAKEN_FILTER_KRITERIA = "D"
 
 
 final_df = pd.DataFrame()
+for file in snakemake.input.initial_contigs:
+    contigs = {}
+    sample = file.split("/")[-1].split(".")[0]
+    if os.stat(file).st_size == 0:
+        contigs[sample] = ""
+    else:
+        with open(file, "r") as fasta_unordered:
+            
+            for line in fasta_unordered.read().splitlines():
+                if line.startswith(">"):
+                    contigs[sample] = ""
+                else:  
+                    contigs[sample] += line
+    length = 0
+    for key in contigs:
+        if len(contigs[key]) > length:
+            length = len(contigs[key])
+    final_df = final_df.append(
+        {
+            "initial contig (bp)": str(length),
+            "sample": sample,
+        },
+        ignore_index=True,
+    )
+
 for file in snakemake.input.polished_contigs:
     contigs = {}
     sample = file.split("/")[-1].split(".")[0]
@@ -28,7 +53,7 @@ for file in snakemake.input.polished_contigs:
         length = len(contigs[key])
     final_df = final_df.append(
         {
-            "contig length": str(length),
+            "final contig (bp)": str(length),
             "sample": sample,
         },
         ignore_index=True,

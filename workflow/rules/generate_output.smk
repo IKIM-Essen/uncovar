@@ -47,10 +47,10 @@ rule generate_rki:
 
 rule generate_virologist_output:
     input:
-        # initial_contigs=lambda wildcards: expand(
-        #     "results/{{date}}/assembly/{sample}/{sample}.contigs.fa",
-        #     sample=get_samples_for_date(wildcards.date),
-        # ),
+        initial_contigs=lambda wildcards: expand(
+            "results/{{date}}/assembly/{sample}/{sample}.contigs.fa",
+            sample=get_samples_for_date(wildcards.date),
+        ),
         polished_contigs=lambda wildcards: expand(
             "results/{{date}}/polished-contigs/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
@@ -85,7 +85,7 @@ rule report_virologist:
         report(
             directory("results/{date}/virologist-report"),
             htmlindex="index.html",
-            #caption="../report/virologist-report.rst",
+            # caption="../report/virologist-report.rst",
             category="Virologist report",
         ),
     conda:
