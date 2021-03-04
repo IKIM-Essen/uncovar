@@ -9,7 +9,7 @@ sys.stdout = open(snakemake.log[0], "a")
 KRAKEN_FILTER_KRITERIA = "D"
 
 
-final_df = pd.DataFrame()
+initial_df = pd.DataFrame()
 for file in snakemake.input.initial_contigs:
     contigs = {}
     sample = file.split("/")[-1].split(".")[0]
@@ -20,21 +20,25 @@ for file in snakemake.input.initial_contigs:
             
             for line in fasta_unordered.read().splitlines():
                 if line.startswith(">"):
-                    contigs[sample] = ""
+                    key = line
+                    contigs[key] = ""
                 else:  
-                    contigs[sample] += line
-    length = 0
+                    contigs[key] += line
+
+    length_initial = 0
     for key in contigs:
-        if len(contigs[key]) > length:
-            length = len(contigs[key])
-    final_df = final_df.append(
+        if len(contigs[key]) > length_initial:
+            length_initial = len(contigs[key])
+
+    initial_df = initial_df.append(
         {
-            "initial contig (bp)": str(length),
+            "initial contig (bp)": str(length_initial),
             "sample": sample,
         },
         ignore_index=True,
     )
 
+final_df = pd.DataFrame()
 for file in snakemake.input.polished_contigs:
     contigs = {}
     sample = file.split("/")[-1].split(".")[0]
@@ -179,16 +183,23 @@ var_df = var_df.set_index("sample")
 print(var_df)
 var_df = var_df[["pangolin strain (#SNPs)", "variants of interest", "other S variants", "M variants", "E variants", "ORF1ab variants", "ORF3a variants", "ORF6 variants", "ORF7a variants", "ORF8 variants", "ORF10 variants", "other variants"]]
 
+initial_df = initial_df.set_index("sample")
+final_df = final_df.set_index("sample")
 
-final_df = final_df.merge(
+output_df = pd.merge(
+    initial_df, final_df, how="left", left_on="sample", right_on=initial_df.index
+)
+
+total_kraken_df = total_kraken_df[["Eukaryota", "Bacteria", "Archaea", "Viruses", "thereof SARS", "Unclassified"]]
+output_df = output_df.merge(
     total_kraken_df, how="left", left_on="sample", right_on=total_kraken_df.index
 ).rename(columns={"key_0": "sample"})
 
-final_df = final_df.merge(
+output_df = output_df.merge(
     var_df, how="right", left_on="sample", right_on=var_df.index
 )
 
-final_df = final_df.set_index("sample")
+output_df = output_df.set_index("sample")
 
-print(final_df)
-final_df.to_csv(snakemake.output[0])
+print(output_df)
+output_df.to_csv(snakemake.output[0])
