@@ -1,21 +1,39 @@
-rule determine_coverage:
+rule masking:
     input:
-        "results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
+        bamfile="results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
+        sequence="results/{date}/ordered-contigs/{sample}.fasta",
+        sequence_fai="results/{date}/ordered-contigs/{sample}.fasta.fai",
     output:
-        "results/{date}/tables/coverage/{sample}.txt",
+        masked_sequence="results/{date}/contigs-masked/{sample}.fasta",
+        coverage="results/{date}/tables/coverage/{sample}.txt",
+    params:
+        min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
     log:
-        "logs/{date}/tables/coverage/{sample}.logs",
+        "logs/{date}/masking/{sample}.logs",
     conda:
-        "../envs/samtools.yaml"
-    shell:
-        "samtools depth -aa -H -o {output} {input} 2> {log}"
+        "../envs/pysam.yaml"
+    script:
+        "../scripts/mask-contigs.py"
+
+
+# rule determine_coverage:
+#     input:
+#         "results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
+#     output:
+#         "results/{date}/tables/coverage/{sample}.txt",
+#     log:
+#         "logs/{date}/tables/coverage/{sample}.logs",
+#     conda:
+#         "../envs/samtools.yaml"
+#     shell:
+#         "samtools depth -aa -H -o {output} {input} 2> {log}"
 
 
 rule plot_coverage:
     input:
         "results/{date}/tables/coverage/{sample}.txt",
     output:
-        "results/{date}/plots/coverage/{sample}.svg",
+        report("results/{date}/plots/coverage/{sample}.svg"),
     log:
         "logs/{date}/plot-coverage/{sample}.log",
     conda:
@@ -98,6 +116,10 @@ rule snakemake_reports:
             "results/{{date}}/vcf-report/{target}.{filter}",
             target=get_samples_for_date(wildcards.date) + ["all"],
             filter=config["variant-calling"]["filters"],
+        ),
+        lambda wildcards: expand(
+            "results/{{date}}/plots/coverage/{sample}.svg",
+            sample=get_samples_for_date(wildcards.date),
         ),
     output:
         "results/reports/{date}.zip",
