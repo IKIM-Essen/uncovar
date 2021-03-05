@@ -130,11 +130,14 @@ def extract_coverage_and_mask(
                     # log when masking occures
 
                     bases = sorted(list(pileupread_base_count.keys()))
-                    for key, values in IUPAC.items():
-                        if values == bases:
-                            iupac_mask = key
-                            break
-
+                    if len(bases) > 1:
+                        for key, values in IUPAC.items():
+                            if values == bases:
+                                iupac_mask = key
+                                break
+                    else:
+                        iupac_mask = "N"
+                    
                     print(
                         "Coverage of base %s at pos. %s = %s with Allel frequnzy = %s. Bases in reads: %s. Masking with %s."
                         % (

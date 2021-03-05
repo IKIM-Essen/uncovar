@@ -1,7 +1,7 @@
 rule masking:
     input:
         bamfile="results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
-        sequence="results/{date}/ordered-contigs/{sample}.fasta",
+        sequence="results/{date}/polished-contigs/{sample}.fasta",
     output:
         masked_sequence="results/{date}/contigs-masked/{sample}.fasta",
         coverage="results/{date}/tables/coverage/{sample}.txt",
