@@ -2,7 +2,6 @@ rule masking:
     input:
         bamfile="results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
         sequence="results/{date}/ordered-contigs/{sample}.fasta",
-        sequence_fai="results/{date}/ordered-contigs/{sample}.fasta.fai",
     output:
         masked_sequence="results/{date}/contigs-masked/{sample}.fasta",
         coverage="results/{date}/tables/coverage/{sample}.txt",
@@ -36,6 +35,8 @@ rule plot_coverage:
         report("results/{date}/plots/coverage/{sample}.svg"),
     log:
         "logs/{date}/plot-coverage/{sample}.log",
+    params:
+        min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
     conda:
         "../envs/python.yaml"
     script:
@@ -116,10 +117,6 @@ rule snakemake_reports:
             "results/{{date}}/vcf-report/{target}.{filter}",
             target=get_samples_for_date(wildcards.date) + ["all"],
             filter=config["variant-calling"]["filters"],
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/plots/coverage/{sample}.svg",
-            sample=get_samples_for_date(wildcards.date),
         ),
     output:
         "results/reports/{date}.zip",
