@@ -135,8 +135,6 @@ def extract_coverage_and_mask(
                             iupac_mask = key
                             break
 
-                    sequence[pileupcolumn.reference_pos] = iupac_mask
-
                     print(
                         "Coverage of base %s at pos. %s = %s with Allel frequnzy = %s. Bases in reads: %s. Masking with %s."
                         % (
@@ -150,6 +148,8 @@ def extract_coverage_and_mask(
                         file=sys.stderr,
                     )
 
+                    sequence[pileupcolumn.reference_pos] = iupac_mask
+                    
     # join list of characters to sequence
     sequence = "".join(sequence)
     header = list(sequence_dict.keys())[0].split(".")[0] + "\n"
