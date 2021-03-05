@@ -42,7 +42,7 @@ def extract_coverage_and_mask(
         "N": ["A", "C", "T", "G"],
     }
 
-    # sort for later matching
+    # sort iupac for later matching
     for key, values in IUPAC.items():
         IUPAC[key] = sorted(values)
 
@@ -51,7 +51,7 @@ def extract_coverage_and_mask(
         sequence_path
     ) as sequence_handle, open(coverage_path, "w") as coverage:
 
-        # get sequence(s)
+        # get sequence(s) in fasta file
         sequence_dict = {}
         for line in sequence_handle:
             line = line.strip()
@@ -64,14 +64,14 @@ def extract_coverage_and_mask(
         if len(sequence_dict.keys()) > 1:
             raise ValueError("Sequence contains more than one contig.")
 
-        # convert sequence string to list of characters
+        # convert sequence string to list of characters so that we can change characters
         sequence = list(list(sequence_dict.values())[0])
 
+        # write header of coverage file
         if len(coverage_header) > 0:
             coverage.write(coverage_header)
 
-        i = 0
-        # pileup reade per position
+        # pileup reads per position
         for pileupcolumn in bamfile.pileup(ignore_overlaps=False):
 
             # write name, pos and coverage to coverage file
@@ -86,7 +86,7 @@ def extract_coverage_and_mask(
 
             # check if there is enough coverage at poisition
             if pileupcolumn.nsegments < min_coverage:
-                # log when masking occures
+                # log the masking
                 print(
                     "Coverage of base %s at pos. %s = %s. Masking with N."
                     % (
@@ -125,19 +125,23 @@ def extract_coverage_and_mask(
                 except:
                     base_allel_freq = 0
 
-                # if Allele frequency is lower than treshold, mask base with "N"
+                # if Allele frequency is lower than treshold, then
                 if base_allel_freq < min_allele:
-                    # log when masking occures
 
                     bases = sorted(list(pileupread_base_count.keys()))
+
+                    # mask base with corresonding IUPAC code
                     if len(bases) > 1:
                         for key, values in IUPAC.items():
                             if values == bases:
                                 iupac_mask = key
                                 break
+
+                    # mask the 1 base with "N"
                     else:
                         iupac_mask = "N"
-                    
+
+                    # log when masking occures
                     print(
                         "Coverage of base %s at pos. %s = %s with Allel frequnzy = %s. Bases in reads: %s. Masking with %s."
                         % (
@@ -152,7 +156,7 @@ def extract_coverage_and_mask(
                     )
 
                     sequence[pileupcolumn.reference_pos] = iupac_mask
-                    
+
     # join list of characters to sequence
     sequence = "".join(sequence)
     header = list(sequence_dict.keys())[0].split(".")[0] + "\n"
