@@ -7,6 +7,7 @@ rule masking:
         coverage="results/{date}/tables/coverage/{sample}.txt",
     params:
         min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
+        min_allele=config["RKI-quality-criteria"]["min-allele"],
     log:
         "logs/{date}/masking/{sample}.logs",
     conda:

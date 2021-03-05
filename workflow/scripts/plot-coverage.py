@@ -19,7 +19,7 @@ def plot_coverage(sm_input, sm_output, min_coverage):
         else f">= {min_coverage}"
     )
 
-    # max_x_pos = 31000 if coverage.Pos.max() < 31000 else coverage.Pos.max()
+    # max_x_pos = 30000 if coverage.Pos.max() < 30000 else coverage.Pos.max()
     max_x_pos = coverage.Pos.max()
 
     if len(coverage) > 0:

@@ -9,6 +9,7 @@ def extract_coverage_and_mask(
     masked_sequence_path: str,
     coverage_path: str,
     min_coverage: int,
+    min_allele: float,
     coverage_header: str = "#CHROM\tPOS\tCoverage\n",
 ) -> None:
     """Masks positions below a certain coverage with "N". Outputs the coverage per position in a separate file.
@@ -20,11 +21,30 @@ def extract_coverage_and_mask(
         masked_sequence_path (str): Path to write masked sequence to (.fasta)
         coverage_path (str): Path to write coverage per positions to (.txt)
         min_coverage (int): Minimal coverage at position to achive. Else apply masking with "N"
+        min_allele (float): Minimal Allele frequency of base to achive. If not reach, masking base with "N".
         coverage_header (str, optional): Content of the header in the coverage file. Defaults to "#CHROM\tPOS\tCoverage\n".
 
     Raises:
         ValueError: if sequence contains more than one reference / contig.
     """
+    # source: https://www.bioinformatics.org/sms/iupac.html
+    IUPAC = {
+        "R": ["A", "G"],
+        "Y": ["C", "T"],
+        "S": ["G", "C"],
+        "W": ["A", "T"],
+        "K": ["G", "T"],
+        "M": ["A", "C"],
+        "B": ["C", "G", "T"],
+        "D": ["A", "G", "T"],
+        "H": ["A", "C", "T"],
+        "V": ["A", "C", "G"],
+        "N": ["A", "C", "T", "G"],
+    }
+
+    # sort for later matching
+    for key, values in IUPAC.items():
+        IUPAC[key] = sorted(values)
 
     # context managers for bamfile reader, sequence reader and coverage writer
     with pysam.AlignmentFile(bamfile_path, "rb") as bamfile, open(
@@ -50,8 +70,9 @@ def extract_coverage_and_mask(
         if len(coverage_header) > 0:
             coverage.write(coverage_header)
 
+        i = 0
         # pileup reade per position
-        for pileupcolumn in bamfile.pileup():
+        for pileupcolumn in bamfile.pileup(ignore_overlaps=False):
 
             # write name, pos and coverage to coverage file
             coverage.write(
@@ -67,15 +88,67 @@ def extract_coverage_and_mask(
             if pileupcolumn.nsegments < min_coverage:
                 # log when masking occures
                 print(
-                    "Masked at pos",
-                    pileupcolumn.reference_pos,
-                    "in",
-                    pileupcolumn.reference_name,
+                    "Coverage of base %s at pos. %s = %s. Masking with N."
+                    % (
+                        sequence[pileupcolumn.reference_pos],
+                        pileupcolumn.reference_pos,
+                        pileupcolumn.nsegments,
+                    ),
                     file=sys.stderr,
                 )
 
                 # mask the position
                 sequence[pileupcolumn.reference_pos] = "N"
+
+            # check Allele frequency of base
+            else:
+                # get all base in read for pileup base
+                pileupread_base_count = {}
+                for pileupread in pileupcolumn.pileups:
+                    if not pileupread.is_del and not pileupread.is_refskip:
+
+                        read_base = pileupread.alignment.query_sequence[
+                            pileupread.query_position
+                        ]
+
+                        if read_base not in pileupread_base_count.keys():
+                            pileupread_base_count[read_base] = 1
+                        else:
+                            pileupread_base_count[read_base] += 1
+
+                # calc Allele frequency
+                try:
+                    base_allel_freq = (
+                        pileupread_base_count[sequence[pileupcolumn.reference_pos]]
+                        / pileupcolumn.nsegments
+                    )
+                except:
+                    base_allel_freq = 0
+
+                # if Allele frequency is lower than treshold, mask base with "N"
+                if base_allel_freq < min_allele:
+                    # log when masking occures
+
+                    bases = sorted(list(pileupread_base_count.keys()))
+                    for key, values in IUPAC.items():
+                        if values == bases:
+                            iupac_mask = key
+                            break
+
+                    sequence[pileupcolumn.reference_pos] = iupac_mask
+
+                    print(
+                        "Coverage of base %s at pos. %s = %s with Allel frequnzy = %s. Bases in reads: %s. Masking with %s."
+                        % (
+                            sequence[pileupcolumn.reference_pos],
+                            pileupcolumn.reference_pos,
+                            pileupcolumn.nsegments,
+                            base_allel_freq,
+                            pileupread_base_count,
+                            iupac_mask,
+                        ),
+                        file=sys.stderr,
+                    )
 
     # join list of characters to sequence
     sequence = "".join(sequence)
@@ -93,4 +166,5 @@ if __name__ == "__main__":
         snakemake.output.masked_sequence,
         snakemake.output.coverage,
         snakemake.params.get("min_coverage", ""),
+        snakemake.params.get("min_allele", ""),
     )
