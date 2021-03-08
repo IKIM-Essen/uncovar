@@ -47,7 +47,7 @@ rule plot_coverage:
 checkpoint rki_filter:
     input:
         quast_polished_contigs=lambda wildcards: expand(
-            "results/{date}/quast-polished/{sample}/report.tsv",
+            "results/{date}/quast/polished/{sample}/report.tsv",
             zip,
             date=[wildcards.date] * len(get_samples_for_date(wildcards.date)),
             sample=get_samples_for_date(wildcards.date),
@@ -123,11 +123,11 @@ rule snakemake_reports:
         "results/reports/{date}.zip",
     params:
         for_testing=(
-            "--snakefile ../workflow/Snakefile --nolock"
+            "--snakefile ../workflow/Snakefile"
             if config.get("benchmark-genomes", [])
             else ""
         ),
     log:
         "../logs/snakemake_reports/{date}.log",
     shell:
-        "snakemake {input} --report {output} {params.for_testing}"
+        "snakemake --nolock {input} --report {output} {params.for_testing}"

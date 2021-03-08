@@ -204,7 +204,8 @@ def get_reads(wildcards):
         or wildcards.reference == "main+human"
         or wildcards.reference.startswith("polished-")
     ):
-        # alignment against the human reference genome must be done with trimmed reads, since this alignment is used to generate the ordered, non human contigs
+        # alignment against the human reference genome must be done with trimmed reads, 
+        # since this alignment is used to generate the ordered, non human contigs
         return expand(
             "results/{date}/trimmed/{sample}.{read}.fastq.gz",
             date=wildcards.date,
@@ -212,7 +213,8 @@ def get_reads(wildcards):
             sample=wildcards.sample,
         )
     else:
-        # other reference (e.g. the covid reference genome, are done with contigs) that do not contain human contaminations
+        # other reference (e.g. the covid reference genome, are done with contigs) that 
+        # do not contain human contaminations
         return expand(
             "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
@@ -266,6 +268,15 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
         ],
         [],
     )
+
+
+def get_quast_fastas(wildcards):
+    if wildcards.stage == "unpolished":
+        return "results/{date}/assembly/{sample}/{sample}.contigs.fa"
+    elif wildcards.stage == "polished":
+        return "results/{date}/polished-contigs/{sample}.fasta"
+    elif wildcards.stage == "masked":
+        return "results/{date}/contigs-masked/{sample}.fasta"
 
 
 wildcard_constraints:
