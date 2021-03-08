@@ -166,10 +166,7 @@ def get_assembly_comparisons(bams=True):
             if bams
             else "resources/genomes/{accession}.fasta"
         )
-        return expand(
-            pattern,
-            accession=accessions,
-        )
+        return expand(pattern, accession=accessions,)
 
     return inner
 
@@ -204,7 +201,7 @@ def get_reads(wildcards):
         or wildcards.reference == "main+human"
         or wildcards.reference.startswith("polished-")
     ):
-        # alignment against the human reference genome must be done with trimmed reads, 
+        # alignment against the human reference genome must be done with trimmed reads,
         # since this alignment is used to generate the ordered, non human contigs
         return expand(
             "results/{date}/trimmed/{sample}.{read}.fastq.gz",
@@ -213,7 +210,7 @@ def get_reads(wildcards):
             sample=wildcards.sample,
         )
     else:
-        # other reference (e.g. the covid reference genome, are done with contigs) that 
+        # other reference (e.g. the covid reference genome, are done with contigs) that
         # do not contain human contaminations
         return expand(
             "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
@@ -260,10 +257,7 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
         [
             expand(ele, exp=expand_wildcard)
             for ele in expand(
-                expand_string,
-                zip,
-                zip1=zip_wildcard_1,
-                zip2=zip_wildcard_2,
+                expand_string, zip, zip1=zip_wildcard_1, zip2=zip_wildcard_2,
             )
         ],
         [],

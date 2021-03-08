@@ -71,8 +71,8 @@ rule polish_contigs:
 
 rule align_contigs:
     input:
-        target = "resources/genomes/main.fasta",
-        query = get_quast_fastas,
+        target="resources/genomes/main.fasta",
+        query=get_quast_fastas,
     output:
         "results/{date}/aligned/ref~main/{stage}~{sample}.bam",
     log:

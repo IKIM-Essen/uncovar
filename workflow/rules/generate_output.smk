@@ -18,9 +18,16 @@ rule masking:
 
 rule plot_coverage:
     input:
-        lambda wildcards: expand("results/{{date}}/tables/coverage/{sample}.txt", sample = get_samples_for_date(wildcards.date))
+        lambda wildcards: expand(
+            "results/{{date}}/tables/coverage/{sample}.txt",
+            sample=get_samples_for_date(wildcards.date),
+        ),
     output:
-        report("results/{date}/plots/coverage.svg", caption="../report/all-coverage.rst", category="Coverage"),
+        report(
+            "results/{date}/plots/coverage.svg",
+            caption="../report/all-coverage.rst",
+            category="Coverage",
+        ),
     log:
         "logs/{date}/plot-coverage.log",
     params:
