@@ -16,44 +16,31 @@ rule masking:
         "../scripts/mask-contigs.py"
 
 
-# rule determine_coverage:
-#     input:
-#         "results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
-#     output:
-#         "results/{date}/tables/coverage/{sample}.txt",
-#     log:
-#         "logs/{date}/tables/coverage/{sample}.logs",
-#     conda:
-#         "../envs/samtools.yaml"
-#     shell:
-#         "samtools depth -aa -H -o {output} {input} 2> {log}"
-
-
 rule plot_coverage:
     input:
-        "results/{date}/tables/coverage/{sample}.txt",
+        lambda wildcards: expand("results/{{date}}/tables/coverage/{sample}.txt", sample = get_samples_for_date(wildcards.date))
     output:
-        report("results/{date}/plots/coverage/{sample}.svg"),
+        report("results/{date}/plots/coverage.svg", caption="../report/all-coverage.rst", category="Coverage"),
     log:
-        "logs/{date}/plot-coverage/{sample}.log",
+        "logs/{date}/plot-coverage.log",
     params:
         min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/plot-coverage.py"
+        "../scripts/plot-all-coverage.py"
 
 
 checkpoint rki_filter:
     input:
-        quast_polished_contigs=lambda wildcards: expand(
-            "results/{date}/quast/polished/{sample}/report.tsv",
+        quast=lambda wildcards: expand(
+            "results/{date}/quast/masked/{sample}/report.tsv",
             zip,
             date=[wildcards.date] * len(get_samples_for_date(wildcards.date)),
             sample=get_samples_for_date(wildcards.date),
         ),
-        polished_contigs=lambda wildcards: expand(
-            "results/{date}/polished-contigs/{sample}.fasta",
+        contigs=lambda wildcards: expand(
+            "results/{date}/contigs-masked/{sample}.fasta",
             zip,
             date=[wildcards.date] * len(get_samples_for_date(wildcards.date)),
             sample=get_samples_for_date(wildcards.date),
@@ -74,8 +61,8 @@ checkpoint rki_filter:
 rule generate_rki:
     input:
         filtered_samples="results/{date}/rki-filter/{date}.txt",
-        polished_contigs=lambda wildcards: expand(
-            "results/{date}/polished-contigs/{sample}.fasta",
+        contigs=lambda wildcards: expand(
+            "results/{date}/contigs-masked/{sample}.fasta",
             zip,
             date=[wildcards.date] * len(get_samples_for_date(wildcards.date)),
             sample=get_samples_for_date(wildcards.date, filtered=True),
@@ -93,6 +80,7 @@ rule generate_rki:
 
 rule snakemake_reports:
     input:
+        "results/{date}/plots/coverage.svg",
         lambda wildcards: expand(
             "results/{{date}}/polished-contigs/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
