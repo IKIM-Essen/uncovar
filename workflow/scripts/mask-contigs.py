@@ -143,7 +143,7 @@ def extract_coverage_and_mask(
 
                     # log when masking occures
                     print(
-                        "Coverage of base %s at pos. %s = %s with Allel frequnzy = %s. Bases in reads: %s. Masking with %s."
+                        "Coverage of base %s at pos. %s = %s with Allel frequency = %s. Bases in reads: %s. Masking with %s."
                         % (
                             sequence[pileupcolumn.reference_pos],
                             pileupcolumn.reference_pos,
