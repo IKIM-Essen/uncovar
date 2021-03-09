@@ -11,7 +11,7 @@ rule vcf_report:
             directory("results/{date}/vcf-report/{target}.{filter}"),
             htmlindex="index.html",
             caption="../report/variant-calls.rst",
-            category="2. Virology",
+            category="2. Virology Details",
             subcategory="2. Variant Call Reports: {filter}",
         ),
     params:

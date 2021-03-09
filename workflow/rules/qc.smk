@@ -60,7 +60,7 @@ rule multiqc:
         "0.69.0/bio/multiqc"
 
 
-rule multiqc_for_lab:
+rule multiqc_lab:
     input:
         lambda wildcards: expand(
             "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
@@ -83,8 +83,8 @@ rule multiqc_for_lab:
             "results/{date}/qc/laboratory/multiqc.html",
             htmlindex="multiqc.html",
             caption="../report/multi-qc-lab.rst",
-            category="3. Lab",
-            subcategory="2. Quality Control",
+            category="3. Sequencing Details",
+            subcategory="1. Quality Control",
         ),
     params:
         "--config config/multiqc_config_lab.yaml",
