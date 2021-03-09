@@ -154,6 +154,7 @@ rule snakemake_html_report_virologist:
         "(rbt csv-report {input.qc_data} {output.qc_data} && "
         "rbt csv-report {input.var_data} {output.var_data}) > {log} 2>&1"
 
+
 rule snakemake_reports:
     input:
         "results/{date}/plots/coverage.svg",
@@ -195,4 +196,3 @@ rule snakemake_reports:
         "../logs/snakemake_reports/{date}.log",
     shell:
         "snakemake --nolock {input} --report {output} {params.for_testing}"
-
