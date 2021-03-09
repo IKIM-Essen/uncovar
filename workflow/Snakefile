@@ -71,9 +71,12 @@ rule all:
         expand(
             "results/{date}/virologist/report.csv", date=get_all_run_dates(),
         ),
-        # expand(
-        #     "results/{date}/virologist-report/", date=get_all_run_dates(),
-        # ),
+        expand(
+            "results/{date}/var_data/", date=get_all_run_dates(),
+        ),
+        expand(
+            "results/{date}/qc_data/", date=get_all_run_dates(),
+        ),
 
 
 rule benchmark_strain_calling:

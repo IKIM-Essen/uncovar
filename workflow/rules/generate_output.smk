@@ -47,6 +47,15 @@ rule generate_rki:
 
 rule generate_virologist_output:
     input:
+        # reads_unfiltered=lambda wildcards: [pep.sample_table.loc[sample][["fq1", "fq2"]] for sample in get_samples_for_date(wildcards.date)],
+        reads_unfiltered=lambda wildcards: expand(
+            "results/{{date}}/trimmed/{sample}.fastp.json",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        reads_filtered=lambda wildcards: expand(
+            "results/{{date}}/assembly/{sample}/log",
+            sample=get_samples_for_date(wildcards.date),
+        ),
         initial_contigs=lambda wildcards: expand(
             "results/{{date}}/assembly/{sample}/{sample}.contigs.fa",
             sample=get_samples_for_date(wildcards.date),
@@ -68,7 +77,9 @@ rule generate_virologist_output:
             sample=get_samples_for_date(wildcards.date),
         ),
     output:
-        "results/{date}/virologist/report.csv",
+        all_data="results/{date}/virologist/report.csv",
+        qc_data="results/{date}/virologist/qc_report.csv",
+        var_data="results/{date}/virologist/var_report.csv",
     log:
         "logs/{date}/viro_report.log",
     conda:
@@ -78,19 +89,27 @@ rule generate_virologist_output:
         "../scripts/generate_virologist_output.py"
 
 
-rule report_virologist:
+rule snakemake_html_report_virologist:
     input:
-        "results/{date}/virologist/report.csv",
+        qc_data="results/{date}/virologist/qc_report.csv",
+        var_data="results/{date}/virologist/var_report.csv",
     output:
-        report(
-            directory("results/{date}/virologist-report"),
+        qc_data=report(
+            directory("results/{date}/qc_data/"),
             htmlindex="index.html",
-            # caption="../report/virologist-report.rst",
-            category="Virologist report",
+            caption="../report/qc-report.rst",
+            category="QC report overview",
+        ),
+        var_data=report(
+            directory("results/{date}/var_data/"),
+            htmlindex="index.html",
+            caption="../report/var-report.rst",
+            category="Variant report overview",
         ),
     conda:
         "../envs/rbt.yaml"
     log:
         "logs/{date}/viro_report_html.log",
     shell:
-        "(rbt csv-report -s ',' {input} {output}) > {log} 2>&1"
+        "(rbt csv-report {input.qc_data} {output.qc_data} && "
+        "rbt csv-report {input.var_data} {output.var_data}) > {log} 2>&1"
