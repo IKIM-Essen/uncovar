@@ -35,8 +35,16 @@ rule generate_rki:
             sample=get_samples_for_date(wildcards.date, filtered=True),
         ),
     output:
-        fasta="results/rki/{date}_uk-essen_rki.fasta",
-        table="results/rki/{date}_uk-essen_rki.csv",
+        fasta=report(
+            "results/rki/{date}_uk-essen_rki.fasta",
+            category="4. RKI Submission",
+            caption="../report/rki-submission-fasta.rst",
+        ),
+        table=report(
+            "results/rki/{date}_uk-essen_rki.csv",
+            category="4. RKI Submission",
+            caption="../report/rki-submission-csv.rst",
+        ),
     params:
         min_length=config["rki-output"]["minimum-length"],
     log:
@@ -45,33 +53,20 @@ rule generate_rki:
         "../scripts/generate-rki-output.py"
 
 
-rule snakemake_reports:
+rule snakemake_report:
     input:
-        lambda wildcards: expand(
-            "results/{{date}}/polished-contigs/{sample}.fasta",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        expand(
-            "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
-            mode=["major", "any"],
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/plots/strain-calls/{sample}.strains.pangolin.svg",
-            sample=get_samples_for_date(wildcards.date),
-        ),
         "results/{date}/plots/all.strains.pangolin.svg",
-        lambda wildcards: expand(
-            "results/{{date}}/scenarios/{sample}.yaml",
-            sample=get_samples_for_date(wildcards.date),
-        ),
         lambda wildcards: expand(
             "results/{{date}}/vcf-report/{target}.{filter}",
             target=get_samples_for_date(wildcards.date) + ["all"],
             filter=config["variant-calling"]["filters"],
+        ),
+        "results/{date}/qc/laboratory/multiqc.html",
+        "results/rki/{date}_uk-essen_rki.csv",
+        "results/rki/{date}_uk-essen_rki.fasta",
+        lambda wildcards: expand(
+            "results/{{date}}/polished-contigs/{sample}.fasta",
+            sample=get_samples_for_date(wildcards.date),
         ),
     output:
         "results/reports/{date}.zip",
