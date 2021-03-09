@@ -10,7 +10,7 @@ sys.stdout = open(snakemake.log[0], "a")
 length = 0
 
 header2seq = {}
-for file in snakemake.input.polished_contigs:
+for file in snakemake.input.contigs:
     print(file)
     infile = open(file, "r")
     for line in infile.read().splitlines():

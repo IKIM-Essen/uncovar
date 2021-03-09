@@ -12,29 +12,55 @@ include: "rules/utils.smk"
 include: "rules/ref.smk"
 include: "rules/qc.smk"
 include: "rules/read_trimming.smk"
+include: "rules/read_mapping.smk"
 include: "rules/assembly.smk"
 include: "rules/strain_calling.smk"
-include: "rules/read_mapping.smk"
 include: "rules/variant_calling.smk"
 include: "rules/variant_annotation.smk"
 include: "rules/variant_filtration.smk"
 include: "rules/variant_report.smk"
-include: "rules/benchmarking.smk"
 include: "rules/generate_output.smk"
+include: "rules/benchmarking.smk"
 
 
-rule all:
+rule save_latest_run:
+    input:
+        expand(
+            "results/archive-indicator/{latest_run}.archived",
+            latest_run=get_latest_run_date(),
+        ),
+    output:
+        expand(
+            "".join(
+                (
+                    config["data-handling"]["archive"],
+                    "{latest_run}/results_{latest_run}.tar.gz",
+                )
+            ),
+            latest_run=get_latest_run_date(),
+        ),
+    params:
+        latest_run=get_latest_run_date(),
+    log:
+        expand("logs/save-run/{latest_run}.log", latest_run=get_latest_run_date()),
+    conda:
+        "envs/unix.yaml"
+    shell:
+        "tar -zcvf {output} results/{params.latest_run} 2> {log} 2>&1"
+
+
+checkpoint all:
     input:
         expand(
             "results/{date}/qc/multiqc.html", date=get_all_run_dates(),
         ),
+        expand("results/reports/{date}.zip", date=get_all_run_dates()),
         expand("results/rki/{date}_uk-essen_rki.fasta", date=get_all_run_dates()),
         expand(
-            "results/{date}/plots/strain-calls/all.strains.pangolin.svg",
-            date=get_all_run_dates(),
+            "results/{date}/plots/all.strains.pangolin.svg", date=get_all_run_dates(),
         ),
         expand(
-            "results/{date}/plots/strain-calls/all.{mode}-strain.strains.kallisto.svg",
+            "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
             date=get_all_run_dates(),
             mode=["major", "any"],
         ),
@@ -68,6 +94,7 @@ rule all:
             zip_wildcard_2=get_samples() + ["all"] * len(get_all_run_dates()),
             expand_wildcard=config["variant-calling"]["filters"],
         ),
+
         expand(
             "results/{date}/virologist/report.csv", date=get_all_run_dates(),
         ),
@@ -76,6 +103,13 @@ rule all:
         ),
         expand(
             "results/{date}/qc_data/", date=get_all_run_dates(),
+
+    output:
+        touch(
+            expand(
+                "results/archive-indicator/{latest_run}.archived",
+                latest_run=get_latest_run_date(),
+            )
         ),
 
 

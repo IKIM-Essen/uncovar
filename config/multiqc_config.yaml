@@ -37,7 +37,7 @@ module_order:
       name: "Contigs (assembly)"
       anchor: "quast_assembly"
       path_filters:
-        - "*quast-unpolished/*/report.tsv"
+        - "*/quast/unpolished/*/report.tsv" 
   - picard:
       name: Duplication (raGOO)
       info: 'is used to mark duplicates of the raGOO outout against the covid reference genome.'
@@ -48,7 +48,7 @@ module_order:
       name: "Contigs (polished)"
       anchor: "quast_consensus"
       path_filters:
-        - "*quast-polished/*/report.tsv"
+        - "*/quast/polished/*/report.tsv"
 
 
 # sample name cleaning
@@ -100,7 +100,7 @@ table_columns_visible:
   Contigs (assembly):
     N50: True
     Total length: False
-    Largest contig: True
+    Largest contig: False
   Samtools (?):
     flagstat_total: False
     mapped_passed: False

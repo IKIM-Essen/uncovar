@@ -53,12 +53,24 @@ def get_all_run_dates():
     return sorted_list
 
 
+def get_latest_run_date():
+    return pep.sample_table["run_id"].max()
+
+
 def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
     if wildcards.sample.startswith(benchmark_prefix):
         # this is a simulated benchmark sample, do not look up FASTQs in the sample sheet
         accession = wildcards.sample[len(benchmark_prefix) :]
         return expand(
             "resources/benchmarking/{accession}/reads.{read}.fastq.gz",
+            accession=accession,
+            read=[1, 2],
+        )
+    if wildcards.sample.startswith("non-cov2-"):
+        # this is for testing non-sars-cov2-genomes
+        accession = wildcards.sample[len("non-cov2-") :]
+        return expand(
+            "resources/test-cases/{accession}/reads.{read}.fastq.gz",
             accession=accession,
             read=[1, 2],
         )
@@ -125,6 +137,11 @@ def get_strain_accessions(wildcards):
         return accessions
 
 
+def get_non_cov2_accessions():
+    accessions = config.get("non_cov2_genomes", [])
+    return accessions
+
+
 def get_strain_genomes(wildcards):
     # Case 1: take custom genomes from gisaid
     custom_genomes = config["strain-calling"]["use-gisaid"]
@@ -167,6 +184,22 @@ def get_assembly_comparisons(bams=True):
     return inner
 
 
+def get_non_cov2_calls(from_caller="pangolin"):
+    accessions = get_non_cov2_accessions()
+    pattern = (
+        "results/test-cases/tables/strain-calls/non-cov2-{accession}.strains.pangolin.csv"
+        if from_caller == "pangolin"
+        else "results/test-cases/tables/strain-calls/non-cov2-{accession}.strains.kallisto.tsv"
+        if from_caller == "kallisto"
+        else []
+    )
+
+    if not pattern:
+        raise NameError(f"Caller {from_caller} not recognized")
+
+    return expand(pattern, accession=accessions)
+
+
 def get_reference(suffix=""):
     def inner(wildcards):
         if wildcards.reference == "main":
@@ -177,6 +210,11 @@ def get_reference(suffix=""):
             return "resources/genomes/human-genome.fna.gz"
         elif wildcards.reference == "main+human":
             return "resources/genomes/main-and-human-genome.fna.gz"
+        elif wildcards.reference.startswith("polished-"):
+            # return polished contigs
+            return "results/{date}/polished-contigs/{sample}.fasta".format(
+                sample=wildcards.reference.replace("polished-", ""), **wildcards
+            )
         else:
             # return assembly result
             return "results/{date}/ordered-contigs/{reference}.fasta{suffix}".format(
@@ -187,8 +225,13 @@ def get_reference(suffix=""):
 
 
 def get_reads(wildcards):
-    if wildcards.reference == "human" or wildcards.reference == "main+human":
-        # alignment against the human reference genome must be done with trimmed reads, since this alignment is used to generate the ordered, non human contigs
+    if (
+        wildcards.reference == "human"
+        or wildcards.reference == "main+human"
+        or wildcards.reference.startswith("polished-")
+    ):
+        # alignment against the human reference genome must be done with trimmed reads,
+        # since this alignment is used to generate the ordered, non human contigs
         return expand(
             "results/{date}/trimmed/{sample}.{read}.fastq.gz",
             date=wildcards.date,
@@ -196,7 +239,8 @@ def get_reads(wildcards):
             sample=wildcards.sample,
         )
     else:
-        # other reference (e.g. the covid reference genome, are done with contigs) that do not contain human contaminations
+        # other reference (e.g. the covid reference genome, are done with contigs) that
+        # do not contain human contaminations
         return expand(
             "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
@@ -247,6 +291,15 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
         ],
         [],
     )
+
+
+def get_quast_fastas(wildcards):
+    if wildcards.stage == "unpolished":
+        return "results/{date}/assembly/{sample}/{sample}.contigs.fa"
+    elif wildcards.stage == "polished":
+        return "results/{date}/polished-contigs/{sample}.fasta"
+    elif wildcards.stage == "masked":
+        return "results/{date}/contigs-masked/{sample}.fasta"
 
 
 wildcard_constraints:
