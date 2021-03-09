@@ -79,4 +79,4 @@ rule snakemake_report:
     log:
         "../logs/snakemake_reports/{date}.log",
     shell:
-        "snakemake {input} --report {output} {params.for_testing}"
+        "snakemake --report-stylesheet resources/custom-stylesheet.css {input} --report {output} {params.for_testing}"

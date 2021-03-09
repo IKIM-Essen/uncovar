@@ -4,6 +4,9 @@ configfile: "config/config.yaml"
 pepfile: config["pepfile"]
 
 
+report: "report/workflow.rst"
+
+
 container: "docker://condaforge/mambaforge"
 
 

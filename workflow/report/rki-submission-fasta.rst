@@ -1,1 +1,1 @@
-The reconstruct genome sequences from the {snakemake.wildcards.date} samples for submission to the RKI.
+The reconstruct genome sequences for submitting to the RKI.
