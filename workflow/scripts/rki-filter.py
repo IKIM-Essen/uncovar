@@ -41,11 +41,11 @@ def get_identity(quast_report_paths: List[str]) -> dict:
     return identity_dict
 
 
-def get_n_share(polished_contig_paths: List[str]) -> dict:
+def get_n_share(contig_paths: List[str]) -> dict:
     """Extracts share of Ns in given contigs.
 
     Args:
-        polished_contig_paths (List[str]): List of paths of to be parsed contig
+        contig_paths (List[str]): List of paths of to be parsed contig
 
     Returns:
         dict: Dict consisting of sample name and share of Ns
@@ -54,7 +54,7 @@ def get_n_share(polished_contig_paths: List[str]) -> dict:
     n_share_dict = {}
     seq_dict = {}
 
-    for contig_path in polished_contig_paths:
+    for contig_path in contig_paths:
         with open(contig_path, "r") as handle:
             for line in handle.read().splitlines():
                 if line.startswith(">"):
@@ -110,6 +110,6 @@ def filter_and_save(
             snakemake_output.write("%s\n" % sample)
 
 
-identity_dict = get_identity(snakemake.input.quast_polished_contigs)
-n_share_dict = get_n_share(snakemake.input.polished_contigs)
+identity_dict = get_identity(snakemake.input.quast)
+n_share_dict = get_n_share(snakemake.input.contigs)
 filter_and_save(identity_dict, n_share_dict, min_identity, max_n, snakemake.output[0])
