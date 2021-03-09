@@ -26,7 +26,8 @@ rule plot_coverage:
         report(
             "results/{date}/plots/coverage.svg",
             caption="../report/all-coverage.rst",
-            category="Coverage",
+            category="3. Lab",
+            subcategory="2. Read Coverage",
         ),
     log:
         "logs/{date}/plot-coverage.log",
