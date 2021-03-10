@@ -3,7 +3,8 @@ rule assembly:
         fastq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
         fastq2="results/{date}/nonhuman-reads/{sample}.2.fastq.gz",
     output:
-        "results/{date}/assembly/{sample}/{sample}.contigs.fa",
+        contigs="results/{date}/assembly/{sample}/{sample}.contigs.fa",
+        log="results/{date}/assembly/{sample}/log",
     log:
         "logs/{date}/megahit/{sample}.log",
     params:
@@ -13,7 +14,7 @@ rule assembly:
     conda:
         "../envs/megahit.yaml"
     shell:
-        "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f && mv {params.outdir}/final.contigs.fa {output} ) 2> {log}"
+        "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f && mv {params.outdir}/final.contigs.fa {output.contigs} ) 2> {log}"
 
 
 rule order_contigs:
