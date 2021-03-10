@@ -114,6 +114,10 @@ rule snakemake_reports:
             target=get_samples_for_date(wildcards.date) + ["all"],
             filter=config["variant-calling"]["filters"],
         ),
+        expand(
+            "results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf",
+            filter=config["variant-calling"]["filters"],
+        ),
     output:
         "results/reports/{date}.zip",
     params:
