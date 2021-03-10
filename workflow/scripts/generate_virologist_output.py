@@ -101,37 +101,38 @@ for file in snakemake.input.polished_contigs:
 total_kraken_df = pd.DataFrame()
 
 for file in snakemake.input.kraken:
-    sample = file.split("/")[-1].split(".")[0]
-    krake_df = pd.read_csv(
-        file,
-        delimiter="\t",
-        header=None,
-    )
-    krake_df.columns = ["%", "covered", "assigned", "code", "taxonomic ID", "name"]
-    krake_df.name = krake_df.name.str.strip()
-    krake_df_filtered = (
-        krake_df[(krake_df["code"] == KRAKEN_FILTER_KRITERIA)][["%", "name"]]
-        .set_index("name")
-        .T
-    )
-    krake_df_filtered["sample"] = sample
-    try:
-        krake_df_filtered["thereof SARS"] = krake_df[
-            krake_df["name"] == "Severe acute respiratory syndrome-related coronavirus"
+    try:    
+        sample = file.split("/")[-1].split(".")[0]
+        krake_df = pd.read_csv(
+            file,
+            delimiter="\t",
+            header=None,
+        )
+        krake_df.columns = ["%", "covered", "assigned", "code", "taxonomic ID", "name"]
+        krake_df.name = krake_df.name.str.strip()
+        krake_df_filtered = (
+            krake_df[(krake_df["code"] == KRAKEN_FILTER_KRITERIA)][["%", "name"]]
+            .set_index("name")
+            .T
+        )
+        krake_df_filtered["sample"] = sample
+        try:
+            krake_df_filtered["thereof SARS"] = krake_df[
+                krake_df["name"] == "Severe acute respiratory syndrome-related coronavirus"
+            ]["%"].values[0]
+        except:
+            pass
+        krake_df_filtered["Unclassified"] = krake_df[
+            krake_df["name"] == "unclassified"
         ]["%"].values[0]
+
+        krake_df_filtered = krake_df_filtered.rename(columns={"Eukaryota": "Eukaryota (%)", "Bacteria": "Bacteria (%)", "Viruses": "Viruses (%)", "thereof SARS": "thereof SARS (%)", "Unclassified": "Unclassified (%)"})
+        krake_df_filtered = krake_df_filtered.set_index("sample")
+        total_kraken_df = total_kraken_df.append(krake_df_filtered)
+
+        total_kraken_df.drop(columns=["Archaea"], inplace=True)
     except:
         pass
-    krake_df_filtered["Unclassified"] = krake_df[
-        krake_df["name"] == "unclassified"
-    ]["%"].values[0]
-
-    krake_df_filtered = krake_df_filtered.rename(columns={"Eukaryota": "Eukaryota (%)", "Bacteria": "Bacteria (%)", "Viruses": "Viruses (%)", "thereof SARS": "thereof SARS (%)", "Unclassified": "Unclassified (%)"})
-    krake_df_filtered = krake_df_filtered.set_index("sample")
-    total_kraken_df = total_kraken_df.append(krake_df_filtered)
-try:
-    total_kraken_df.drop(columns=["Archaea"], inplace=True)
-except:
-    pass
 # assembly_df = assembly_df.merge(
 #     final_df, how="left", left_on="sample", right_on="sample"
 # )
@@ -237,11 +238,13 @@ output_df = output_df.merge(
 output_df = output_df.merge(
     final_df, how="left", left_on="sample", right_on=initial_df.index
 )
-
-total_kraken_df = total_kraken_df[["Eukaryota (%)", "Bacteria (%)", "Viruses (%)", "thereof SARS (%)", "Unclassified (%)"]]
-output_df = output_df.merge(
-    total_kraken_df, how="left", left_on="sample", right_on=total_kraken_df.index
-).rename(columns={"key_0": "sample"})
+try:
+    total_kraken_df = total_kraken_df[["Eukaryota (%)", "Bacteria (%)", "Viruses (%)", "thereof SARS (%)", "Unclassified (%)"]]
+    output_df = output_df.merge(
+        total_kraken_df, how="left", left_on="sample", right_on=total_kraken_df.index
+    ).rename(columns={"key_0": "sample"})
+except:
+    pass
 
 output_df = output_df.merge(
     var_df, how="right", left_on="sample", right_on=var_df.index
@@ -254,8 +257,10 @@ variant_df = pd.DataFrame()
 qc_df = output_df.copy()
 variant_df = output_df.copy()
 qc_df.drop(columns=["other S variants", "M variants", "E variants", "ORF1ab variants", "ORF3a variants", "ORF6 variants", "ORF7a variants", "ORF8 variants", "ORF10 variants", "other variants"], inplace=True)
-variant_df.drop(columns=["# raw reads", "# trimmed reads", "# filtered reads", "initial contig (bp)", "final contig (bp)", "Eukaryota (%)", "Bacteria (%)", "Viruses (%)", "thereof SARS (%)", "Unclassified (%)"], inplace=True)
-
+try:
+    variant_df.drop(columns=["# raw reads", "# trimmed reads", "# filtered reads", "initial contig (bp)", "final contig (bp)", "Eukaryota (%)", "Bacteria (%)", "Viruses (%)", "thereof SARS (%)", "Unclassified (%)"], inplace=True)
+except:
+    pass
 output_df.to_csv(snakemake.output.all_data)
 qc_df.to_csv(snakemake.output.qc_data)
 variant_df.to_csv(snakemake.output.var_data)
