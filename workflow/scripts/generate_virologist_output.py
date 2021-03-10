@@ -1,7 +1,6 @@
 from numpy import NZERO
 import pandas as pd
 import sys
-import pprint
 import os
 import pysam
 import json
@@ -16,12 +15,12 @@ for file in snakemake.input.reads_unfiltered:
     sample = file.split("/")[-1].split(".")[0]
     with open(file) as read_json:
         number_reads = json.load(read_json)
-    print(number_reads["summary"]["before_filtering"]["total_reads"], number_reads["summary"]["after_filtering"]["total_reads"])
-
+    raw_reads = int(number_reads["summary"]["before_filtering"]["total_reads"])
+    trimmed_reads = int(number_reads["summary"]["after_filtering"]["total_reads"])
     initial_reads_df = initial_reads_df.append(
         {
-            "# raw reads": str(int(number_reads["summary"]["before_filtering"]["total_reads"])),
-            "# trimmed reads": str(int(number_reads["summary"]["after_filtering"]["total_reads"])),
+            "# raw reads": str(f"{raw_reads:,}"),
+            "# trimmed reads": str(f"{trimmed_reads:,}"),
             "sample": sample,
         },
         ignore_index=True,
@@ -34,18 +33,16 @@ for file in snakemake.input.reads_filtered:
     infile = open(file, "r")
     sample = file.split("/")[-2]
     for line in infile:
-        #print(line)
         if "max length" in line:
             num_reads = line.split(", ")[-2].split(" ")[0]
             filtered_reads_df = filtered_reads_df.append(
                 {
-                    "# filtered reads": num_reads,
+                    "# filtered reads": f"{int(num_reads):,}",
                     "sample": sample,
                 },
                 ignore_index=True,
             )
 filtered_reads_df = filtered_reads_df.set_index("sample")
-print(filtered_reads_df)
 
 initial_df = pd.DataFrame()
 for file in snakemake.input.initial_contigs:
@@ -55,7 +52,7 @@ for file in snakemake.input.initial_contigs:
         contigs[sample] = ""
     else:
         with open(file, "r") as fasta_unordered:
-            
+             
             for line in fasta_unordered.read().splitlines():
                 if line.startswith(">"):
                     key = line
@@ -70,7 +67,7 @@ for file in snakemake.input.initial_contigs:
 
     initial_df = initial_df.append(
         {
-            "initial contig (bp)": str(int(length_initial)),
+            "initial contig (bp)": str(f"{int(length_initial):,}"),
             "sample": sample,
         },
         ignore_index=True,
@@ -95,7 +92,7 @@ for file in snakemake.input.polished_contigs:
         length = len(contigs[key])
     final_df = final_df.append(
         {
-            "final contig (bp)": str(int(length)),
+            "final contig (bp)": str(f"{int(length):,}"),
             "sample": sample,
         },
         ignore_index=True,
@@ -118,13 +115,17 @@ for file in snakemake.input.kraken:
         .T
     )
     krake_df_filtered["sample"] = sample
-    krake_df_filtered["thereof SARS"] = krake_df[
-        krake_df["name"] == "Severe acute respiratory syndrome-related coronavirus"
-    ]["%"].values[0]
+    try:
+        krake_df_filtered["thereof SARS"] = krake_df[
+            krake_df["name"] == "Severe acute respiratory syndrome-related coronavirus"
+        ]["%"].values[0]
+    except:
+        pass
     krake_df_filtered["Unclassified"] = krake_df[
         krake_df["name"] == "unclassified"
     ]["%"].values[0]
 
+    krake_df_filtered = krake_df_filtered.rename(columns={"Eukaryota": "Eukaryota (%)", "Bacteria": "Bacteria (%)", "Viruses": "Viruses (%)", "thereof SARS": "thereof SARS (%)", "Unclassified": "Unclassified (%)"})
     krake_df_filtered = krake_df_filtered.set_index("sample")
     total_kraken_df = total_kraken_df.append(krake_df_filtered)
 try:
@@ -159,7 +160,6 @@ for file in snakemake.input.bcf:
     variants = pysam.VariantFile(file, "rb")
     for record in variants:
         vaf = record.samples[0]["AF"]
-         #print(vaf)
         for ann in record.info["ANN"]:
             ann = ann.split("|")
             hgvsp = ann[11]
@@ -170,6 +170,7 @@ for file in snakemake.input.bcf:
                 enssast_id = hgvsp.split(":", 1)[0]
                 for triplet, amino in AS3to1.items():
                     alt = alt.replace(triplet, amino)
+                # hgvsp = f"{feature}:{alt} {enssast_id}"
                 hgvsp = f"{feature}:{alt}"
                 if  feature == "S" and\
                     ("501" in alt or \
@@ -221,7 +222,6 @@ for sample in table:
         
     )
 var_df = var_df.set_index("sample")
-print(var_df)
 var_df = var_df[["pangolin strain (#SNPs)", "variants of interest", "other S variants", "M variants", "E variants", "ORF1ab variants", "ORF3a variants", "ORF6 variants", "ORF7a variants", "ORF8 variants", "ORF10 variants", "other variants"]]
 
 initial_df = initial_df.set_index("sample")
@@ -238,7 +238,7 @@ output_df = output_df.merge(
     final_df, how="left", left_on="sample", right_on=initial_df.index
 )
 
-total_kraken_df = total_kraken_df[["Eukaryota", "Bacteria", "Viruses", "thereof SARS", "Unclassified"]]
+total_kraken_df = total_kraken_df[["Eukaryota (%)", "Bacteria (%)", "Viruses (%)", "thereof SARS (%)", "Unclassified (%)"]]
 output_df = output_df.merge(
     total_kraken_df, how="left", left_on="sample", right_on=total_kraken_df.index
 ).rename(columns={"key_0": "sample"})
@@ -254,7 +254,7 @@ variant_df = pd.DataFrame()
 qc_df = output_df.copy()
 variant_df = output_df.copy()
 qc_df.drop(columns=["other S variants", "M variants", "E variants", "ORF1ab variants", "ORF3a variants", "ORF6 variants", "ORF7a variants", "ORF8 variants", "ORF10 variants", "other variants"], inplace=True)
-variant_df.drop(columns=["# raw reads", "# trimmed reads", "# filtered reads", "initial contig (bp)", "final contig (bp)", "Eukaryota", "Bacteria", "Viruses", "thereof SARS", "Unclassified"], inplace=True)
+variant_df.drop(columns=["# raw reads", "# trimmed reads", "# filtered reads", "initial contig (bp)", "final contig (bp)", "Eukaryota (%)", "Bacteria (%)", "Viruses (%)", "thereof SARS (%)", "Unclassified (%)"], inplace=True)
 
 output_df.to_csv(snakemake.output.all_data)
 qc_df.to_csv(snakemake.output.qc_data)
