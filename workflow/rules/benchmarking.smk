@@ -91,3 +91,16 @@ rule report_non_cov2:
         "../envs/rbt.yaml"
     shell:
         "rbt csv-report -s '\t' {input.summary} {output}"
+
+
+rule evaluate_kallistos_read_error:
+    input:
+       get_mixture_results
+    output:
+        "results/benchmarking/kallisto-read-error.csv",
+    log:
+        "logs/evaluate-kallistos-read-error.log"
+    conda:
+        "../envs/.yaml"
+    shell:
+        "echo echo"

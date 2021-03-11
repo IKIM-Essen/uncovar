@@ -1,6 +1,7 @@
 from pathlib import Path
-import re
 import pandas as pd
+import re
+import random
 
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
@@ -71,6 +72,15 @@ def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
         accession = wildcards.sample[len("non-cov2-") :]
         return expand(
             "resources/test-cases/{accession}/reads.{read}.fastq.gz",
+            accession=accession,
+            read=[1, 2],
+        )
+    if wildcards.sample.startswith("mixture-sample-"):
+        print(wildcards)
+        accessions = wildcards.sample[len("mixture-sample-") :]
+        print(accessions)
+        return expand(
+            "resources/mixtures/{accession}/reads.{read}.fastq.gz",
             accession=accession,
             read=[1, 2],
         )
@@ -300,6 +310,39 @@ def get_quast_fastas(wildcards):
         return "results/{date}/polished-contigs/{sample}.fasta"
     elif wildcards.stage == "masked":
         return "results/{date}/contigs-masked/{sample}.fasta"
+
+
+def get_random_strain():
+    with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
+        lines = f.read().splitlines()
+        rnd_strain_path = random.choice(lines)
+        strain = rnd_strain_path.split('/')[-1].replace(".fasta","")
+        return strain
+
+
+def get_mixture_results(wildcards):
+    no_mixtures = config["mixtures"]["no_mixtures"]
+    no_strains = config["mixtures"]["no_strains"]
+    mixture_list = []
+
+    for mix in range(no_mixtures):
+
+        fractions = [random.randint(1, 100) for _ in range(no_strains)]
+        s = sum(fractions)
+        fractions = [ round(i/s *100) for i in fractions ]
+
+        s = sum(fractions)
+        if s!=100:
+            fractions[-1] += (100 - s)
+
+        mixture = ""
+        for frac in fractions:
+            strain = get_random_strain()
+            mixture += f"#{strain}={frac}"
+        
+        mixture_list.append(mixture.replace(".", "-"))
+
+    return  expand("results/benchmarking/tables/strain-calls/mixture-sample-{mixtures}.strains.kallisto.tsv", mixtures = mixture_list)
 
 
 wildcard_constraints:

@@ -84,3 +84,11 @@ non_cov2_genomes:
   - NC_006577
   - NC_019843
   # - NC_004718 # This results in 30246 long (polished) contig, which pangolin can't process
+
+
+# For testing the read bases strain calling
+mixtures:
+  # number of mixtures to generate
+  no_mixtures: 2
+  # number of strains to mix
+  no_strains: 2
