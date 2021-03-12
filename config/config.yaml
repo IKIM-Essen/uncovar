@@ -94,3 +94,10 @@ mixtures:
   no_mixtures: 2
   # number of strains to mix
   no_strains: 2
+  # or you can specify the mix you would like to have 
+  # this assumes, that strain files are available under resources/genomes
+  use_predefined_mixtures: True
+  # use the following format
+  predefined_mixtures:
+    - "#B-1-1-7=40#B-1-351=60"
+    - "#B-1-1-7=90#B-1-351=10"

@@ -319,29 +319,32 @@ def get_random_strain():
 
 
 def get_mixture_results(wildcards):
-    no_mixtures = config["mixtures"]["no_mixtures"]
-    no_strains = config["mixtures"]["no_strains"]
-    mixture_list = []
+    if not config["mixtures"]["use_predefined_mixtures"]:
+        no_mixtures = config["mixtures"]["no_mixtures"]
+        no_strains = config["mixtures"]["no_strains"]
+        mixture_list = []
 
-    for mix in range(no_mixtures):
+        for mix in range(no_mixtures):
 
-        fractions = [random.randint(1, 100) for _ in range(no_strains)]
-        s = sum(fractions)
-        fractions = [ round(i/s *100) for i in fractions ]
+            fractions = [random.randint(1, 100) for _ in range(no_strains)]
+            s = sum(fractions)
+            fractions = [ round(i/s *100) for i in fractions ]
 
-        s = sum(fractions)
-        if s!=100:
-            fractions[-1] += (100 - s)
+            s = sum(fractions)
+            if s!=100:
+                fractions[-1] += (100 - s)
 
-        mixture = ""
-        for frac in fractions:
-            strain = get_random_strain()
-            mixture += f"#{strain}={frac}"
-        
-        mixture_list.append(mixture.replace(".", "-"))
+            mixture = ""
+            for frac in fractions:
+                strain = get_random_strain()
+                mixture += f"#{strain}={frac}"
+            
+            mixture_list.append(mixture.replace(".", "-"))
+    else:
+        mixture_list = config["mixtures"]["predefined_mixtures"]
+    return  expand("results/benchmarking/tables/strain-calls/mixture-sample-{mixtures}.strains.kallisto.tsv", mixtures = mixture_list)
 
-    # return  expand("results/benchmarking/tables/strain-calls/mixture-sample-{mixtures}.strains.kallisto.tsv", mixtures = mixture_list)
-    return ["results/benchmarking/tables/strain-calls/mixture-sample-#B-1-1-7=40#B-1-351=60.strains.kallisto.tsv" ,"results/benchmarking/tables/strain-calls/mixture-sample-#B-1-1-7=90#B-1-351=10.strains.kallisto.tsv"]
+        # return ["results/benchmarking/tables/strain-calls/mixture-sample-#B-1-1-7=40#B-1-351=60.strains.kallisto.tsv" ,"results/benchmarking/tables/strain-calls/mixture-sample-#B-1-1-7=90#B-1-351=10.strains.kallisto.tsv"]
 
 
 def get_genome_fasta(wildcards):
