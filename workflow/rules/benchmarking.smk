@@ -1,15 +1,31 @@
 rule simulate_strain_reads:
     input:
-        "resources/genomes/{accession}.fasta",
+        get_genome_fasta
     output:
-        left="resources/{use_case}/{accession}/reads.1.fastq.gz",
-        right="resources/{use_case}/{accession}/reads.2.fastq.gz",
+        left="resources/benchmarking/{accession}/reads.1.fastq.gz",
+        right="resources/benchmarking/{accession}/reads.2.fastq.gz",
+    params:
+        no_reads = lambda wildcards: no_reads(wildcards)
     log:
-        "logs/mason/{use_case}/{accession}.log",
+        "logs/mason/benchmarking/{accession}.log",
     conda:
         "../envs/mason.yaml"
     shell:  # median reads in data: 584903
-        "mason_simulator -ir {input} -n 584903 -o {output.left} -or {output.right} 2> {log}"
+        "mason_simulator -ir {input} -n {params.no_reads} -o {output.left} -or {output.right} 2> {log}"
+
+
+rule mix_strain_reads:
+    input:
+        left = expand("resources/benchmarking/{mix}/reads.1.fastq.gz", mix = ["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])]),
+        right = expand("resources/benchmarking/{mix}/reads.2.fastq.gz", mix = ["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])]),
+    output:
+        left = expand("resources/mixtures/{mix}/reads.1.fastq.gz", mix = "".join(["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])])),
+        right = expand("resources/mixtures/{mix}/reads.2.fastq.gz", mix = "".join(["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])]))
+    log:
+        "logs/mix_strain_reads/{}".format("".join(["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])]))
+    shell:
+        "(zcat {input.left} > {output.left} &&"
+        "zcat {input.right} > {output.right}) 2>{log}"
 
 
 rule test_benchmark_results:
@@ -98,9 +114,11 @@ rule evaluate_kallistos_read_error:
        get_mixture_results
     output:
         "results/benchmarking/kallisto-read-error.csv",
+    params:
+     max_reads = config["mixtures"]["max_reads"]
     log:
         "logs/evaluate-kallistos-read-error.log"
     conda:
-        "../envs/.yaml"
-    shell:
-        "echo echo"
+        "../envs/python.yaml"
+    script:
+        "../scripts/evaluate-kallistos-read-error.py"

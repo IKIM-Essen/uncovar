@@ -71,17 +71,15 @@ def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
         # this is for testing non-sars-cov2-genomes
         accession = wildcards.sample[len("non-cov2-") :]
         return expand(
-            "resources/test-cases/{accession}/reads.{read}.fastq.gz",
+            "resources/benchmarking/{accession}/reads.{read}.fastq.gz",
             accession=accession,
             read=[1, 2],
         )
     if wildcards.sample.startswith("mixture-sample-"):
-        print(wildcards)
-        accessions = wildcards.sample[len("mixture-sample-") :]
-        print(accessions)
+        mixture = wildcards.sample[len("mixture-sample-") :]
         return expand(
-            "resources/mixtures/{accession}/reads.{read}.fastq.gz",
-            accession=accession,
+            "resources/mixtures/{mixtures}/reads.{read}.fastq.gz",
+            mixtures=mixture,
             read=[1, 2],
         )
     # default case, look up FASTQs in the sample sheet
@@ -342,7 +340,26 @@ def get_mixture_results(wildcards):
         
         mixture_list.append(mixture.replace(".", "-"))
 
-    return  expand("results/benchmarking/tables/strain-calls/mixture-sample-{mixtures}.strains.kallisto.tsv", mixtures = mixture_list)
+    # return  expand("results/benchmarking/tables/strain-calls/mixture-sample-{mixtures}.strains.kallisto.tsv", mixtures = mixture_list)
+    return ["results/benchmarking/tables/strain-calls/mixture-sample-#B-1-1-7=40#B-1-351=60.strains.kallisto.tsv" ,"results/benchmarking/tables/strain-calls/mixture-sample-#B-1-1-7=90#B-1-351=10.strains.kallisto.tsv"]
+
+
+def get_genome_fasta(wildcards):
+    if "#" in wildcards.accession:
+        acc, _ = wildcards.accession.split('=')
+        acc = acc.replace("-",".").replace('#',"")
+        return f"resources/genomes/{acc}.fasta"
+    else:
+        return f"resources/genomes/{wildcards.accession}.fasta"
+
+
+def no_reads(wildcards):
+    max_reads = config["mixtures"]["max_reads"]
+    if "#" in wildcards.accession:
+        _, fraction = wildcards.accession.split('=')
+        return round(int(fraction) * max_reads / 100)
+    else:
+        return max_reads
 
 
 wildcard_constraints:
