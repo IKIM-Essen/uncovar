@@ -122,3 +122,16 @@ rule evaluate_kallistos_read_error:
         "../envs/python.yaml"
     script:
         "../scripts/evaluate-kallistos-read-error.py"
+
+
+rule plot_kallistos_read_error:
+    input:
+        "results/benchmarking/kallisto-read-error.csv",
+    output:
+        "results/benchmarking/kallisto-read-error.svg",
+    log:
+        "logs/plot-kallistos-read-error.log"
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot-kallistos-read-error.py"

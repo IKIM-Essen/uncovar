@@ -38,6 +38,7 @@ def eval_error(kallisto_tsvs, sm_output, max_reads):
     results_df.set_index(["mix", "rmse", "target_id"], inplace=True)
     results_df.to_csv(sm_output, sep="\t")
 
+
 if __name__ == "__main__":
     sys.stderr = open(snakemake.log[0], "w")
     max_reads = snakemake.params.get("max_reads", "")
