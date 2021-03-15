@@ -123,7 +123,7 @@ rule generate_virologist_output:
     log:
         "logs/{date}/viro_report.log",
     params:
-        voc=config.get("voc")
+        voc=config.get("voc"),
     conda:
         "../envs/pysam.yaml"
     threads: 1
