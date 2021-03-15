@@ -85,6 +85,88 @@ rule generate_rki:
         "../scripts/generate-rki-output.py"
 
 
+rule generate_virologist_output:
+    input:
+        # reads_unfiltered=lambda wildcards: [pep.sample_table.loc[sample][["fq1", "fq2"]] for sample in get_samples_for_date(wildcards.date)],
+        reads_unfiltered=lambda wildcards: expand(
+            "results/{{date}}/trimmed/{sample}.fastp.json",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        reads_filtered=lambda wildcards: expand(
+            "results/{{date}}/assembly/{sample}/log",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        initial_contigs=lambda wildcards: expand(
+            "results/{{date}}/assembly/{sample}/{sample}.contigs.fa",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        polished_contigs=lambda wildcards: expand(
+            "results/{{date}}/polished-contigs/{sample}.fasta",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        kraken=lambda wildcards: expand(
+            "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        pangolin=lambda wildcards: expand(
+            "results/{{date}}/tables/strain-calls/{sample}.strains.pangolin.csv",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        bcf=lambda wildcards: expand(
+            "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+    output:
+        all_data="results/{date}/virologist/report.csv",
+        qc_data="results/{date}/virologist/qc_report.csv",
+        var_data="results/{date}/virologist/var_report.csv",
+    log:
+        "logs/{date}/viro_report.log",
+    params:
+        voc=config.get("voc"),
+    conda:
+        "../envs/pysam.yaml"
+    threads: 1
+    script:
+        "../scripts/generate_virologist_output.py"
+
+
+rule snakemake_html_report_qc:
+    input:
+        "results/{date}/virologist/qc_report.csv",
+    output:
+        report(
+            directory("results/{date}/qc_data/"),
+            htmlindex="index.html",
+            caption="../report/qc-report.rst",
+            category="QC report overview",
+        ),
+    conda:
+        "../envs/rbt.yaml"
+    log:
+        "logs/{date}/qc_report_html.log",
+    shell:
+        "rbt csv-report {input} {output} > {log} 2>&1"
+
+
+rule snakemake_html_report_variants:
+    input:
+        "results/{date}/virologist/var_report.csv",
+    output:
+        report(
+            directory("results/{date}/var_data/"),
+            htmlindex="index.html",
+            caption="../report/var-report.rst",
+            category="Variant report overview",
+        ),
+    conda:
+        "../envs/rbt.yaml"
+    log:
+        "logs/{date}/var_report_html.log",
+    shell:
+        "rbt csv-report {input} {output} > {log} 2>&1"
+
+
 rule snakemake_reports:
     input:
         "results/{date}/plots/coverage.svg",
@@ -96,6 +178,8 @@ rule snakemake_reports:
             "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
             sample=get_samples_for_date(wildcards.date),
         ),
+        "results/{date}/qc_data",
+        "results/{date}/var_data",
         expand(
             "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
             mode=["major", "any"],
@@ -112,6 +196,10 @@ rule snakemake_reports:
         lambda wildcards: expand(
             "results/{{date}}/vcf-report/{target}.{filter}",
             target=get_samples_for_date(wildcards.date) + ["all"],
+            filter=config["variant-calling"]["filters"],
+        ),
+        expand(
+            "results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf",
             filter=config["variant-calling"]["filters"],
         ),
     output:

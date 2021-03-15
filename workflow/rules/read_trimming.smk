@@ -2,10 +2,12 @@ rule fastp_pe:
     input:
         sample=get_fastqs,
     output:
-        trimmed=[
-            "results/{date}/trimmed/{sample}.1.fastq.gz",
-            "results/{date}/trimmed/{sample}.2.fastq.gz",
-        ],
+        trimmed=temp(
+            [
+                "results/{date}/trimmed/{sample}.1.fastq.gz",
+                "results/{date}/trimmed/{sample}.2.fastq.gz",
+            ]
+        ),
         html="results/{date}/trimmed/{sample}.html",
         json="results/{date}/trimmed/{sample}.fastp.json",
     log:

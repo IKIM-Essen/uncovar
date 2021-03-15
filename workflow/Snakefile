@@ -94,6 +94,15 @@ checkpoint all:
             zip_wildcard_2=get_samples() + ["all"] * len(get_all_run_dates()),
             expand_wildcard=config["variant-calling"]["filters"],
         ),
+        expand(
+            "results/{date}/virologist/report.csv", date=get_all_run_dates(),
+        ),
+        expand(
+            "results/{date}/var_data/", date=get_all_run_dates(),
+        ),
+        expand(
+            "results/{date}/qc_data/", date=get_all_run_dates(),
+        ),
     output:
         touch(
             expand(

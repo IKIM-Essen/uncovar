@@ -365,6 +365,11 @@ def no_reads(wildcards):
         return max_reads
 
 
+def get_strain(path_to_pangolin_call):
+    pangolin_results = pd.read_csv(path_to_pangolin_call)
+    return pangolin_results.loc[0]["lineage"]
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartypes="|".join(VARTYPES),

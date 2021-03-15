@@ -102,3 +102,12 @@ mixtures:
   predefined_mixtures:
     - "#B-1-1-7=50#B-1-351=50"
     - "#B-1-1-7=90#B-1-351=10"
+
+
+# variants of concern
+
+voc:
+  - N501Y
+  - E484K
+  - K417N
+  #- H69del V70del0
