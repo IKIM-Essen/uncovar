@@ -1,11 +1,11 @@
 rule simulate_strain_reads:
     input:
-        get_genome_fasta
+        get_genome_fasta,
     output:
         left=temp("resources/benchmarking/{accession}/reads.1.fastq.gz"),
         right=temp("resources/benchmarking/{accession}/reads.2.fastq.gz"),
     params:
-        no_reads = lambda wildcards: no_reads(wildcards)
+        no_reads=lambda wildcards: no_reads(wildcards),
     log:
         "logs/mason/benchmarking/{accession}.log",
     conda:
@@ -16,13 +16,52 @@ rule simulate_strain_reads:
 
 rule mix_strain_reads:
     input:
-        left = expand("resources/benchmarking/{mix}/reads.1.fastq.gz", mix = ["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])]),
-        right = expand("resources/benchmarking/{mix}/reads.2.fastq.gz", mix = ["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])]),
+        left=expand(
+            "resources/benchmarking/{mix}/reads.1.fastq.gz",
+            mix=[
+                "#{{strain_{}}}".format(i)
+                for i in range(config["mixtures"]["no_strains"])
+            ],
+        ),
+        right=expand(
+            "resources/benchmarking/{mix}/reads.2.fastq.gz",
+            mix=[
+                "#{{strain_{}}}".format(i)
+                for i in range(config["mixtures"]["no_strains"])
+            ],
+        ),
     output:
-        left = temp(expand("resources/mixtures/{mix}/reads.1.fastq.gz", mix = "".join(["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])]))),
-        right = temp(expand("resources/mixtures/{mix}/reads.2.fastq.gz", mix = "".join(["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])])))
+        left=temp(
+            expand(
+                "resources/mixtures/{mix}/reads.1.fastq.gz",
+                mix="".join(
+                    [
+                        "#{{strain_{}}}".format(i)
+                        for i in range(config["mixtures"]["no_strains"])
+                    ]
+                ),
+            )
+        ),
+        right=temp(
+            expand(
+                "resources/mixtures/{mix}/reads.2.fastq.gz",
+                mix="".join(
+                    [
+                        "#{{strain_{}}}".format(i)
+                        for i in range(config["mixtures"]["no_strains"])
+                    ]
+                ),
+            )
+        ),
     log:
-        "logs/mix_strain_reads/{}".format("".join(["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])]))
+        "logs/mix_strain_reads/{}".format(
+            "".join(
+                [
+                    "#{{strain_{}}}".format(i)
+                    for i in range(config["mixtures"]["no_strains"])
+                ]
+            )
+        ),
     shell:
         "(zcat {input.left} > {output.left} &&"
         "zcat {input.right} > {output.right}) 2>{log}"
@@ -111,13 +150,13 @@ rule report_non_cov2:
 
 rule evaluate_kallistos_read_error:
     input:
-       get_mixture_results
+        get_mixture_results,
     output:
         "results/benchmarking/kallisto-read-error.csv",
     params:
-     max_reads = config["mixtures"]["max_reads"]
+        max_reads=config["mixtures"]["max_reads"],
     log:
-        "logs/evaluate-kallistos-read-error.log"
+        "logs/evaluate-kallistos-read-error.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -130,7 +169,7 @@ rule plot_kallistos_read_error:
     output:
         "results/benchmarking/kallisto-read-error.svg",
     log:
-        "logs/plot-kallistos-read-error.log"
+        "logs/plot-kallistos-read-error.log",
     conda:
         "../envs/python.yaml"
     script:
