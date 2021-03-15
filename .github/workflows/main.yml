@@ -60,6 +60,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Free some disk space
+        run: |
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
       - name: Install tree
         run: sudo apt-get install tree
 
