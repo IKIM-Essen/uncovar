@@ -79,7 +79,7 @@ rule samtools_calmd:
         aln="results/{date}/dedup/ref~{reference}/{sample}.bam",
         ref=get_reference(),
     output:
-        "results/{date}/recal/ref~{reference}/{sample}.bam",
+        temp("results/{date}/recal/ref~{reference}/{sample}.bam"),
     log:
         "logs/{date}/samtools-calmd/ref~{reference}/{sample}.log",
     params:
