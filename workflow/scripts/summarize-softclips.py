@@ -18,6 +18,7 @@ with AlignmentFile(snakemake.input[0]) as bam:
         # extract softclipped sequences
         clipped_seq_start = get_softclip(record, 0)
         clipped_seq_end = get_softclip(record, -1)
+        # we'll need to see if this is ok or too strict and whether we should count based on an inner substring or so
         softclipped_sequences[clipped_seq_start] += 1
         softclipped_sequences[clipped_seq_end] += 1
 
