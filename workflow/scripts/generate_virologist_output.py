@@ -201,6 +201,22 @@ for file in snakemake.input.bcf:
                 elif vaf[0] > 0.5:
                     table[file.split("/")[-1].split(".")[0]][11].append(hgvsp + " " + str(round(vaf[0], 3)))
                 
+for sample in table:
+    for i in range(1, len(table[sample])):
+        hashing = {}
+        for j in range(len(table[sample][i])):
+            var = table[sample][i][j].split(" ")[0]
+            freq = float(table[sample][i][j].split(" ")[1])
+            print(var, freq)
+            if var in hashing and freq > float(hashing[var].split(" ")[1]):
+                hashing[var] = table[sample][i][j]
+            elif var not in hashing:
+                hashing[var] = table[sample][i][j]
+        table[sample][i] = []
+        for key in hashing:
+            table[sample][i].append(hashing[key])
+
+print(table)
 
 var_df = pd.DataFrame()
 for sample in table: 
