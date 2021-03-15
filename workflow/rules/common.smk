@@ -302,6 +302,11 @@ def get_quast_fastas(wildcards):
         return "results/{date}/contigs-masked/{sample}.fasta"
 
 
+def get_strain(path_to_pangolin_call):
+    pangolin_results = pd.read_csv(path_to_pangolin_call)
+    return pangolin_results.loc[0]["lineage"]
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartypes="|".join(VARTYPES),
