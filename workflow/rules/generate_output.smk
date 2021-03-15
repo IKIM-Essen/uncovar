@@ -122,6 +122,8 @@ rule generate_virologist_output:
         var_data="results/{date}/virologist/var_report.csv",
     log:
         "logs/{date}/viro_report.log",
+    params:
+        voc=config.get("voc")
     conda:
         "../envs/pysam.yaml"
     threads: 1
@@ -129,18 +131,29 @@ rule generate_virologist_output:
         "../scripts/generate_virologist_output.py"
 
 
-rule snakemake_html_report_virologist:
+rule snakemake_html_report_qc:
     input:
-        qc_data="results/{date}/virologist/qc_report.csv",
-        var_data="results/{date}/virologist/var_report.csv",
+        "results/{date}/virologist/qc_report.csv",
     output:
-        qc_data=report(
+        report(
             directory("results/{date}/qc_data/"),
             htmlindex="index.html",
             caption="../report/qc-report.rst",
             category="QC report overview",
         ),
-        var_data=report(
+    conda:
+        "../envs/rbt.yaml"
+    log:
+        "logs/{date}/qc_report_html.log",
+    shell:
+        "rbt csv-report {input} {output} > {log} 2>&1"
+
+
+rule snakemake_html_report_variants:
+    input:
+        "results/{date}/virologist/var_report.csv",
+    output:
+        report(
             directory("results/{date}/var_data/"),
             htmlindex="index.html",
             caption="../report/var-report.rst",
@@ -149,50 +162,51 @@ rule snakemake_html_report_virologist:
     conda:
         "../envs/rbt.yaml"
     log:
-        "logs/{date}/viro_report_html.log",
+        "logs/{date}/var_report_html.log",
     shell:
-        "(rbt csv-report {input.qc_data} {output.qc_data} && "
-        "rbt csv-report {input.var_data} {output.var_data}) > {log} 2>&1"
+        "rbt csv-report {input} {output} > {log} 2>&1"
 
 
-rule snakemake_reports:
-    input:
-        "results/{date}/plots/coverage.svg",
-        lambda wildcards: expand(
-            "results/{{date}}/polished-contigs/{sample}.fasta",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        expand(
-            "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
-            mode=["major", "any"],
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/plots/strain-calls/{sample}.strains.pangolin.svg",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        "results/{date}/plots/all.strains.pangolin.svg",
-        lambda wildcards: expand(
-            "results/{{date}}/scenarios/{sample}.yaml",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/vcf-report/{target}.{filter}",
-            target=get_samples_for_date(wildcards.date) + ["all"],
-            filter=config["variant-calling"]["filters"],
-        ),
-    output:
-        "results/reports/{date}.zip",
-    params:
-        for_testing=(
-            "--snakefile ../workflow/Snakefile"
-            if config.get("benchmark-genomes", [])
-            else ""
-        ),
-    log:
-        "../logs/snakemake_reports/{date}.log",
-    shell:
-        "snakemake --nolock {input} --report {output} {params.for_testing}"
+# rule snakemake_reports:
+#     input:
+#         "results/{date}/plots/coverage.svg",
+#         lambda wildcards: expand(
+#             "results/{{date}}/polished-contigs/{sample}.fasta",
+#             sample=get_samples_for_date(wildcards.date),
+#         ),
+#         lambda wildcards: expand(
+#             "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
+#             sample=get_samples_for_date(wildcards.date),
+#         ),
+#         "results/{date}/qc_data",
+#         "results/{date}/var_data",
+#         expand(
+#             "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
+#             mode=["major", "any"],
+#         ),
+#         lambda wildcards: expand(
+#             "results/{{date}}/plots/strain-calls/{sample}.strains.pangolin.svg",
+#             sample=get_samples_for_date(wildcards.date),
+#         ),
+#         "results/{date}/plots/all.strains.pangolin.svg",
+#         lambda wildcards: expand(
+#             "results/{{date}}/scenarios/{sample}.yaml",
+#             sample=get_samples_for_date(wildcards.date),
+#         ),
+#         lambda wildcards: expand(
+#             "results/{{date}}/vcf-report/{target}.{filter}",
+#             target=get_samples_for_date(wildcards.date) + ["all"],
+#             filter=config["variant-calling"]["filters"],
+#         ),
+#     output:
+#         "results/reports/{date}.zip",
+#     params:
+#         for_testing=(
+#             "--snakefile ../workflow/Snakefile"
+#             if config.get("benchmark-genomes", [])
+#             else ""
+#         ),
+#     log:
+#         "../logs/snakemake_reports/{date}.log",
+#     shell:
+#         "snakemake --nolock {input} --report {output} {params.for_testing}"

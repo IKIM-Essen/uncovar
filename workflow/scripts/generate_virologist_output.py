@@ -1,4 +1,3 @@
-from numpy import NZERO
 import pandas as pd
 import sys
 import os
@@ -8,6 +7,8 @@ import json
 sys.stderr = open(snakemake.log[0], "w")
 sys.stdout = open(snakemake.log[0], "a")
 KRAKEN_FILTER_KRITERIA = "D"
+
+print(snakemake.params.get("voc"))
 
 initial_reads_df = pd.DataFrame()
 for file in snakemake.input.reads_unfiltered:
@@ -19,8 +20,8 @@ for file in snakemake.input.reads_unfiltered:
     trimmed_reads = int(number_reads["summary"]["after_filtering"]["total_reads"])
     initial_reads_df = initial_reads_df.append(
         {
-            "# raw reads": str(f"{raw_reads:,}"),
-            "# trimmed reads": str(f"{trimmed_reads:,}"),
+            "# raw reads": f"{raw_reads:,}",
+            "# trimmed reads": f"{trimmed_reads:,}",
             "sample": sample,
         },
         ignore_index=True,
@@ -42,6 +43,7 @@ for file in snakemake.input.reads_filtered:
                 },
                 ignore_index=True,
             )
+    infile.close()
 filtered_reads_df = filtered_reads_df.set_index("sample")
 
 initial_df = pd.DataFrame()
@@ -67,7 +69,7 @@ for file in snakemake.input.initial_contigs:
 
     initial_df = initial_df.append(
         {
-            "initial contig (bp)": str(f"{int(length_initial):,}"),
+            "initial contig (bp)": f"{int(length_initial):,}",
             "sample": sample,
         },
         ignore_index=True,
@@ -90,9 +92,10 @@ for file in snakemake.input.polished_contigs:
 
     for key in contigs:
         length = len(contigs[key])
+    length = f'{length:,}'
     final_df = final_df.append(
         {
-            "final contig (bp)": str(f"{int(length):,}"),
+            "final contig (bp)": length,
             "sample": sample,
         },
         ignore_index=True,
@@ -135,10 +138,6 @@ try:
 except:
     pass
 
-# assembly_df = assembly_df.merge(
-#     final_df, how="left", left_on="sample", right_on="sample"
-# )
-
 table = {}
 for file in snakemake.input.pangolin:
 
@@ -173,13 +172,13 @@ for file in snakemake.input.bcf:
                 enssast_id = hgvsp.split(":", 1)[0]
                 for triplet, amino in AS3to1.items():
                     alt = alt.replace(triplet, amino)
-                # hgvsp = f"{feature}:{alt} {enssast_id}"
                 hgvsp = f"{feature}:{alt}"
-                if  feature == "S" and\
-                    ("501" in alt or \
-                    ("484" in alt and not "6484" in alt ) or\
-                    "417" in alt or\
-                    "6970" in alt):
+                if  feature == "S" and alt in snakemake.params.get("voc"):
+                # if  feature == "S" and\
+                    # ("501" in alt or \
+                    # ("484" in alt and not "6484" in alt ) or\
+                    # "417" in alt or\
+                    # "6970" in alt):
                     table[file.split("/")[-1].split(".")[0]][1].append(hgvsp + " " + str(round(vaf[0], 3)))
                 elif vaf[0] > 0.5 and feature == "S":
                     table[file.split("/")[-1].split(".")[0]][2].append(hgvsp + " " + str(round(vaf[0], 3)))
@@ -254,8 +253,6 @@ output_df = output_df.merge(
 
 output_df = output_df.set_index("sample")
 
-qc_df = pd.DataFrame()
-variant_df = pd.DataFrame()
 qc_df = output_df.copy()
 variant_df = output_df.copy()
 qc_df.drop(columns=["other S variants", "M variants", "E variants", "ORF1ab variants", "ORF3a variants", "ORF6 variants", "ORF7a variants", "ORF8 variants", "ORF10 variants", "other variants"], inplace=True)
