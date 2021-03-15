@@ -2,8 +2,8 @@ rule simulate_strain_reads:
     input:
         get_genome_fasta
     output:
-        left="resources/benchmarking/{accession}/reads.1.fastq.gz",
-        right="resources/benchmarking/{accession}/reads.2.fastq.gz",
+        left=temp("resources/benchmarking/{accession}/reads.1.fastq.gz"),
+        right=temp("resources/benchmarking/{accession}/reads.2.fastq.gz"),
     params:
         no_reads = lambda wildcards: no_reads(wildcards)
     log:
@@ -19,8 +19,8 @@ rule mix_strain_reads:
         left = expand("resources/benchmarking/{mix}/reads.1.fastq.gz", mix = ["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])]),
         right = expand("resources/benchmarking/{mix}/reads.2.fastq.gz", mix = ["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])]),
     output:
-        left = expand("resources/mixtures/{mix}/reads.1.fastq.gz", mix = "".join(["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])])),
-        right = expand("resources/mixtures/{mix}/reads.2.fastq.gz", mix = "".join(["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])]))
+        left = temp(expand("resources/mixtures/{mix}/reads.1.fastq.gz", mix = "".join(["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])]))),
+        right = temp(expand("resources/mixtures/{mix}/reads.2.fastq.gz", mix = "".join(["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])])))
     log:
         "logs/mix_strain_reads/{}".format("".join(["#{{strain_{}}}".format(i) for i in range(config["mixtures"]["no_strains"])]))
     shell:
