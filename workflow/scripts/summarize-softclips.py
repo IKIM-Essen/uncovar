@@ -24,3 +24,6 @@ with AlignmentFile(snakemake.input[0]) as bam:
 
 # print top 20 sequences
 print(*map("{}: {}".format, softclipped_sequences.most_common(20)), sep="\n", file=snakemake.output[0])
+
+
+# TODO additionally, it makes sense to also print the number and length of softclips in total
