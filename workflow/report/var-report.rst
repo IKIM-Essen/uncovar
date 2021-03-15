@@ -1,0 +1,1 @@
+Called COVID-19-strains for samples from {{ snakemake.wildcards.date }} including defining SNPs (`Pangolin <https://github.com/cov-lineages/pangolin>`_) and full variants list ordered by genomic features (`Varlociraptor <https://varlociraptor.github.io>`_).

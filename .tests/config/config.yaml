@@ -89,3 +89,8 @@ non_cov2_genomes:
   - NC_006577
   - NC_019843
   # - NC_004718
+
+# variants of concern
+voc:
+  - N501Y
+  - E484K
