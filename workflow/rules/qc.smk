@@ -75,7 +75,7 @@ rule multiqc_lab:
             sample=get_samples_for_date(wildcards.date),
         ),
         lambda wildcards: expand(
-            "results/{{date}}/quast-unpolished/{sample}/report.tsv",
+            "results/{{date}}/quast/unpolished/{sample}/report.tsv",
             sample=get_samples_for_date(wildcards.date),
         ),
     output:

@@ -148,7 +148,8 @@ rule qc_html_report:
             directory("results/{date}/qc_data/"),
             htmlindex="index.html",
             caption="../report/qc-report.rst",
-            category="QC report overview",
+            category="1. Overview",
+            subcategory="1. QC Report",
         ),
     conda:
         "../envs/rbt.yaml"
@@ -166,7 +167,8 @@ rule variants_html_report:
             directory("results/{date}/var_data/"),
             htmlindex="index.html",
             caption="../report/var-report.rst",
-            category="Variant report overview",
+            category="2. Virology Details",
+            subcategory="1. Variant Call Overview",
         ),
     conda:
         "../envs/rbt.yaml"
@@ -183,20 +185,20 @@ rule snakemake_reports:
             "results/{{date}}/polished-contigs/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
         ),
-        lambda wildcards: expand(
-            "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
-            sample=get_samples_for_date(wildcards.date),
-        ),
+        # lambda wildcards: expand(
+        #     "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
+        #     sample=get_samples_for_date(wildcards.date),
+        # ),
         "results/{date}/qc_data",
         "results/{date}/var_data",
         expand(
             "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
             mode=["major", "any"],
         ),
-        lambda wildcards: expand(
-            "results/{{date}}/plots/strain-calls/{sample}.strains.pangolin.svg",
-            sample=get_samples_for_date(wildcards.date),
-        ),
+        # lambda wildcards: expand(
+        #     "results/{{date}}/plots/strain-calls/{sample}.strains.pangolin.svg",
+        #     sample=get_samples_for_date(wildcards.date),
+        # ),
         "results/{date}/plots/all.strains.pangolin.svg",
         lambda wildcards: expand(
             "results/{{date}}/vcf-report/{target}.{filter}",
