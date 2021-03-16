@@ -126,7 +126,9 @@ rule species_diversity_before:
                 read=[1, 2],
             )
         ),
-        kraken_output="results/{date}/species-diversity/{sample}/{sample}.kraken",
+        kraken_output=temp(
+            "results/{date}/species-diversity/{sample}/{sample}.kraken"
+        ),
         report="results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
     log:
         "logs/{date}/kraken/{sample}.log",
@@ -182,7 +184,7 @@ rule extract_reads_of_interest:
     input:
         "results/{date}/mapped/ref~main+human/{sample}.bam",
     output:
-        "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
+        temp("results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam"),
     log:
         "logs/{date}/extract_reads_of_interest/{sample}.log",
     threads: 1
@@ -196,8 +198,8 @@ rule order_nonhuman_reads:
     input:
         "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
     output:
-        fq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
-        fq2="results/{date}/nonhuman-reads/{sample}.2.fastq.gz",
+        fq1=temp("results/{date}/nonhuman-reads/{sample}.1.fastq.gz"),
+        fq2=temp("results/{date}/nonhuman-reads/{sample}.2.fastq.gz"),
         bam_sorted=temp("results/{date}/nonhuman-reads/{sample}.sorted.bam"),
     log:
         "logs/{date}/order_nonhuman_reads/{sample}.log",
@@ -219,7 +221,7 @@ rule species_diversity_after:
             "results/{{date}}/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]
         ),
     output:
-        kraken_output=(
+        kraken_output=temp(
             "results/{date}/species-diversity-nonhuman/{sample}/{sample}.kraken"
         ),
         report="results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",

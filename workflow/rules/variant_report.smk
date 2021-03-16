@@ -30,3 +30,47 @@ rule vcf_report:
     shell:
         "rbt vcf-report {input.ref} --bams {params.bams} --vcfs {params.bcfs} --formats {params.format_field} "
         "--infos PROB_* -d {params.max_read_depth} -l {params.js_files} -- {output} 2> {log}"
+
+
+rule ucsc_vcf:
+    input:
+        bcfs=get_report_input(
+            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.{filter}.bcf"
+        ),
+        strain_call="results/{date}/tables/strain-calls/{target}.strains.pangolin.csv",
+    output:
+        report(
+            "results/{date}/ucsc-vcfs/{target}.{filter}.vcf",
+            caption="../report/variant-calls.rst",
+            category="6. Variant Call Files",
+            subcategory="{filter}",
+        ),
+    params:
+        strain=lambda w, input: get_strain(input.strain_call),
+    log:
+        "logs/{date}/ucsc-vcf/{target}.subclonal.{filter}.log",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        "bcftools view -Ov {input.bcfs} | (echo track name={wildcards.target} description={params.strain}-{wildcards.filter}; cat -) > {output} 2> {log}"
+
+
+rule aggregate_ucsc_vcfs:
+    input:
+        lambda wildcards: expand(
+            "results/{{date}}/ucsc-vcfs/{sample}.{{filter}}.vcf",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+    output:
+        report(
+            "results/{date}/ucsc-vcfs/all.{date}.{filter}.vcf",
+            caption="../report/ucsc.rst",
+            category="6. Variant Call Files",
+            subcategory="Overview",
+        ),
+    log:
+        "logs/{date}/aggregate_ucsc_vcfs-{filter}.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "cat {input} > {output} 2> {log}"
