@@ -21,3 +21,24 @@ rule fastp_pe:
     threads: 2
     wrapper:
         "0.70.0/bio/fastp"
+
+
+rule sum_softclips:
+    input:
+        "results/{date}/mapped/ref~main/{sample}.bam",
+    output:
+        "results/{date}/sum-softclips/{sample}.txt",
+    log:
+        "logs/{date}/sum-softclips/{sample}.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/summarize-softclips.py"
+
+
+rule agg_softclips:
+    input:
+        expand(
+            "results/2021-03-13/sum-softclips/{sample}.txt",
+            sample=get_samples_for_date("2021-03-13"),
+        ),

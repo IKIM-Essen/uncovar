@@ -1,3 +1,5 @@
+sys.stderr = open(snakemake.log[0], "w")
+
 from collections import Counter
 from pysam import AlignmentFile
 
@@ -23,7 +25,9 @@ with AlignmentFile(snakemake.input[0]) as bam:
         softclipped_sequences[clipped_seq_end] += 1
 
 # print top 20 sequences
-print(*map("{}: {}".format, softclipped_sequences.most_common(20)), sep="\n", file=snakemake.output[0])
+with open(snakemake.output[0], "w") as out_file:
+    [print(f"{seq}: {count}", sep="\n", file=out_file) for seq, count in softclipped_sequences.most_common(20)]
+
 
 
 # TODO additionally, it makes sense to also print the number and length of softclips in total
