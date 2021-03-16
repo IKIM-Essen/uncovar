@@ -1,0 +1,89 @@
+# general info
+custom_logo: "/Users/btf/Projects/snakemake-workflow-sars-cov2/resources/IKIM.png"
+custom_logo_url: "https://www.ikim.uk-essen.de/"
+custom_logo_title: "Institut für Künstliche Intelligenz in der Medizin"
+show_analysis_time: True
+report_header_info:
+  - Authors: "Alexander Thomas, Thomas Battenfeld, Folker Meyer, Johannes Köster"
+  - Project: "SARS-Cov-2 strain and variant calling pipeline"
+
+# order of report
+module_order:
+  - kraken:
+      name: "Species Diversity"
+      target: "Kraken2"
+      anchor: "kraken_raw"
+      path_filters:
+        - "*.uncleaned.kreport2"
+  - fastqc:
+      name: "Reads Quality Control"
+      target: "FastQC"
+  - fastp:
+      name: "Reads Preprocessing"
+      target: "fastp"
+  - quast:
+      name: "Assembly"
+      target: "Quast"
+      anchor: "quast_assembly"
+      path_filters:
+        - "*quast-unpolished/*/report.tsv"
+
+# sample name cleaning
+fn_clean_exts:
+  - ".kreport2"
+  - ".contigs"
+  - ".fastp"
+  - ".trimmed"
+  - ".fastq"
+  - ".gz"
+  - ".bam"
+  - ".flagstat"
+  - ".uncleaned"
+  - ".cleaned"
+  - "_L001_R1_001"
+  - "_L001_R2_001"
+  - "_S"
+  - ".1"
+
+table_columns_visible:
+  samtools-flagstat: False
+  Samtools: False
+  samtools: False
+  
+# customising general Statistics
+table_columns_visible:
+  Species Diversity:
+    "% Severe acute respiratory syndrome-related coronavirus": True
+    "% Top 5": False
+    "% Unclassified": False
+  Reads Quality Control:
+    percent_duplicates: False
+    percent_gc: False
+    avg_sequence_length: 
+    percent_fails: False
+    total_sequences: True
+  Reads Preprocessing:
+    pct_duplication: False
+    after_filtering_q30_rate: False
+    after_filtering_q30_bases: False
+    after_filtering_gc_content: False
+    total_sequencpct_survivinges: False
+    pct_surviving: True
+    pct_adapter: False
+  Assembly:
+    N50: True
+    Total length: False
+    Largest contig: True
+
+# number formatting
+read_count_multiplier: 0.001
+read_count_prefix: "K"
+read_count_desc: "thousands"
+
+base_count_multiplier: 0.001
+base_count_prefix: "K"
+base_count_desc: "thousands"
+
+long_read_count_multiplier: 0.001
+long_read_count_prefix: "K"
+long_read_count_desc: "thousands"
