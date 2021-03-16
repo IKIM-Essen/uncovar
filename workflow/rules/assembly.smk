@@ -59,7 +59,7 @@ rule polish_contigs:
     output:
         report(
             "results/{date}/polished-contigs/{sample}.fasta",
-            category="Assembly",
+            category="5. Assembly",
             caption="../report/assembly.rst",
         ),
     log:
