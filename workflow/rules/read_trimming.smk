@@ -42,3 +42,11 @@ rule agg_softclips:
             "results/2021-03-13/sum-softclips/{sample}.txt",
             sample=get_samples_for_date("2021-03-13"),
         ),
+    output:
+        "results/2021-03-13/sum-softclips.txt",
+    log:
+        "logs/2021-03-13/sum-softclips.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/aggregate-softclips.py"
