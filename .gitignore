@@ -23,3 +23,5 @@
 !.tests/data
 !preprocessing/
 !preprocessing/update-sample-sheet.py
+!resources/
+!resources/custom-stylesheet.css
