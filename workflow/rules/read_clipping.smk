@@ -25,10 +25,10 @@ rule clipPrimer:
     shell:
         """
         samtools sort -@ {threads} -o {output.sortbam} {input.bam} > {log} 2>&1
-        samtools index {output.sortbam} > {log} 2>&1
+        samtools index {output.sortbam} >> {log} 2>&1
         cd {params.dir}
-        bamclipper.sh -b {params.bam} -p {params.dir_depth}{input.bed} -n {threads} > {params.dir_depth}{log} 2>&1
+        bamclipper.sh -b {params.bam} -p {params.dir_depth}{input.bed} -n {threads} >> {params.dir_depth}{log} 2>&1
         cd {params.dir_depth}
-        samtools sort  -@ {threads} -n {output.tempbam} -o {output.sorttempbam}  > {log} 2>&1
-        samtools fastq -@ {threads} {output.sorttempbam} -1 {output.fq1} -2 {output.fq2}  > {log} 2>&1
+        samtools sort  -@ {threads} -n {output.tempbam} -o {output.sorttempbam}  >> {log} 2>&1
+        samtools fastq -@ {threads} {output.sorttempbam} -1 {output.fq1} -2 {output.fq2}  >> {log} 2>&1
         """
