@@ -198,8 +198,8 @@ rule order_nonhuman_reads:
     input:
         "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
     output:
-        fq1=temp("results/{date}/nonhuman-reads/{sample}.1.fastq.gz"),
-        fq2=temp("results/{date}/nonhuman-reads/{sample}.2.fastq.gz"),
+        fq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
+        fq2="results/{date}/nonhuman-reads/{sample}.2.fastq.gz",
         bam_sorted=temp("results/{date}/nonhuman-reads/{sample}.sorted.bam"),
     log:
         "logs/{date}/order_nonhuman_reads/{sample}.log",
