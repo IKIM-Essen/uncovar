@@ -71,7 +71,7 @@ rki-output:
 
 adapters:
   #  Illumina TruSeq adapters
-  illumina: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+  illumina: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
   amplicon-primers: "resources/primer.bedpe"
 
 
