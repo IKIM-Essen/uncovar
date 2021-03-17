@@ -72,6 +72,7 @@ rki-output:
 adapters:
   #  Illumina TruSeq adapters
   illumina: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+  amplicon-primers: "resources/primer.bedpe"
 
 
 # NCBI reference sequences of non-SARS-CoV-2 coronavirus. 
