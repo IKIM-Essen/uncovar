@@ -167,7 +167,8 @@ rule plot_kallistos_read_error:
     input:
         "results/benchmarking/kallisto-read-error.csv",
     output:
-        "results/benchmarking/kallisto-read-error.svg",
+        "results/benchmarking/kallisto-read-error-heatmap.svg",
+        "results/benchmarking/kallisto-read-error-bar.svg",
     log:
         "logs/plot-kallistos-read-error.log",
     conda:

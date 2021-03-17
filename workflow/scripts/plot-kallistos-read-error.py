@@ -23,6 +23,8 @@ def plot_error(sm_input, sm_output, type="heatmap"):
     results_df = pd.read_csv(sm_input, delimiter="\t")
 
     results_df["Kallisto output"] = results_df["target_id"].apply(lambda x: mask(x))
+    results_df=results_df[results_df["Kallisto output"] != "unmapped"]
+    results_df=results_df[results_df["Kallisto output"] != "other"]
     no_of_mixs = int(results_df["mix"].max() + 1)
 
     if type == "heatmap":
@@ -35,6 +37,7 @@ def plot_error(sm_input, sm_output, type="heatmap"):
                     axis=alt.Axis(format="%", title="True Fraction"),
                     bin=alt.Bin(maxbins=49),
                     scale=alt.Scale(
+                        domain=(0.0, 1.0),
                         bins=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
                     ),
                 ),
@@ -43,6 +46,7 @@ def plot_error(sm_input, sm_output, type="heatmap"):
                     axis=alt.Axis(format="%", title="Est. Fraction"),
                     bin=alt.Bin(maxbins=50),
                     scale=alt.Scale(
+                        domain=(0.0, 1.0),
                         bins=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
                     ),
                 ),
@@ -98,6 +102,8 @@ def plot_zeros(sm_input, sm_output):
     results_df = pd.read_csv(sm_input, delimiter="\t")
 
     results_df["Kallisto output"] = results_df["target_id"].apply(lambda x: mask(x))
+    results_df=results_df[results_df["Kallisto output"] != "unmapped"]
+    results_df=results_df[results_df["Kallisto output"] != "other"]
 
     results_df = results_df[
         (results_df["true_fraction"] == 0) | (results_df["est_fraction"] == 0)
@@ -120,4 +126,4 @@ def plot_zeros(sm_input, sm_output):
 
 if __name__ == "__main__":
     plot_error(snakemake.input[0], snakemake.output[0])
-    # plot_zeros(snakemake.input[0], snakemake.output[0])
+    plot_zeros(snakemake.input[0], snakemake.output[1])
