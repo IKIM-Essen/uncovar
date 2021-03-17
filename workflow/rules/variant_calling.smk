@@ -23,11 +23,7 @@ rule render_scenario:
     input:
         local(get_resource("scenario.yaml")),
     output:
-        report(
-            "results/{date}/scenarios/{sample}.yaml",
-            caption="../report/scenario.rst",
-            category="Variant calling scenarios",
-        ),
+        "results/{date}/scenarios/{sample}.yaml",
     log:
         "logs/{date}/render-scenario/{sample}.log",
     conda:

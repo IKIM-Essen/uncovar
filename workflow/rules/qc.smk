@@ -60,6 +60,41 @@ rule multiqc:
         "0.69.0/bio/multiqc"
 
 
+rule multiqc_lab:
+    input:
+        lambda wildcards: expand(
+            "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        lambda wildcards: expand(
+            "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        lambda wildcards: expand(
+            "results/{{date}}/trimmed/{sample}.fastp.json",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        lambda wildcards: expand(
+            "results/{{date}}/quast/unpolished/{sample}/report.tsv",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+    output:
+        report(
+            "results/{date}/qc/laboratory/multiqc.html",
+            htmlindex="multiqc.html",
+            caption="../report/multi-qc-lab.rst",
+            category="3. Sequencing Details",
+            subcategory="1. Quality Control",
+        ),
+    params:
+        "--config config/multiqc_config_lab.yaml",
+        "--title 'Results for data from {date}'",  # Optional: extra parameters for multiqc.
+    log:
+        "logs/{date}/multiqc.log",
+    wrapper:
+        "0.69.0/bio/multiqc"
+
+
 rule samtools_flagstat:
     input:
         "results/{date}/recal/ref~main/{sample}.bam",
@@ -91,7 +126,9 @@ rule species_diversity_before:
                 read=[1, 2],
             )
         ),
-        kraken_output="results/{date}/species-diversity/{sample}/{sample}.kraken",
+        kraken_output=temp(
+            "results/{date}/species-diversity/{sample}/{sample}.kraken"
+        ),
         report="results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
     log:
         "logs/{date}/kraken/{sample}.log",
@@ -147,7 +184,7 @@ rule extract_reads_of_interest:
     input:
         "results/{date}/mapped/ref~main+human/{sample}.bam",
     output:
-        "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
+        temp("results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam"),
     log:
         "logs/{date}/extract_reads_of_interest/{sample}.log",
     threads: 1
@@ -161,8 +198,8 @@ rule order_nonhuman_reads:
     input:
         "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
     output:
-        fq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
-        fq2="results/{date}/nonhuman-reads/{sample}.2.fastq.gz",
+        fq1=temp("results/{date}/nonhuman-reads/{sample}.1.fastq.gz"),
+        fq2=temp("results/{date}/nonhuman-reads/{sample}.2.fastq.gz"),
         bam_sorted=temp("results/{date}/nonhuman-reads/{sample}.sorted.bam"),
     log:
         "logs/{date}/order_nonhuman_reads/{sample}.log",
@@ -184,7 +221,7 @@ rule species_diversity_after:
             "results/{{date}}/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]
         ),
     output:
-        kraken_output=(
+        kraken_output=temp(
             "results/{date}/species-diversity-nonhuman/{sample}/{sample}.kraken"
         ),
         report="results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
