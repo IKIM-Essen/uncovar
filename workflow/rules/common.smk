@@ -6,6 +6,9 @@ import pandas as pd
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 
 
+BENCHMARK_PREFIX = "benchmark-sample-"
+
+
 def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
@@ -57,10 +60,10 @@ def get_latest_run_date():
     return pep.sample_table["run_id"].max()
 
 
-def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
-    if wildcards.sample.startswith(benchmark_prefix):
+def get_fastqs(wildcards):
+    if wildcards.sample.startswith(BENCHMARK_PREFIX):
         # this is a simulated benchmark sample, do not look up FASTQs in the sample sheet
-        accession = wildcards.sample[len(benchmark_prefix) :]
+        accession = wildcards.sample[len(BENCHMARK_PREFIX) :]
         return expand(
             "resources/benchmarking/{accession}/reads.{read}.fastq.gz",
             accession=accession,
@@ -314,7 +317,10 @@ def get_strain(path_to_pangolin_call):
 
 
 def is_amplicon_data(sample):
-    sample = samples.loc[sample]
+    if sample.startswith(BENCHMARK_PREFIX):
+        # benchmark data, not amplicon based
+        return False
+    sample = pep.sample_table.loc[sample]
     try:
         return bool(sample["is_amplicon_data"])
     except KeyError:
