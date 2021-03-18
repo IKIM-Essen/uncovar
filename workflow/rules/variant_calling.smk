@@ -58,6 +58,8 @@ rule varlociraptor_call:
         scenario="results/{date}/scenarios/{sample}.yaml",
     output:
         temp("results/{date}/calls/ref~{reference}/{sample}.bcf"),
+    params:
+        biases=get_varlociraptor_bias_flags,
     log:
         "logs/{date}/varlociraptor/call/ref~{reference}/{sample}.log",
     conda:
