@@ -148,30 +148,30 @@ rule report_non_cov2:
         "rbt csv-report -s '\t' {input.summary} {output}"
 
 
-rule evaluate_kallistos_read_error:
+rule evaluate_read_error:
     input:
         get_mixture_results,
     output:
-        "results/benchmarking/kallisto-read-error.csv",
+        "results/benchmarking/{caller}-read-error.csv",
     params:
         max_reads=config["mixtures"]["max_reads"],
     log:
-        "logs/evaluate-kallistos-read-error.log",
+        "logs/evaluate-{caller}-read-error.log",
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/evaluate-kallistos-read-error.py"
+        "../scripts/evaluate-{wildcards.caller}-read-error.py"
 
 
-rule plot_kallistos_read_error:
+rule plot_read_error:
     input:
-        "results/benchmarking/kallisto-read-error.csv",
+        "results/benchmarking/{caller}-read-error.csv",
     output:
-        "results/benchmarking/kallisto-read-error-heatmap.svg",
-        "results/benchmarking/kallisto-read-error-bar.svg",
+        "results/benchmarking/{caller}-read-error-heatmap.svg",
+        "results/benchmarking/{caller}-read-error-bar.svg",
     log:
-        "logs/plot-kallistos-read-error.log",
+        "logs/plot-{caller}-read-error.log",
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/plot-kallistos-read-error.py"
+        "../scripts/plot-{wildcards.caller}-read-error.py"

@@ -342,22 +342,31 @@ def get_mixture_results(wildcards):
             mixture_list.append(mixture.replace(".", "-"))
     else:
         mixture_list = config["mixtures"]["predefined_mixtures"]
-    return expand(
-        "results/benchmarking/tables/strain-calls/mixture-sample-{mixtures}.strains.kallisto.tsv",
-        mixtures=mixture_list,
-    )
+    if wildcards.caller=="pangolin":
+        return expand(
+            "results/benchmarking/tables/strain-calls/mixture-sample-{mixtures}.strains.{caller}.csv",
+            caller=wildcards.caller,
+            mixtures=mixture_list,
+        )
+    else:
+        return expand(
+            "results/benchmarking/tables/strain-calls/mixture-sample-{mixtures}.strains.{caller}.tsv",
+            caller=wildcards.caller,
+            mixtures=mixture_list,
+        )
 
 
 # return ["results/benchmarking/tables/strain-calls/mixture-sample-#B-1-1-7=40#B-1-351=60.strains.kallisto.tsv" ,"results/benchmarking/tables/strain-calls/mixture-sample-#B-1-1-7=90#B-1-351=10.strains.kallisto.tsv"]
 
 
 def get_genome_fasta(wildcards):
-    if "#" in wildcards.accession:
-        acc, _ = wildcards.accession.split("=")
-        acc = acc.replace("-", ".").replace("#", "")
-        return f"resources/genomes/{acc}.fasta"
-    else:
-        return f"resources/genomes/{wildcards.accession}.fasta"
+    with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
+        if "#" in wildcards.accession:
+            acc, _ = wildcards.accession.split("=")
+            acc = acc.replace("-", ".").replace("#", "")
+            return f"resources/genomes/{acc}.fasta"
+        else:
+            return f"resources/genomes/{wildcards.accession}.fasta"
 
 
 def no_reads(wildcards):
