@@ -7,6 +7,7 @@ VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 
 
 BENCHMARK_PREFIX = "benchmark-sample-"
+NON_COV2_TEST_PREFIX = "non-cov2-"
 
 
 def get_samples():
@@ -69,9 +70,9 @@ def get_fastqs(wildcards):
             accession=accession,
             read=[1, 2],
         )
-    if wildcards.sample.startswith("non-cov2-"):
+    if wildcards.sample.startswith(NON_COV2_TEST_PREFIX):
         # this is for testing non-sars-cov2-genomes
-        accession = wildcards.sample[len("non-cov2-") :]
+        accession = wildcards.sample[len(NON_COV2_TEST_PREFIX) :]
         return expand(
             "resources/test-cases/{accession}/reads.{read}.fastq.gz",
             accession=accession,
@@ -317,7 +318,7 @@ def get_strain(path_to_pangolin_call):
 
 
 def is_amplicon_data(sample):
-    if sample.startswith(BENCHMARK_PREFIX):
+    if sample.startswith(BENCHMARK_PREFIX) or sample.startswith(NON_COV2_TEST_PREFIX):
         # benchmark data, not amplicon based
         return False
     sample = pep.sample_table.loc[sample]
