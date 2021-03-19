@@ -2,8 +2,4 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
-<<<<<<< HEAD
-  - varlociraptor =2.6.3
-=======
-  - varlociraptor =2.6.2
->>>>>>> 7976cf23303985045fa35c17abadd3bcfde979fe
+  - varlociraptor =2.6.1
