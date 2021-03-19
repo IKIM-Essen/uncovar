@@ -58,11 +58,13 @@ rule varlociraptor_call:
         scenario="results/{date}/scenarios/{sample}.yaml",
     output:
         temp("results/{date}/calls/ref~{reference}/{sample}.bcf"),
+    params:
+        biases=get_varlociraptor_bias_flags,
     log:
         "logs/{date}/varlociraptor/call/ref~{reference}/{sample}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
         "varlociraptor "
-        "call variants generic --obs {wildcards.sample}={input.obs} "
+        "call variants {params.biases} generic --obs {wildcards.sample}={input.obs} "
         "--scenario {input.scenario} > {output} 2> {log}"
