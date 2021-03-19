@@ -215,6 +215,8 @@ def get_reference(suffix=""):
             return "results/{date}/polished-contigs/{sample}.fasta".format(
                 sample=wildcards.reference.replace("polished-", ""), **wildcards
             )
+        elif wildcards.reference == "MN908947":
+            return "resources/genomes/MN908947.fasta"
         else:
             # return assembly result
             return "results/{date}/ordered-contigs/{reference}.fasta{suffix}".format(
@@ -238,11 +240,18 @@ def get_reads(wildcards):
             read=[1, 2],
             sample=wildcards.sample,
         )
+    elif wildcards.reference == "MN908947":
+        return expand(
+            "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
+            date=wildcards.date,
+            read=[1, 2],
+            sample=wildcards.sample,
+        )
     else:
         # other reference (e.g. the covid reference genome, are done with contigs) that
         # do not contain human contaminations
         return expand(
-            "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
+            "results/{date}/clipped-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
