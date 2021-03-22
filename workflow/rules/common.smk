@@ -6,6 +6,10 @@ import pandas as pd
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 
 
+BENCHMARK_PREFIX = "benchmark-sample-"
+NON_COV2_TEST_PREFIX = "non-cov2-"
+
+
 def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
@@ -57,18 +61,18 @@ def get_latest_run_date():
     return pep.sample_table["run_id"].max()
 
 
-def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
-    if wildcards.sample.startswith(benchmark_prefix):
+def get_fastqs(wildcards):
+    if wildcards.sample.startswith(BENCHMARK_PREFIX):
         # this is a simulated benchmark sample, do not look up FASTQs in the sample sheet
-        accession = wildcards.sample[len(benchmark_prefix) :]
+        accession = wildcards.sample[len(BENCHMARK_PREFIX) :]
         return expand(
             "resources/benchmarking/{accession}/reads.{read}.fastq.gz",
             accession=accession,
             read=[1, 2],
         )
-    if wildcards.sample.startswith("non-cov2-"):
+    if wildcards.sample.startswith(NON_COV2_TEST_PREFIX):
         # this is for testing non-sars-cov2-genomes
-        accession = wildcards.sample[len("non-cov2-") :]
+        accession = wildcards.sample[len(NON_COV2_TEST_PREFIX) :]
         return expand(
             "resources/test-cases/{accession}/reads.{read}.fastq.gz",
             accession=accession,
@@ -179,7 +183,10 @@ def get_assembly_comparisons(bams=True):
             if bams
             else "resources/genomes/{accession}.fasta"
         )
-        return expand(pattern, accession=accessions,)
+        return expand(
+            pattern,
+            accession=accessions,
+        )
 
     return inner
 
@@ -295,7 +302,10 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
         [
             expand(ele, exp=expand_wildcard)
             for ele in expand(
-                expand_string, zip, zip1=zip_wildcard_1, zip2=zip_wildcard_2,
+                expand_string,
+                zip,
+                zip1=zip_wildcard_1,
+                zip2=zip_wildcard_2,
             )
         ],
         [],
@@ -314,6 +324,34 @@ def get_quast_fastas(wildcards):
 def get_strain(path_to_pangolin_call):
     pangolin_results = pd.read_csv(path_to_pangolin_call)
     return pangolin_results.loc[0]["lineage"]
+
+
+def is_amplicon_data(sample):
+    if sample.startswith(BENCHMARK_PREFIX) or sample.startswith(NON_COV2_TEST_PREFIX):
+        # benchmark data, not amplicon based
+        return False
+    sample = pep.sample_table.loc[sample]
+    try:
+        return bool(sample["is_amplicon_data"])
+    except KeyError:
+        return False
+
+
+def get_varlociraptor_bias_flags(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        # no bias detection possible
+        return (
+            "--omit-strand-bias --omit-read-orientation-bias --omit-read-position-bias"
+        )
+    return ""
+
+
+def get_recal_input(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        # do not mark duplicates
+        return "results/{date}/mapped/ref~{reference}/{sample}.bam"
+    # use BAM with marked duplicates
+    return "results/{date}/dedup/ref~{reference}/{sample}.bam"
 
 
 wildcard_constraints:

@@ -76,7 +76,7 @@ rule mark_duplicates:
 
 rule samtools_calmd:
     input:
-        aln="results/{date}/dedup/ref~{reference}/{sample}.bam",
+        aln=get_recal_input,
         ref=get_reference(),
     output:
         "results/{date}/recal/ref~{reference}/{sample}.bam",
