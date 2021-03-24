@@ -179,27 +179,27 @@ for file in snakemake.input.bcf:
                     # ("484" in alt and not "6484" in alt ) or\
                     # "417" in alt or\
                     # "6970" in alt):
-                    table[file.split("/")[-1].split(".")[0]][1].append(hgvsp + " " + str(round(vaf[0], 3)))
+                    table[file.split("/")[-1].split(".")[0]][1].append(hgvsp + ":" + str(round(vaf[0], 3)))
                 elif vaf[0] > 0.5 and feature == "S":
-                    table[file.split("/")[-1].split(".")[0]][2].append(hgvsp + " " + str(round(vaf[0], 3)))
+                    table[file.split("/")[-1].split(".")[0]][2].append(hgvsp + ":" + str(round(vaf[0], 3)))
                 elif vaf[0] > 0.5 and feature == "M":
-                    table[file.split("/")[-1].split(".")[0]][3].append(hgvsp + " " + str(round(vaf[0], 3)))
+                    table[file.split("/")[-1].split(".")[0]][3].append(hgvsp + ":" + str(round(vaf[0], 3)))
                 elif vaf[0] > 0.5 and feature == "E":
-                    table[file.split("/")[-1].split(".")[0]][4].append(hgvsp + " " + str(round(vaf[0], 3)))
+                    table[file.split("/")[-1].split(".")[0]][4].append(hgvsp + ":" + str(round(vaf[0], 3)))
                 elif vaf[0] > 0.5 and feature == "ORF1ab":
-                    table[file.split("/")[-1].split(".")[0]][5].append(hgvsp + " " + str(round(vaf[0], 3)))
+                    table[file.split("/")[-1].split(".")[0]][5].append(hgvsp + ":" + str(round(vaf[0], 3)))
                 elif vaf[0] > 0.5 and feature == "ORF3a":
-                    table[file.split("/")[-1].split(".")[0]][6].append(hgvsp + " " + str(round(vaf[0], 3)))
+                    table[file.split("/")[-1].split(".")[0]][6].append(hgvsp + ":" + str(round(vaf[0], 3)))
                 elif vaf[0] > 0.5 and feature == "ORF6":
-                    table[file.split("/")[-1].split(".")[0]][7].append(hgvsp + " " + str(round(vaf[0], 3)))
+                    table[file.split("/")[-1].split(".")[0]][7].append(hgvsp + ":" + str(round(vaf[0], 3)))
                 elif vaf[0] > 0.5 and feature == "ORF7a":
-                    table[file.split("/")[-1].split(".")[0]][8].append(hgvsp + " " + str(round(vaf[0], 3)))
+                    table[file.split("/")[-1].split(".")[0]][8].append(hgvsp + ":" + str(round(vaf[0], 3)))
                 elif vaf[0] > 0.5 and feature == "ORF8":
-                    table[file.split("/")[-1].split(".")[0]][9].append(hgvsp + " " + str(round(vaf[0], 3)))
+                    table[file.split("/")[-1].split(".")[0]][9].append(hgvsp + ":" + str(round(vaf[0], 3)))
                 elif vaf[0] > 0.5 and feature == "ORF10":
-                    table[file.split("/")[-1].split(".")[0]][10].append(hgvsp + " " + str(round(vaf[0], 3)))
+                    table[file.split("/")[-1].split(".")[0]][10].append(hgvsp + ":" + str(round(vaf[0], 3)))
                 elif vaf[0] > 0.5:
-                    table[file.split("/")[-1].split(".")[0]][11].append(hgvsp + " " + str(round(vaf[0], 3)))
+                    table[file.split("/")[-1].split(".")[0]][11].append(hgvsp + ":" + str(round(vaf[0], 3)))
                 
 for sample in table:
     for i in range(1, len(table[sample])):
