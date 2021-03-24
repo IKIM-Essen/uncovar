@@ -142,7 +142,7 @@ table = {}
 for file in snakemake.input.pangolin:
 
     pang_call = open(file, "r")
-    table[file.split("/")[-1].split(".")[0]] = [[],[],[],[],[],[],[],[],[],[],[],[]]
+    table[file.split("/")[-1].split(".")[0]] = [[] for i in range(12)]
     for line in pang_call.read().splitlines():
         if not line.startswith("taxon"):
             if line.split(",")[1].startswith("None"):
@@ -173,33 +173,12 @@ for file in snakemake.input.bcf:
                 for triplet, amino in AS3to1.items():
                     alt = alt.replace(triplet, amino)
                 hgvsp = f"{feature}:{alt}"
-                if  feature == "S" and alt in snakemake.params.get("voc"):
-                # if  feature == "S" and\
-                    # ("501" in alt or \
-                    # ("484" in alt and not "6484" in alt ) or\
-                    # "417" in alt or\
-                    # "6970" in alt):
-                    table[file.split("/")[-1].split(".")[0]][1].append(hgvsp + ":" + str(round(vaf[0], 3)))
-                elif vaf[0] > 0.5 and feature == "S":
-                    table[file.split("/")[-1].split(".")[0]][2].append(hgvsp + ":" + str(round(vaf[0], 3)))
-                elif vaf[0] > 0.5 and feature == "M":
-                    table[file.split("/")[-1].split(".")[0]][3].append(hgvsp + ":" + str(round(vaf[0], 3)))
-                elif vaf[0] > 0.5 and feature == "E":
-                    table[file.split("/")[-1].split(".")[0]][4].append(hgvsp + ":" + str(round(vaf[0], 3)))
-                elif vaf[0] > 0.5 and feature == "ORF1ab":
-                    table[file.split("/")[-1].split(".")[0]][5].append(hgvsp + ":" + str(round(vaf[0], 3)))
-                elif vaf[0] > 0.5 and feature == "ORF3a":
-                    table[file.split("/")[-1].split(".")[0]][6].append(hgvsp + ":" + str(round(vaf[0], 3)))
-                elif vaf[0] > 0.5 and feature == "ORF6":
-                    table[file.split("/")[-1].split(".")[0]][7].append(hgvsp + ":" + str(round(vaf[0], 3)))
-                elif vaf[0] > 0.5 and feature == "ORF7a":
-                    table[file.split("/")[-1].split(".")[0]][8].append(hgvsp + ":" + str(round(vaf[0], 3)))
-                elif vaf[0] > 0.5 and feature == "ORF8":
-                    table[file.split("/")[-1].split(".")[0]][9].append(hgvsp + ":" + str(round(vaf[0], 3)))
-                elif vaf[0] > 0.5 and feature == "ORF10":
-                    table[file.split("/")[-1].split(".")[0]][10].append(hgvsp + ":" + str(round(vaf[0], 3)))
-                elif vaf[0] > 0.5:
-                    table[file.split("/")[-1].split(".")[0]][11].append(hgvsp + ":" + str(round(vaf[0], 3)))
+                entry = f"{hgvsp}:{vaf[0]:.3f}"
+                split = file.split("/")[-1].split(".")[0]
+                if feature == "S" and alt in snakemake.params.get("voc"):
+                    table[split][1].append(entry)
+                else:
+                    table[split][2].append(entry)
                 
 for sample in table:
     for i in range(1, len(table[sample])):
@@ -222,16 +201,7 @@ var_df = pd.DataFrame()
 for sample in table: 
     var_df = var_df.append(
         {
-            "other variants": " ".join(table[sample][11]),
-            "ORF10 variants": " ".join(table[sample][10]),
-            "ORF8 variants": " ".join(table[sample][9]),
-            "ORF7a variants": " ".join(table[sample][8]),
-            "ORF6 variants": " ".join(table[sample][7]),
-            "ORF3a variants": " ".join(table[sample][6]),
-            "ORF1ab variants": " ".join(table[sample][5]),
-            "E variants": " ".join(table[sample][4]),
-            "M variants": " ".join(table[sample][3]),
-            "other S variants": " ".join(table[sample][2]),
+            "other variants": " ".join(table[sample][2]),
             "variants of interest": " ".join(table[sample][1]),
             "pangolin strain (#SNPs)": " ".join(table[sample][0]),
             "sample": sample,
@@ -240,7 +210,7 @@ for sample in table:
         
     )
 var_df = var_df.set_index("sample")
-var_df = var_df[["pangolin strain (#SNPs)", "variants of interest", "other S variants", "M variants", "E variants", "ORF1ab variants", "ORF3a variants", "ORF6 variants", "ORF7a variants", "ORF8 variants", "ORF10 variants", "other variants"]]
+var_df = var_df[["pangolin strain (#SNPs)", "variants of interest", "other variants"]]
 
 initial_df = initial_df.set_index("sample")
 final_df = final_df.set_index("sample")
@@ -271,7 +241,7 @@ output_df = output_df.set_index("sample")
 
 qc_df = output_df.copy()
 variant_df = output_df.copy()
-qc_df.drop(columns=["other S variants", "M variants", "E variants", "ORF1ab variants", "ORF3a variants", "ORF6 variants", "ORF7a variants", "ORF8 variants", "ORF10 variants", "other variants"], inplace=True)
+qc_df.drop(columns=["other variants"], inplace=True)
 
 try:
     variant_df.drop(columns=["# raw reads", "# trimmed reads", "# filtered reads", "initial contig (bp)", "final contig (bp)", "Eukaryota (%)", "Bacteria (%)", "Viruses (%)", "thereof SARS (%)", "Unclassified (%)"], inplace=True)
