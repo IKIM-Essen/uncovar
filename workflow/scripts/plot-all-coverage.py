@@ -43,9 +43,9 @@ def plot_coverage(sm_input, sm_output, min_coverage):
             ),
         ).properties(width=1200, height=150).interactive().save(sm_output)
     else:
-        alt.Chart(coverage).mark_bar().encode().properties(width='container', height=150).save(
-            sm_output
-        )
+        alt.Chart(coverage).mark_bar().encode().properties(
+            width="container", height=150
+        ).save(sm_output)
 
 
 sys.stderr = open(snakemake.log[0], "w")
