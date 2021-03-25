@@ -108,7 +108,7 @@ rule samtools_flagstat:
 
 rule samtools_depth:
     input:
-        "results/{date}/clipped-reads/{sample}.tmp.primerclipped.bam",
+        get_depth_input,
     output:
         "results/{date}/qc/samtools_depth/{sample}.txt",
     log:

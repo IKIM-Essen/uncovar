@@ -348,6 +348,14 @@ def get_recal_input(wildcards):
     return "results/{date}/dedup/ref~{reference}/{sample}.bam"
 
 
+def get_depth_input(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        # use clipped reads
+        return "results/{date}/clipped-reads/{sample}.tmp.primerclipped.bam"
+    # use trimmed reads
+    return "results/{date}/mapped/ref~MN908947/{sample}.bam"
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartypes="|".join(VARTYPES),
