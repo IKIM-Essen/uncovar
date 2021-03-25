@@ -22,7 +22,7 @@ def plot_coverage(sm_input, sm_output, min_coverage):
         else f">= {min_coverage}"
     )
 
-    max_y_pos = 500
+    max_y_pos = 100
     max_x_pos = coverage.Pos.max()
 
     coverage["Coverage"] = coverage["Coverage"].apply(
@@ -41,9 +41,9 @@ def plot_coverage(sm_input, sm_output, min_coverage):
                     range=["indianred", "lightgreen"],
                 ),
             ),
-        ).properties(width=600, height=150).save(sm_output)
+        ).properties(width=1200, height=150).interactive().save(sm_output)
     else:
-        alt.Chart(coverage).mark_bar().encode().properties(width=600, height=150).save(
+        alt.Chart(coverage).mark_bar().encode().properties(width='container', height=150).save(
             sm_output
         )
 

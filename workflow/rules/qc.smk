@@ -106,6 +106,20 @@ rule samtools_flagstat:
         "0.70.0/bio/samtools/flagstat"
 
 
+rule samtools_depth:
+    input:
+        "results/{date}/clipped-reads/{sample}.tmp.primerclipped.bam",
+    output:
+        "results/{date}/qc/samtools_depth/{sample}.txt",
+    log:
+        "logs/{date}/samtools/{sample}_depth.txt",
+    conda:
+        "../envs/samtools.yaml"
+    shell:
+        "samtools depth -aH -o {output} {input} && "
+        "sed -i 's/MN908947.3/{wildcards.sample}/' {output}"
+
+
 # analysis of species diversity present BEFORE removing human contamination
 rule species_diversity_before:
     input:

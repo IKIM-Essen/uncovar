@@ -16,7 +16,30 @@ rule masking:
         "../scripts/mask-contigs.py"
 
 
-rule plot_coverage:
+rule plot_coverage_main_sequence:
+    input:
+        lambda wildcards: expand(
+            "results/{{date}}/qc/samtools_depth/{sample}.txt",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+    output:
+        report(
+            "results/{date}/plots/coverage-main-sequence.svg",
+            caption="../report/all-main-coverage.rst",
+            category="3. Sequencing Details",
+            subcategory="2. Read Coverage of Reference Sequence",
+        ),
+    log:
+        "logs/{date}/plot-coverage-main-seq.log",
+    params:
+        min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot-all-coverage.py"
+
+
+rule plot_coverage_final_sequence:
     input:
         lambda wildcards: expand(
             "results/{{date}}/tables/coverage/{sample}.txt",
@@ -24,13 +47,13 @@ rule plot_coverage:
         ),
     output:
         report(
-            "results/{date}/plots/coverage.svg",
-            caption="../report/all-coverage.rst",
+            "results/{date}/plots/coverage-final-sequence.svg",
+            caption="../report/all-final-coverage.rst",
             category="3. Sequencing Details",
-            subcategory="2. Read Coverage",
+            subcategory="3. Read Coverage of Reconstructed Sequence",
         ),
     log:
-        "logs/{date}/plot-coverage.log",
+        "logs/{date}/plot-coverage-final-seq.log",
     params:
         min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
     conda:
@@ -180,7 +203,8 @@ rule variants_html_report:
 
 rule snakemake_reports:
     input:
-        "results/{date}/plots/coverage.svg",
+        "results/{date}/plots/coverage-main-sequence.svg",
+        "results/{date}/plots/coverage-final-sequence.svg",
         lambda wildcards: expand(
             "results/{{date}}/polished-contigs/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
