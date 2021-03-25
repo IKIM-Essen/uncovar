@@ -5,6 +5,7 @@ import pandas as pd
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 
+PRIMER_REFERENCE = "MN908947"
 
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
@@ -219,8 +220,9 @@ def get_reference(suffix=""):
             return "results/{date}/polished-contigs/{sample}.fasta".format(
                 sample=wildcards.reference.replace("polished-", ""), **wildcards
             )
-        elif wildcards.reference == "MN908947":
-            return "resources/genomes/MN908947.fasta"
+        elif wildcards.reference == PRIMER_REFERENCE:
+            # return reference genome of amplicon primers
+            return "resources/genomes/{reference}.fasta{suffix}".format(reference=PRIMER_REFERENCE, suffix=suffix)
         else:
             # return assembly result
             return "results/{date}/ordered-contigs/{reference}.fasta{suffix}".format(
@@ -231,35 +233,58 @@ def get_reference(suffix=""):
 
 
 def get_reads(wildcards):
+    # alignment against the human reference genome is done with trimmed reads,
+    # since this alignment is used to generate the ordered, non human reads
     if (
         wildcards.reference == "human"
         or wildcards.reference == "main+human"
         or wildcards.reference.startswith("polished-")
     ):
-        # alignment against the human reference genome must be done with trimmed reads,
-        # since this alignment is used to generate the ordered, non human contigs
         return expand(
             "results/{date}/trimmed/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
         )
-    elif wildcards.reference == "MN908947":
+
+    # theses reads are used to generate the bam file for the BAMclipper
+    elif wildcards.reference == PRIMER_REFERENCE:
         return expand(
             "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
         )
+
+    # aligments to other references (e.g. the covid reference genome), 
+    # are done with reads, which have undergone the quality control process 
     else:
-        # other reference (e.g. the covid reference genome, are done with contigs) that
-        # do not contain human contaminations
-        return expand(
+        return get_reads_after_qc(wildcards)
+
+
+def get_reads_after_qc(wildcards, read="both"):
+    
+    if is_amplicon_data(wildcards.sample):
+        pattern = expand(
             "results/{date}/clipped-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
         )
+    else:
+        pattern = expand(
+                "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
+                date=wildcards.date,
+                read=[1, 2],
+                sample=wildcards.sample,
+            )
+
+    if read == "1":
+        return pattern[0]
+    if read == "2":
+        return pattern[1]
+
+    return pattern
 
 
 def get_bwa_index(wildcards):
