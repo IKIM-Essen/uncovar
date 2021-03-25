@@ -1,7 +1,7 @@
 rule assembly:
     input:
-        fastq1="results/{date}/clipped-reads/{sample}.1.fastq.gz",
-        fastq2="results/{date}/clipped-reads/{sample}.2.fastq.gz",
+        fastq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
+        fastq2="results/{date}/nonhuman-reads/{sample}.2.fastq.gz",
     output:
         contigs="results/{date}/assembly/{sample}/{sample}.contigs.fa",
         log="results/{date}/assembly/{sample}/log",
