@@ -380,6 +380,10 @@ def get_depth_input(wildcards):
     # use trimmed reads
     return "results/{date}/mapped/ref~MN908947/{sample}.bam"
 
+def get_adapters(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        return config["adapters"]["illumina-nimagen"]
+    return config["adapters"]["illumina-revelo"]
 
 wildcard_constraints:
     sample="[^/.]+",
