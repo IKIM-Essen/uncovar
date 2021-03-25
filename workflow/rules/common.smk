@@ -351,7 +351,7 @@ def is_amplicon_data(sample):
         return False
     sample = pep.sample_table.loc[sample]
     try:
-        return bool(sample["is_amplicon_data"])
+        return bool(int(sample["is_amplicon_data"]))
     except KeyError:
         return False
 
