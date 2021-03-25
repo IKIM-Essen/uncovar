@@ -5,8 +5,6 @@ import pandas as pd
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 
-PRIMER_REFERENCE = "MN908947"
-
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
 
@@ -220,9 +218,9 @@ def get_reference(suffix=""):
             return "results/{date}/polished-contigs/{sample}.fasta".format(
                 sample=wildcards.reference.replace("polished-", ""), **wildcards
             )
-        elif wildcards.reference == PRIMER_REFERENCE:
+        elif wildcards.reference == config["adapters"]["amplicon-reference"]:
             # return reference genome of amplicon primers
-            return "resources/genomes/{reference}.fasta{suffix}".format(reference=PRIMER_REFERENCE, suffix=suffix)
+            return "resources/genomes/{reference}.fasta{suffix}".format(reference=config["adapters"]["amplicon-reference"], suffix=suffix)
         else:
             # return assembly result
             return "results/{date}/ordered-contigs/{reference}.fasta{suffix}".format(
@@ -248,7 +246,7 @@ def get_reads(wildcards):
         )
 
     # theses reads are used to generate the bam file for the BAMclipper
-    elif wildcards.reference == PRIMER_REFERENCE:
+    elif wildcards.reference == config["adapters"]["amplicon-reference"]:
         return expand(
             "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
@@ -376,9 +374,10 @@ def get_recal_input(wildcards):
 def get_depth_input(wildcards):
     if is_amplicon_data(wildcards.sample):
         # use clipped reads
-        return "results/{date}/clipped-reads/{sample}.tmp.primerclipped.bam"
+        return "results/{date}/clipped-reads/{sample}.primerclipped.bam"
     # use trimmed reads
-    return "results/{date}/mapped/ref~MN908947/{sample}.bam"
+    amplicon_reference = config["adapters"]["amplicon-reference"]
+    return "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam".format(ref=amplicon_reference)
 
 def get_adapters(wildcards):
     if is_amplicon_data(wildcards.sample):

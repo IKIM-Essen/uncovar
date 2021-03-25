@@ -1,13 +1,13 @@
 rule clip_primer:
     input:
-        bam="results/{date}/mapped/ref~MN908947/{sample}.bam",
+        bam=expand("results/{{date}}/mapped/ref~{ref}/{{sample}}.bam", ref=config["adapters"]["amplicon-reference"]),
         bed=config["adapters"]["amplicon-primers"],
     output:
-        sortbam=temp("results/{date}/clipped-reads/{sample}.tmp.bam"),
-        sortindex=temp("results/{date}/clipped-reads/{sample}.tmp.bam.bai"),
-        tempbam=temp("results/{date}/clipped-reads/{sample}.tmp.primerclipped.bam"),
-        sorttempbam=temp(
-            "results/{date}/clipped-reads/{sample}.sort.tmp.primerclipped.bam"
+        sortbam=temp("results/{date}/clipped-reads/{sample}.bam"),
+        sortindex=temp("results/{date}/clipped-reads/{sample}.bam.bai"),
+        clippedbam=temp("results/{date}/clipped-reads/{sample}.primerclipped.bam"),
+        sortclippedbam=temp(
+            "results/{date}/clipped-reads/{sample}.sort.primerclipped.bam"
         ),
         fq1="results/{date}/clipped-reads/{sample}.1.fastq.gz",
         fq2="results/{date}/clipped-reads/{sample}.2.fastq.gz",
@@ -29,6 +29,6 @@ rule clip_primer:
         cd {params.dir}
         bamclipper.sh -b {params.bam} -p {params.dir_depth}{input.bed} -n {threads} >> {params.dir_depth}{log} 2>&1
         cd {params.dir_depth}
-        samtools sort  -@ {threads} -n {output.tempbam} -o {output.sorttempbam}  >> {log} 2>&1
-        samtools fastq -@ {threads} {output.sorttempbam} -1 {output.fq1} -2 {output.fq2}  >> {log} 2>&1
+        samtools sort  -@ {threads} -n {output.clippedbam} -o {output.sortclippedbam}  >> {log} 2>&1
+        samtools fastq -@ {threads} {output.sortclippedbam} -1 {output.fq1} -2 {output.fq2}  >> {log} 2>&1
         """

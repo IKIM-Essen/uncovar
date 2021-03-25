@@ -115,9 +115,11 @@ rule samtools_depth:
         "logs/{date}/samtools/{sample}_depth.txt",
     conda:
         "../envs/samtools.yaml"
+    params:
+        ref=config["adapters"]["amplicon-reference"]
     shell:
         "samtools depth -aH -o {output} {input} && "
-        "sed -i 's/MN908947.3/{wildcards.sample}/' {output}"
+        "sed -i 's/{params.ref}.3/{wildcards.sample}/' {output}"
 
 
 # analysis of species diversity present BEFORE removing human contamination
