@@ -24,10 +24,10 @@ rule plot_coverage_main_sequence:
         ),
     output:
         report(
-            "results/{date}/plots/coverage-main-sequence.svg",
+            "results/{date}/plots/coverage-reference-genome.svg",
             caption="../report/all-main-coverage.rst",
             category="3. Sequencing Details",
-            subcategory="2. Read Coverage of Reference Sequence",
+            subcategory="2. Read Coverage of Reference Genome",
         ),
     log:
         "logs/{date}/plot-coverage-main-seq.log",
@@ -47,10 +47,10 @@ rule plot_coverage_final_sequence:
         ),
     output:
         report(
-            "results/{date}/plots/coverage-final-sequence.svg",
+            "results/{date}/plots/coverage-assembled-genome.svg",
             caption="../report/all-final-coverage.rst",
             category="3. Sequencing Details",
-            subcategory="3. Read Coverage of Reconstructed Sequence",
+            subcategory="3. Read Coverage of Reconstructed Genome",
         ),
     log:
         "logs/{date}/plot-coverage-final-seq.log",
@@ -203,8 +203,8 @@ rule variants_html_report:
 
 rule snakemake_reports:
     input:
-        "results/{date}/plots/coverage-main-sequence.svg",
-        "results/{date}/plots/coverage-final-sequence.svg",
+        "results/{date}/plots/coverage-reference-genome.svg",
+        "results/{date}/plots/coverage-assembled-genome.svg",
         lambda wildcards: expand(
             "results/{{date}}/polished-contigs/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),

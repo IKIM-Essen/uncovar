@@ -1,6 +1,9 @@
 rule clip_primer:
     input:
-        bam=expand("results/{{date}}/mapped/ref~{ref}/{{sample}}.bam", ref=config["adapters"]["amplicon-reference"]),
+        bam=expand(
+            "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam",
+            ref=config["adapters"]["amplicon-reference"],
+        ),
         bed=config["adapters"]["amplicon-primers"],
     output:
         sortbam=temp("results/{date}/clipped-reads/{sample}.bam"),

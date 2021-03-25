@@ -220,7 +220,9 @@ def get_reference(suffix=""):
             )
         elif wildcards.reference == config["adapters"]["amplicon-reference"]:
             # return reference genome of amplicon primers
-            return "resources/genomes/{reference}.fasta{suffix}".format(reference=config["adapters"]["amplicon-reference"], suffix=suffix)
+            return "resources/genomes/{reference}.fasta{suffix}".format(
+                reference=config["adapters"]["amplicon-reference"], suffix=suffix
+            )
         else:
             # return assembly result
             return "results/{date}/ordered-contigs/{reference}.fasta{suffix}".format(
@@ -254,14 +256,14 @@ def get_reads(wildcards):
             sample=wildcards.sample,
         )
 
-    # aligments to other references (e.g. the covid reference genome), 
-    # are done with reads, which have undergone the quality control process 
+    # aligments to other references (e.g. the covid reference genome),
+    # are done with reads, which have undergone the quality control process
     else:
         return get_reads_after_qc(wildcards)
 
 
 def get_reads_after_qc(wildcards, read="both"):
-    
+
     if is_amplicon_data(wildcards.sample):
         pattern = expand(
             "results/{date}/clipped-reads/{sample}.{read}.fastq.gz",
@@ -271,11 +273,11 @@ def get_reads_after_qc(wildcards, read="both"):
         )
     else:
         pattern = expand(
-                "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
-                date=wildcards.date,
-                read=[1, 2],
-                sample=wildcards.sample,
-            )
+            "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
+            date=wildcards.date,
+            read=[1, 2],
+            sample=wildcards.sample,
+        )
 
     if read == "1":
         return pattern[0]
@@ -377,12 +379,16 @@ def get_depth_input(wildcards):
         return "results/{date}/clipped-reads/{sample}.primerclipped.bam"
     # use trimmed reads
     amplicon_reference = config["adapters"]["amplicon-reference"]
-    return "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam".format(ref=amplicon_reference)
+    return "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam".format(
+        ref=amplicon_reference
+    )
+
 
 def get_adapters(wildcards):
     if is_amplicon_data(wildcards.sample):
         return config["adapters"]["illumina-nimagen"]
     return config["adapters"]["illumina-revelo"]
+
 
 wildcard_constraints:
     sample="[^/.]+",
