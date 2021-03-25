@@ -1,4 +1,4 @@
-rule clipPrimer:
+rule clip_primer:
     input:
         bam="results/{date}/mapped/ref~MN908947/{sample}.bam",
         bed=config["adapters"]["amplicon-primers"],
