@@ -73,6 +73,7 @@ adapters:
   #  Illumina TruSeq adapters
   illumina-revelo: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
   illumina-nimagen: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+  amplicon-primers: "resources/primer.bedpe"
 
 rki-output:
 # minimum contig length
