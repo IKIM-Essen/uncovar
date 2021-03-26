@@ -90,10 +90,8 @@ rule update_pangoLEARN:
         directory("results/{date}/pangolin/pangoLEARN"),
     log:
         "logs/{date}/pangolin/update.log",
-    conda:
-        "../envs/svn.yaml"
     shell:
-        "(svn export https://github.com/cov-lineages/pangoLEARN/trunk/ {output}) > {log} 2>&1"
+        "(mkdir -p {output} && wget -qO- https://github.com/cov-lineages/pangoLEARN/archive/master.tar.gz | tar xvz --strip-components=1 -C {output})> {log} 2>&1"
 
 
 rule update_lineages:
@@ -101,7 +99,5 @@ rule update_lineages:
         directory("results/{date}/pangolin/lineages"),
     log:
         "logs/{date}/pangolin/update.log",
-    conda:
-        "../envs/svn.yaml"
     shell:
-        "(svn export https://github.com/cov-lineages/lineages/trunk/ {output}) > {log} 2>&1"
+        "(mkdir -p {output} && wget -qO- https://github.com/cov-lineages/lineages/archive/master.tar.gz | tar xvz --strip-components=1 -C {output})> {log} 2>&1"
