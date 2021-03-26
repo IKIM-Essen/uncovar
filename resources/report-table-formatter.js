@@ -6,7 +6,7 @@
 
         if (value !== "no strain called") {
             var lineage = value.split(' ')[0];
-            var link = "<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Linkout to cov-lineages\" href='https://cov-lineages.org/lineages/lineage_" + lineage + ".html' target='_blank'>" + lineage + "</a>";
+            var link = `<a data-toggle=\"tooltip\" data-placement=\"top\" title=\"Linkout to cov-lineages\" href='https://cov-lineages.org/lineages/lineage_${lineage}.html' target='_blank'>${lineage}</a>`;
             return link + value.split(lineage).pop();
         } else {
             return value;3
@@ -45,14 +45,14 @@
             vats[split[0]].push(split[2]);
         }
 
-        const table = "<table class=\"table\">\n" +
-            "  <thead>\n" +
-            "    <tr>\n" +
-            "      <th scope=\"col\">Variant</th>\n" +
-            "      <th scope=\"col\">VAF</th>\n" +
-            "    </tr>\n" +
-            "  </thead>" +
-            "<tbody>";
+        const table = `<table class=\"table\">
+              <thead>
+                <tr>
+                  <th scope=\"col\">Variant</th>
+                  <th scope=\"col\">VAF</th>
+                </tr>
+              </thead>
+            <tbody>`;
 
         const table_end = "</tbody></table>";
 
@@ -61,7 +61,7 @@
         for (g of genes) {
             var body = "";
             for (let i = 0; i < vafs[g].length; i++) {
-                var row = "    <tr><td scope=\"col\">" + vafs[g][i] + "</td><td>"  + vats[g][i] + "</td></tr>";
+                var row = `<tr><td scope=\"col\">${vafs[g][i]}</td><td>${vats[g][i]}</td></tr>`;
                 body = body + row;
             }
             tables[g] = table + body + table_end;
@@ -71,7 +71,7 @@
         let unique_genes = [...new Set(genes)];
 
         for (g of unique_genes) {
-            var x = "<a tabindex=\"0\" class=\"btn btn-link\" data-toggle=\"popover\" data-trigger=\"focus\" data-html='true' title='Gene: <a data-html=\"true\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Linkout to gene in Ensembl genome browser\" href=\"https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=" + g + "\" target=\"_blank\">" + g + "</a>' data-content='" + tables[g] + "'>" + g +"</a>";
+            var x = `<a tabindex=\"0\" class=\"btn btn-link\" data-toggle=\"popover\" data-trigger=\"focus\" data-html='true' title='Gene: <a data-html=\"true\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Linkout to gene in Ensembl genome browser\" href=\"https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}\" target=\"_blank\">${g}</a>' data-content='${tables[g]}'>${g}</a>`;
             result = result + x + " ";
         }
 
