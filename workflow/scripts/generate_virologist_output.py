@@ -142,7 +142,7 @@ table = {}
 for file in snakemake.input.pangolin:
 
     pang_call = open(file, "r")
-    table[file.split("/")[-1].split(".")[0]] = [[] for i in range(12)]
+    table[file.split("/")[-1].split(".")[0]] = [[]] * 12
     for line in pang_call.read().splitlines():
         if not line.startswith("taxon"):
             if line.split(",")[1].startswith("None"):
