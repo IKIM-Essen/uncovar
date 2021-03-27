@@ -287,6 +287,21 @@ def get_reads_after_qc(wildcards, read="both"):
     return pattern
 
 
+def get_contigs(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        pattern = expand(
+            "results/{date}/assembly_metaspades/{sample}/{sample}.contigs.fa",
+            date=wildcards.date,
+            sample=wildcards.sample,
+        )
+    else:
+        pattern = expand(
+            "results/{date}/assembly_megahit/{sample}/{sample}.contigs.fa",
+            date=wildcards.date,
+            sample=wildcards.sample,
+        )
+
+
 def get_bwa_index(wildcards):
     if wildcards.reference == "human" or wildcards.reference == "main+human":
         return rules.bwa_large_index.output

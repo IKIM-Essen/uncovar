@@ -1,9 +1,9 @@
-rule assembly:
+rule assembly_megahit:
     input:
         fastq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
         fastq2="results/{date}/nonhuman-reads/{sample}.2.fastq.gz",
     output:
-        contigs="results/{date}/assembly/{sample}/{sample}.contigs.fa",
+        contigs="results/{date}/assembly_megahit/{sample}/{sample}.contigs.fa",
         log="results/{date}/assembly/{sample}/log",
     log:
         "logs/{date}/megahit/{sample}.log",
@@ -17,9 +17,26 @@ rule assembly:
         "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f && mv {params.outdir}/final.contigs.fa {output.contigs} ) 2> {log}"
 
 
+rule assembly_metaspades:
+    input:
+        fastq1="results/{date}/clipped-reads/{sample}.1.fastq.gz",
+        fastq2="results/{date}/clipped-reads/{sample}.2.fastq.gz",
+    output:
+        "results/{date}/assembly_metaspades/{sample}/{sample}.contigs.fa",
+    params:
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    log:
+        "logs/{date}/metaSPAdes/{sample}.log",
+    threads: 8
+    conda:
+        "../envs/spades.yaml"
+    shell:
+        "(metaspades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads}) > {log} 2>&1"
+
+
 rule order_contigs:
     input:
-        contigs="results/{date}/assembly/{sample}/{sample}.contigs.fa",
+        contigs=lambda wildcards: get_contigs(wildcards),
         reference="resources/genomes/main.fasta",
     output:
         temp("results/{date}/ordered-contigs-all/{sample}.fasta"),
