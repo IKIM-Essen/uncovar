@@ -300,7 +300,7 @@ def get_contigs(wildcards):
             date=wildcards.date,
             sample=wildcards.sample,
         )
-
+    return pattern
 
 def get_bwa_index(wildcards):
     if wildcards.reference == "human" or wildcards.reference == "main+human":
@@ -348,7 +348,10 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
 
 def get_quast_fastas(wildcards):
     if wildcards.stage == "unpolished":
-        return "results/{date}/assembly/{sample}/{sample}.contigs.fa"
+        if is_amplicon_data(wildcards.sample):
+            return "results/{date}/assembly_metaspades/{sample}/{sample}.contigs.fa"
+        else:
+            return "results/{date}/assembly_megahit/{sample}/{sample}.contigs.fa"
     elif wildcards.stage == "polished":
         return "results/{date}/polished-contigs/{sample}.fasta"
     elif wildcards.stage == "masked":

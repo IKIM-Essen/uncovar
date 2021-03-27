@@ -36,7 +36,7 @@ rule assembly_metaspades:
 
 rule order_contigs:
     input:
-        contigs=lambda wildcards: get_contigs(wildcards),
+        contigs=get_contigs,
         reference="resources/genomes/main.fasta",
     output:
         temp("results/{date}/ordered-contigs-all/{sample}.fasta"),
