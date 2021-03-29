@@ -5,7 +5,6 @@ import pandas as pd
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 
-
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
 
@@ -183,10 +182,7 @@ def get_assembly_comparisons(bams=True):
             if bams
             else "resources/genomes/{accession}.fasta"
         )
-        return expand(
-            pattern,
-            accession=accessions,
-        )
+        return expand(pattern, accession=accessions,)
 
     return inner
 
@@ -222,6 +218,11 @@ def get_reference(suffix=""):
             return "results/{date}/polished-contigs/{sample}.fasta".format(
                 sample=wildcards.reference.replace("polished-", ""), **wildcards
             )
+        elif wildcards.reference == config["adapters"]["amplicon-reference"]:
+            # return reference genome of amplicon primers
+            return "resources/genomes/{reference}.fasta{suffix}".format(
+                reference=config["adapters"]["amplicon-reference"], suffix=suffix
+            )
         else:
             # return assembly result
             return "results/{date}/ordered-contigs/{reference}.fasta{suffix}".format(
@@ -232,28 +233,58 @@ def get_reference(suffix=""):
 
 
 def get_reads(wildcards):
+    # alignment against the human reference genome is done with trimmed reads,
+    # since this alignment is used to generate the ordered, non human reads
     if (
         wildcards.reference == "human"
         or wildcards.reference == "main+human"
         or wildcards.reference.startswith("polished-")
     ):
-        # alignment against the human reference genome must be done with trimmed reads,
-        # since this alignment is used to generate the ordered, non human contigs
         return expand(
             "results/{date}/trimmed/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
         )
-    else:
-        # other reference (e.g. the covid reference genome, are done with contigs) that
-        # do not contain human contaminations
+
+    # theses reads are used to generate the bam file for the BAMclipper
+    elif wildcards.reference == config["adapters"]["amplicon-reference"]:
         return expand(
             "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
         )
+
+    # aligments to other references (e.g. the covid reference genome),
+    # are done with reads, which have undergone the quality control process
+    else:
+        return get_reads_after_qc(wildcards)
+
+
+def get_reads_after_qc(wildcards, read="both"):
+
+    if is_amplicon_data(wildcards.sample):
+        pattern = expand(
+            "results/{date}/clipped-reads/{sample}.{read}.fastq.gz",
+            date=wildcards.date,
+            read=[1, 2],
+            sample=wildcards.sample,
+        )
+    else:
+        pattern = expand(
+            "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
+            date=wildcards.date,
+            read=[1, 2],
+            sample=wildcards.sample,
+        )
+
+    if read == "1":
+        return pattern[0]
+    if read == "2":
+        return pattern[1]
+
+    return pattern
 
 
 def get_bwa_index(wildcards):
@@ -293,10 +324,7 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
         [
             expand(ele, exp=expand_wildcard)
             for ele in expand(
-                expand_string,
-                zip,
-                zip1=zip_wildcard_1,
-                zip2=zip_wildcard_2,
+                expand_string, zip, zip1=zip_wildcard_1, zip2=zip_wildcard_2,
             )
         ],
         [],
@@ -323,7 +351,7 @@ def is_amplicon_data(sample):
         return False
     sample = pep.sample_table.loc[sample]
     try:
-        return bool(sample["is_amplicon_data"])
+        return bool(int(sample["is_amplicon_data"]))
     except KeyError:
         return False
 
@@ -343,6 +371,23 @@ def get_recal_input(wildcards):
         return "results/{date}/mapped/ref~{reference}/{sample}.bam"
     # use BAM with marked duplicates
     return "results/{date}/dedup/ref~{reference}/{sample}.bam"
+
+
+def get_depth_input(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        # use clipped reads
+        return "results/{date}/clipped-reads/{sample}.primerclipped.bam"
+    # use trimmed reads
+    amplicon_reference = config["adapters"]["amplicon-reference"]
+    return "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam".format(
+        ref=amplicon_reference
+    )
+
+
+def get_adapters(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        return config["adapters"]["illumina-nimagen"]
+    return config["adapters"]["illumina-revelo"]
 
 
 wildcard_constraints:
