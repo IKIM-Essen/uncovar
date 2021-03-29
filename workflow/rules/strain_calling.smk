@@ -45,9 +45,7 @@ rule kallisto_index:
 
 rule kallisto_quant:
     input:
-        fastq=expand(
-            "results/{{date}}/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]
-        ),
+        fastq=get_reads_after_qc,
         index="resources/strain-genomes.idx",
     output:
         directory("results/{date}/quant/{sample}"),
@@ -63,7 +61,7 @@ rule kallisto_quant:
 rule call_strains_kallisto:
     input:
         quant="results/{date}/quant/{sample}",
-        fq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
+        fq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
     output:
         "results/{date}/tables/strain-calls/{sample}.strains.kallisto.tsv",
     log:
