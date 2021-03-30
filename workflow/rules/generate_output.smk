@@ -209,20 +209,20 @@ rule snakemake_reports:
             "results/{{date}}/polished-contigs/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
         ),
-        # lambda wildcards: expand(
-        #     "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
-        #     sample=get_samples_for_date(wildcards.date),
-        # ),
-        # "results/{date}/qc_data",
-        # "results/{date}/var_data",
+        lambda wildcards: expand(
+            "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        "results/{date}/qc_data",
+        "results/{date}/var_data",
         expand(
             "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
             mode=["major", "any"],
         ),
-        # lambda wildcards: expand(
-        #     "results/{{date}}/plots/strain-calls/{sample}.strains.pangolin.svg",
-        #     sample=get_samples_for_date(wildcards.date),
-        # ),
+        lambda wildcards: expand(
+            "results/{{date}}/plots/strain-calls/{sample}.strains.pangolin.svg",
+            sample=get_samples_for_date(wildcards.date),
+        ),
         "results/{date}/plots/all.strains.pangolin.svg",
         lambda wildcards: expand(
             "results/{{date}}/vcf-report/{target}.{filter}",
