@@ -289,17 +289,17 @@ def get_reads_after_qc(wildcards, read="both"):
 
 def get_contigs(wildcards):
     if is_amplicon_data(wildcards.sample):
-        pattern = "results/{date}/assembly/metaspades/{sample}/contigs.fasta",
+        pattern = ("results/{date}/assembly/metaspades/{sample}/contigs.fasta",)
     else:
-        pattern = "results/{date}/assembly/megahit/{sample}/{sample}.contigs.fa",
+        pattern = ("results/{date}/assembly/megahit/{sample}/{sample}.contigs.fa",)
     return pattern
 
 
 def get_read_counts(wildcards):
     if is_amplicon_data(wildcards.sample):
-        pattern = "results/{date}/assembly/metaspades/{sample}.log",
+        pattern = ("results/{date}/assembly/metaspades/{sample}.log",)
     else:
-        pattern = "results/{date}/assembly/megahit/{sample}.log",
+        pattern = ("results/{date}/assembly/megahit/{sample}.log",)
     return pattern
 
 
