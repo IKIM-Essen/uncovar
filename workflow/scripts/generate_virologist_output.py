@@ -184,10 +184,10 @@ for sample in table:
     for i in range(1, len(table[sample])):
         hashing = {}
         for j in range(len(table[sample][i])):
-            var = table[sample][i][j].split(" ")[0]
-            freq = float(table[sample][i][j].split(" ")[1])
+            var = table[sample][i][j].split(":")[0]
+            freq = float(table[sample][i][j].split(":")[1])
             print(var, freq)
-            if var in hashing and freq > float(hashing[var].split(" ")[1]):
+            if var in hashing and freq > float(hashing[var].split(":")[1]):
                 hashing[var] = table[sample][i][j]
             elif var not in hashing:
                 hashing[var] = table[sample][i][j]
