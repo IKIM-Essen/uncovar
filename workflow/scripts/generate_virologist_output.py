@@ -12,9 +12,7 @@ KRAKEN_FILTER_KRITERIA = "D"
 print(snakemake.params.get("voc"))
 
 initial_reads_df = pd.DataFrame()
-for file in snakemake.input.reads_unfiltered:
-    
-    sample = file.split("/")[-1].split(".")[0]
+for sample, file in zip(snakemake.params.samples, snakemake.input.reads_unfiltered):
     with open(file) as read_json:
         number_reads = json.load(read_json)
     raw_reads = int(number_reads["summary"]["before_filtering"]["total_reads"])
@@ -31,9 +29,8 @@ initial_reads_df = initial_reads_df.set_index("sample")
 initial_reads_df = initial_reads_df[["# raw reads", "# trimmed reads"]]
 
 filtered_reads_df = pd.DataFrame()
-for file in snakemake.input.reads_used_for_assembly:
+for sample, file in zip(snakemake.params.samples, snakemake.input.reads_used_for_assembly):
     infile = open(file, "r")
-    sample = file.split("/")[-1].split(".")[0]
     for line in infile.read().splitlines():
         try:
             num_reads = int(line)/4*2
@@ -50,9 +47,8 @@ for file in snakemake.input.reads_used_for_assembly:
 filtered_reads_df = filtered_reads_df.set_index("sample")
 
 initial_df = pd.DataFrame()
-for file in snakemake.input.initial_contigs:
+for sample, file in zip(snakemake.params.samples, snakemake.input.initial_contigs):
     contigs = {}
-    sample = file.split("/")[-1].split(".")[0]
     if os.stat(file).st_size == 0:
         contigs[sample] = ""
     else:
@@ -79,9 +75,8 @@ for file in snakemake.input.initial_contigs:
     )
 
 final_df = pd.DataFrame()
-for file in snakemake.input.polished_contigs:
+for sample, file in zip(snakemake.params.samples, snakemake.input.polished_contigs):
     contigs = {}
-    sample = file.split("/")[-1].split(".")[0]
     if os.stat(file).st_size == 0:
         contigs[sample] = ""
     else:
@@ -106,7 +101,7 @@ for file in snakemake.input.polished_contigs:
 
 total_kraken_df = pd.DataFrame()
 
-for file in snakemake.input.kraken:
+for sample, file in zip(snakemake.params.samples, snakemake.input.kraken):
 
     sample = file.split("/")[-1].split(".")[0]
     krake_df = pd.read_csv(
