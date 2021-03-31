@@ -188,7 +188,7 @@ for sample in table:
             var = ':'.join(table[sample][i][j].split(":")[:2])
             freq = float(table[sample][i][j].split(":")[2])
             print(var, freq)
-            if var not in hashing or freq > float(hashing[var].split(":")[1]):
+            if var not in hashing or freq > float(hashing[var].split(":")[2]):
                 hashing[var] = table[sample][i][j]
         table[sample][i] = []
         for element in hashing.values():
