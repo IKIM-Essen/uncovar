@@ -313,7 +313,6 @@ def get_expanded_contigs(wildcards):
                     sample=s
                 )
             ),
-    print(sample_list)
     return sample_list
 
 
