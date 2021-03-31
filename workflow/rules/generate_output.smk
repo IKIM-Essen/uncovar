@@ -125,13 +125,10 @@ rule virologist_report:
             sample=get_samples_for_date(wildcards.date),
         ),
         reads_used_for_assembly=lambda wildcards: expand(
-            "results/{{date}}/assembly/{sample}.log",
+            "results/{{date}}/tables/read_counts/{sample}.txt",
             sample=get_samples_for_date(wildcards.date),
         ),
-        initial_contigs=lambda wildcards: expand(
-            "results/{{date}}/assembly/{sample}.contigs.fasta",
-            sample=get_samples_for_date(wildcards.date),
-        ),
+        initial_contigs=lambda wildcards: get_expanded_contigs(wildcards),
         polished_contigs=lambda wildcards: expand(
             "results/{{date}}/polished-contigs/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
@@ -156,6 +153,7 @@ rule virologist_report:
         "logs/{date}/viro_report.log",
     params:
         voc=config.get("voc"),
+        samples=lambda wildcards: get_samples_for_date(wildcards.date),
     conda:
         "../envs/pysam.yaml"
     threads: 1
