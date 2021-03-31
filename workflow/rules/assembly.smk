@@ -10,7 +10,7 @@ rule count_assembly_reads:
         "../envs/unix.yaml"
     shell:
         "zcat {input.fastq1} |wc -l > {output.read_count} 2> {log}"
-    
+
 
 rule assembly_megahit:
     input:

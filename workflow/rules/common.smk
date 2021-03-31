@@ -289,28 +289,39 @@ def get_reads_after_qc(wildcards, read="both"):
 
 def get_contigs(wildcards):
     if is_amplicon_data(wildcards.sample):
-        pattern = "results/{date}/assembly/metaspades/{sample}/{sample}.contigs.fasta",
+        pattern = (
+            "results/{date}/assembly/metaspades/{sample}/{sample}.contigs.fasta",
+        )
     else:
-        pattern = "results/{date}/assembly/megahit/{sample}/{sample}.contigs.fasta",
+        pattern = ("results/{date}/assembly/megahit/{sample}/{sample}.contigs.fasta",)
     return pattern
 
 
 def get_expanded_contigs(wildcards):
-    sample=get_samples_for_date(wildcards.date)
+    sample = get_samples_for_date(wildcards.date)
     sample_list = []
     for s in sample:
         if is_amplicon_data(s):
-            sample_list.append("results/{{date}}/assembly/metaspades/{sample}/{sample}.contigs.fasta".format(sample=s)),
+            sample_list.append(
+                "results/{{date}}/assembly/metaspades/{sample}/{sample}.contigs.fasta".format(
+                    sample=s
+                )
+            ),
         else:
-            sample_list.append("results/{{date}}/assembly/megahit/{sample}/{sample}.contigs.fasta".format(sample=s)),
+            sample_list.append(
+                "results/{{date}}/assembly/megahit/{sample}/{sample}.contigs.fasta".format(
+                    sample=s
+                )
+            ),
     print(sample_list)
     return sample_list
 
+
 def get_read_counts(wildcards):
     if is_amplicon_data(wildcards.sample):
-        pattern = "results/{date}/assembly/metaspades/{sample}.log",
+        pattern = ("results/{date}/assembly/metaspades/{sample}.log",)
     else:
-        pattern = "results/{date}/assembly/megahit/{sample}.log",
+        pattern = ("results/{date}/assembly/megahit/{sample}.log",)
     return pattern
 
 

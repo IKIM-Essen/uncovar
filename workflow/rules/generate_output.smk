@@ -119,7 +119,6 @@ rule rki_report:
 
 rule virologist_report:
     input:
-        # reads_unfiltered=lambda wildcards: [pep.sample_table.loc[sample][["fq1", "fq2"]] for sample in get_samples_for_date(wildcards.date)],
         reads_unfiltered=lambda wildcards: expand(
             "results/{{date}}/trimmed/{sample}.fastp.json",
             sample=get_samples_for_date(wildcards.date),
