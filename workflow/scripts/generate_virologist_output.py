@@ -184,6 +184,7 @@ for sample in table:
     for i in range(1, len(table[sample])):
         hashing = {}
         for j in range(len(table[sample][i])):
+            print(table[sample][i][j])
             var = table[sample][i][j].split(":")[0]
             freq = float(table[sample][i][j].split(":")[1])
             print(var, freq)
