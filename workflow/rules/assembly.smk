@@ -17,7 +17,7 @@ rule assembly_megahit:
         fastq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
         fastq2="results/{date}/nonhuman-reads/{sample}.2.fastq.gz",
     output:
-        contigs="results/{date}/assembly/megahit/{sample}/{sample}.contigs.fa",
+        contigs="results/{date}/assembly/megahit/{sample}/{sample}.contigs.fasta",
     log:
         "logs/{date}/megahit/{sample}.log",
     params:
