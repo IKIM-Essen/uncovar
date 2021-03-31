@@ -1,22 +1,33 @@
+rule count_assembly_reads:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+    output:
+        read_count=temp("results/{date}/tables/read_counts/{sample}.txt"),
+    log:
+        "logs/{date}/read_counts/{sample}.log",
+    threads: 1
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "zcat {input.fastq1} |wc -l > {output.read_count} 2> {log}"
+    
+
 rule assembly_megahit:
     input:
         fastq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
         fastq2="results/{date}/nonhuman-reads/{sample}.2.fastq.gz",
     output:
         contigs="results/{date}/assembly/megahit/{sample}/{sample}.contigs.fa",
-        read_count=temp("results/{date}/assembly/megahit/{sample}.log"),
     log:
         "logs/{date}/megahit/{sample}.log",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
-        sample=lambda wildcards: wildcards.sample,
     threads: 8
     conda:
         "../envs/megahit.yaml"
     shell:
-        "(zcat {input.fastq1} |wc -l > {output.read_count} && "
-        "megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f && "
-        "mv {params.outdir}/final.contigs.fa {output.contigs} ) 2> {log}"
+        "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f && "
+        "mv {params.outdir}/final.contigs.fa {output.contigs} ) > {log} 2>&1"
 
 
 rule assembly_metaspades:
@@ -24,44 +35,17 @@ rule assembly_metaspades:
         fastq1="results/{date}/clipped-reads/{sample}.1.fastq.gz",
         fastq2="results/{date}/clipped-reads/{sample}.2.fastq.gz",
     output:
-        contigs="results/{date}/assembly/metaspades/{sample}/contigs.fasta",
-        read_count=temp("results/{date}/assembly/metaspades/{sample}.log"),
+        contigs="results/{date}/assembly/metaspades/{sample}/{sample}.contigs.fasta",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
     log:
         "logs/{date}/metaSPAdes/{sample}.log",
-    threads: 16
+    threads: 8
     conda:
         "../envs/spades.yaml"
     shell:
-        "(zcat {input.fastq1} |wc -l > {output.read_count} && "
-        "metaspades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads}) > {log} 2>&1"
-
-
-rule mv_contigs:
-    input:
-        contigs=get_contigs,
-    output:
-        contigs=temp("results/{date}/assembly/{sample}.contigs.fasta"),
-    log:
-        "logs/{date}/mv_contigs/{sample}.log",
-    conda:
-        "../envs/unix.yaml"
-    shell:
-        "(cp {input.contigs} {output.contigs}) > {log} 2>&1"
-
-
-rule mv_assembly_read_counts:
-    input:
-        read_counts=get_read_counts,
-    output:
-        read_counts=temp("results/{date}/assembly/{sample}.log"),
-    log:
-        "logs/{date}/mv_read_counts/{sample}.log",
-    conda:
-        "../envs/unix.yaml"
-    shell:
-        "(cp {input.read_counts} {output.read_counts}) > {log} 2>&1"
+        "(metaspades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
+        "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
 
 
 rule order_contigs:
