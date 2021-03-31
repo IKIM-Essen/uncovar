@@ -3,7 +3,6 @@ import sys
 import os
 import pysam
 import json
-import subprocess
 
 sys.stderr = open(snakemake.log[0], "w")
 sys.stdout = open(snakemake.log[0], "a")
