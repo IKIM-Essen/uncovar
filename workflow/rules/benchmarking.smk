@@ -19,14 +19,18 @@ rule mix_strain_reads:
         left=expand(
             "resources/benchmarking/{mix}/reads.1.fastq.gz",
             mix=[
-                "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(MIXTURE_PERCENTAGE_INDICATOR = MIXTURE_PERCENTAGE_INDICATOR,no=i)
+                "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(
+                    MIXTURE_PERCENTAGE_INDICATOR=MIXTURE_PERCENTAGE_INDICATOR, no=i
+                )
                 for i in range(config["mixtures"]["no_strains"])
             ],
         ),
         right=expand(
             "resources/benchmarking/{mix}/reads.2.fastq.gz",
             mix=[
-                "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(MIXTURE_PERCENTAGE_INDICATOR = MIXTURE_PERCENTAGE_INDICATOR,no=i)
+                "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(
+                    MIXTURE_PERCENTAGE_INDICATOR=MIXTURE_PERCENTAGE_INDICATOR, no=i
+                )
                 for i in range(config["mixtures"]["no_strains"])
             ],
         ),
@@ -36,7 +40,10 @@ rule mix_strain_reads:
                 "resources/mixtures/{mix}/reads.1.fastq.gz",
                 mix="".join(
                     [
-                        "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(MIXTURE_PERCENTAGE_INDICATOR = MIXTURE_PERCENTAGE_INDICATOR,no=i)
+                        "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(
+                            MIXTURE_PERCENTAGE_INDICATOR=MIXTURE_PERCENTAGE_INDICATOR,
+                            no=i,
+                        )
                         for i in range(config["mixtures"]["no_strains"])
                     ]
                 ),
@@ -47,7 +54,10 @@ rule mix_strain_reads:
                 "resources/mixtures/{mix}/reads.2.fastq.gz",
                 mix="".join(
                     [
-                        "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(MIXTURE_PERCENTAGE_INDICATOR = MIXTURE_PERCENTAGE_INDICATOR,no=i)
+                        "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(
+                            MIXTURE_PERCENTAGE_INDICATOR=MIXTURE_PERCENTAGE_INDICATOR,
+                            no=i,
+                        )
                         for i in range(config["mixtures"]["no_strains"])
                     ]
                 ),
@@ -57,7 +67,9 @@ rule mix_strain_reads:
         "logs/mix_strain_reads/{}".format(
             "".join(
                 [
-                    "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(MIXTURE_PERCENTAGE_INDICATOR = MIXTURE_PERCENTAGE_INDICATOR,no=i)
+                    "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(
+                        MIXTURE_PERCENTAGE_INDICATOR=MIXTURE_PERCENTAGE_INDICATOR, no=i
+                    )
                     for i in range(config["mixtures"]["no_strains"])
                 ]
             )
@@ -178,6 +190,10 @@ rule plot_variant_call_error:
     script:
         "../scripts/plot-{wildcards.caller}-error.py"
 
+
 rule test_variant_call_error:
     input:
-        expand("results/benchmarking/{caller}-variant-call-error-heatmap.svg", caller = ["kallisto", "pangolin"])
+        expand(
+            "results/benchmarking/{caller}-variant-call-error-heatmap.svg",
+            caller=["kallisto", "pangolin"],
+        ),

@@ -192,7 +192,10 @@ def get_assembly_comparisons(bams=True):
             if bams
             else "resources/genomes/{accession}.fasta"
         )
-        return expand(pattern, accession=accessions,)
+        return expand(
+            pattern,
+            accession=accessions,
+        )
 
     return inner
 
@@ -371,7 +374,10 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
         [
             expand(ele, exp=expand_wildcard)
             for ele in expand(
-                expand_string, zip, zip1=zip_wildcard_1, zip2=zip_wildcard_2,
+                expand_string,
+                zip,
+                zip1=zip_wildcard_1,
+                zip2=zip_wildcard_2,
             )
         ],
         [],
@@ -419,7 +425,7 @@ def get_mixture_results(wildcards):
             mixture_list.append(mixture.replace(".", "-"))
     else:
         mixture_list = config["mixtures"]["predefined_mixtures"]
-    if wildcards.caller=="pangolin":
+    if wildcards.caller == "pangolin":
         return expand(
             "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.csv",
             prefix=MIXTURE_PREFIX,
@@ -429,7 +435,7 @@ def get_mixture_results(wildcards):
     else:
         return expand(
             "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.tsv",
-            prefix = MIXTURE_PREFIX,
+            prefix=MIXTURE_PREFIX,
             caller=wildcards.caller,
             mixtures=mixture_list,
         )
@@ -460,7 +466,11 @@ def get_strain(path_to_pangolin_call):
 
 
 def is_amplicon_data(sample):
-    if sample.startswith(BENCHMARK_PREFIX) or sample.startswith(NON_COV2_TEST_PREFIX) or sample.startswith(MIXTURE_PREFIX):
+    if (
+        sample.startswith(BENCHMARK_PREFIX)
+        or sample.startswith(NON_COV2_TEST_PREFIX)
+        or sample.startswith(MIXTURE_PREFIX)
+    ):
         # benchmark data, not amplicon based
         return False
     sample = pep.sample_table.loc[sample]
