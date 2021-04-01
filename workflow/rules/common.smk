@@ -391,7 +391,7 @@ def get_random_strain():
     with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
         lines = f.read().splitlines()
         rnd_strain_path = random.choice(lines)
-        strain = rnd_strain_path.split("/")[-1].replace(".fasta", "")
+        strain = rnd_strain_path.replace(".fasta", "").split("/")[-1]
         return strain
 
 
