@@ -148,30 +148,34 @@ rule report_non_cov2:
         "rbt csv-report -s '\t' {input.summary} {output}"
 
 
-rule evaluate_read_error:
+rule evaluate_variant_call_error:
     input:
         get_mixture_results,
     output:
-        "results/benchmarking/{caller}-read-error.csv",
+        "results/benchmarking/{caller}-variant-call-error.csv",
     params:
         max_reads=config["mixtures"]["max_reads"],
     log:
-        "logs/evaluate-{caller}-read-error.log",
+        "logs/evaluate-{caller}-variant-call-error.log",
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/evaluate-{wildcards.caller}-read-error.py"
+        "../scripts/evaluate-{wildcards.caller}-variant-call-error.py"
 
 
-rule plot_read_error:
+rule plot_variant_call_error:
     input:
-        "results/benchmarking/{caller}-read-error.csv",
+        "results/benchmarking/{caller}-variant-call-error.csv",
     output:
-        "results/benchmarking/{caller}-read-error-heatmap.svg",
-        "results/benchmarking/{caller}-read-error-bar.svg",
+        "results/benchmarking/{caller}-variant-call-error-heatmap.svg",
+        "results/benchmarking/{caller}-variant-call-error-bar.svg",
     log:
-        "logs/plot-{caller}-read-error.log",
+        "logs/plot-{caller}-variant-call-error.log",
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/plot-{wildcards.caller}-read-error.py"
+        "../scripts/plot-{wildcards.caller}-variant-call-error.py"
+
+rule test_variant_call_error:
+    input:
+        expand("results/benchmarking/{caller}-variant-call-error-heatmap.svg", caller = ["kallisto", "pangolin"])
