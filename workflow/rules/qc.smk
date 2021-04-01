@@ -60,6 +60,41 @@ rule multiqc:
         "0.69.0/bio/multiqc"
 
 
+rule multiqc_lab:
+    input:
+        lambda wildcards: expand(
+            "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        lambda wildcards: expand(
+            "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        lambda wildcards: expand(
+            "results/{{date}}/trimmed/{sample}.fastp.json",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        lambda wildcards: expand(
+            "results/{{date}}/quast/unpolished/{sample}/report.tsv",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+    output:
+        report(
+            "results/{date}/qc/laboratory/multiqc.html",
+            htmlindex="multiqc.html",
+            caption="../report/multi-qc-lab.rst",
+            category="3. Sequencing Details",
+            subcategory="1. Quality Control",
+        ),
+    params:
+        "--config config/multiqc_config_lab.yaml",
+        "--title 'Results for data from {date}'",  # Optional: extra parameters for multiqc.
+    log:
+        "logs/{date}/multiqc.log",
+    wrapper:
+        "0.69.0/bio/multiqc"
+
+
 rule samtools_flagstat:
     input:
         "results/{date}/recal/ref~main/{sample}.bam",
@@ -69,6 +104,22 @@ rule samtools_flagstat:
         "logs/{date}/samtools/{sample}_flagstat.log",
     wrapper:
         "0.70.0/bio/samtools/flagstat"
+
+
+rule samtools_depth:
+    input:
+        get_depth_input,
+    output:
+        "results/{date}/qc/samtools_depth/{sample}.txt",
+    log:
+        "logs/{date}/samtools/{sample}_depth.txt",
+    conda:
+        "../envs/samtools.yaml"
+    params:
+        ref=config["adapters"]["amplicon-reference"],
+    shell:
+        "samtools depth -aH -o {output} {input} && "
+        "sed -i 's/{params.ref}.3/{wildcards.sample}/' {output}"
 
 
 # analysis of species diversity present BEFORE removing human contamination

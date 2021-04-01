@@ -6,6 +6,9 @@ import random
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 
+BENCHMARK_PREFIX = "benchmark-sample-"
+NON_COV2_TEST_PREFIX = "non-cov2-"
+
 
 def get_samples():
     return list(pep.sample_table["sample_name"].values)
@@ -58,18 +61,18 @@ def get_latest_run_date():
     return pep.sample_table["run_id"].max()
 
 
-def get_fastqs(wildcards, benchmark_prefix="benchmark-sample-"):
-    if wildcards.sample.startswith(benchmark_prefix):
+def get_fastqs(wildcards):
+    if wildcards.sample.startswith(BENCHMARK_PREFIX):
         # this is a simulated benchmark sample, do not look up FASTQs in the sample sheet
-        accession = wildcards.sample[len(benchmark_prefix) :]
+        accession = wildcards.sample[len(BENCHMARK_PREFIX) :]
         return expand(
             "resources/benchmarking/{accession}/reads.{read}.fastq.gz",
             accession=accession,
             read=[1, 2],
         )
-    if wildcards.sample.startswith("non-cov2-"):
+    if wildcards.sample.startswith(NON_COV2_TEST_PREFIX):
         # this is for testing non-sars-cov2-genomes
-        accession = wildcards.sample[len("non-cov2-") :]
+        accession = wildcards.sample[len(NON_COV2_TEST_PREFIX) :]
         return expand(
             "resources/benchmarking/{accession}/reads.{read}.fastq.gz",
             accession=accession,
@@ -223,6 +226,11 @@ def get_reference(suffix=""):
             return "results/{date}/polished-contigs/{sample}.fasta".format(
                 sample=wildcards.reference.replace("polished-", ""), **wildcards
             )
+        elif wildcards.reference == config["adapters"]["amplicon-reference"]:
+            # return reference genome of amplicon primers
+            return "resources/genomes/{reference}.fasta{suffix}".format(
+                reference=config["adapters"]["amplicon-reference"], suffix=suffix
+            )
         else:
             # return assembly result
             return "results/{date}/ordered-contigs/{reference}.fasta{suffix}".format(
@@ -233,28 +241,95 @@ def get_reference(suffix=""):
 
 
 def get_reads(wildcards):
+    # alignment against the human reference genome is done with trimmed reads,
+    # since this alignment is used to generate the ordered, non human reads
     if (
         wildcards.reference == "human"
         or wildcards.reference == "main+human"
         or wildcards.reference.startswith("polished-")
     ):
-        # alignment against the human reference genome must be done with trimmed reads,
-        # since this alignment is used to generate the ordered, non human contigs
         return expand(
             "results/{date}/trimmed/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
         )
-    else:
-        # other reference (e.g. the covid reference genome, are done with contigs) that
-        # do not contain human contaminations
+
+    # theses reads are used to generate the bam file for the BAMclipper
+    elif wildcards.reference == config["adapters"]["amplicon-reference"]:
         return expand(
             "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
         )
+
+    # aligments to other references (e.g. the covid reference genome),
+    # are done with reads, which have undergone the quality control process
+    else:
+        return get_reads_after_qc(wildcards)
+
+
+def get_reads_after_qc(wildcards, read="both"):
+
+    if is_amplicon_data(wildcards.sample):
+        pattern = expand(
+            "results/{date}/clipped-reads/{sample}.{read}.fastq.gz",
+            date=wildcards.date,
+            read=[1, 2],
+            sample=wildcards.sample,
+        )
+    else:
+        pattern = expand(
+            "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
+            date=wildcards.date,
+            read=[1, 2],
+            sample=wildcards.sample,
+        )
+
+    if read == "1":
+        return pattern[0]
+    if read == "2":
+        return pattern[1]
+
+    return pattern
+
+
+def get_contigs(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        pattern = (
+            "results/{date}/assembly/metaspades/{sample}/{sample}.contigs.fasta",
+        )
+    else:
+        pattern = ("results/{date}/assembly/megahit/{sample}/{sample}.contigs.fasta",)
+    return pattern
+
+
+def get_expanded_contigs(wildcards):
+    sample = get_samples_for_date(wildcards.date)
+    sample_list = []
+    for s in sample:
+        if is_amplicon_data(s):
+            sample_list.append(
+                "results/{{date}}/assembly/metaspades/{sample}/{sample}.contigs.fasta".format(
+                    sample=s
+                )
+            ),
+        else:
+            sample_list.append(
+                "results/{{date}}/assembly/megahit/{sample}/{sample}.contigs.fasta".format(
+                    sample=s
+                )
+            ),
+    return sample_list
+
+
+def get_read_counts(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        pattern = ("results/{date}/assembly/metaspades/{sample}.log",)
+    else:
+        pattern = ("results/{date}/assembly/megahit/{sample}.log",)
+    return pattern
 
 
 def get_bwa_index(wildcards):
@@ -303,7 +378,7 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
 
 def get_quast_fastas(wildcards):
     if wildcards.stage == "unpolished":
-        return "results/{date}/assembly/{sample}/{sample}.contigs.fa"
+        return get_contigs(wildcards)
     elif wildcards.stage == "polished":
         return "results/{date}/polished-contigs/{sample}.fasta"
     elif wildcards.stage == "masked":
@@ -381,6 +456,51 @@ def no_reads(wildcards):
 def get_strain(path_to_pangolin_call):
     pangolin_results = pd.read_csv(path_to_pangolin_call)
     return pangolin_results.loc[0]["lineage"]
+
+
+def is_amplicon_data(sample):
+    if sample.startswith(BENCHMARK_PREFIX) or sample.startswith(NON_COV2_TEST_PREFIX):
+        # benchmark data, not amplicon based
+        return False
+    sample = pep.sample_table.loc[sample]
+    try:
+        return bool(int(sample["is_amplicon_data"]))
+    except KeyError:
+        return False
+
+
+def get_varlociraptor_bias_flags(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        # no bias detection possible
+        return (
+            "--omit-strand-bias --omit-read-orientation-bias --omit-read-position-bias"
+        )
+    return ""
+
+
+def get_recal_input(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        # do not mark duplicates
+        return "results/{date}/mapped/ref~{reference}/{sample}.bam"
+    # use BAM with marked duplicates
+    return "results/{date}/dedup/ref~{reference}/{sample}.bam"
+
+
+def get_depth_input(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        # use clipped reads
+        return "results/{date}/clipped-reads/{sample}.primerclipped.bam"
+    # use trimmed reads
+    amplicon_reference = config["adapters"]["amplicon-reference"]
+    return "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam".format(
+        ref=amplicon_reference
+    )
+
+
+def get_adapters(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        return config["adapters"]["illumina-nimagen"]
+    return config["adapters"]["illumina-revelo"]
 
 
 wildcard_constraints:

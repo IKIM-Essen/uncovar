@@ -13,8 +13,7 @@ rule fastp_pe:
     log:
         "logs/{date}/fastp/{sample}.log",
     params:
-        # adapters=get_adapters,
-        adapters=config["adapters"]["illumina"],
+        adapters=get_adapters,
         extra="--qualified_quality_phred {} ".format(
             config["RKI-quality-criteria"]["illumina"]["min-PHRED"]
         ) + "--length_required {}".format(

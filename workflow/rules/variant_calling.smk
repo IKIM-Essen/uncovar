@@ -23,11 +23,7 @@ rule render_scenario:
     input:
         local(get_resource("scenario.yaml")),
     output:
-        report(
-            "results/{date}/scenarios/{sample}.yaml",
-            caption="../report/scenario.rst",
-            category="Variant calling scenarios",
-        ),
+        "results/{date}/scenarios/{sample}.yaml",
     log:
         "logs/{date}/render-scenario/{sample}.log",
     conda:
@@ -62,11 +58,13 @@ rule varlociraptor_call:
         scenario="results/{date}/scenarios/{sample}.yaml",
     output:
         temp("results/{date}/calls/ref~{reference}/{sample}.bcf"),
+    params:
+        biases=get_varlociraptor_bias_flags,
     log:
         "logs/{date}/varlociraptor/call/ref~{reference}/{sample}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
         "varlociraptor "
-        "call variants generic --obs {wildcards.sample}={input.obs} "
+        "call variants {params.biases} generic --obs {wildcards.sample}={input.obs} "
         "--scenario {input.scenario} > {output} 2> {log}"

@@ -4,6 +4,9 @@ configfile: "config/config.yaml"
 pepfile: config["pepfile"]
 
 
+report: "report/workflow.rst"
+
+
 container: "docker://condaforge/mambaforge"
 
 
@@ -12,6 +15,7 @@ include: "rules/utils.smk"
 include: "rules/ref.smk"
 include: "rules/qc.smk"
 include: "rules/read_trimming.smk"
+include: "rules/read_clipping.smk"
 include: "rules/read_mapping.smk"
 include: "rules/assembly.smk"
 include: "rules/strain_calling.smk"

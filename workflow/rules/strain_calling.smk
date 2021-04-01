@@ -45,9 +45,7 @@ rule kallisto_index:
 
 rule kallisto_quant:
     input:
-        fastq=expand(
-            "results/{{date}}/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]
-        ),
+        fastq=get_reads_after_qc,
         index="resources/strain-genomes.idx",
     output:
         directory("results/{date}/quant/{sample}"),
@@ -63,7 +61,7 @@ rule kallisto_quant:
 rule call_strains_kallisto:
     input:
         quant="results/{date}/quant/{sample}",
-        fq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
+        fq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
     output:
         "results/{date}/tables/strain-calls/{sample}.strains.kallisto.tsv",
     log:
@@ -83,7 +81,7 @@ rule plot_strains_kallisto:
         report(
             "results/{date}/plots/strain-calls/{sample}.strains.kallisto.svg",
             caption="../report/strain-calls-kallisto.rst",
-            category="Strain calls",
+            category="Kallisto strain calls",
             subcategory="Per sample",
         ),
     log:
@@ -106,8 +104,8 @@ rule plot_all_strains_kallisto:
         report(
             "results/{date}/plots/all.{mode,(major|any)}-strain.strains.kallisto.svg",
             caption="../report/all-strain-calls-kallisto.rst",
-            category="Strain calls",
-            subcategory="Overview",
+            category="1. Overview",
+            subcategory="2. Strain Calls",
         ),
     log:
         "logs/{date}/plot-strains/all.{mode}.log",
@@ -163,8 +161,8 @@ rule plot_all_strains_pangolin:
         report(
             "results/{date}/plots/all.strains.pangolin.svg",
             caption="../report/all-strain-calls-pangolin.rst",
-            category="Pangolin strain calls",
-            subcategory="Overview",
+            category="1. Overview",
+            subcategory="2. Strain Calls",
         ),
     log:
         "logs/{date}/plot-strains-pangolin/all.log",

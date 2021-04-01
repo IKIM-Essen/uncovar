@@ -1,3 +1,3 @@
 QC overview for samples from {{ snakemake.wildcards.date }}.
-Readcounts for raw, trimmed and filtered reads, length of initially assembled (`Megahit <https://github.com/voutcn/megahit>`_) and reference ordered contigs (`RaGOO <https://github.com/malonge/RaGOO>`_).
+Readcounts for raw, trimmed and filtered reads, length of initially assembled (`Megahit <https://github.com/voutcn/megahit>`_/`metaSPAdes <https://github.com/ablab/spades>`_) and reference ordered contigs (`RaGOO <https://github.com/malonge/RaGOO>`_).
 Percentil overview for contamination in the raw reads (`kraken <https://github.com/DerrickWood/kraken>`_) and called COVID-19-strain including defining SNPs (`Pangolin <https://github.com/cov-lineages/pangolin>`_) and variants of interest from variant calling (`Varlociraptor <https://varlociraptor.github.io>`_).
