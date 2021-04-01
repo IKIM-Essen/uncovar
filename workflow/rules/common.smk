@@ -287,6 +287,43 @@ def get_reads_after_qc(wildcards, read="both"):
     return pattern
 
 
+def get_contigs(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        pattern = (
+            "results/{date}/assembly/metaspades/{sample}/{sample}.contigs.fasta",
+        )
+    else:
+        pattern = ("results/{date}/assembly/megahit/{sample}/{sample}.contigs.fasta",)
+    return pattern
+
+
+def get_expanded_contigs(wildcards):
+    sample = get_samples_for_date(wildcards.date)
+    sample_list = []
+    for s in sample:
+        if is_amplicon_data(s):
+            sample_list.append(
+                "results/{{date}}/assembly/metaspades/{sample}/{sample}.contigs.fasta".format(
+                    sample=s
+                )
+            ),
+        else:
+            sample_list.append(
+                "results/{{date}}/assembly/megahit/{sample}/{sample}.contigs.fasta".format(
+                    sample=s
+                )
+            ),
+    return sample_list
+
+
+def get_read_counts(wildcards):
+    if is_amplicon_data(wildcards.sample):
+        pattern = ("results/{date}/assembly/metaspades/{sample}.log",)
+    else:
+        pattern = ("results/{date}/assembly/megahit/{sample}.log",)
+    return pattern
+
+
 def get_bwa_index(wildcards):
     if wildcards.reference == "human" or wildcards.reference == "main+human":
         return rules.bwa_large_index.output
@@ -333,7 +370,7 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
 
 def get_quast_fastas(wildcards):
     if wildcards.stage == "unpolished":
-        return "results/{date}/assembly/{sample}/{sample}.contigs.fa"
+        return get_contigs(wildcards)
     elif wildcards.stage == "polished":
         return "results/{date}/polished-contigs/{sample}.fasta"
     elif wildcards.stage == "masked":
