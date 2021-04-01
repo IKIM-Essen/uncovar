@@ -442,8 +442,13 @@ def get_mixture_results(wildcards):
 
 
 def get_genome_fasta(wildcards):
-    if MIXTURE_PERCENTAGE_INDICATOR in wildcards.accession and "=" in wildcards.accession:
-        with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as strain_file:
+    if (
+        MIXTURE_PERCENTAGE_INDICATOR in wildcards.accession
+        and "=" in wildcards.accession
+    ):
+        with checkpoints.extract_strain_genomes_from_gisaid.get().output[
+            0
+        ].open() as strain_file:
             acc, _ = wildcards.accession.split("=")
             acc = acc.replace("-", ".").replace(MIXTURE_PERCENTAGE_INDICATOR, "")
             return f"resources/genomes/{acc}.fasta"
