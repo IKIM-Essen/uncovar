@@ -160,40 +160,40 @@ rule report_non_cov2:
         "rbt csv-report -s '\t' {input.summary} {output}"
 
 
-rule evaluate_variant_call_error:
+rule evaluate_strain_call_error:
     input:
         get_mixture_results,
     output:
-        "results/benchmarking/{caller}-variant-call-error.csv",
+        "results/benchmarking/{caller}-strain-call-error.csv",
     params:
         max_reads=config["mixtures"]["max_reads"],
         prefix=MIXTURE_PREFIX,
         separator=MIXTURE_PERCENTAGE_INDICATOR,
     log:
-        "logs/evaluate-{caller}-variant-call-error.log",
+        "logs/evaluate-{caller}-strain-call-error.log",
     conda:
         "../envs/python.yaml"
     script:
         "../scripts/evaluate-{wildcards.caller}-error.py"
 
 
-rule plot_variant_call_error:
+rule plot_strain_call_error:
     input:
-        "results/benchmarking/{caller}-variant-call-error.csv",
+        "results/benchmarking/{caller}-strain-call-error.csv",
     output:
-        "results/benchmarking/{caller}-variant-call-error-heatmap.svg",
-        "results/benchmarking/{caller}-variant-call-error-bar.svg",
+        "results/benchmarking/{caller}-strain-call-error-heatmap.svg",
+        "results/benchmarking/{caller}-strain-call-error-bar.svg",
     log:
-        "logs/plot-{caller}-variant-call-error.log",
+        "logs/plot-{caller}-strain-call-error.log",
     conda:
         "../envs/python.yaml"
     script:
         "../scripts/plot-{wildcards.caller}-error.py"
 
 
-rule test_variant_call_error:
+rule benchmark_strain_call_error:
     input:
         expand(
-            "results/benchmarking/{caller}-variant-call-error-heatmap.svg",
+            "results/benchmarking/{caller}-strain-call-error-heatmap.svg",
             caller=["kallisto", "pangolin"],
         ),

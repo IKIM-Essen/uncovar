@@ -92,6 +92,23 @@ non_cov2_genomes:
   - NC_019843
   # - NC_004718
 
+# For testing the read bases strain calling
+mixtures:
+  # maximal number of reads to generate
+  max_reads: 584903
+  # number of mixtures to generate
+  no_mixtures: 500
+  # number of strains to mix
+  no_strains: 2
+  # or you can specify the mix you would like to have 
+  # this assumes, that strain files are available under resources/genomes
+  # the used number of strains must match the no_strains defined above
+  use_predefined_mixtures: True
+  # use the following format: "%B-1-1-7=90%B-1-351=10"
+  predefined_mixtures:
+    - "%B-1-1-7=50%B-1-351=50"
+    - "%B-1-1-7=90%B-1-351=10"
+
 # variants of concern
 voc:
   - N501Y

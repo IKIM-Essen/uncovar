@@ -55,7 +55,7 @@ jobs:
     
     strategy:
       matrix:
-        rule: [all, benchmark_strain_calling, benchmark_assembly, test_non_cov2]
+        rule: [all, benchmark_strain_calling, benchmark_assembly, test_non_cov2, benchmark_strain_call_error]
 
     steps:
       - uses: actions/checkout@v2
