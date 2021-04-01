@@ -101,3 +101,19 @@ rule update_lineages:
         "logs/{date}/pangolin/update.log",
     shell:
         "(mkdir -p {output} && wget -qO- https://github.com/cov-lineages/lineages/archive/master.tar.gz | tar xvz --strip-components=1 -C {output})> {log} 2>&1"
+
+
+rule download_pangolin_csv_data:
+    output:
+        directory("resources/lineage_data"),
+    log:
+        "logs/get_pangolin_lineage_data.log",
+    shell:
+        "(wget https://github.com/cov-lineages/pangolin/archive/refs/heads/master.zip -O pangolin-master.zip && "
+        "unzip pangolin-master.zip && "
+        "rm pangolin-master.zip && "
+        "mkdir -p {output} && "
+        "cp pangolin-master/pangolin/data/*.csv {output} && "
+        "rm -rf pangolin-master) "
+        "2> {log}"
+
