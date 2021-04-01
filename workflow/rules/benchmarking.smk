@@ -160,7 +160,7 @@ rule evaluate_variant_call_error:
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/evaluate-{wildcards.caller}-variant-call-error.py"
+        "../scripts/evaluate-{wildcards.caller}-error.py"
 
 
 rule plot_variant_call_error:
@@ -174,7 +174,7 @@ rule plot_variant_call_error:
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/plot-{wildcards.caller}-variant-call-error.py"
+        "../scripts/plot-{wildcards.caller}-error.py"
 
 rule test_variant_call_error:
     input:
