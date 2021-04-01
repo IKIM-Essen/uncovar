@@ -8,6 +8,7 @@ VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
+MIXTURE_PREFIX = "mixture-sample-"
 
 
 def get_samples():
@@ -78,8 +79,8 @@ def get_fastqs(wildcards):
             accession=accession,
             read=[1, 2],
         )
-    if wildcards.sample.startswith("mixture-sample-"):
-        mixture = wildcards.sample[len("mixture-sample-") :]
+    if wildcards.sample.startswith(MIXTURE_PREFIX):
+        mixture = wildcards.sample[len(MIXTURE_PREFIX) :]
         return expand(
             "resources/mixtures/{mixtures}/reads.{read}.fastq.gz",
             mixtures=mixture,
@@ -419,19 +420,18 @@ def get_mixture_results(wildcards):
         mixture_list = config["mixtures"]["predefined_mixtures"]
     if wildcards.caller=="pangolin":
         return expand(
-            "results/benchmarking/tables/strain-calls/mixture-sample-{mixtures}.strains.{caller}.csv",
+            "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.csv",
+            prefix=MIXTURE_PREFIX,
             caller=wildcards.caller,
             mixtures=mixture_list,
         )
     else:
         return expand(
-            "results/benchmarking/tables/strain-calls/mixture-sample-{mixtures}.strains.{caller}.tsv",
+            "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.tsv",
+            prefix = MIXTURE_PREFIX,
             caller=wildcards.caller,
             mixtures=mixture_list,
         )
-
-
-# return ["results/benchmarking/tables/strain-calls/mixture-sample-#B-1-1-7=40#B-1-351=60.strains.kallisto.tsv" ,"results/benchmarking/tables/strain-calls/mixture-sample-#B-1-1-7=90#B-1-351=10.strains.kallisto.tsv"]
 
 
 def get_genome_fasta(wildcards):
@@ -459,7 +459,7 @@ def get_strain(path_to_pangolin_call):
 
 
 def is_amplicon_data(sample):
-    if sample.startswith(BENCHMARK_PREFIX) or sample.startswith(NON_COV2_TEST_PREFIX):
+    if sample.startswith(BENCHMARK_PREFIX) or sample.startswith(NON_COV2_TEST_PREFIX) or sample.startswith(MIXTURE_PREFIX):
         # benchmark data, not amplicon based
         return False
     sample = pep.sample_table.loc[sample]
