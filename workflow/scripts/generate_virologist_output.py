@@ -173,10 +173,15 @@ for file in snakemake.input.bcf:
                 entry = f"{hgvsp}:{vaf[0]:.3f}"
                 split = file.split("/")[-1].split(".")[0]
                 if feature == "S" and alt in snakemake.params.get("voc"):
+                    print(f"Append {entry} to table[{split}][1] (Variants of interests)")
                     table[split][1].append(entry)
                 else:
                     table[split][2].append(entry)
-                
+                    print(f"Append {entry} to table[{split}][2] (Other Variants)")
+
+print("Table before hashing")                    
+print(table)
+
 for sample in table:
     for i in range(1, len(table[sample])):
         hashing = {}
@@ -191,6 +196,7 @@ for sample in table:
         for element in hashing.values():
             table[sample][i].append(element)
 
+print("Table after hashing")              
 print(table)
 
 var_df = pd.DataFrame()
