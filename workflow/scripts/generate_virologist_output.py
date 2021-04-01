@@ -237,7 +237,7 @@ output_df = output_df.set_index("sample")
 
 qc_df = output_df.copy()
 variant_df = output_df.copy()
-qc_df.drop(columns=["other variants"], inplace=True)
+# qc_df.drop(columns=["other variants"], inplace=True)
 
 try:
     variant_df.drop(columns=["# raw reads", "# trimmed reads", "# used reads", "initial contig (bp)", "final contig (bp)", "Eukaryota (%)", "Bacteria (%)", "Viruses (%)", "thereof SARS (%)", "Unclassified (%)"], inplace=True)
