@@ -119,19 +119,15 @@ rule rki_report:
 
 rule virologist_report:
     input:
-        # reads_unfiltered=lambda wildcards: [pep.sample_table.loc[sample][["fq1", "fq2"]] for sample in get_samples_for_date(wildcards.date)],
         reads_unfiltered=lambda wildcards: expand(
             "results/{{date}}/trimmed/{sample}.fastp.json",
             sample=get_samples_for_date(wildcards.date),
         ),
-        reads_filtered=lambda wildcards: expand(
-            "results/{{date}}/assembly/{sample}/log",
+        reads_used_for_assembly=lambda wildcards: expand(
+            "results/{{date}}/tables/read_counts/{sample}.txt",
             sample=get_samples_for_date(wildcards.date),
         ),
-        initial_contigs=lambda wildcards: expand(
-            "results/{{date}}/assembly/{sample}/{sample}.contigs.fa",
-            sample=get_samples_for_date(wildcards.date),
-        ),
+        initial_contigs=lambda wildcards: get_expanded_contigs(wildcards),
         polished_contigs=lambda wildcards: expand(
             "results/{{date}}/polished-contigs/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
@@ -156,6 +152,7 @@ rule virologist_report:
         "logs/{date}/viro_report.log",
     params:
         voc=config.get("voc"),
+        samples=lambda wildcards: get_samples_for_date(wildcards.date),
     conda:
         "../envs/pysam.yaml"
     threads: 1
@@ -217,10 +214,10 @@ rule snakemake_reports:
         # ),
         "results/{date}/qc_data",
         "results/{date}/var_data",
-        expand(
-            "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
-            mode=["major", "any"],
-        ),
+        # expand(
+        #     "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
+        #     mode=["major", "any"],
+        # ),
         # lambda wildcards: expand(
         #     "results/{{date}}/plots/strain-calls/{sample}.strains.pangolin.svg",
         #     sample=get_samples_for_date(wildcards.date),
