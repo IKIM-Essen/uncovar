@@ -442,7 +442,7 @@ def get_mixture_results(wildcards):
 
 
 def get_genome_fasta(wildcards):
-    with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
+    with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open():
         if MIXTURE_PERCENTAGE_INDICATOR in wildcards.accession:
             acc, _ = wildcards.accession.split("=")
             acc = acc.replace("-", ".").replace(MIXTURE_PERCENTAGE_INDICATOR, "")
