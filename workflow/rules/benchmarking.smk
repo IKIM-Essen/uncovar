@@ -19,14 +19,14 @@ rule mix_strain_reads:
         left=expand(
             "resources/benchmarking/{mix}/reads.1.fastq.gz",
             mix=[
-                "#{{strain_{}}}".format(i)
+                "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(MIXTURE_PERCENTAGE_INDICATOR = MIXTURE_PERCENTAGE_INDICATOR,no=i)
                 for i in range(config["mixtures"]["no_strains"])
             ],
         ),
         right=expand(
             "resources/benchmarking/{mix}/reads.2.fastq.gz",
             mix=[
-                "#{{strain_{}}}".format(i)
+                "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(MIXTURE_PERCENTAGE_INDICATOR = MIXTURE_PERCENTAGE_INDICATOR,no=i)
                 for i in range(config["mixtures"]["no_strains"])
             ],
         ),
@@ -36,7 +36,7 @@ rule mix_strain_reads:
                 "resources/mixtures/{mix}/reads.1.fastq.gz",
                 mix="".join(
                     [
-                        "#{{strain_{}}}".format(i)
+                        "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(MIXTURE_PERCENTAGE_INDICATOR = MIXTURE_PERCENTAGE_INDICATOR,no=i)
                         for i in range(config["mixtures"]["no_strains"])
                     ]
                 ),
@@ -47,7 +47,7 @@ rule mix_strain_reads:
                 "resources/mixtures/{mix}/reads.2.fastq.gz",
                 mix="".join(
                     [
-                        "#{{strain_{}}}".format(i)
+                        "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(MIXTURE_PERCENTAGE_INDICATOR = MIXTURE_PERCENTAGE_INDICATOR,no=i)
                         for i in range(config["mixtures"]["no_strains"])
                     ]
                 ),
@@ -57,7 +57,7 @@ rule mix_strain_reads:
         "logs/mix_strain_reads/{}".format(
             "".join(
                 [
-                    "#{{strain_{}}}".format(i)
+                    "{MIXTURE_PERCENTAGE_INDICATOR}{{strain_{no}}}".format(MIXTURE_PERCENTAGE_INDICATOR = MIXTURE_PERCENTAGE_INDICATOR,no=i)
                     for i in range(config["mixtures"]["no_strains"])
                 ]
             )
@@ -155,6 +155,8 @@ rule evaluate_variant_call_error:
         "results/benchmarking/{caller}-variant-call-error.csv",
     params:
         max_reads=config["mixtures"]["max_reads"],
+        prefix=MIXTURE_PREFIX,
+        separator=MIXTURE_PERCENTAGE_INDICATOR,
     log:
         "logs/evaluate-{caller}-variant-call-error.log",
     conda:

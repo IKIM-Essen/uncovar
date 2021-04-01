@@ -9,6 +9,7 @@ VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
 MIXTURE_PREFIX = "mixture-sample-"
+MIXTURE_PERCENTAGE_INDICATOR = "%"
 
 
 def get_samples():
@@ -413,7 +414,7 @@ def get_mixture_results(wildcards):
             mixture = ""
             for frac in fractions:
                 strain = get_random_strain()
-                mixture += f"#{strain}={frac}"
+                mixture += f"{MIXTURE_PERCENTAGE_INDICATOR}{strain}={frac}"
 
             mixture_list.append(mixture.replace(".", "-"))
     else:
@@ -436,9 +437,9 @@ def get_mixture_results(wildcards):
 
 def get_genome_fasta(wildcards):
     with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
-        if "#" in wildcards.accession:
+        if MIXTURE_PERCENTAGE_INDICATOR in wildcards.accession:
             acc, _ = wildcards.accession.split("=")
-            acc = acc.replace("-", ".").replace("#", "")
+            acc = acc.replace("-", ".").replace(MIXTURE_PERCENTAGE_INDICATOR, "")
             return f"resources/genomes/{acc}.fasta"
         else:
             return f"resources/genomes/{wildcards.accession}.fasta"
@@ -446,7 +447,7 @@ def get_genome_fasta(wildcards):
 
 def no_reads(wildcards):
     max_reads = config["mixtures"]["max_reads"]
-    if "#" in wildcards.accession:
+    if MIXTURE_PERCENTAGE_INDICATOR in wildcards.accession:
         _, fraction = wildcards.accession.split("=")
         return round(int(fraction) * max_reads / 100)
     else:

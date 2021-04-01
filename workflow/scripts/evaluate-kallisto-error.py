@@ -3,11 +3,11 @@ import pandas as pd
 import numpy as np
 
 
-def extract_mixture_sample(path):
-    path = path.split("mixture-sample-#")[-1]
+def extract_mixture_sample(path, prefix, separator):
+    path = path.split(prefix+separator)[-1]
     path = path.split(".strains")[0]
     path = path.replace("-", ".")
-    path = path.split("#")
+    path = path.split(separator)
     path = [ele.split("=") for ele in path]
     return pd.DataFrame(path, columns=["target_id", "true_fraction"])
 
@@ -16,7 +16,7 @@ def rmse(predictions, targets):
     return np.sqrt(((predictions - targets) ** 2).mean())
 
 
-def eval_error(kallisto_tsvs, sm_output, max_reads):
+def eval_error(kallisto_tsvs, sm_output, max_reads, prefix, separator):
     results_df = pd.DataFrame()
 
     for i, path in enumerate(kallisto_tsvs):
@@ -24,7 +24,7 @@ def eval_error(kallisto_tsvs, sm_output, max_reads):
         kallisto_df["mix"] = i
         kallisto_df = kallisto_df.rename(columns={"fraction": "est_fraction"})
 
-        org_mix_df = extract_mixture_sample(path)
+        org_mix_df = extract_mixture_sample(path, prefix, separator)
         org_mix_df["true_fraction"] = org_mix_df["true_fraction"].astype(int)
         org_mix_df["true_fraction"] = org_mix_df["true_fraction"] / 100
         org_mix_df["true_counts"] = round(org_mix_df["true_fraction"] * int(max_reads))
@@ -47,5 +47,7 @@ def eval_error(kallisto_tsvs, sm_output, max_reads):
 if __name__ == "__main__":
     sys.stderr = open(snakemake.log[0], "w")
     max_reads = snakemake.params.get("max_reads", "")
+    prefix = snakemake.params.get("prefix", "")
+    separator = snakemake.params.get("separator", "")
 
-    eval_error(snakemake.input, snakemake.output[0], max_reads)
+    eval_error(snakemake.input, snakemake.output[0], max_reads, prefix, separator)
