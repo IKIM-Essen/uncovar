@@ -176,11 +176,11 @@ for file in snakemake.input.bcf:
                 entry = f"{hgvsp}:{vaf[0]:.3f}"
                 sample = file.split("/")[-1].split(".")[0]
                 if feature == "S" and alt in snakemake.params.get("voc"):
-                    print(f"Append {entry} to table[{split}][1] (Variants of interests)")
+                    print(f"Append {entry} to table[{sample}][1] (Variants of interests)")
                     table[sample][1].append(entry)
                 else:
                     table[sample][2].append(entry)
-                    print(f"Append {entry} to table[{split}][2] (Other Variants)")
+                    print(f"Append {entry} to table[{sample}][2] (Other Variants)")
 
 print("Table before hashing")                    
 print(table)
