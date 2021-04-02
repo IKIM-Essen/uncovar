@@ -11,9 +11,7 @@ KRAKEN_FILTER_KRITERIA = "D"
 print(snakemake.params.get("voc"))
 
 initial_reads_df = pd.DataFrame()
-for file in snakemake.input.reads_unfiltered:
-    
-    sample = file.split("/")[-1].split(".")[0]
+for sample, file in zip(snakemake.params.samples, snakemake.input.reads_unfiltered):
     with open(file) as read_json:
         number_reads = json.load(read_json)
     raw_reads = int(number_reads["summary"]["before_filtering"]["total_reads"])
@@ -30,26 +28,26 @@ initial_reads_df = initial_reads_df.set_index("sample")
 initial_reads_df = initial_reads_df[["# raw reads", "# trimmed reads"]]
 
 filtered_reads_df = pd.DataFrame()
-for file in snakemake.input.reads_filtered:
+for sample, file in zip(snakemake.params.samples, snakemake.input.reads_used_for_assembly):
     infile = open(file, "r")
-    sample = file.split("/")[-2]
-    for line in infile:
-        if "max length" in line:
-            num_reads = line.split(", ")[-2].split(" ")[0]
-            filtered_reads_df = filtered_reads_df.append(
-                {
-                    "# filtered reads": f"{int(num_reads):,}",
-                    "sample": sample,
-                },
-                ignore_index=True,
-            )
+    for line in infile.read().splitlines():
+        try:
+            num_reads = int(line)/4*2
+        except:
+            num_reads = 0
+        filtered_reads_df = filtered_reads_df.append(
+            {
+                "# used reads": f"{int(num_reads):,}",
+                "sample": sample,
+            },
+            ignore_index=True,
+        )
     infile.close()
 filtered_reads_df = filtered_reads_df.set_index("sample")
 
 initial_df = pd.DataFrame()
-for file in snakemake.input.initial_contigs:
+for sample, file in zip(snakemake.params.samples, snakemake.input.initial_contigs):
     contigs = {}
-    sample = file.split("/")[-1].split(".")[0]
     if os.stat(file).st_size == 0:
         contigs[sample] = ""
     else:
@@ -76,9 +74,8 @@ for file in snakemake.input.initial_contigs:
     )
 
 final_df = pd.DataFrame()
-for file in snakemake.input.polished_contigs:
+for sample, file in zip(snakemake.params.samples, snakemake.input.polished_contigs):
     contigs = {}
-    sample = file.split("/")[-1].split(".")[0]
     if os.stat(file).st_size == 0:
         contigs[sample] = ""
     else:
@@ -103,7 +100,7 @@ for file in snakemake.input.polished_contigs:
 
 total_kraken_df = pd.DataFrame()
 
-for file in snakemake.input.kraken:
+for sample, file in zip(snakemake.params.samples, snakemake.input.kraken):
 
     sample = file.split("/")[-1].split(".")[0]
     krake_df = pd.read_csv(
@@ -274,9 +271,9 @@ variant_df = output_df.copy()
 qc_df.drop(columns=["other S variants", "M variants", "E variants", "ORF1ab variants", "ORF3a variants", "ORF6 variants", "ORF7a variants", "ORF8 variants", "ORF10 variants", "other variants"], inplace=True)
 
 try:
-    variant_df.drop(columns=["# raw reads", "# trimmed reads", "# filtered reads", "initial contig (bp)", "final contig (bp)", "Eukaryota (%)", "Bacteria (%)", "Viruses (%)", "thereof SARS (%)", "Unclassified (%)"], inplace=True)
+    variant_df.drop(columns=["# raw reads", "# trimmed reads", "# used reads", "initial contig (bp)", "final contig (bp)", "Eukaryota (%)", "Bacteria (%)", "Viruses (%)", "thereof SARS (%)", "Unclassified (%)"], inplace=True)
 except:
-    variant_df.drop(columns=["# raw reads", "# trimmed reads", "# filtered reads", "initial contig (bp)", "final contig (bp)"], inplace=True)
+    variant_df.drop(columns=["# raw reads", "# trimmed reads", "# used reads", "initial contig (bp)", "final contig (bp)"], inplace=True)
 output_df.to_csv(snakemake.output.all_data)
 qc_df.to_csv(snakemake.output.qc_data)
 variant_df.to_csv(snakemake.output.var_data)
