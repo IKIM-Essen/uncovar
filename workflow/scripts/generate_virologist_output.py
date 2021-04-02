@@ -139,7 +139,7 @@ table = {}
 for file in snakemake.input.pangolin:
 
     pang_call = open(file, "r")
-    table[file.split("/")[-1].split(".")[0]] = [[]] * 12
+    table[file.split("/")[-1].split(".")[0]] = [[] for _ in range(12)]
     for line in pang_call.read().splitlines():
         if not line.startswith("taxon"):
             if line.split(",")[1].startswith("None"):
@@ -154,9 +154,6 @@ AS3to1 = {
     "Ile": "I", "Cys": "C", "Tyr": "Y", "His": "H",
     "Arg": "R", "Asn": "N", "Asp": "D", "Thr": "T",
 }
-
-print("Table before variants")                    
-print(table)
 
 for file in snakemake.input.bcf:
     variants = pysam.VariantFile(file, "rb")
@@ -176,14 +173,9 @@ for file in snakemake.input.bcf:
                 entry = f"{hgvsp}:{vaf[0]:.3f}"
                 sample = file.split("/")[-1].split(".")[0]
                 if feature == "S" and alt in snakemake.params.get("voc"):
-                    print(f"Append {entry} to table[{sample}][1] (Variants of interests)")
                     table[sample][1].append(entry)
                 else:
                     table[sample][2].append(entry)
-                    print(f"Append {entry} to table[{sample}][2] (Other Variants)")
-
-print("Table before hashing")                    
-print(table)
 
 for sample in table:
     for i in range(1, len(table[sample])):
@@ -198,9 +190,6 @@ for sample in table:
         table[sample][i] = []
         for element in hashing.values():
             table[sample][i].append(element)
-
-print("Table after hashing")              
-print(table)
 
 var_df = pd.DataFrame()
 for sample in table: 
