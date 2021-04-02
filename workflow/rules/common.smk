@@ -9,8 +9,8 @@ VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
 MIXTURE_PREFIX = "mixture-sample-"
-MIXTURE_PERCENTAGE_INDICATOR = "%"
-
+MIXTURE_PART_INDICATOR = "?"
+MIXTURE_PERCENTAGE_INDICATOR = "!"
 
 def get_samples():
     return list(pep.sample_table["sample_name"].values)
@@ -420,7 +420,7 @@ def get_mixture_results(wildcards):
             mixture = ""
             for frac in fractions:
                 strain = get_random_strain()
-                mixture += f"{MIXTURE_PERCENTAGE_INDICATOR}{strain}={frac}"
+                mixture += f"{MIXTURE_PART_INDICATOR}{strain}={frac}"
 
             mixture_list.append(mixture.replace(".", "-"))
     else:
@@ -442,24 +442,24 @@ def get_mixture_results(wildcards):
 
 
 def get_genome_fasta(wildcards):
+    # mixtures sample
     if (
-        MIXTURE_PERCENTAGE_INDICATOR in wildcards.accession
-        and "=" in wildcards.accession
+        MIXTURE_PART_INDICATOR in wildcards.accession
+        and MIXTURE_PERCENTAGE_INDICATOR in wildcards.accession
     ):
-        with checkpoints.extract_strain_genomes_from_gisaid.get().output[
-            0
-        ].open() as strain_file:
-            acc, _ = wildcards.accession.split("=")
-            acc = acc.replace("-", ".").replace(MIXTURE_PERCENTAGE_INDICATOR, "")
-            return f"resources/genomes/{acc}.fasta"
+        with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
+            acc, _ = wildcards.accession.split(MIXTURE_PERCENTAGE_INDICATOR)
+            acc = acc.replace("-", ".").replace(MIXTURE_PART_INDICATOR, "")
+            return "resources/genomes/{accession}.fasta".format(accession = acc)
+    # normal genome
     else:
-        return f"resources/genomes/{wildcards.accession}.fasta"
+        return "resources/genomes/{accession}.fasta".format(accession=wildcards.accession)
 
 
 def no_reads(wildcards):
     max_reads = config["mixtures"]["max_reads"]
-    if MIXTURE_PERCENTAGE_INDICATOR in wildcards.accession:
-        _, fraction = wildcards.accession.split("=")
+    if MIXTURE_PART_INDICATOR in wildcards.accession:
+        _, fraction = wildcards.accession.split(MIXTURE_PERCENTAGE_INDICATOR)
         return round(int(fraction) * max_reads / 100)
     else:
         return max_reads

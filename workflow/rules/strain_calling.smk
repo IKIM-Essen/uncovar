@@ -3,7 +3,7 @@ checkpoint extract_strain_genomes_from_gisaid:
         metadata=lambda wildcards: config["strain-calling"]["gisaid-metadata"],
         sequences=lambda wildcards: config["strain-calling"]["gisaid-metafasta"],
     output:
-        temp("resources/gisaid/strain-genomes.txt"),
+        "resources/gisaid/strain-genomes.txt",
     log:
         "logs/extract-strain-genomes.log",
     params:
