@@ -155,6 +155,9 @@ AS3to1 = {
     "Arg": "R", "Asn": "N", "Asp": "D", "Thr": "T",
 }
 
+print("Table before variants")                    
+print(table)
+
 for file in snakemake.input.bcf:
     variants = pysam.VariantFile(file, "rb")
     for record in variants:
@@ -171,12 +174,12 @@ for file in snakemake.input.bcf:
                     alt = alt.replace(triplet, amino)
                 hgvsp = f"{feature}:{alt}"
                 entry = f"{hgvsp}:{vaf[0]:.3f}"
-                split = file.split("/")[-1].split(".")[0]
+                sample = file.split("/")[-1].split(".")[0]
                 if feature == "S" and alt in snakemake.params.get("voc"):
                     print(f"Append {entry} to table[{split}][1] (Variants of interests)")
-                    table[split][1].append(entry)
+                    table[sample][1].append(entry)
                 else:
-                    table[split][2].append(entry)
+                    table[sample][2].append(entry)
                     print(f"Append {entry} to table[{split}][2] (Other Variants)")
 
 print("Table before hashing")                    
