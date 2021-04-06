@@ -3,6 +3,7 @@ from shutil import move, copy2
 from datetime import date, datetime
 from os import mkdir
 from ruamel import yaml  # conda install -c conda-forge ruamel.yaml
+import os
 
 import pandas as pd
 
@@ -72,11 +73,12 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
     # check if there is new data in the incoming data directory:
     # get files that are in incoming and contain 'ndetermined' and '.fastq.gz' in their name
     incoming_files = [
-        f
-        for f in listdir(IN_PATH)
-        if path.isfile(path.join(IN_PATH, f))
+        f if path.isfile(path.join(IN_PATH, f))
+        and os.stat(IN_PATH + f).st_size > 100
         and "ndetermined" not in f
         and ".fastq.gz" in f
+        else print(f, "not used")
+        for f in listdir(IN_PATH)
     ]
 
     # add date subfolder in data path
@@ -148,6 +150,7 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
         new_files_df.sort_index(inplace=True)
         new_files_df.columns = ["fq1", "fq2"]
         new_files_df["run_id"] = today
+        new_files_df["is_amplicon_data"] = 1
 
         new_sample_sheet = (
             pd.read_csv(SAMPLE_SHEET, index_col="sample_name")
