@@ -173,10 +173,12 @@ rule qc_html_report:
         ),
     conda:
         "../envs/rbt.yaml"
+    params:
+        formatter=get_resource("report-table-formatter.js"),
     log:
         "logs/{date}/qc_report_html.log",
     shell:
-        "rbt csv-report {input} {output} > {log} 2>&1"
+        "rbt csv-report {input} --formatter {params.formatter} {output} > {log} 2>&1"
 
 
 rule variants_html_report:
