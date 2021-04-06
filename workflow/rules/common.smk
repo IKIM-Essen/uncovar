@@ -9,8 +9,8 @@ VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
 MIXTURE_PREFIX = "mixture-sample-"
-MIXTURE_PART_INDICATOR = "?"
-MIXTURE_PERCENTAGE_INDICATOR = "!"
+MIXTURE_PART_INDICATOR = "~~"
+MIXTURE_PERCENTAGE_INDICATOR = "@"
 
 def get_samples():
     return list(pep.sample_table["sample_name"].values)

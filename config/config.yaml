@@ -101,11 +101,10 @@ mixtures:
   # this assumes, that strain files are available under resources/genomes
   # the used number of strains must match the no_strains defined above
   use_predefined_mixtures: True
-  # use the following format: "!B-1-1-7%90!B-1-351%10"
+  # use the following format: "~~B-1-1-7@90~~B-1-351@10"
   predefined_mixtures:
-    - "?B-1-1-7!50?B-1-351!50"
-    - "?B-1-1-7!90?B-1-351!10"
-
+    - "~~B-1-1-7@50~~B-1-351@50"
+    - "~~B-1-1-7@90~~B-1-351@10"
 
 # variants of concern
 
