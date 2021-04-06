@@ -80,7 +80,7 @@ def plot_error(sm_input, sm_output, type="heatmap"):
             for order in degree_list
         ]
 
-        plot = alt.layer(plot, *polynomial_fit)
+        # plot = alt.layer(plot, *polynomial_fit)
 
     else:
         plot = (

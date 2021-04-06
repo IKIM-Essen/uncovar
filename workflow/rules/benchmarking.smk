@@ -164,7 +164,7 @@ rule evaluate_strain_call_error:
     input:
         get_mixture_results,
     output:
-        "results/benchmarking/{caller}-strain-call-error.csv",
+        "results/benchmarking/tables/{caller}-strain-call-error.csv",
     params:
         max_reads=config["mixtures"]["max_reads"],
         prefix=MIXTURE_PREFIX,
@@ -180,21 +180,21 @@ rule evaluate_strain_call_error:
 
 rule plot_strain_call_error:
     input:
-        "results/benchmarking/{caller}-strain-call-error.csv",
+        "results/benchmarking/tables/{caller}-strain-call-error.csv",
     output:
-        "results/benchmarking/{caller}-strain-call-error-heatmap.svg",
-        "results/benchmarking/{caller}-strain-call-error-bar.svg",
+        "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
+        "results/benchmarking/plots/{caller}-strain-call-error-bar.svg",
     log:
         "logs/plot-{caller}-strain-call-error.log",
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/plot-{wildcards.caller}-error.py"
+        "../scripts/plot-caller-error.py"
 
 
 rule benchmark_strain_call_error:
     input:
         expand(
-            "results/benchmarking/{caller}-strain-call-error-heatmap.svg",
+            "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
             caller=["kallisto", "pangolin"],
         ),
