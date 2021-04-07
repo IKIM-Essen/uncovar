@@ -82,6 +82,8 @@
 
         result = result + x + ", ";
     }
+    
+    result = result.slice(0, result.length - 2)
 
     if (value.trim() !== "") {
         return result;
