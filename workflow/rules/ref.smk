@@ -109,7 +109,7 @@ rule download_pangolin_csv_data:
     log:
         "logs/get_pangolin_lineage_data.log",
     shell:
-        "(wget https://github.com/cov-lineages/pangolin/archive/refs/heads/master.zip -O pangolin-master.zip && "
+        "(wget https://github.com/cov-lineages/pangolin/archive/refs/heads/master.tar.gz -O pangolin-master.zip && "
         "tar -xf pangolin-master.zip && "
         "rm pangolin-master.zip && "
         "mkdir -p {output} && "
