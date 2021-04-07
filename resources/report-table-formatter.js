@@ -80,7 +80,7 @@
             var x = `<a tabindex="0" class="btn btn-link" data-toggle="popover" data-trigger="focus" data-html='true' title='Gene: <a data-html="true" data-toggle="tooltip" data-placement="bottom" title="Linkout to gene in Ensembl genome browser" href="https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}" target="_blank">${g}</a>' data-content='${tables[g]}'>${g}</a>`;
         }
 
-        result = result + x + " ";
+        result = result + x + ", ";
     }
 
     if (value.trim() !== "") {
