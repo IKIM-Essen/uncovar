@@ -1,3 +1,4 @@
+import itertools
 import pandas as pd
 import sys
 import os
@@ -135,26 +136,6 @@ try:
 except:
     pass
 
-table = {}
-for file in snakemake.input.pangolin:
-
-    pang_call = open(file, "r")
-    table[file.split("/")[-1].split(".")[0]] = [[] for _ in range(12)]
-    for line in pang_call.read().splitlines():
-        if not line.startswith("taxon"):
-            if line.split(",")[1].startswith("None"):
-                table[file.split("/")[-1].split(".")[0]][0] = ["no strain called"]
-            else:
-                table[file.split("/")[-1].split(".")[0]][0] = [line.split(",")[1] + " " + "(" + line.split(",")[-1].split(" ")[0]+ ")"]
-
-AS3to1 = {
-    "Gly": "G", "Ala": "A", "Leu": "L", "Met": "M",
-    "Phe": "F", "Trp": "W", "Lys": "K", "Gln": "Q",
-    "Glu": "E", "Ser": "S", "Pro": "P", "Val": "V",
-    "Ile": "I", "Cys": "C", "Tyr": "Y", "His": "H",
-    "Arg": "R", "Asn": "N", "Asp": "D", "Thr": "T",
-}
-
 pangolin_lineages = {}
 
 for file_name in os.listdir(snakemake.input.lineages_dir):
@@ -166,6 +147,30 @@ for file_name in os.listdir(snakemake.input.lineages_dir):
             pangolin_lineages[lineage].append(alteration.strip())
 
 print(pangolin_lineages)
+
+table = {}
+
+for file in snakemake.input.pangolin:
+    pang_call = open(file, "r")
+    table[file.split("/")[-1].split(".")[0]] = [[] for _ in range(12)]
+    for line in pang_call.read().splitlines():
+        if not line.startswith("taxon"):
+            sample = file.split("/")[-1].split(".")[0]
+            lineage = line.split(",")[1]
+            if line.split(",")[1].startswith("None"):
+                table[sample][0] = ["no strain called"]
+            else:
+                table[sample][0] = [lineage]  # + " " + "(" + line.split(",")[-1].split(" ")[0] + ")"
+
+AS3to1 = {
+    "Gly": "G", "Ala": "A", "Leu": "L", "Met": "M",
+    "Phe": "F", "Trp": "W", "Lys": "K", "Gln": "Q",
+    "Glu": "E", "Ser": "S", "Pro": "P", "Val": "V",
+    "Ile": "I", "Cys": "C", "Tyr": "Y", "His": "H",
+    "Arg": "R", "Asn": "N", "Asp": "D", "Thr": "T",
+}
+
+
 
 for file in snakemake.input.bcf:
     variants = pysam.VariantFile(file, "rb")
@@ -202,6 +207,26 @@ for sample in table:
         table[sample][i] = []
         for element in hashing.values():
             table[sample][i].append(element)
+
+"""Iterate variants of interest and other variants and check if gene and alteration are contained in pangolin data."""
+for sample in table:
+    lineage = table[sample][0].pop().lower()
+    if pangolin_lineages[lineage]:
+        for variant in itertools.chain(table[sample][1], table[sample][2]):
+            gene = variant.split(":")[0]
+            alteration = variant.split(":")[1]
+            for pangolin_variant in pangolin_lineages[lineage]:
+                pan_gene = pangolin_variant.split(":")[1]
+                pan_alteration = pangolin_variant.split(":")[2]
+                if gene.lower() == pan_gene.lower() and alteration.lower() == pan_alteration.lower():
+                    entry = f"{variant}:true"
+                else:
+                    entry = f"{variant}:false"
+                table[sample][0].append(entry)
+
+# Debug print
+for sample in table:
+    print(table[sample][0])
 
 var_df = pd.DataFrame()
 for sample in table: 
