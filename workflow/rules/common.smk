@@ -420,11 +420,12 @@ def get_mixture_results(wildcards):
             mixture = ""
             for frac in fractions:
                 strain = get_random_strain()
-                mixture += f"{MIXTURE_PART_INDICATOR}{strain}={frac}"
+                mixture += f"{MIXTURE_PART_INDICATOR}{strain}{MIXTURE_PERCENTAGE_INDICATOR}{frac}"
 
             mixture_list.append(mixture.replace(".", "-"))
     else:
         mixture_list = config["mixtures"]["predefined_mixtures"]
+    
     if wildcards.caller == "pangolin":
         return expand(
             "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.csv",
