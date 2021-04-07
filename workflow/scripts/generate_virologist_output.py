@@ -211,7 +211,7 @@ for sample in table:
 """Iterate variants of interest and other variants and check if gene and alteration are contained in pangolin data."""
 for sample in table:
     lineage = table[sample][0].pop().lower()
-    if pangolin_lineages[lineage]:
+    if lineage in pangolin_lineages:
         for variant in itertools.chain(table[sample][1], table[sample][2]):
             gene = variant.split(":")[0]
             alteration = variant.split(":")[1]
