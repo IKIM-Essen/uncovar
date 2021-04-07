@@ -162,8 +162,8 @@ for file_name in os.listdir(snakemake.input.lineages_dir):
     pangolin_lineages[lineage] = []
     file = os.path.join(snakemake.input.lineages_dir, file_name)
     with open(file) as f:
-        for line in f:
-            pangolin_lineages[lineage].append(line)
+        for alteration in f:
+            pangolin_lineages[lineage].append(alteration.strip())
 
 print(pangolin_lineages)
 
