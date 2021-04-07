@@ -147,7 +147,6 @@ rule virologist_report:
     output:
         all_data="results/{date}/virologist/report.csv",
         qc_data="results/{date}/virologist/qc_report.csv",
-        var_data="results/{date}/virologist/var_report.csv",
     log:
         "logs/{date}/viro_report.log",
     params:
@@ -179,25 +178,6 @@ rule qc_html_report:
         "logs/{date}/qc_report_html.log",
     shell:
         "rbt csv-report {input} --formatter {params.formatter} {output} > {log} 2>&1"
-
-
-rule variants_html_report:
-    input:
-        "results/{date}/virologist/var_report.csv",
-    output:
-        report(
-            directory("results/{date}/var_data/"),
-            htmlindex="index.html",
-            caption="../report/var-report.rst",
-            category="2. Virology Details",
-            subcategory="1. Variant Call Overview",
-        ),
-    conda:
-        "../envs/rbt.yaml"
-    log:
-        "logs/{date}/var_report_html.log",
-    shell:
-        "rbt csv-report {input} {output} > {log} 2>&1"
 
 
 rule snakemake_reports:
