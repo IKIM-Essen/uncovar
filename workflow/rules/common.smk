@@ -401,7 +401,7 @@ def get_random_strain():
         return strain
 
 
-def get_mixture_results(wildcards):
+def generate_mixtures(wildcards):
     if not config["mixtures"]["use_predefined_mixtures"]:
         no_mixtures = config["mixtures"]["no_mixtures"]
         no_strains = config["mixtures"]["no_strains"]
@@ -425,7 +425,18 @@ def get_mixture_results(wildcards):
             mixture_list.append(mixture.replace(".", "-"))
     else:
         mixture_list = config["mixtures"]["predefined_mixtures"]
+
+    return mixture_list
+
+def get_mixture_results(wildcards):
+    mixture_list = []
     
+    with checkpoints.generate_mixtures.get().output[0].open() as f:
+        for mix in f.read().splitlines():
+            mixture_list.append(mix)
+    
+    print(mixture_list)
+
     if wildcards.caller == "pangolin":
         return expand(
             "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.csv",
@@ -443,7 +454,7 @@ def get_mixture_results(wildcards):
 
 
 def get_genome_fasta(wildcards):
-    # mixtures sample
+    # mixtures sample, use provided (GISAID) genomes to generate mixtures of these
     if (
         MIXTURE_PART_INDICATOR in wildcards.accession
         and MIXTURE_PERCENTAGE_INDICATOR in wildcards.accession
@@ -452,7 +463,7 @@ def get_genome_fasta(wildcards):
             acc, _ = wildcards.accession.split(MIXTURE_PERCENTAGE_INDICATOR)
             acc = acc.replace("-", ".").replace(MIXTURE_PART_INDICATOR, "")
             return "resources/genomes/{accession}.fasta".format(accession = acc)
-    # normal genome
+    # normal genome, download via entrez
     else:
         return "resources/genomes/{accession}.fasta".format(accession=wildcards.accession)
 

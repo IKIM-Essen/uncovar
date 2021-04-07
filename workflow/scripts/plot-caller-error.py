@@ -1,5 +1,4 @@
 sys.stderr = open(snakemake.log[0], "w")
-# parameter = snakemake.params.get("parameter", "")
 
 import pandas as pd
 import altair as alt
@@ -95,7 +94,7 @@ def plot_error(sm_input, sm_output, type="heatmap"):
         .encode(alt.X("true_fraction"), alt.Y("est_fraction"))
     )
 
-    (plot + line).properties(title=f"No. of mixtures {no_of_mixs}").save(sm_output)
+    (plot + line).properties(title=f"{snakemake.wildcards.caller}, No. of mixtures {no_of_mixs}").save(sm_output)
 
 
 def plot_zeros(sm_input, sm_output):

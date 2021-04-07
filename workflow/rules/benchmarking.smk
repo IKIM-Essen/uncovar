@@ -159,6 +159,18 @@ rule report_non_cov2:
     shell:
         "rbt csv-report -s '\t' {input.summary} {output}"
 
+checkpoint generate_mixtures:
+    output:
+        "results/benchmarking/tables/mixtures.txt",
+    params:
+        mixtures = generate_mixtures
+    log:
+        "logs/generate_mixtures.log"
+    run:
+        with open(output[0], "w") as out:
+            for mix in params.mixtures:
+                out.write(mix+"\n")
+
 
 rule evaluate_strain_call_error:
     input:
