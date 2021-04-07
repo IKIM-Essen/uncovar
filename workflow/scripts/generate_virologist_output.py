@@ -155,6 +155,18 @@ AS3to1 = {
     "Arg": "R", "Asn": "N", "Asp": "D", "Thr": "T",
 }
 
+pangolin_lineages = {}
+
+for file_name in os.listdir(snakemake.input.lineages_dir):
+    lineage = file_name.rstrip(".csv").lstrip("config_")
+    pangolin_lineages[lineage] = []
+    file = os.path.join(snakemake.input.lineages_dir, file_name)
+    with open(file) as f:
+        for line in f:
+            pangolin_lineages[lineage].append(line)
+
+print(pangolin_lineages)
+
 for file in snakemake.input.bcf:
     variants = pysam.VariantFile(file, "rb")
     for record in variants:
