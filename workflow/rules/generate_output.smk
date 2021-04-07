@@ -193,7 +193,6 @@ rule snakemake_reports:
         #     sample=get_samples_for_date(wildcards.date),
         # ),
         "results/{date}/qc_data",
-        "results/{date}/var_data",
         # expand(
         #     "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
         #     mode=["major", "any"],
