@@ -163,8 +163,8 @@ jobs:
           curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
           mkdir -p .tests/resources/gisaid
           printf "resources/genomes/B.1.1.7.fasta\nresources/genomes/B.1.351.fasta" > .tests/resources/gisaid/strain-genomes.txt
-          curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=MW735442.1&db=nuccore&report=fasta" > .tests/resources/genomes/B.1.1.7.fasta
-          curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=MT324062.1&db=nuccore&report=fasta" > .tests/resources/genomes/B.1.351.fasta
+          curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=MW735442.1&db=nuccore&report=fasta" | grep "\S" > .tests/resources/genomes/B.1.1.7.fasta
+          curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=MT324062.1&db=nuccore&report=fasta" | grep "\S" > .tests/resources/genomes/B.1.351.fasta
 
       - name: Print tree
         run: tree .tests/ -C
