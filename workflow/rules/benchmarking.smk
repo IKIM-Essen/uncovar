@@ -186,7 +186,7 @@ rule evaluate_strain_call_error:
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/evaluate-{wildcards.caller}-error.py"
+        "../scripts/evaluate-strain-call-error.py"
 
 
 rule plot_strain_call_error:
