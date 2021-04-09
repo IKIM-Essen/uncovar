@@ -435,8 +435,6 @@ def get_mixture_results(wildcards):
         for mix in f.read().splitlines():
             mixture_list.append(mix)
     
-    print(mixture_list)
-
     if wildcards.caller == "pangolin":
         return expand(
             "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.csv",

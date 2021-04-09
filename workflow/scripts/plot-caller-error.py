@@ -1,8 +1,10 @@
-sys.stderr = open(snakemake.log[0], "w")
+try:
+    sys.stderr = open(snakemake.log[0], "w")
+except NameError:
+    pass
 
 import pandas as pd
 import altair as alt
-import numpy as np
 
 
 def mask(string):
@@ -18,12 +20,12 @@ def mask(string):
         return "some strain"
 
 
-def plot_error(sm_input, sm_output, type="heatmap"):
+def plot_error_heatmap(sm_input, sm_output, type="heatmap"):
     results_df = pd.read_csv(sm_input, delimiter="\t")
 
-    results_df["Kallisto output"] = results_df["target_id"].apply(lambda x: mask(x))
-    results_df=results_df[results_df["Kallisto output"] != "unmapped"]
-    results_df=results_df[results_df["Kallisto output"] != "other"]
+    results_df["Output"] = results_df["target_id"].apply(lambda x: mask(x))
+    results_df=results_df[results_df["Output"] != "unmapped"]
+    results_df=results_df[results_df["Output"] != "other"]
     no_of_mixs = int(results_df["mix"].max() + 1)
 
     if type == "heatmap":
@@ -34,7 +36,7 @@ def plot_error(sm_input, sm_output, type="heatmap"):
                 alt.X(
                     "true_fraction:Q",
                     axis=alt.Axis(format="%", title="True Fraction"),
-                    bin=alt.Bin(maxbins=49),
+                    bin=alt.Bin(maxbins=35),
                     scale=alt.Scale(
                         domain=(0.0, 1.0),
                         bins=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
@@ -43,7 +45,7 @@ def plot_error(sm_input, sm_output, type="heatmap"):
                 alt.Y(
                     "est_fraction:Q",
                     axis=alt.Axis(format="%", title="Est. Fraction"),
-                    bin=alt.Bin(maxbins=50),
+                    bin=alt.Bin(maxbins=35),
                     scale=alt.Scale(
                         domain=(0.0, 1.0),
                         bins=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
@@ -97,12 +99,12 @@ def plot_error(sm_input, sm_output, type="heatmap"):
     (plot + line).properties(title=f"{snakemake.wildcards.caller}, No. of mixtures {no_of_mixs}").save(sm_output)
 
 
-def plot_zeros(sm_input, sm_output):
+def plot_bar_of_zeros(sm_input, sm_output):
     results_df = pd.read_csv(sm_input, delimiter="\t")
 
-    results_df["Kallisto output"] = results_df["target_id"].apply(lambda x: mask(x))
-    results_df=results_df[results_df["Kallisto output"] != "unmapped"]
-    results_df=results_df[results_df["Kallisto output"] != "other"]
+    results_df["Output"] = results_df["target_id"].apply(lambda x: mask(x))
+    results_df=results_df[results_df["Output"] != "unmapped"]
+    results_df=results_df[results_df["Output"] != "other"]
 
     results_df = results_df[
         (results_df["true_fraction"] == 0) | (results_df["est_fraction"] == 0)
@@ -116,13 +118,51 @@ def plot_zeros(sm_input, sm_output):
 
     bar = (
         base.mark_bar()
-        .encode(x=alt.X("target_id", sort="y"), y=alt.Y("count(target_id)"))
+        .encode(x=alt.X("target_id", sort="-y"), y=alt.Y("count(target_id)"))
         .facet(row="Axis:N",)
+    ).properties(
+        title=f"Count of records where the other fraction is 0. Shows the x and y axis of the heatmap in more detail."
     )
 
     (bar).save(sm_output)
 
+def plot_worst_predictons_content(sm_input, sm_output):
+    plots = []
+    for i in range(3):
+        results_df = pd.read_csv(sm_input, delimiter="\t")
+
+        results_df["Output"] = results_df["target_id"].apply(lambda x: mask(x))
+        results_df=results_df[results_df["Output"] != "unmapped"]
+        results_df=results_df[results_df["Output"] != "other"]
+
+        results_df_false = results_df[results_df["true_fraction"] == 0]
+        worst_predictions = results_df_false.target_id.value_counts()
+        worst_prediction = worst_predictions.index[i]
+        worst_predictions = results_df_false[results_df_false["target_id"]==worst_prediction].mix.unique()
+
+        results_df = results_df[results_df.mix.isin(worst_predictions)]
+        results_df = results_df[results_df.target_id!=worst_prediction]
+        results_df = results_df[results_df.true_fraction != 0]
+
+        no_samples = len(results_df.mix.unique())
+
+        plot = alt.Chart(results_df).mark_bar().encode(
+            x=alt.X("target_id:O", sort="-y"),
+            y="count(target_id)",
+            color="true_fraction:Q"
+        ).properties(
+            title=f"Composition of {no_samples} mixtures, where {worst_prediction} is called, but not contained in mixture"
+        )
+        
+        plots.append(plot)
+        
+    alt.vconcat(*plots).save(sm_output)
+   
+
+
 
 if __name__ == "__main__":
-    plot_error(snakemake.input[0], snakemake.output[0])
-    plot_zeros(snakemake.input[0], snakemake.output[1])
+    plot_error_heatmap(snakemake.input[0], snakemake.output[0])
+    plot_bar_of_zeros(snakemake.input[0], snakemake.output[1])
+    plot_worst_predictons_content(snakemake.input[0], snakemake.output[2])
+    # plot_worst_predictons_content("results/benchmarking/tables/kallisto-strain-call-error.csv", "kallisto-strain-call-error-content-false-predictions.svg")

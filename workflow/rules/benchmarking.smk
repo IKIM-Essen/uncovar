@@ -195,7 +195,8 @@ rule plot_strain_call_error:
         "results/benchmarking/tables/{caller}-strain-call-error.csv",
     output:
         "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
-        "results/benchmarking/plots/{caller}-strain-call-error-bar.svg",
+        "results/benchmarking/plots/{caller}-strain-call-error-false-predictions.svg",
+        "results/benchmarking/plots/{caller}-strain-call-error-content-false-predictions.svg",
     log:
         "logs/plot-{caller}-strain-call-error.log",
     conda:
