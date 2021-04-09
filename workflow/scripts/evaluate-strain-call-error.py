@@ -83,6 +83,6 @@ if __name__ == "__main__":
 
     if snakemake.wildcards.caller == "pangolin":
         eval_pangolin_error(snakemake.input, snakemake.output[0], max_reads, prefix, separator, percentage)
-    elif snakemake.wildcards.caller == "kallist":
+    elif snakemake.wildcards.caller == "kallisto":
         eval_kallisto_error(snakemake.input, snakemake.output[0], max_reads, prefix, separator, percentage)
     
