@@ -82,8 +82,9 @@ jobs:
             .tests/resources/minikraken-8GB
             .tests/resources/genomes/human-genome.fna.gz
             .test/resources/gisaid
-          key: ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+          key: ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}-${{ hashFiles('.tests/resources/gisaid/strain-genomes.txt') }}
           restore-keys: |
+            ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
             ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-
             ${{ runner.os }}-test-resources-
 
