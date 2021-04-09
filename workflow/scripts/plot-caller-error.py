@@ -128,33 +128,37 @@ def plot_bar_of_zeros(sm_input, sm_output):
 
 def plot_worst_predictons_content(sm_input, sm_output):
     plots = []
+
     for i in range(3):
-        results_df = pd.read_csv(sm_input, delimiter="\t")
+        try:
+            results_df = pd.read_csv(sm_input, delimiter="\t")
 
-        results_df["Output"] = results_df["target_id"].apply(lambda x: mask(x))
-        results_df=results_df[results_df["Output"] != "unmapped"]
-        results_df=results_df[results_df["Output"] != "other"]
+            results_df["Output"] = results_df["target_id"].apply(lambda x: mask(x))
+            results_df=results_df[results_df["Output"] != "unmapped"]
+            results_df=results_df[results_df["Output"] != "other"]
 
-        results_df_false = results_df[results_df["true_fraction"] == 0]
-        worst_predictions = results_df_false.target_id.value_counts()
-        worst_prediction = worst_predictions.index[i]
-        worst_predictions = results_df_false[results_df_false["target_id"]==worst_prediction].mix.unique()
+            results_df_false = results_df[results_df["true_fraction"] == 0]
+            worst_predictions = results_df_false.target_id.value_counts()
+            worst_prediction = worst_predictions.index[i]
+            worst_predictions = results_df_false[results_df_false["target_id"]==worst_prediction].mix.unique()
 
-        results_df = results_df[results_df.mix.isin(worst_predictions)]
-        results_df = results_df[results_df.target_id!=worst_prediction]
-        results_df = results_df[results_df.true_fraction != 0]
+            results_df = results_df[results_df.mix.isin(worst_predictions)]
+            results_df = results_df[results_df.target_id!=worst_prediction]
+            results_df = results_df[results_df.true_fraction != 0]
 
-        no_samples = len(results_df.mix.unique())
+            no_samples = len(results_df.mix.unique())
 
-        plot = alt.Chart(results_df).mark_bar().encode(
-            x=alt.X("target_id:O", sort="-y"),
-            y="count(target_id)",
-            color="true_fraction:Q"
-        ).properties(
-            title=f"Composition of {no_samples} mixtures, where {worst_prediction} is called, but not contained in mixture"
-        )
-        
-        plots.append(plot)
+            plot = alt.Chart(results_df).mark_bar().encode(
+                x=alt.X("target_id:O", sort="-y"),
+                y="count(target_id)",
+                color="true_fraction:Q"
+            ).properties(
+                title=f"Composition of {no_samples} mixtures, where {worst_prediction} is called, but not contained in mixture"
+            )
+            
+            plots.append(plot)
+        except:
+            pass
         
     alt.vconcat(*plots).save(sm_output)
    
