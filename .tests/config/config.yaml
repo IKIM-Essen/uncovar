@@ -7,7 +7,7 @@ benchmark-genomes:
   - MT810976
   - MW184368
   - MT470120
-  - MT451810
+  - MW735430 # B.1.1.7
 
 
 data-handling:
