@@ -12,6 +12,7 @@ MIXTURE_PREFIX = "mixture-sample-"
 MIXTURE_PART_INDICATOR = "_MIX_"
 MIXTURE_PERCENTAGE_INDICATOR = "_PERC_"
 
+
 def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
@@ -428,13 +429,14 @@ def generate_mixtures(wildcards):
 
     return mixture_list
 
+
 def get_mixture_results(wildcards):
     mixture_list = []
-    
+
     with checkpoints.generate_mixtures.get().output[0].open() as f:
         for mix in f.read().splitlines():
             mixture_list.append(mix)
-    
+
     if wildcards.caller == "pangolin":
         return expand(
             "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.csv",
@@ -460,10 +462,12 @@ def get_genome_fasta(wildcards):
         with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
             acc, _ = wildcards.accession.split(MIXTURE_PERCENTAGE_INDICATOR)
             acc = acc.replace("-", ".").replace(MIXTURE_PART_INDICATOR, "")
-            return "resources/genomes/{accession}.fasta".format(accession = acc)
+            return "resources/genomes/{accession}.fasta".format(accession=acc)
     # normal genome, download via entrez
     else:
-        return "resources/genomes/{accession}.fasta".format(accession=wildcards.accession)
+        return "resources/genomes/{accession}.fasta".format(
+            accession=wildcards.accession
+        )
 
 
 def no_reads(wildcards):

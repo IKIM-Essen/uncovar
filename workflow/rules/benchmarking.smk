@@ -159,13 +159,14 @@ rule report_non_cov2:
     shell:
         "rbt csv-report -s '\t' {input.summary} {output}"
 
+
 checkpoint generate_mixtures:
     output:
         "results/benchmarking/tables/mixtures.txt",
     params:
-        mixtures = generate_mixtures
+        mixtures=generate_mixtures,
     log:
-        "logs/generate_mixtures.log"
+        "logs/generate_mixtures.log",
     script:
         "../scripts/generate-mixtures.py"
 
