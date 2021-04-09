@@ -190,6 +190,12 @@ jobs:
         with:
           name: report-${{ matrix.rule }}
           path: .tests/report.zip
+          
+      - name: Upload logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: log-${{ matrix.rule }}
+          path: .tests/logs/
 
       # - name: Unit test
       #     args: "--generate-unit-tests"

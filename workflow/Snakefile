@@ -105,10 +105,6 @@ checkpoint all:
             date=get_all_run_dates(),
         ),
         expand(
-            "results/{date}/var_data/",
-            date=get_all_run_dates(),
-        ),
-        expand(
             "results/{date}/qc_data/",
             date=get_all_run_dates(),
         ),
