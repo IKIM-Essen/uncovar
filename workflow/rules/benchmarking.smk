@@ -166,10 +166,8 @@ checkpoint generate_mixtures:
         mixtures = generate_mixtures
     log:
         "logs/generate_mixtures.log"
-    run:
-        with open(output[0], "w") as out:
-            for mix in params.mixtures:
-                out.write(mix+"\n")
+    script:
+        "../scripts/generate-mixtures.py"
 
 
 rule evaluate_strain_call_error:
