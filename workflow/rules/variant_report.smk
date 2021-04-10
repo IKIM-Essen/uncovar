@@ -11,8 +11,8 @@ rule vcf_report:
             directory("results/{date}/vcf-report/{target}.{filter}"),
             htmlindex="index.html",
             caption="../report/variant-calls.rst",
-            category="2. Virology Details",
-            subcategory="2. Variant Call Reports: {filter}",
+            category="2. Variant Call Details",
+            subcategory="{filter}",
         ),
     params:
         bcfs=get_report_bcfs,
