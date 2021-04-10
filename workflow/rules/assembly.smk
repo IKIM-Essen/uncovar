@@ -96,7 +96,7 @@ rule polish_contigs:
     log:
         "logs/{date}/bcftools-consensus/{sample}.log",
     params:
-        is_amp=lambda wildcards: is_amplicon_data(wildcards.sample)
+        is_amp=lambda wildcards: is_amplicon_data(wildcards.sample),
     conda:
         "../envs/bcftools.yaml"
     shell:
