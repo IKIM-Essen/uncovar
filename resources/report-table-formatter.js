@@ -1,6 +1,10 @@
 {
     "pangolin strain (#SNPs)": function format(value) {
     $(function () {
+        $('[data-toggle="popover"]').popover()
+    })
+
+    $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
 
@@ -31,6 +35,8 @@
             let vaf = splitted_variant[2];
             let gene = splitted_variant[0];
             let alteration = splitted_variant[1];
+
+            console.log(splitted_variant);
 
             let cont = "";
             if (splitted_variant[3] === "true") {
