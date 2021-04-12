@@ -28,16 +28,16 @@
 
         for (i = 1; i < split.length; i++) {
             let splitted_variant = split[i].split(":");
-            let contained = splitted_variant[3].equals("true");
             let vaf = splitted_variant[2];
             let gene = splitted_variant[0];
             let alteration = splitted_variant[1];
 
-            if (contained) {
-                let cont = "&#10003;" // Häkchen
+            let cont = "";
+            if (splitted_variant[3] === "true") {
+                cont = "&#10003;" // Häkchen
                 cont += 1;
             } else {
-                let cont = "&#10799;" // Kreuz
+                cont = "&#10799;" // Kreuz
                 not_cont += 1;
             }
 
