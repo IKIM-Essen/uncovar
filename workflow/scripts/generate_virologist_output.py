@@ -281,13 +281,6 @@ output_df = output_df.merge(
 output_df = output_df.set_index("sample")
 
 qc_df = output_df.copy()
-variant_df = output_df.copy()
-# qc_df.drop(columns=["other variants"], inplace=True)
 
-try:
-    variant_df.drop(columns=["# raw reads", "# trimmed reads", "# used reads", "initial contig (bp)", "final contig (bp)", "Eukaryota (%)", "Bacteria (%)", "Viruses (%)", "thereof SARS (%)", "Unclassified (%)"], inplace=True)
-except:
-    variant_df.drop(columns=["# raw reads", "# trimmed reads", "# used reads", "initial contig (bp)", "final contig (bp)"], inplace=True)
 output_df.to_csv(snakemake.output.all_data)
 qc_df.to_csv(snakemake.output.qc_data)
-variant_df.to_csv(snakemake.output.var_data)

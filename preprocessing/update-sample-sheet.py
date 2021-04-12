@@ -3,6 +3,7 @@ from shutil import move, copy2
 from datetime import date, datetime
 from os import mkdir
 from ruamel import yaml  # conda install -c conda-forge ruamel.yaml
+import os
 
 import pandas as pd
 
@@ -70,14 +71,16 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
             raise Exception("Data directory (%s) not found" % given_path)
 
     # check if there is new data in the incoming data directory:
-    # get files that are in incoming and contain 'ndetermined' and '.fastq.gz' in their name
-    incoming_files = [
-        f
-        for f in listdir(IN_PATH)
-        if path.isfile(path.join(IN_PATH, f))
-        and "ndetermined" not in f
-        and ".fastq.gz" in f
-    ]
+    # get files that are in incoming and do not contain 'ndetermined' and '.fastq.gz' in their name and are not under a specific filesize
+    incoming_files = []
+    for f in listdir(IN_PATH):
+        if path.isfile(path.join(IN_PATH, f))\
+        and "ndetermined" not in f\
+        and ".fastq.gz" in f\
+        and os.stat(IN_PATH + f).st_size > 100:
+            incoming_files.append(f)
+        else:
+            print(f, "not used")
 
     # add date subfolder in data path
     DATA_PATH += today
@@ -87,7 +90,7 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
     # get files that are in outgoing directory
     data_files = [f for f in listdir(DATA_PATH) if path.isfile(path.join(DATA_PATH, f))]
 
-    # print promt, which data is in incoming and in outgoing and thus is not moved
+    # print prompt, which data is in incoming and in outgoing and thus is not moved
     files_not_to_copy = [f for f in data_files if f in incoming_files]
 
     if files_not_to_copy:
@@ -103,7 +106,6 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
             print("\tIn total: {}".format(i))
 
     files_to_copy = [f for f in incoming_files if f not in data_files]
-
     ##################################
     ######### update the csv #########
     ##################################
@@ -117,11 +119,11 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
 
         # create dataframe
         new_files_df = pd.DataFrame(files_to_copy, columns=["file"])
-
+        
         # get only files, that contain .fastq.gz
         new_files_df = new_files_df[new_files_df["file"].str.contains(".fastq.gz")]
         new_files_df = new_files_df[~new_files_df["file"].str.contains("Undetermined")]
-
+        
         # get id of sample, thus split at first '_'
         new_files_df["sample_name"] = new_files_df["file"].apply(
             lambda x: (x.split("_", 1)[0])
@@ -148,13 +150,15 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
         new_files_df.sort_index(inplace=True)
         new_files_df.columns = ["fq1", "fq2"]
         new_files_df["run_id"] = today
+        new_files_df["is_amplicon_data"] = 1
 
         new_sample_sheet = (
             pd.read_csv(SAMPLE_SHEET, index_col="sample_name")
             .append(new_files_df)
             .sort_values(by=["run_id", "sample_name"])
         )
-
+        # check for duplicates
+        new_sample_sheet.index = new_sample_sheet.index.where(~new_sample_sheet.index.duplicated(), new_sample_sheet.index + '_2')
         # save to csv
         if verbose:
             print("\t{} samples added".format(len(new_files_df)))
