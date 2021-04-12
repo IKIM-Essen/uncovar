@@ -345,9 +345,9 @@ def get_target_events(wildcards):
 
 def get_filter_odds_input(wildcards):
     if wildcards.reference == "main":
-        return "results/{date}/filtered-calls/ref~{reference}/{sample}.{filter}.{vartype}.bcf"
+        return "results/{date}/filtered-calls/ref~{reference}/{sample}.{filter}.bcf"
     else:
-        return "results/{date}/calls/ref~{reference}/{sample}.{vartype}.bcf"
+        return "results/{date}/calls/ref~{reference}/{sample}.bcf"
 
 
 def get_vembrane_expression(wildcards):
