@@ -345,9 +345,9 @@ def get_target_events(wildcards):
 
 def get_filter_odds_input(wildcards):
     if wildcards.reference == "main":
-        return "results/{date}/filtered-calls/ref~{reference}/{sample}.{filter}.bcf"
+        return "results/{date}/filtered-calls/ref~{reference}/{sample}.{filter}.{vartype}.bcf"
     else:
-        return "results/{date}/calls/ref~{reference}/{sample}.bcf"
+        return "results/{date}/calls/ref~{reference}/{sample}.{vartype}.bcf"
 
 
 def get_vembrane_expression(wildcards):
@@ -435,8 +435,9 @@ def get_adapters(wildcards):
 
 wildcard_constraints:
     sample="[^/.]+",
-    vartypes="|".join(VARTYPES),
+    vartype="|".join(VARTYPES),
     clonality="subclonal|clonal",
     filter="|".join(
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
     ),
+    varrange="structural|small",
