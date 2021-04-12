@@ -5,9 +5,51 @@
     })
 
     if (value !== "no strain called") {
-        var lineage = value.split(' ')[0];
+        var split = value.split(' ');
+        var lineage = split[0];
         var link = `<a data-toggle="tooltip" data-placement="top" title="Linkout to cov-lineages" href='https://cov-lineages.org/lineages/lineage_${lineage}.html' target='_blank'>${lineage}</a>`;
-        return link + value.split(lineage).pop();
+
+        const table = `<table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Gene</th>
+                  <th scope="col">Alteration</th>
+                  <th scope="col">Pangolin</th>
+                </tr>
+              </thead>
+            <tbody>`;
+
+        const table_end = "</tbody></table>";
+
+        let inner_table = [];
+
+        let cont = 0;
+        let not_cont = 0;
+
+        for (i = 1; i < split.length; i++) {
+            let splitted_variant = split[i].split(":");
+            let contained = splitted_variant[3].equals("true");
+            let vaf = splitted_variant[2];
+            let gene = splitted_variant[0];
+            let alteration = splitted_variant[1];
+
+            if (contained) {
+                let cont = "&#10003;" // Häkchen
+                cont += 1;
+            } else {
+                let cont = "&#10799;" // Kreuz
+                not_cont += 1;
+            }
+
+            let row = `<tr><td scope="col">${gene}</td><td>${alteration}</td><td>${cont}</td></tr>`;
+            inner_table.push(row);
+        }
+
+        let final_table = table + inner_table.join("") + table_end;
+
+        let overview = `<a href="#" data-toggle="popover" data-trigger="focus" data-html='true' title='Overview for ${lineage}' data-content='${final_table}'>(${cont}/${not_cont})</a>`
+
+        return link + overview;
     } else {
         return value;
     }
