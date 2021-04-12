@@ -89,8 +89,12 @@ rule varlociraptor_call:
 
 rule merge_varranges:
     input:
-        expand(
+        calls=expand(
             "results/{{date}}/calls/ref~{{reference}}/{{sample}}.{varrange}.bcf",
+            varrange=["small", "structural"],
+        ),
+        idx=expand(
+            "results/{{date}}/calls/ref~{{reference}}/{{sample}}.{varrange}.bcf.csi",
             varrange=["small", "structural"],
         ),
     output:
