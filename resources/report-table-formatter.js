@@ -13,7 +13,7 @@
         var lineage = split[0];
         var link = `<a data-toggle="tooltip" data-placement="top" title="Linkout to cov-lineages" href='https://cov-lineages.org/lineages/lineage_${lineage}.html' target='_blank'>${lineage}</a>`;
 
-        const table = `<div style="overflow: auto"><table class="table">
+        const table = `<div style="height: 200px; overflow-y: auto; white-space:pre-wrap;"><table class="table">
               <thead>
                 <tr>
                   <th scope="col">Gene</th>
@@ -51,9 +51,9 @@
 
         let final_table = table + inner_table.join("") + table_end;
 
-        let overview = `<a tabindex="0" data-toggle="popover" data-trigger="focus" data-html='true' title='Overview for ${lineage}' data-content='${final_table}'>(${cont}/${not_cont})</a>`
+        let overview = `<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html='true' title='Overview for ${lineage}' data-content='${final_table}'>(${cont}/${not_cont})</a>`
 
-        return link + overview;
+        return `${link} ${overview}`;
     } else {
         return value;
     }
@@ -120,10 +120,10 @@
         if (voi) {
             var x = "";
             for (let i = 0; i < vats[g].length; i++) {
-                x = x + `<a tabindex="0" data-toggle="popover" data-trigger="focus" data-html='true' title='Gene: <a data-html="true" data-toggle="tooltip" data-placement="bottom" title="Linkout to gene in Ensembl genome browser" href="https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}" target="_blank">${g}:${vats[g][i]}</a>' data-content='${tables[g]}'>${g}:${vats[g][i]}</a>`;
+                x = x + `<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html='true' title='Gene: <a data-html="true" data-toggle="tooltip" data-placement="bottom" title="Linkout to gene in Ensembl genome browser" href="https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}" target="_blank">${g}:${vats[g][i]}</a>' data-content='${tables[g]}'>${g}:${vats[g][i]}</a>`;
             }
         } else {
-            var x = `<a tabindex="0" data-toggle="popover" data-trigger="focus" data-html='true' title='Gene: <a data-html="true" data-toggle="tooltip" data-placement="bottom" title="Linkout to gene in Ensembl genome browser" href="https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}" target="_blank">${g}</a>' data-content='${tables[g]}'>${g}</a>`;
+            var x = `<a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html='true' title='Gene: <a data-html="true" data-toggle="tooltip" data-placement="bottom" title="Linkout to gene in Ensembl genome browser" href="https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}" target="_blank">${g}</a>' data-content='${tables[g]}'>${g}</a>`;
         }
 
         result.push(x);
