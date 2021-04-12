@@ -211,6 +211,12 @@ for sample in table:
         for element in hashing.values():
             table[sample][i].append(element)
 
+# Add sample for testing pangolin lineages
+table["z"] = [[] for _ in range(12)]
+table["z"][0].append("B.1.1.7")
+table["z"][1].append("ORF1AB:T1001I:0.263") # Contained in pangolin lineages
+table["z"][1].append("ORF1ab:N1094_G1095delinsR:0.246") # Not contained in pangolin lineages
+
 """Iterate variants of interest and other variants and check if gene and alteration are contained in pangolin data."""
 for sample in table:
     lineage = table[sample][0][0].lower()
