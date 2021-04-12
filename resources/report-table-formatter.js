@@ -31,7 +31,7 @@
     var vats = {};
     for (var v of variants) {
         var split = v.split(':');
-        genes.push(split[0].trim());
+        genes.push(split[0]);
     }
 
     for (var g of genes) {
@@ -41,8 +41,8 @@
 
     for (var v of variants) {
         var split = v.split(':');
-        vafs[split[0]].push(split[2].trim());
-        vats[split[0]].push(split[1].trim());
+        vafs[split[0]].push(split[2]);
+        vats[split[0]].push(split[1]);
     }
 
     const table = `<table class="table">
