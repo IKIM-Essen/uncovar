@@ -225,10 +225,10 @@ for sample in table:
         for pangolin_variant in pangolin_lineages[lineage]:
             pan_gene = pangolin_variant.split(":")[1]
             pan_alteration = pangolin_variant.split(":")[2]
+            entry = f"{pan_gene}:{pan_alteration}:false"
             for variant in itertools.chain(table[sample][1], table[sample][2]):
                 gene = variant.split(":")[0]
                 alteration = variant.split(":")[1]
-                entry = f"{pan_gene}:{pan_alteration}:false"
                 if gene.lower() == pan_gene.lower() and alteration.lower() == pan_alteration.lower():
                     entry = f"{gene}:{alteration}:true"
                     break
