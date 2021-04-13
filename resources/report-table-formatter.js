@@ -18,7 +18,7 @@
                 <tr>
                   <th scope="col">Gene</th>
                   <th scope="col">Alteration</th>
-                  <th scope="col">Pangolin</th>
+                  <th scope="col">Present</th>
                 </tr>
               </thead>
             <tbody>`;
