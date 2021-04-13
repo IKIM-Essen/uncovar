@@ -16,7 +16,14 @@ with pysam.AlignmentFile(snakemake.input.sample) as bam:
         # Not enough reads to perform SV calling.
         # Output empty BCF.
         header = pysam.VariantHeader()
-        header.add_line("##contig=<ID=NC_045512.2,length=29903>") # TODO generalize for other viruses or changed reference
+
+        # Retrieve and record reference lengths.
+        ref = pysam.FastaFile(snakemake.input.ref)
+        for contig in ref.references:
+            n = ref.get_reference_length(contig)
+            header.add_line("##contig=<ID={},length={}>".format(contig, n))
+
+        # Write BCF.
         with pysam.VariantFile(snakemake.output[0], "wb", header=header) as bcf:
             pass
 
