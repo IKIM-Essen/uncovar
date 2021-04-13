@@ -37,7 +37,7 @@
 
             let contained = "";
             if (splitted_variant[2] === "true") {
-                contained = "&#10003;" // Häkchen
+                contained = `&#10003; (${splitted_variant[3]})` // Häkchen
                 cont += 1;
             } else {
                 contained = "&#10799;" // Kreuz

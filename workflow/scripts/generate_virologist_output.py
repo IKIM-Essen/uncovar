@@ -229,8 +229,9 @@ for sample in table:
             for variant in itertools.chain(table[sample][1], table[sample][2]):
                 gene = variant.split(":")[0]
                 alteration = variant.split(":")[1]
+                vaf = variant.split(":")[2]
                 if gene.lower() == pan_gene.lower() and alteration.lower() == pan_alteration.lower():
-                    entry = f"{gene}:{alteration}:true"
+                    entry = f"{gene}:{alteration}:true:{vaf}"
                     break
             table[sample][0].append(entry)
 
