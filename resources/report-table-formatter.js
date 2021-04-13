@@ -32,12 +32,11 @@
 
         for (i = 1; i < split.length; i++) {
             let splitted_variant = split[i].split(":");
-            let vaf = splitted_variant[2];
             let gene = splitted_variant[0];
             let alteration = splitted_variant[1];
 
             let contained = "";
-            if (splitted_variant[3] === "true") {
+            if (splitted_variant[2] === "true") {
                 contained = "&#10003;" // Häkchen
                 cont += 1;
             } else {
