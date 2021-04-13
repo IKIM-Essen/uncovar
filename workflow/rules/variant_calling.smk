@@ -23,7 +23,8 @@ rule delly:
     input:
         ref=get_reference(),
         ref_idx=get_reference(".fai"),
-        samples="results/{date}/recal/ref~{reference}/{sample}.bam",
+        sample="results/{date}/recal/ref~{reference}/{sample}.bam",
+        sample_idx="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
         temp("results/{date}/candidate-calls/ref~{reference}/{sample}.structural.bcf"),
     params:

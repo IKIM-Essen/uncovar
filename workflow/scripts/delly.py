@@ -15,7 +15,9 @@ with pysam.AlignmentFile(snakemake.input.sample) as bam:
     if read_count < 10000:
         # Not enough reads to perform SV calling.
         # Output empty BCF.
-        with pysam.VariantFile(snakemake.output[0], "wb", header=pysam.VariantHeader()) as bcf:
+        header = pysam.VariantHeader()
+        header.add_line("##contig=<ID=NC_045512.2,length=29903>") # TODO generalize for other viruses or changed reference
+        with pysam.VariantFile(snakemake.output[0], "wb", header=header) as bcf:
             pass
 
 shell(
