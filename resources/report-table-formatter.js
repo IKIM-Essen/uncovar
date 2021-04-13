@@ -53,7 +53,12 @@
 
         let overview = `<a tabindex="0" role="button" href="#" data-toggle="popover" data-trigger="focus" data-html='true' title='Overview for ${lineage}' data-content='${final_table}'>(${cont}/${sum})</a>`
 
-        return `${link} ${overview}`;
+        if (split.length > 1) {
+            return `${link} ${overview}`;
+        } else {
+            return `${link}`;
+        }
+
     } else {
         return value;
     }
