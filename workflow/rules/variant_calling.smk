@@ -28,10 +28,12 @@ rule delly:
         temp("results/{date}/candidate-calls/ref~{reference}/{sample}.structural.bcf"),
     params:
         extra="",
+    conda:
+        "../envs/delly.yaml"
     log:
         "logs/{date}/delly/ref~{reference}/{sample}.log",
-    wrapper:
-        "0.73.0/bio/delly"
+    script:
+        "../scripts/delly.py"
 
 
 rule render_scenario:
