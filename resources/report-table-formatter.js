@@ -36,22 +36,23 @@
             let gene = splitted_variant[0];
             let alteration = splitted_variant[1];
 
-            let cont = "";
+            let contained = "";
             if (splitted_variant[3] === "true") {
-                cont = "&#10003;" // Häkchen
+                contained = "&#10003;" // Häkchen
                 cont += 1;
             } else {
-                cont = "&#10799;" // Kreuz
+                contained = "&#10799;" // Kreuz
                 not_cont += 1;
             }
 
-            let row = `<tr><td scope="col">${gene}</td><td>${alteration}</td><td>${cont}</td></tr>`;
+            let row = `<tr><td scope="col">${gene}</td><td>${alteration}</td><td>${contained}</td></tr>`;
             inner_table.push(row);
         }
 
         let final_table = table + inner_table.join("") + table_end;
+        let sum = cont + not_cont;
 
-        let overview = `<a tabindex="0" role="button" href="#" data-toggle="popover" data-trigger="focus" data-html='true' title='Overview for ${lineage}' data-content='${final_table}'>(${cont}/${not_cont})</a>`
+        let overview = `<a tabindex="0" role="button" href="#" data-toggle="popover" data-trigger="focus" data-html='true' title='Overview for ${lineage}' data-content='${final_table}'>(${cont}/${sum})</a>`
 
         return `${link} ${overview}`;
     } else {
