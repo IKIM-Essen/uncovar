@@ -6,7 +6,7 @@ rule freebayes:
         samples="results/{date}/recal/ref~{reference}/{sample}.bam",
         index="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.bcf"),
+        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.small.bcf"),
     log:
         "logs/{date}/freebayes/ref~{reference}/{sample}.log",
     params:
@@ -17,6 +17,21 @@ rule freebayes:
         ),
     wrapper:
         "0.68.0/bio/freebayes"
+
+
+rule delly:
+    input:
+        ref=get_reference(),
+        ref_idx=get_reference(".fai"),
+        samples="results/{date}/recal/ref~{reference}/{sample}.bam",
+    output:
+        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.structural.bcf"),
+    params:
+        extra="",
+    log:
+        "logs/{date}/delly/ref~{reference}/{sample}.log",
+    wrapper:
+        "0.73.0/bio/delly"
 
 
 rule render_scenario:
@@ -36,15 +51,17 @@ rule varlociraptor_preprocess:
     input:
         ref=get_reference(),
         ref_idx=get_reference(".fai"),
-        candidates="results/{date}/candidate-calls/ref~{reference}/{sample}.bcf",
+        candidates=(
+            "results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.bcf"
+        ),
         bam="results/{date}/recal/ref~{reference}/{sample}.bam",
         bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        "results/{date}/observations/ref~{reference}/{sample}.bcf",
+        "results/{date}/observations/ref~{reference}/{sample}.{varrange}.bcf",
     params:
         depth=config["variant-calling"]["max-read-depth"],
     log:
-        "logs/{date}/varlociraptor/preprocess/ref~{reference}/{sample}.log",
+        "logs/{date}/varlociraptor/preprocess/ref~{reference}/{sample}.{varrange}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
@@ -54,17 +71,37 @@ rule varlociraptor_preprocess:
 
 rule varlociraptor_call:
     input:
-        obs="results/{date}/observations/ref~{reference}/{sample}.bcf",
+        obs="results/{date}/observations/ref~{reference}/{sample}.{varrange}.bcf",
         scenario="results/{date}/scenarios/{sample}.yaml",
     output:
-        temp("results/{date}/calls/ref~{reference}/{sample}.bcf"),
+        temp("results/{date}/calls/ref~{reference}/{sample}.{varrange}.bcf"),
     params:
         biases=get_varlociraptor_bias_flags,
     log:
-        "logs/{date}/varlociraptor/call/ref~{reference}/{sample}.log",
+        "logs/{date}/varlociraptor/call/ref~{reference}/{sample}.{varrange}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
         "varlociraptor "
         "call variants {params.biases} generic --obs {wildcards.sample}={input.obs} "
         "--scenario {input.scenario} > {output} 2> {log}"
+
+
+rule merge_varranges:
+    input:
+        calls=expand(
+            "results/{{date}}/calls/ref~{{reference}}/{{sample}}.{varrange}.bcf",
+            varrange=["small", "structural"],
+        ),
+        idx=expand(
+            "results/{{date}}/calls/ref~{{reference}}/{{sample}}.{varrange}.bcf.csi",
+            varrange=["small", "structural"],
+        ),
+    output:
+        "results/{date}/calls/ref~{reference}/{sample}.bcf",
+    log:
+        "logs/{date}/merge-calls/ref~{reference}/{sample}.log",
+    params:
+        "-a -Ob",
+    wrapper:
+        "0.69.0/bio/bcftools/concat"
