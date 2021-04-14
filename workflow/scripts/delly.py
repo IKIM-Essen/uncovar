@@ -25,7 +25,8 @@ with pysam.AlignmentFile(snakemake.input.sample) as bam:
 
         # Write BCF.
         with pysam.VariantFile(snakemake.output[0], "wb", header=header) as bcf:
-            pass
+            exit(0)
+
 
 shell(
     "OMP_NUM_THREADS={snakemake.threads} delly call {extra} "
