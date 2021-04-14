@@ -223,8 +223,7 @@ for sample in table:
     print(f"Checking lineage: {lineage}")
     if lineage in pangolin_lineages:
         for pangolin_variant in pangolin_lineages[lineage]:
-            pan_gene = pangolin_variant.split(":")[1]
-            pan_alteration = pangolin_variant.split(":")[2]
+            _, pan_gene, pan_alteration = pangolin_variant.split(":")
             entry = f"{pan_gene}:{pan_alteration}:false"
             for variant in itertools.chain(table[sample][1], table[sample][2]):
                 gene, alteration, vaf = variant.split(":")
