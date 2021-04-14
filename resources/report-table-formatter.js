@@ -69,8 +69,12 @@
 },
     "variant helper": function format(value, voi) {
     $(function () {
-        $('[data-toggle="popover"]').popover()
+       $('[data-toggle="popover"]').popover({
+            container: 'body'
+       });
     })
+
+    $('.popover').css("max-width", "100%");
 
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
@@ -100,7 +104,7 @@
         vats[split[0]].push(split[1]);
     }
 
-    const table = `<table class="table">
+    const table = `<div style="height: 200px; overflow-y: auto; white-space:pre-wrap;"><table class="table">
               <thead>
                 <tr>
                   <th scope="col">Variant</th>
@@ -109,7 +113,7 @@
               </thead>
             <tbody>`;
 
-    const table_end = "</tbody></table>";
+    const table_end = "</tbody></table></div>";
 
     var tables = {};
 
