@@ -19,8 +19,8 @@ for sample, file in zip(snakemake.params.samples, snakemake.input.reads_unfilter
     trimmed_reads = int(number_reads["summary"]["after_filtering"]["total_reads"])
     initial_reads_df = initial_reads_df.append(
         {
-            "# raw reads": f"{raw_reads:,}",
-            "# trimmed reads": f"{trimmed_reads:,}",
+            "# raw reads": raw_reads,
+            "# trimmed reads": trimmed_reads,
             "sample": sample,
         },
         ignore_index=True,
@@ -38,7 +38,7 @@ for sample, file in zip(snakemake.params.samples, snakemake.input.reads_used_for
             num_reads = 0
         filtered_reads_df = filtered_reads_df.append(
             {
-                "# used reads": f"{int(num_reads):,}",
+                "# used reads": int(num_reads),
                 "sample": sample,
             },
             ignore_index=True,
@@ -68,7 +68,7 @@ for sample, file in zip(snakemake.params.samples, snakemake.input.initial_contig
 
     initial_df = initial_df.append(
         {
-            "initial contig (bp)": f"{int(length_initial):,}",
+            "initial contig (bp)": int(length_initial),
             "sample": sample,
         },
         ignore_index=True,
@@ -90,7 +90,6 @@ for sample, file in zip(snakemake.params.samples, snakemake.input.polished_conti
 
     for key in contigs:
         length = len(contigs[key])
-    length = f'{length:,}'
     final_df = final_df.append(
         {
             "final contig (bp)": length,
@@ -223,13 +222,10 @@ for sample in table:
     print(f"Checking lineage: {lineage}")
     if lineage in pangolin_lineages:
         for pangolin_variant in pangolin_lineages[lineage]:
-            pan_gene = pangolin_variant.split(":")[1]
-            pan_alteration = pangolin_variant.split(":")[2]
+            _, pan_gene, pan_alteration = pangolin_variant.split(":")
             entry = f"{pan_gene}:{pan_alteration}:false"
             for variant in itertools.chain(table[sample][1], table[sample][2]):
-                gene = variant.split(":")[0]
-                alteration = variant.split(":")[1]
-                vaf = variant.split(":")[2]
+                gene, alteration, vaf = variant.split(":")
                 if gene.lower() == pan_gene.lower() and alteration.lower() == pan_alteration.lower():
                     entry = f"{gene}:{alteration}:true:{vaf}"
                     break
