@@ -2,11 +2,10 @@
     "pangolin strain (#SNPs)": function format(value) {
     $(function () {
        $('[data-toggle="popover"]').popover({
-            container: 'body'
+            container: 'body',
+           template: '<div class="popover" style="max-width: none" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>'
        });
     })
-
-    $('.popover').css("max-width", "none");
 
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
@@ -73,8 +72,6 @@
             container: 'body'
        });
     })
-
-    $('.popover').css("max-width", "none");
 
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
