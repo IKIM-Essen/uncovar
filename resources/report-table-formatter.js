@@ -41,8 +41,8 @@
 
     for (var v of variants) {
         var split = v.split(':');
-        vafs[split[0]].push(split[1]);
-        vats[split[0]].push(split[2]);
+        vafs[split[0]].push(split[2]);
+        vats[split[0]].push(split[1]);
     }
 
     const table = `<table class="table">
@@ -61,29 +61,29 @@
     for (g of genes) {
         var body = "";
         for (let i = 0; i < vafs[g].length; i++) {
-            var row = `<tr><td scope="col">${vafs[g][i]}</td><td>${vats[g][i]}</td></tr>`;
+            var row = `<tr><td scope="col">${vats[g][i]}</td><td>${vafs[g][i]}</td></tr>`;
             body = body + row;
         }
         tables[g] = table + body + table_end;
     }
 
-    let result = "";
+    let result = [];
     let unique_genes = [...new Set(genes)];
 
     for (g of unique_genes) {
         if (voi) {
             var x = "";
             for (let i = 0; i < vats[g].length; i++) {
-                x = x + `<a tabindex="0" class="btn btn-link" data-toggle="popover" data-trigger="focus" data-html='true' title='Gene: <a data-html="true" data-toggle="tooltip" data-placement="bottom" title="Linkout to gene in Ensembl genome browser" href="https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}" target="_blank">${g}:${vats[g][i]}</a>' data-content='${tables[g]}'>${g}:${vats[g][i]}</a>`;
+                x = x + `<a href="#" data-toggle="popover" data-trigger="focus" data-html='true' title='Gene: <a data-html="true" data-toggle="tooltip" data-placement="bottom" title="Linkout to gene in Ensembl genome browser" href="https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}" target="_blank">${g}:${vats[g][i]}</a>' data-content='${tables[g]}'>${g}:${vats[g][i]}</a>`;
             }
         } else {
-            var x = `<a tabindex="0" class="btn btn-link" data-toggle="popover" data-trigger="focus" data-html='true' title='Gene: <a data-html="true" data-toggle="tooltip" data-placement="bottom" title="Linkout to gene in Ensembl genome browser" href="https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}" target="_blank">${g}</a>' data-content='${tables[g]}'>${g}</a>`;
+            var x = `<a href="#" data-toggle="popover" data-trigger="focus" data-html='true' title='Gene: <a data-html="true" data-toggle="tooltip" data-placement="bottom" title="Linkout to gene in Ensembl genome browser" href="https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}" target="_blank">${g}</a>' data-content='${tables[g]}'>${g}</a>`;
         }
 
-        result = result + x + ", ";
+        result.push(x);
     }
     
-    result = result.slice(0, result.length - 2)
+    result = result.join(", ");
 
     if (value.trim() !== "") {
         return result;
