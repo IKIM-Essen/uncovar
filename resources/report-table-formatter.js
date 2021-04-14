@@ -6,7 +6,7 @@
        });
     })
 
-    $('.popover').css("max-width", "100%");
+    $('.popover').css("max-width", "none");
 
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
@@ -74,7 +74,7 @@
        });
     })
 
-    $('.popover').css("max-width", "100%");
+    $('.popover').css("max-width", "none");
 
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
