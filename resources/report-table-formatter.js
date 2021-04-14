@@ -17,12 +17,12 @@
         var lineage = split[0];
         var link = `<a data-toggle="tooltip" data-placement="top" title="Linkout to cov-lineages" href='https://cov-lineages.org/lineages/lineage_${lineage}.html' target='_blank'>${lineage}</a>`;
 
-        const table = `<div style="height: 200px; overflow-y: auto; white-space:pre-wrap;"><table class="table">
+        const table = `<div style="height: 200px; overflow-y: auto; white-space:nowrap;"><table class="table">
               <thead>
                 <tr>
                   <th scope="col">Gene</th>
                   <th scope="col">Alteration</th>
-                  <th scope="col">Present</th>
+                  <th scope="col">Present (VAF)</th>
                 </tr>
               </thead>
             <tbody>`;
@@ -104,7 +104,7 @@
         vats[split[0]].push(split[1]);
     }
 
-    const table = `<div style="height: 200px; overflow-y: auto; white-space:pre-wrap;"><table class="table">
+    const table = `<div style="height: 200px; overflow-y: auto; white-space:nowrap;"><table class="table">
               <thead>
                 <tr>
                   <th scope="col">Variant</th>
