@@ -1,76 +1,20 @@
 {
     "pangolin strain (#SNPs)": function format(value) {
     $(function () {
-       $('[data-toggle="popover"]').popover({
-            container: 'body',
-           template: '<div class="popover" style="max-width: none" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>'
-       });
-    })
-
-    $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
 
     if (value !== "no strain called") {
-        var split = value.split(' ');
-        var lineage = split[0];
+        var lineage = value.split(' ')[0];
         var link = `<a data-toggle="tooltip" data-placement="top" title="Linkout to cov-lineages" href='https://cov-lineages.org/lineages/lineage_${lineage}.html' target='_blank'>${lineage}</a>`;
-
-        const table = `<div style="height: 200px; overflow-y: auto; white-space:nowrap;"><table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">Gene</th>
-                  <th scope="col">Alteration</th>
-                  <th scope="col">Present (VAF)</th>
-                </tr>
-              </thead>
-            <tbody>`;
-
-        const table_end = "</tbody></table><div>";
-
-        let inner_table = [];
-
-        let cont = 0;
-        let not_cont = 0;
-
-        for (i = 1; i < split.length; i++) {
-            let splitted_variant = split[i].split(":");
-            let gene = splitted_variant[0];
-            let alteration = splitted_variant[1];
-
-            let contained = "";
-            if (splitted_variant[2] === "true") {
-                contained = `&#10003; (${splitted_variant[3]})` // Häkchen
-                cont += 1;
-            } else {
-                contained = "&#10799;" // Kreuz
-                not_cont += 1;
-            }
-
-            let row = `<tr><td scope="col">${gene}</td><td>${alteration}</td><td>${contained}</td></tr>`;
-            inner_table.push(row);
-        }
-
-        let final_table = table + inner_table.join("") + table_end;
-        let sum = cont + not_cont;
-
-        let overview = `<a tabindex="0" role="button" href="#" data-toggle="popover" data-trigger="focus" data-html='true' title='Overview for ${lineage}' data-content='${final_table}'>(${cont}/${sum})</a>`
-
-        if (split.length > 1) {
-            return `${link} ${overview}`;
-        } else {
-            return `${link}`;
-        }
-
+        return link + value.split(lineage).pop();
     } else {
         return value;
     }
 },
     "variant helper": function format(value, voi) {
     $(function () {
-       $('[data-toggle="popover"]').popover({
-            container: 'body'
-       });
+        $('[data-toggle="popover"]').popover()
     })
 
     $(function () {
@@ -101,7 +45,7 @@
         vats[split[0]].push(split[1]);
     }
 
-    const table = `<div style="height: 200px; overflow-y: auto; white-space:nowrap;"><table class="table">
+    const table = `<table class="table">
               <thead>
                 <tr>
                   <th scope="col">Variant</th>
@@ -110,7 +54,7 @@
               </thead>
             <tbody>`;
 
-    const table_end = "</tbody></table></div>";
+    const table_end = "</tbody></table>";
 
     var tables = {};
 
@@ -130,10 +74,10 @@
         if (voi) {
             var x = "";
             for (let i = 0; i < vats[g].length; i++) {
-                x = x + `<a tabindex="0" role="button" href="#" data-toggle="popover" data-trigger="focus" data-html='true' title='Gene: <a data-html="true" data-toggle="tooltip" data-placement="bottom" title="Linkout to gene in Ensembl genome browser" href="https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}" target="_blank">${g}:${vats[g][i]}</a>' data-content='${tables[g]}'>${g}:${vats[g][i]}</a>`;
+                x = x + `<a href="#" data-toggle="popover" data-trigger="focus" data-html='true' title='Gene: <a data-html="true" data-toggle="tooltip" data-placement="bottom" title="Linkout to gene in Ensembl genome browser" href="https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}" target="_blank">${g}:${vats[g][i]}</a>' data-content='${tables[g]}'>${g}:${vats[g][i]}</a>`;
             }
         } else {
-            var x = `<a tabindex="0" role="button" href="#" data-toggle="popover" data-trigger="focus" data-html='true' title='Gene: <a data-html="true" data-toggle="tooltip" data-placement="bottom" title="Linkout to gene in Ensembl genome browser" href="https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}" target="_blank">${g}</a>' data-content='${tables[g]}'>${g}</a>`;
+            var x = `<a href="#" data-toggle="popover" data-trigger="focus" data-html='true' title='Gene: <a data-html="true" data-toggle="tooltip" data-placement="bottom" title="Linkout to gene in Ensembl genome browser" href="https://covid-19.ensembl.org/Sars_cov_2/Gene/Summary?g=${g}" target="_blank">${g}</a>' data-content='${tables[g]}'>${g}</a>`;
         }
 
         result.push(x);
