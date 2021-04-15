@@ -1,4 +1,3 @@
-import itertools
 import pandas as pd
 import sys
 import os
@@ -29,13 +28,11 @@ initial_reads_df = initial_reads_df.set_index("sample")
 initial_reads_df = initial_reads_df[["# raw reads", "# trimmed reads"]]
 
 filtered_reads_df = pd.DataFrame()
-for sample, file in zip(
-    snakemake.params.samples, snakemake.input.reads_used_for_assembly
-):
+for sample, file in zip(snakemake.params.samples, snakemake.input.reads_used_for_assembly):
     infile = open(file, "r")
     for line in infile.read().splitlines():
         try:
-            num_reads = int(line) / 4 * 2
+            num_reads = int(line)/4*2
         except:
             num_reads = 0
         filtered_reads_df = filtered_reads_df.append(
@@ -55,12 +52,12 @@ for sample, file in zip(snakemake.params.samples, snakemake.input.initial_contig
         contigs[sample] = ""
     else:
         with open(file, "r") as fasta_unordered:
-
+             
             for line in fasta_unordered.read().splitlines():
                 if line.startswith(">"):
                     key = line
                     contigs[key] = ""
-                else:
+                else:  
                     contigs[key] += line
 
     length_initial = 0
@@ -83,11 +80,11 @@ for sample, file in zip(snakemake.params.samples, snakemake.input.polished_conti
         contigs[sample] = ""
     else:
         with open(file, "r") as fasta_ordered:
-
+            
             for line in fasta_ordered.read().splitlines():
                 if line.startswith(">"):
                     contigs[sample] = ""
-                else:
+                else:  
                     contigs[sample] += line
 
     for key in contigs:
@@ -124,19 +121,11 @@ for sample, file in zip(snakemake.params.samples, snakemake.input.kraken):
         ]["%"].values[0]
     except:
         krake_df_filtered["thereof SARS"] = 0
-    krake_df_filtered["Unclassified"] = krake_df[krake_df["name"] == "unclassified"][
-        "%"
-    ].values[0]
+    krake_df_filtered["Unclassified"] = krake_df[
+        krake_df["name"] == "unclassified"
+    ]["%"].values[0]
 
-    krake_df_filtered = krake_df_filtered.rename(
-        columns={
-            "Eukaryota": "Eukaryota (%)",
-            "Bacteria": "Bacteria (%)",
-            "Viruses": "Viruses (%)",
-            "thereof SARS": "thereof SARS (%)",
-            "Unclassified": "Unclassified (%)",
-        }
-    )
+    krake_df_filtered = krake_df_filtered.rename(columns={"Eukaryota": "Eukaryota (%)", "Bacteria": "Bacteria (%)", "Viruses": "Viruses (%)", "thereof SARS": "thereof SARS (%)", "Unclassified": "Unclassified (%)"})
     krake_df_filtered = krake_df_filtered.set_index("sample")
     total_kraken_df = total_kraken_df.append(krake_df_filtered)
 
@@ -145,53 +134,24 @@ try:
 except:
     pass
 
-pangolin_lineages = {}
-
-for file_name in os.listdir(snakemake.input.lineages_dir):
-    lineage = file_name.rstrip(".csv").lstrip("config_")
-    pangolin_lineages[lineage] = []
-    file = os.path.join(snakemake.input.lineages_dir, file_name)
-    with open(file) as f:
-        for alteration in f:
-            pangolin_lineages[lineage].append(alteration.strip())
-
 table = {}
-
 for file in snakemake.input.pangolin:
+
     pang_call = open(file, "r")
     table[file.split("/")[-1].split(".")[0]] = [[] for _ in range(12)]
     for line in pang_call.read().splitlines():
         if not line.startswith("taxon"):
-            sample = file.split("/")[-1].split(".")[0]
-            lineage = line.split(",")[1]
             if line.split(",")[1].startswith("None"):
-                table[sample][0] = ["no strain called"]
+                table[file.split("/")[-1].split(".")[0]][0] = ["no strain called"]
             else:
-                table[sample][0] = [
-                    lineage
-                ]  # + " " + "(" + line.split(",")[-1].split(" ")[0] + ")"
+                table[file.split("/")[-1].split(".")[0]][0] = [line.split(",")[1] + " " + "(" + line.split(",")[-1].split(" ")[0]+ ")"]
 
 AS3to1 = {
-    "Gly": "G",
-    "Ala": "A",
-    "Leu": "L",
-    "Met": "M",
-    "Phe": "F",
-    "Trp": "W",
-    "Lys": "K",
-    "Gln": "Q",
-    "Glu": "E",
-    "Ser": "S",
-    "Pro": "P",
-    "Val": "V",
-    "Ile": "I",
-    "Cys": "C",
-    "Tyr": "Y",
-    "His": "H",
-    "Arg": "R",
-    "Asn": "N",
-    "Asp": "D",
-    "Thr": "T",
+    "Gly": "G", "Ala": "A", "Leu": "L", "Met": "M",
+    "Phe": "F", "Trp": "W", "Lys": "K", "Gln": "Q",
+    "Glu": "E", "Ser": "S", "Pro": "P", "Val": "V",
+    "Ile": "I", "Cys": "C", "Tyr": "Y", "His": "H",
+    "Arg": "R", "Asn": "N", "Asp": "D", "Thr": "T",
 }
 
 for file in snakemake.input.bcf:
@@ -221,7 +181,7 @@ for sample in table:
         hashing = {}
         for j in range(len(table[sample][i])):
             print(table[sample][i][j])
-            var = ":".join(table[sample][i][j].split(":")[:2])
+            var = ':'.join(table[sample][i][j].split(":")[:2])
             freq = float(table[sample][i][j].split(":")[2])
             print(var, freq)
             if var not in hashing or freq > float(hashing[var].split(":")[2]):
@@ -230,31 +190,8 @@ for sample in table:
         for element in hashing.values():
             table[sample][i].append(element)
 
-# Add sample for testing pangolin lineages
-# table["z"] = [[] for _ in range(12)]
-# table["z"][0].append("B.1.1.7")
-# table["z"][1].append("ORF1AB:T1001I:0.263") # Contained in pangolin lineages
-# table["z"][1].append("ORF1ab:N1094_G1095delinsR:0.246") # Not contained in pangolin lineages
-
-"""Iterate variants of interest and other variants and check if gene and alteration are contained in pangolin data."""
-for sample in table:
-    lineage = table[sample][0][0].lower()
-    if lineage in pangolin_lineages:
-        for pangolin_variant in pangolin_lineages[lineage]:
-            _, pan_gene, pan_alteration = pangolin_variant.split(":")
-            entry = f"{pan_gene}:{pan_alteration}:false"
-            for variant in itertools.chain(table[sample][1], table[sample][2]):
-                gene, alteration, vaf = variant.split(":")
-                if (
-                    gene.lower() == pan_gene.lower()
-                    and alteration.lower() == pan_alteration.lower()
-                ):
-                    entry = f"{gene}:{alteration}:true:{vaf}"
-                    break
-            table[sample][0].append(entry)
-
 var_df = pd.DataFrame()
-for sample in table:
+for sample in table: 
     var_df = var_df.append(
         {
             "other variants": " ".join(table[sample][2]),
@@ -263,6 +200,7 @@ for sample in table:
             "sample": sample,
         },
         ignore_index=True,
+        
     )
 var_df = var_df.set_index("sample")
 var_df = var_df[["pangolin strain (#SNPs)", "variants of interest", "other variants"]]
@@ -271,11 +209,7 @@ initial_df = initial_df.set_index("sample")
 final_df = final_df.set_index("sample")
 
 output_df = pd.merge(
-    initial_reads_df,
-    filtered_reads_df,
-    how="left",
-    left_on="sample",
-    right_on=initial_reads_df.index,
+    initial_reads_df, filtered_reads_df, how="left", left_on="sample", right_on=initial_reads_df.index
 )
 output_df = output_df.merge(
     initial_df, how="left", left_on="sample", right_on=initial_df.index
@@ -285,15 +219,7 @@ output_df = output_df.merge(
     final_df, how="left", left_on="sample", right_on=initial_df.index
 )
 try:
-    total_kraken_df = total_kraken_df[
-        [
-            "Eukaryota (%)",
-            "Bacteria (%)",
-            "Viruses (%)",
-            "thereof SARS (%)",
-            "Unclassified (%)",
-        ]
-    ]
+    total_kraken_df = total_kraken_df[["Eukaryota (%)", "Bacteria (%)", "Viruses (%)", "thereof SARS (%)", "Unclassified (%)"]]
 except:
     pass
 output_df = output_df.merge(
