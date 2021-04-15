@@ -144,6 +144,7 @@ rule virologist_report:
             "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
             sample=get_samples_for_date(wildcards.date),
         ),
+        lineages_dir="resources/lineage_data/",
     output:
         all_data="results/{date}/virologist/report.csv",
         qc_data="results/{date}/virologist/qc_report.csv",
