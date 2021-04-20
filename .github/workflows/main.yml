@@ -86,17 +86,18 @@ jobs:
             ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-
             ${{ runner.os }}-test-resources-
 
-      - name: Cache results
-        if: startsWith(matrix.rule, 'all')
-        id: test-results
-        uses: actions/cache@v2
-        with:
-          path: |
-            .tests/results
-          key: ${{ runner.os }}-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/2021-02-01/qc/multiqc.html') }}
-          restore-keys: |
-            ${{ runner.os }}-results-${{ steps.get-date.outputs.date }}-
-            ${{ runner.os }}-results-
+      # TODO this can avoid that MissingInputFileExceptions are detected.
+      # - name: Cache results
+      #   if: startsWith(matrix.rule, 'all')
+      #   id: test-results
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: |
+      #       .tests/results
+      #     key: ${{ runner.os }}-results-${{ steps.get-date.outputs.date }}-${{ hashFiles('**results/2021-02-01/qc/multiqc.html') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-results-${{ steps.get-date.outputs.date }}-
+      #       ${{ runner.os }}-results-
 
       - name: Cache data
         if: startsWith(matrix.rule, 'all')
