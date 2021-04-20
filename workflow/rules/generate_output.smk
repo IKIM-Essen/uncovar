@@ -175,10 +175,11 @@ rule qc_html_report:
         "../envs/rbt.yaml"
     params:
         formatter=get_resource("report-table-formatter.js"),
+        pin_until="sample",
     log:
         "logs/{date}/qc_report_html.log",
     shell:
-        "rbt csv-report {input} --formatter {params.formatter} {output} > {log} 2>&1"
+        "rbt csv-report {input} --formatter {params.formatter} --pin-until {params.pin_until} {output} > {log} 2>&1"
 
 
 rule snakemake_reports:
