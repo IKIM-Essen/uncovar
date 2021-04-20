@@ -74,19 +74,21 @@ jobs:
           echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
         shell: bash
 
-      - name: Cache resources
-        id: test-resources
-        uses: actions/cache@v2
-        with:
-          path: |
-            .tests/resources/minikraken-8GB
-            .tests/resources/genomes/human-genome.fna.gz
-          key: ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
-          restore-keys: |
-            ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-
-            ${{ runner.os }}-test-resources-
+      # TODO caches are currently completely misleading, as they lead to certain files becoming present on disk which might
+      # then hide failures that would otherwise be seen.
+      
+      # - name: Cache resources
+      #   id: test-resources
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: |
+      #       .tests/resources/minikraken-8GB
+      #       .tests/resources/genomes/human-genome.fna.gz
+      #     key: ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources**taxo.k2d') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-test-resources-${{ steps.get-date.outputs.date }}-
+      #       ${{ runner.os }}-test-resources-
 
-      # TODO this can avoid that MissingInputFileExceptions are detected.
       # - name: Cache results
       #   if: startsWith(matrix.rule, 'all')
       #   id: test-results
@@ -99,53 +101,53 @@ jobs:
       #       ${{ runner.os }}-results-${{ steps.get-date.outputs.date }}-
       #       ${{ runner.os }}-results-
 
-      - name: Cache data
-        if: startsWith(matrix.rule, 'all')
-        id: test-data
-        uses: actions/cache@v2
-        with:
-          path: |
-            .tests/data
-          key: ${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
-          restore-keys: |
-            ${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-
-            ${{ runner.os }}-test-data-
+      # - name: Cache data
+      #   if: startsWith(matrix.rule, 'all')
+      #   id: test-data
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: |
+      #       .tests/data
+      #     key: ${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/data/*.fastq.gz') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-test-data-${{ steps.get-date.outputs.date }}-
+      #       ${{ runner.os }}-test-data-
 
-      - name: Cache benchmark data
-        if: startsWith(matrix.rule, 'all') != true
-        id: benchmark-data
-        uses: actions/cache@v2
-        with:
-          path: |
-            .tests/resources/benchmarking
-          key: ${{ runner.os }}-benchmark-data-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources/benchmarking/**/reads.1.fastq.gz') }}
-          restore-keys: |
-            ${{ runner.os }}-benchmark-data-${{ steps.get-date.outputs.date }}-
-            ${{ runner.os }}-benchmark-data-
+      # - name: Cache benchmark data
+      #   if: startsWith(matrix.rule, 'all') != true
+      #   id: benchmark-data
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: |
+      #       .tests/resources/benchmarking
+      #     key: ${{ runner.os }}-benchmark-data-${{ steps.get-date.outputs.date }}-${{ hashFiles('**.tests/resources/benchmarking/**/reads.1.fastq.gz') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-benchmark-data-${{ steps.get-date.outputs.date }}-
+      #       ${{ runner.os }}-benchmark-data-
 
-      - name: Cache test dependencies
-        if: startsWith(matrix.rule, 'all')
-        id: test-dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            .tests/.snakemake/conda
-          key: ${{ runner.os }}-sars-cov-test-dependencies-${{ steps.get-date.outputs.date }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-sars-cov-test-dependencies-${{ steps.get-date.outputs.date }}-
-            ${{ runner.os }}-sars-cov-test-dependencies-
+      # - name: Cache test dependencies
+      #   if: startsWith(matrix.rule, 'all')
+      #   id: test-dependencies
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: |
+      #       .tests/.snakemake/conda
+      #     key: ${{ runner.os }}-sars-cov-test-dependencies-${{ steps.get-date.outputs.date }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-sars-cov-test-dependencies-${{ steps.get-date.outputs.date }}-
+      #       ${{ runner.os }}-sars-cov-test-dependencies-
 
-      - name: Cache benchmark dependencies
-        if: startsWith(matrix.rule, 'all') != true
-        id: benchmark-dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            .tests/.snakemake/conda
-          key: ${{ runner.os }}-sars-cov-benchmark-dependencies-${{ steps.get-date.outputs.date }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-sars-cov-benchmark-dependencies-${{ steps.get-date.outputs.date }}-
-            ${{ runner.os }}-sars-cov-benchmark-dependencies-
+      # - name: Cache benchmark dependencies
+      #   if: startsWith(matrix.rule, 'all') != true
+      #   id: benchmark-dependencies
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: |
+      #       .tests/.snakemake/conda
+      #     key: ${{ runner.os }}-sars-cov-benchmark-dependencies-${{ steps.get-date.outputs.date }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-sars-cov-benchmark-dependencies-${{ steps.get-date.outputs.date }}-
+      #       ${{ runner.os }}-sars-cov-benchmark-dependencies-
 
       - name: Download test data
         if: steps.test-data.outputs.cache-hit != 'true' && startsWith(matrix.rule, 'all')

@@ -21,8 +21,8 @@ rule get_genome:
     resources:
         ncbi_api_requests=1,
     shell:
-        "(esearch -db nucleotide -query '{params.accession}' | "
-        "efetch -format fasta > {output}) 2> {log}"
+        "((esearch -db nucleotide -query '{params.accession}' | "
+        "efetch -format fasta > {output}) && [ -s {output} ]) 2> {log}"
 
 
 rule get_genome_annotation:
