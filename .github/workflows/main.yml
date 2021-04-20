@@ -151,8 +151,8 @@ jobs:
         if: steps.test-data.outputs.cache-hit != 'true' && startsWith(matrix.rule, 'all')
         run: |
           mkdir -p .tests/data
-          curl -L https://github.com/thomasbtf/small-kraken-db/blob/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
-          curl -L https://github.com/thomasbtf/small-kraken-db/blob/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
       
       - name: Use smaller reference files for testing
         if: steps.test-resources.outputs.cache-hit != 'true'
