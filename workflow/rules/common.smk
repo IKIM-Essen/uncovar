@@ -4,7 +4,7 @@ import re
 import random
 
 
-VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP"]
+VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
 
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
@@ -358,7 +358,10 @@ def get_filter_odds_input(wildcards):
     if wildcards.reference == "main":
         return "results/{date}/filtered-calls/ref~{reference}/{sample}.{filter}.bcf"
     else:
-        return "results/{date}/calls/ref~{reference}/{sample}.bcf"
+        # If reference is not main, we are polishing an assembly.
+        # Here, there is no need to structural variants or annotation based filtering.
+        # Hence we directly take the output of varlociraptor call on the small variants.
+        return "results/{date}/calls/ref~{reference}/{sample}.small.bcf"
 
 
 def get_vembrane_expression(wildcards):
@@ -535,8 +538,9 @@ def get_adapters(wildcards):
 
 wildcard_constraints:
     sample="[^/.]+",
-    vartypes="|".join(VARTYPES),
+    vartype="|".join(VARTYPES),
     clonality="subclonal|clonal",
     filter="|".join(
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
     ),
+    varrange="structural|small",
