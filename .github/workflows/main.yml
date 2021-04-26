@@ -177,6 +177,7 @@ jobs:
 
       - name: Test report
         uses: snakemake/snakemake-github-action@v1.15.0
+        if: startsWith(matrix.rule, 'all -npr') != 'true'
         with:
           directory: .tests
           snakefile: workflow/Snakefile
