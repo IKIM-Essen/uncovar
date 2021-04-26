@@ -150,14 +150,14 @@ jobs:
       #       ${{ runner.os }}-sars-cov-benchmark-dependencies-
 
       - name: Download test data
-        if: steps.test-data.outputs.cache-hit != 'true' && startsWith(matrix.rule, 'all')
+        if: steps.test-data.outputs.cache-hit != true && startsWith(matrix.rule, 'all')
         run: |
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
       
       - name: Use smaller reference files for testing
-        if: steps.test-resources.outputs.cache-hit != 'true'
+        if: steps.test-resources.outputs.cache-hit != true
         run: |
           mkdir -p .tests/resources/minikraken-8GB
           curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
@@ -177,7 +177,7 @@ jobs:
 
       - name: Test report
         uses: snakemake/snakemake-github-action@v1.15.0
-        if: startsWith(matrix.rule, 'all -npr') != 'true'
+        if: startsWith(matrix.rule, 'all -npr') != true
         with:
           directory: .tests
           snakefile: workflow/Snakefile
