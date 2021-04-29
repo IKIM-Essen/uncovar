@@ -10,3 +10,4 @@ dependencies:
   - altair_saver =0.5
   - biopython =1.78
   - pysam =0.16.0
+  - bcftools =1.10
