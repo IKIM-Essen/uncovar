@@ -202,11 +202,3 @@ rule plot_strain_call_error:
         "../envs/python.yaml"
     script:
         "../scripts/plot-caller-error.py"
-
-
-rule benchmark_strain_call_error:
-    input:
-        expand(
-            "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
-            caller=["kallisto", "pangolin"],
-        ),
