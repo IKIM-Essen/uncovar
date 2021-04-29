@@ -2,14 +2,14 @@ rule count_assembly_reads:
     input:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
     output:
-        read_count=temp("results/{date}/tables/read_counts/{sample}.txt"),
+        read_count=temp("results/{date}/tables/read_pair_counts/{sample}.txt"),
     log:
-        "logs/{date}/read_counts/{sample}.log",
+        "logs/{date}/read_pair_counts/{sample}.log",
     threads: 1
     conda:
         "../envs/unix.yaml"
     shell:
-        "zcat {input.fastq1} |wc -l > {output.read_count} 2> {log}"
+        "(echo \"$(zcat {input.fastq1} | wc -l) / 4\" | bc > {output.read_count}) 2> {log}"
 
 
 rule assembly_megahit:

@@ -234,5 +234,4 @@ output_df = output_df.set_index("sample")
 
 qc_df = output_df.copy()
 
-output_df.to_csv(snakemake.output.all_data)
 qc_df.to_csv(snakemake.output.qc_data)
