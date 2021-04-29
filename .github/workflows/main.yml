@@ -173,7 +173,7 @@ jobs:
         with:
           directory: .tests
           snakefile: workflow/Snakefile
-          stagein: mamba install -n snakemake -c conda-forge peppy -y && apt-get install bc
+          stagein: mamba install -n snakemake -c conda-forge peppy -y
           args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
 
       - name: Test report
