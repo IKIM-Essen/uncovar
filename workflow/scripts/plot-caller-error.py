@@ -163,10 +163,7 @@ def plot_worst_predictons_content(sm_input, sm_output):
     alt.vconcat(*plots).save(sm_output)
    
 
-
-
 if __name__ == "__main__":
     plot_error_heatmap(snakemake.input[0], snakemake.output[0])
     plot_bar_of_zeros(snakemake.input[0], snakemake.output[1])
     plot_worst_predictons_content(snakemake.input[0], snakemake.output[2])
-    # plot_worst_predictons_content("results/benchmarking/tables/kallisto-strain-call-error.csv", "kallisto-strain-call-error-content-false-predictions.svg")
