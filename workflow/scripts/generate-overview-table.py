@@ -1,11 +1,12 @@
 import sys
 import json
+import re
 
 import pandas as pd
 import pysam
 
 sys.stderr = open(snakemake.log[0], "w")
-sys.stdout = open(snakemake.log[0], "a")
+# sys.stdout = open(snakemake.log[0], "a")
 
 KRAKEN_FILTER_KRITERIA = "D"
 
@@ -20,7 +21,7 @@ data = pd.DataFrame()
 for sample, file in iter_with_samples(snakemake.input.reads_unfiltered):
     with open(file) as infile:
         number_reads = json.load(infile)
-    data.append(
+    data = data.append(
         {
             "# raw reads": number_reads["summary"]["before_filtering"]["total_reads"],
             "# trimmed reads": number_reads["summary"]["after_filtering"][
@@ -40,7 +41,7 @@ for sample, file in iter_with_samples(snakemake.input.reads_used_for_assembly):
 
 def register_contig_lengths(assemblies, name):
     for sample, file in iter_with_samples(assemblies):
-        with pysam.FastaFile(file) as infile:
+        with pysam.FastxFile(file) as infile:
             data.loc[sample, name] = max(len(contig.sequence) for contig in infile)
 
 
@@ -63,11 +64,11 @@ for sample, file in iter_with_samples(snakemake.input.kraken):
 
     keep_rows = (
         (kraken_results["code"] == KRAKEN_FILTER_KRITERIA)
-        or (
+        | (
             kraken_results["name"]
             == "Severe acute respiratory syndrome-related coronavirus"
         )
-        or (kraken_results["name"] == "unclassified")
+        | (kraken_results["name"] == "unclassified")
     )
 
     kraken_results = kraken_results.loc[keep_rows, ["%", "name"]].set_index("name").T
@@ -105,7 +106,7 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
     else:
         match = re.match(
             "((?P<varcount>\d+/\d+) .+ SNPs$)|(seq_len:\d+)$|($)",
-            pangolin_results.loc[0, "note"].strip(),
+            pangolin_results.fillna("").loc[0, "note"].strip(),
         )
         assert (
             match is not None
