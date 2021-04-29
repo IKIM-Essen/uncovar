@@ -45,14 +45,12 @@ rule ucsc_vcf:
             category="6. Variant Call Files",
             subcategory="{filter}",
         ),
-    params:
-        strain=lambda w, input: get_strain(input.strain_call),
     log:
         "logs/{date}/ucsc-vcf/{target}.subclonal.{filter}.log",
     conda:
         "../envs/bcftools.yaml"
-    shell:
-        "bcftools view -Ov {input.bcfs} | (echo track name={wildcards.target} description={params.strain}-{wildcards.filter}; cat -) > {output} 2> {log}"
+    script:
+        "../scripts/ucsc_vcf.py"
 
 
 rule aggregate_ucsc_vcfs:
