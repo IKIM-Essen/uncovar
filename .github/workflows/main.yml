@@ -65,8 +65,10 @@ jobs:
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
-      - name: Install tree
-        run: sudo apt-get install tree
+      - name: Install dependcies
+        run: |
+          sudo apt-get install tree
+          sudo apt-get install bc
 
       - name: Get date
         id: get-date
