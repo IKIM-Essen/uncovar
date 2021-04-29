@@ -6,7 +6,7 @@ import pandas as pd
 import pysam
 
 sys.stderr = open(snakemake.log[0], "w")
-# sys.stdout = open(snakemake.log[0], "a")
+sys.stdout = open(snakemake.log[0], "a")
 
 KRAKEN_FILTER_KRITERIA = "D"
 
