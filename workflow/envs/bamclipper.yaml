@@ -3,3 +3,4 @@ channels:
   - conda-forge
 dependencies:
   - bamclipper =1.0
+  - fgbio = 1.3
