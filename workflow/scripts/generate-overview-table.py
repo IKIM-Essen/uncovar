@@ -141,8 +141,24 @@ AA_ALPHABET_TRANSLATION = {
 }
 
 for sample, file in iter_with_samples(snakemake.input.bcf):
-    variants_of_interest = []
-    other_variants = []
+    variants_of_interest = {}
+    other_variants = {}
+
+    def insert_entry(variants, hgvsp, vaf):
+        prev_vaf = variants.get(hgvsp)
+        if prev_vaf is None or prev_vaf < vaf:
+            # Only insert if there was no entry before or it had a smaller vaf.
+            # Such duplicate calls can occur if there are multiple genomic variants
+            # that lead to the same protein alteration.
+            # We just report the protein alteration here, so what matters to us is the
+            # variant call with the highest VAF.
+            # TODO: in principle, the different alterations could even be complementary.
+            # Hence, one could try to determine that and provide a joint vaf.
+            variants[hgvsp] = vaf
+
+    def fmt_variants(variants):
+        return " ".join(sorted(f"{hgvsp}:{vaf:.3f}" for hgvsp, vaf in variants))
+
     with pysam.VariantFile(file, "rb") as infile:
         for record in infile:
             vaf = record.samples[0]["AF"][0]
@@ -159,15 +175,15 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
                         alteration = alteration.replace(triplet, amino)
 
                     hgvsp = f"{feature}:{alteration}"
-                    entry = f"{hgvsp}:{vaf:.3f}"
+                    entry = (hgvsp, f"{vaf:.3f}")
                     if alteration in snakemake.params.voc.get(feature, {}):
-                        variants_of_interest.append(entry)
+                        insert_entry(variants_of_interest, hgvsp, vaf)
                     else:
-                        other_variants.append(entry)
-    data.loc[sample, "Variants of Interest"] = " ".join(
-        sorted(set(variants_of_interest))
-    )
-    data.loc[sample, "Other Variants"] = " ".join(sorted(set(other_variants)))
+                        insert_entry(other_variants, hgvsp, vaf)
+
+    data.loc[sample, "Variants of Interest"] = fmt_variants(variants_of_interest)
+    data.loc[sample, "Other Variants"] = fmt_variants(other_variants)
+
 
 int_cols = [
     "Raw Reads (#)",
@@ -177,5 +193,6 @@ int_cols = [
     "Final Contig (bp)",
 ]
 data[int_cols] = data[int_cols].astype(dtype)
+
 
 data.to_csv(snakemake.output[0], float_format="%.1f")
