@@ -171,10 +171,16 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
     data.loc[sample, "Other Variants"] = " ".join(sorted(set(other_variants)))
 
 fmt_dict = {
-    int : ["Raw Reads (#)", "Trimmed Reads (#)", "Used Reads (#)", "Initial Contig (bp)", "Final Contig (bp)"],
-    str : ["Pangolin Strain (#SNPs)", "Variants of Interest", "Other Variants"]
+    int: [
+        "Raw Reads (#)",
+        "Trimmed Reads (#)",
+        "Used Reads (#)",
+        "Initial Contig (bp)",
+        "Final Contig (bp)",
+    ],
+    str: ["Pangolin Strain (#SNPs)", "Variants of Interest", "Other Variants"],
 }
-for dtype, columns in fmt_dict.items(): 
+for dtype, columns in fmt_dict.items():
     data[columns] = data[columns].astype(dtype)
 
 data.to_csv(snakemake.output[0])
