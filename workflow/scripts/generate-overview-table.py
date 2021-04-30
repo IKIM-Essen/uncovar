@@ -6,7 +6,7 @@ import pandas as pd
 import pysam
 
 sys.stderr = open(snakemake.log[0], "w")
-sys.stdout = open(snakemake.log[0], "a")
+
 
 KRAKEN_FILTER_KRITERIA = "D"
 
@@ -91,9 +91,8 @@ for sample, file in iter_with_samples(snakemake.input.kraken):
     ).fillna(0)
     kraken_results["sample"] = sample
     species_columns = species_columns.append(kraken_results, ignore_index=True)
-    print(kraken_results)
 
-data.join(species_columns.set_index("sample"))
+data = data.join(species_columns.set_index("sample"))
 
 # add pangolin results
 for sample, file in iter_with_samples(snakemake.input.pangolin):
