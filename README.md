@@ -9,7 +9,7 @@ This workflow calls the SARS-Cov-2 strain and variants for given NGS samples.
 
 * Alexander Thomas (@alethomas)
 * Thomas Battenfeld (@thomasbtf)
-* Felix	Wiegand	(@fxwiegand)
+* Felix Wiegand (@fxwiegand)
 * Folker Meyer (@folker)
 * Johannes Köster (@johanneskoester)
 
