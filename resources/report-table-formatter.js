@@ -1,5 +1,5 @@
 {
-    "pangolin strain (#SNPs)": function format(value) {
+    "Pangolin Strain (#SNPs)": function format(value) {
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
@@ -92,10 +92,10 @@
     }
 
 },
-    "variants of interest": function format(value) {
+    "Variants of Interest": function format(value) {
     return this["variant helper"](value, true);
 },
-    "other variants": function format(value) {
+    "Other Variants": function format(value) {
     let result = this["variant helper"](value, false);
     return result;
 }
