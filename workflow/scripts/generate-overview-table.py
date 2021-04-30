@@ -141,8 +141,18 @@ AA_ALPHABET_TRANSLATION = {
 }
 
 for sample, file in iter_with_samples(snakemake.input.bcf):
-    variants_of_interest = []
-    other_variants = []
+    variants_of_interest = {}
+    other_variants = {}
+
+    def insert_entry(variants, hgvsp, vaf):
+        prev_vaf = variants.get(hgvsp)
+        if prev_vaf is None or prev_vaf < vaf:
+            # only insert if there was no entry before or it had a smaller vaf
+            variants[hgvsp] = vaf
+
+    def fmt_variants(variants):
+        return " ".join(sorted(f"{hgvsp}:{vaf:.3f}" for hgvsp, vaf in variants))
+
     with pysam.VariantFile(file, "rb") as infile:
         for record in infile:
             vaf = record.samples[0]["AF"][0]
@@ -159,15 +169,14 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
                         alteration = alteration.replace(triplet, amino)
 
                     hgvsp = f"{feature}:{alteration}"
-                    entry = f"{hgvsp}:{vaf:.3f}"
+                    entry = (hgvsp, f"{vaf:.3f}")
                     if alteration in snakemake.params.voc.get(feature, {}):
-                        variants_of_interest.append(entry)
+                        insert_entry(variants_of_interest, hgvsp, vaf)
                     else:
-                        other_variants.append(entry)
-    data.loc[sample, "Variants of Interest"] = " ".join(
-        sorted(set(variants_of_interest))
-    )
-    data.loc[sample, "Other Variants"] = " ".join(sorted(set(other_variants)))
+                        insert_entry(other_variants, hgvsp, vaf)
+
+    data.loc[sample, "Variants of Interest"] = fmt_variants(variants_of_interest)
+    data.loc[sample, "Other Variants"] = fmt_variants(other_variants)
 
 fmt_dict = {
     int: [
@@ -182,4 +191,4 @@ fmt_dict = {
 for dtype, columns in fmt_dict.items():
     data[columns] = data[columns].astype(dtype)
 
-data.to_csv(snakemake.output[0], float_format='%.1f')
+data.to_csv(snakemake.output[0], float_format="%.1f")
