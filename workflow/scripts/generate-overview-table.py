@@ -7,7 +7,6 @@ import pysam
 
 sys.stderr = open(snakemake.log[0], "w")
 
-
 KRAKEN_FILTER_KRITERIA = "D"
 
 
@@ -183,4 +182,4 @@ fmt_dict = {
 for dtype, columns in fmt_dict.items():
     data[columns] = data[columns].astype(dtype)
 
-data.to_csv(snakemake.output[0])
+data.to_csv(snakemake.output[0], float_format='%.1f')
