@@ -9,6 +9,7 @@ This workflow calls the SARS-Cov-2 strain and variants for given NGS samples.
 
 * Alexander Thomas (@alethomas)
 * Thomas Battenfeld (@thomasbtf)
+* Felix Wiegand (@fxwiegand)
 * Folker Meyer (@folker)
 * Johannes Köster (@johanneskoester)
 
@@ -20,10 +21,9 @@ TODO upon publishing fill this with instructions on how to use the github templa
 
 ### Step 2: Configure workflow
 
-Configure the workflow according to your needs via editing the files under `config`.
+Configure the workflow according to your needs via editing the files under `config`. Adjust `config.yaml` to configure the workflow execution, and `pep/samples.csv` to specify your sample setup.
 
-### Step 3: Passing data to the workflow
-
+#### Passing NGS samples
 It is recommended to use the following structure to organize the data:
 
     ├── archive
@@ -32,12 +32,20 @@ It is recommended to use the following structure to organize the data:
         ├── data
         └── ...
 
-The incoming directory should contain paired end reads in a FASTQ format. It is recommended to work with compressed files (e.g. sample-name.fastq.gz).
+The incoming directory should contain paired end reads in a FASTQ format. It is recommended to work with compressed files (e.g. `sample-name.fastq.gz`).
 
-To load your data into the workflow execute `python preprocessing/update_sample_sheet.py` from `snakemake-workflow-sars-cov2` as working directory.
+To load your data into the workflow execute `python preprocessing/update_sample_sheet.py` with `snakemake-workflow-sars-cov2` as working directory.
 
-The executed script automatically copies your data into the data directory of the workflow and moves all files from incoming directory to the archive. 
+The executed script automatically copies your data into the data directory and moves all files from incoming directory to the archive. 
 Moreover, the sample sheet is automatically updated with the new files. Please note, that only the part of the filename before the first '_' character is used as the sample name for the workflow.
+
+### Step 3: Install Snakemake
+
+Install Snakemake using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html):
+
+    conda create -c bioconda -c conda-forge -n snakemake snakemake
+
+For installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
 ### Step 4: Execute workflow
 
