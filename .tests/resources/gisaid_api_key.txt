@@ -1,0 +1,1 @@
+Include here your GISAID API key. Format: user:passwort
