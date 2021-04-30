@@ -12,16 +12,12 @@ rule clip_primer:
         sortbam=temp("results/{date}/clipped-reads/{sample}.bam"),
         sortindex=temp("results/{date}/clipped-reads/{sample}.bam.bai"),
         clippedbam=temp("results/{date}/clipped-reads/{sample}.primerclipped.bam"),
-        sortclippedbam=temp(
-            "results/{date}/clipped-reads/{sample}.sort.primerclipped.bam"
-        ),
         hardclippedbam=temp(
-            "results/{date}/clipped-reads/{sample}.sort.primerclipped.hard.bam"
+            "results/{date}/clipped-reads/{sample}.primerclipped.hard.bam"
         ),
-        fq1_initial=temp("results/{date}/clipped-reads/{sample}_initial.1.fastq.gz"),
-        fq2_initial=temp("results/{date}/clipped-reads/{sample}_initial.2.fastq.gz"),
-        fq1_sorted=temp("results/{date}/clipped-reads/{sample}.1.fastq"),
-        fq2_sorted=temp("results/{date}/clipped-reads/{sample}.2.fastq"),
+        sorthardclippedbam=temp(
+            "results/{date}/clipped-reads/{sample}.primerclipped.hard.sorted.bam"
+        ),
         fq1="results/{date}/clipped-reads/{sample}.1.fastq.gz",
         fq2="results/{date}/clipped-reads/{sample}.2.fastq.gz",
     log:
@@ -43,11 +39,6 @@ rule clip_primer:
         bamclipper.sh -b {params.bam} -p {params.dir_depth}{input.bed} -n {threads} >> {params.dir_depth}{log} 2>&1
         cd {params.dir_depth}
         fgbio --sam-validation-stringency=LENIENT ClipBam -i {output.clippedbam} -o {output.hardclippedbam} -H true -r {input.ref_fasta} >> {log} 2>&1
-        samtools sort  -@ {threads} -n {output.hardclippedbam} -o {output.sortclippedbam}  >> {log} 2>&1
-
-        samtools fastq -@ {threads} {output.hardclippedbam} -1 {output.fq1_initial} -2 {output.fq2_initial}  >> {log} 2>&1
-        zcat {output.fq1_initial} | paste - - - - | sort -k1,1 -t \" \" | tr \"\t\" \"\n\" > {output.fq1_sorted}
-        zcat {output.fq2_initial} | paste - - - - | sort -k1,1 -t \" \" | tr \"\t\" \"\n\" > {output.fq2_sorted}
-        gzip -c {output.fq1_sorted} > {output.fq1}
-        gzip -c {output.fq2_sorted} > {output.fq2}
+        samtools sort  -@ {threads} -n {output.hardclippedbam} -o {output.sorthardclippedbam}  >> {log} 2>&1
+        samtools fastq -@ {threads} {output.sorthardclippedbam} -1 {output.fq1} -2 {output.fq2}  >> {log} 2>&1
         """
