@@ -148,7 +148,7 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
         prev_vaf = variants.get(hgvsp)
         if prev_vaf is None or prev_vaf < vaf:
             # Only insert if there was no entry before or it had a smaller vaf.
-            # Such duplicate calls can occur if there are multiple genomic variants 
+            # Such duplicate calls can occur if there are multiple genomic variants
             # that lead to the same protein alteration.
             # We just report the protein alteration here, so what matters to us is the
             # variant call with the highest VAF.
