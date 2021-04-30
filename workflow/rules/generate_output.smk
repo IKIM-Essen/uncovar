@@ -173,7 +173,7 @@ rule qc_html_report:
         "../envs/rbt.yaml"
     params:
         formatter=get_resource("report-table-formatter.js"),
-        pin_until="sample",
+        pin_until="Sample",
     log:
         "logs/{date}/qc_report_html.log",
     shell:
