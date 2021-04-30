@@ -17,26 +17,26 @@ def iter_with_samples(inputfiles):
 
 data = pd.DataFrame()
 
-# add numbers of raw and trimmed reads
+# add numbers of raw and Trimmed Reads
 for sample, file in iter_with_samples(snakemake.input.reads_unfiltered):
     with open(file) as infile:
         number_reads = json.load(infile)
     data = data.append(
         {
-            "# raw reads": number_reads["summary"]["before_filtering"]["total_reads"],
-            "# trimmed reads": number_reads["summary"]["after_filtering"][
+            "Raw Reads (#)": number_reads["summary"]["before_filtering"]["total_reads"],
+            "Trimmed Reads (#)": number_reads["summary"]["after_filtering"][
                 "total_reads"
             ],
-            "sample": sample,
+            "Sample": sample,
         },
         ignore_index=True,
     )
-data.set_index("sample", inplace=True)
+data.set_index("Sample", inplace=True)
 
 # add numbers of reads used for assembly
 for sample, file in iter_with_samples(snakemake.input.reads_used_for_assembly):
     with open(file) as infile:
-        data.loc[sample, "# used reads"] = int(infile.read()) * 2
+        data.loc[sample, "Used Reads (#)"] = int(infile.read()) * 2
 
 
 def register_contig_lengths(assemblies, name):
@@ -45,11 +45,11 @@ def register_contig_lengths(assemblies, name):
             data.loc[sample, name] = max(len(contig.sequence) for contig in infile)
 
 
-# add lenghts of initial contigs
-register_contig_lengths(snakemake.input.initial_contigs, "initial contig (bp)")
+# add lenghts of Initial Contigs
+register_contig_lengths(snakemake.input.initial_contigs, "Initial Contig (bp)")
 
 # add lenghts of polished contigs
-register_contig_lengths(snakemake.input.polished_contigs, "final contig (bp)")
+register_contig_lengths(snakemake.input.polished_contigs, "Final Contig (bp)")
 
 # add kraken estimates
 species_columns = pd.DataFrame()
@@ -115,7 +115,7 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
         if varcount:
             varcount = f" ({varcount})"
         pangolin_call = f"{lineage}{varcount}"
-    data.loc[sample, "pangolin strain (#SNPs)"] = pangolin_call
+    data.loc[sample, "Pangolin Strain (#SNPs)"] = pangolin_call
 
 # add variant calls
 AA_ALPHABET_TRANSLATION = {
@@ -165,14 +165,14 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
                         variants_of_interest.append(entry)
                     else:
                         other_variants.append(entry)
-    data.loc[sample, "variants of interest"] = " ".join(
+    data.loc[sample, "Variants of Interest"] = " ".join(
         sorted(set(variants_of_interest))
     )
-    data.loc[sample, "other variants"] = " ".join(sorted(set(other_variants)))
+    data.loc[sample, "Other Variants"] = " ".join(sorted(set(other_variants)))
 
 fmt_dict = {
-    int : ["# raw reads", "# trimmed reads", "# used reads", "initial contig (bp)", "final contig (bp)"],
-    str : ["pangolin strain (#SNPs)", "variants of interest", "other variants"]
+    int : ["Raw Reads (#)", "Trimmed Reads (#)", "Used Reads (#)", "Initial Contig (bp)", "Final Contig (bp)"],
+    str : ["Pangolin Strain (#SNPs)", "Variants of Interest", "Other Variants"]
 }
 for dtype, columns in fmt_dict.items(): 
     data[columns] = data[columns].astype(dtype)
