@@ -91,6 +91,7 @@ for sample, file in iter_with_samples(snakemake.input.kraken):
     ).fillna(0)
     kraken_results["sample"] = sample
     species_columns = species_columns.append(kraken_results, ignore_index=True)
+    print(kraken_results)
 
 data.join(species_columns.set_index("sample"))
 
@@ -113,7 +114,7 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
         ), "unexpected pangolin note, please update above regular expression"
         varcount = match.group("varcount") or ""
         if varcount:
-            varcount = f"({varcount})"
+            varcount = f" ({varcount})"
         pangolin_call = f"{lineage}{varcount}"
     data.loc[sample, "pangolin strain (#SNPs)"] = pangolin_call
 
@@ -169,5 +170,12 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
         sorted(set(variants_of_interest))
     )
     data.loc[sample, "other variants"] = " ".join(sorted(set(other_variants)))
+
+fmt_dict = {
+    int : ["# raw reads", "# trimmed reads", "# used reads", "initial contig (bp)", "final contig (bp)"],
+    str : ["pangolin strain (#SNPs)", "variants of interest", "other variants"]
+}
+for dtype, columns in fmt_dict.items(): 
+    data[columns] = data[columns].astype(dtype)
 
 data.to_csv(snakemake.output[0])
