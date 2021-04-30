@@ -56,10 +56,9 @@ strain-calling:
   min-fraction: 0.02
   # flag for using gisaid or genbank 
   use-gisaid: True
-  # path to meta data from GISAID
-  gisaid-metadata: resources/gisaid/metadata_2021-04-11.tsv
-  # path to sequences fasta from GISAID
-  gisaid-metafasta: resources/gisaid/sequences_2021-04-11.fasta
+  # path to gisaid API auth key. If not available, create an account https://www.gisaid.org/ 
+  # and apply for an API key via https://platform.gisaid.org/epi3/cfrontend
+  gisaid-auth-file: resources/gisaid_api_key.txt
   # paths to store genomes that are extracted from the full GISAID data
   extracted-strain-genomes: resources/genomes
 
