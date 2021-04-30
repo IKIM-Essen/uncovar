@@ -192,7 +192,7 @@ int_cols = [
     "Initial Contig (bp)",
     "Final Contig (bp)",
 ]
-data[int_cols] = data[int_cols].astype(int)
+data[int_cols] = data[int_cols].applymap(lambda x: "{0:,}".format(int(x)))
 
 
 data.to_csv(snakemake.output[0], float_format="%.1f")
