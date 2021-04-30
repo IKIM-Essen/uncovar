@@ -157,7 +157,7 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
             variants[hgvsp] = vaf
 
     def fmt_variants(variants):
-        return " ".join(sorted(f"{hgvsp}:{vaf:.3f}" for hgvsp, vaf in variants))
+        return " ".join(sorted(f"{hgvsp}:{vaf:.3f}" for hgvsp, vaf in variants.items()))
 
     with pysam.VariantFile(file, "rb") as infile:
         for record in infile:
@@ -192,7 +192,7 @@ int_cols = [
     "Initial Contig (bp)",
     "Final Contig (bp)",
 ]
-data[int_cols] = data[int_cols].astype(dtype)
+data[int_cols] = data[int_cols].astype(int)
 
 
 data.to_csv(snakemake.output[0], float_format="%.1f")
