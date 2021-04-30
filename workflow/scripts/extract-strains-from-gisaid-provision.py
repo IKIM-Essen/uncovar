@@ -40,13 +40,19 @@ def extrace_strains_from_provision(
 
 
 def select_oldest_strains(df: pd.DataFrame):
-    df = df.copy()
+    # covv_lineage -> pangolin lineage
+    # n_content -> share of nan in seq
+    # covv_subm_date -> submission date of seq
+    # covv_host -> host of the seq
+    # is_complete -> seq ist complete
+
     preselect_filter = (
         (df["covv_host"] == "Human")
         & (df["is_complete"] == True)
         & (df["covv_lineage"] != "None")
     )
     cols_of_interesst = ["covv_lineage", "n_content", "covv_subm_date"]
+    df = df.copy()
     df.dropna(subset=cols_of_interesst, inplace=True)
     df = df[preselect_filter]
     df.sort_values(by=cols_of_interesst, inplace=True)
@@ -58,7 +64,6 @@ def write_sequence(
     covv_lineage: str, covv_lineage_fasta: str, sequence: str, out_path: str
 ):
     genome_file = join(out_path, covv_lineage_fasta)
-    print(genome_file)
     if not isfile(genome_file):
         with open(genome_file, "w") as f:
             f.write(f">{covv_lineage}\n")
