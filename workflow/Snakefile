@@ -25,6 +25,7 @@ include: "rules/variant_filtration.smk"
 include: "rules/variant_report.smk"
 include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
+include: "rules/virus_vg.smk"
 
 
 rule save_latest_run:
