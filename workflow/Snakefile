@@ -56,12 +56,14 @@ rule save_latest_run:
 checkpoint all:
     input:
         expand(
-            "results/{date}/qc/multiqc.html", date=get_all_run_dates(),
+            "results/{date}/qc/multiqc.html",
+            date=get_all_run_dates(),
         ),
         expand("results/reports/{date}.zip", date=get_all_run_dates()),
         expand("results/rki/{date}_uk-essen_rki.fasta", date=get_all_run_dates()),
         expand(
-            "results/{date}/plots/all.strains.pangolin.svg", date=get_all_run_dates(),
+            "results/{date}/plots/all.strains.pangolin.svg",
+            date=get_all_run_dates(),
         ),
         expand(
             "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
@@ -99,10 +101,18 @@ checkpoint all:
             expand_wildcard=config["variant-calling"]["filters"],
         ),
         expand(
-            "results/{date}/virologist/report.csv", date=get_all_run_dates(),
+            "results/{date}/virologist/report.csv",
+            date=get_all_run_dates(),
         ),
         expand(
-            "results/{date}/qc_data/", date=get_all_run_dates(),
+            "results/{date}/qc_data/",
+            date=get_all_run_dates(),
+        ),
+        expand(
+            "results/{date}/assembly/virus-vg/{sample}.contigs.fasta",
+            zip,
+            date=get_dates(),
+            sample=get_samples(),
         ),
     output:
         touch(

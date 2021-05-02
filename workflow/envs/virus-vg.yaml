@@ -1,0 +1,9 @@
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - vg =1.32
+  - graph-tool =2.37
+  - numpy =1.20
+  - tqdm =4.60
+  - gurobi =9.1

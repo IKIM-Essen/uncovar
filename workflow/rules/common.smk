@@ -182,7 +182,10 @@ def get_assembly_comparisons(bams=True):
             if bams
             else "resources/genomes/{accession}.fasta"
         )
-        return expand(pattern, accession=accessions,)
+        return expand(
+            pattern,
+            accession=accessions,
+        )
 
     return inner
 
@@ -364,7 +367,10 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
         [
             expand(ele, exp=expand_wildcard)
             for ele in expand(
-                expand_string, zip, zip1=zip_wildcard_1, zip2=zip_wildcard_2,
+                expand_string,
+                zip,
+                zip1=zip_wildcard_1,
+                zip2=zip_wildcard_2,
             )
         ],
         [],

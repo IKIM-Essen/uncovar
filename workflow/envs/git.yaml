@@ -1,0 +1,4 @@
+channels:
+  - conda-forge
+dependencies:
+  - git =2.30
