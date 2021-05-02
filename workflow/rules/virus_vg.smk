@@ -80,5 +80,6 @@ rule build_haplotypes:
         "logs/{date}/virus-vg/optimize-strains/{sample}.log",
     conda:
         "../envs/virus-vg.yaml"
+    threads: 16
     script:
         "../scripts/virus-vg-optimize-strains.py"

@@ -17,6 +17,7 @@ with tempfile.TemporaryDirectory() as tmp:
     shell(
         "cd {tmp}; "
         "{snakemake.input.virus_vg}/scripts/optimize_strains.py "
+        "--threads {snakemake.threads} "
         "-m {min_node_abundance} -c {min_strain_abundance} "
         "{snakemake.input.abundances} {snakemake.input.gfa} 2> {log}"
     )

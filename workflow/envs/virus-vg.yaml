@@ -1,6 +1,7 @@
 channels:
   - bioconda
   - conda-forge
+  - Gurobi
 dependencies:
   - vg =1.32
   - graph-tool =2.37
