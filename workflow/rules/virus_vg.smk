@@ -24,6 +24,8 @@ rule savage:
         depth="results/{date}/depth/{sample}.txt",
     params:
         denovo=True,
+    log:
+        "logs/{date}/savage/{sample}.log",
     conda:
         "../envs/savage.yaml"
     threads: 16
@@ -74,5 +76,9 @@ rule build_haplotypes:
         "results/{date}/assembly/virus-vg/{sample}.contigs.fasta",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
+    log:
+        "logs/{date}/virus-vg/optimize-strains/{sample}.log",
+    conda:
+        "../envs/virus-vg.yaml"
     script:
         "../scripts/virus-vg-optimize-strains.py"
