@@ -188,7 +188,7 @@ rule combine_references:
     output:
         "resources/genomes/main-and-human-genome.fna.gz",
     log:
-        "../logs/combine-reference-genomes.log",
+        "logs/combine-reference-genomes.log",
     conda:
         "../envs/unix.yaml"
     shell:
