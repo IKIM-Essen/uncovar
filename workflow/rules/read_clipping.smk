@@ -5,12 +5,18 @@ rule clip_primer:
             ref=config["adapters"]["amplicon-reference"],
         ),
         bed=config["adapters"]["amplicon-primers"],
+        ref_fasta="resources/genomes/{reference}.fasta".format(
+            reference=config["adapters"]["amplicon-reference"]
+        ),
     output:
         sortbam=temp("results/{date}/clipped-reads/{sample}.bam"),
         sortindex=temp("results/{date}/clipped-reads/{sample}.bam.bai"),
         clippedbam=temp("results/{date}/clipped-reads/{sample}.primerclipped.bam"),
-        sortclippedbam=temp(
-            "results/{date}/clipped-reads/{sample}.sort.primerclipped.bam"
+        hardclippedbam=temp(
+            "results/{date}/clipped-reads/{sample}.primerclipped.hard.bam"
+        ),
+        sorthardclippedbam=temp(
+            "results/{date}/clipped-reads/{sample}.primerclipped.hard.sorted.bam"
         ),
         fq1="results/{date}/clipped-reads/{sample}.1.fastq.gz",
         fq2="results/{date}/clipped-reads/{sample}.2.fastq.gz",
@@ -32,6 +38,7 @@ rule clip_primer:
         cd {params.dir}
         bamclipper.sh -b {params.bam} -p {params.dir_depth}{input.bed} -n {threads} >> {params.dir_depth}{log} 2>&1
         cd {params.dir_depth}
-        samtools sort  -@ {threads} -n {output.clippedbam} -o {output.sortclippedbam}  >> {log} 2>&1
-        samtools fastq -@ {threads} {output.sortclippedbam} -1 {output.fq1} -2 {output.fq2}  >> {log} 2>&1
+        fgbio --sam-validation-stringency=LENIENT ClipBam -i {output.clippedbam} -o {output.hardclippedbam} -H true -r {input.ref_fasta} >> {log} 2>&1
+        samtools sort  -@ {threads} -n {output.hardclippedbam} -o {output.sorthardclippedbam}  >> {log} 2>&1
+        samtools fastq -@ {threads} {output.sorthardclippedbam} -1 {output.fq1} -2 {output.fq2}  >> {log} 2>&1
         """
