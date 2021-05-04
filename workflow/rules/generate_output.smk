@@ -223,6 +223,6 @@ rule snakemake_reports:
             else ""
         ),
     log:
-        "../logs/snakemake_reports/{date}.log",
+        "logs/snakemake_reports/{date}.log",
     shell:
         "snakemake --nolock --report-stylesheet resources/custom-stylesheet.css {input} --report {output} {params.for_testing}"
