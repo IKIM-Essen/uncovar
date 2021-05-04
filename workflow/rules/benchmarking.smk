@@ -64,7 +64,7 @@ rule test_non_cov2:
     params:
         accessions=get_non_cov2_accessions(),
     log:
-        "../logs/test-cases/summarize_non_cov2.log",
+        "logs/test-cases/summarize_non_cov2.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -86,7 +86,7 @@ rule report_non_cov2:
             category="Test results",
         ),
     log:
-        "../logs/report_non_cov2.log",
+        "logs/report_non_cov2.log",
     conda:
         "../envs/rbt.yaml"
     shell:
