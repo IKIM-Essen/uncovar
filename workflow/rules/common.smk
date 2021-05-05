@@ -82,7 +82,7 @@ def get_fastqs(wildcards):
 
 
 def get_resource(name):
-    return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name)
+    return str((Path(workflow.snakefile).parent.parent / "resources") / name)
 
 
 def get_report_input(pattern):
