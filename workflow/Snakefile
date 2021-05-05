@@ -15,7 +15,7 @@ include: "rules/utils.smk"
 include: "rules/ref.smk"
 include: "rules/qc.smk"
 include: "rules/read_trimming.smk"
-include: "rules/read_clipping.smk"
+include: "rules/conservative-clipping.smk"
 include: "rules/read_mapping.smk"
 include: "rules/assembly.smk"
 include: "rules/strain_calling.smk"
@@ -25,6 +25,7 @@ include: "rules/variant_filtration.smk"
 include: "rules/variant_report.smk"
 include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
+
 
 
 rule save_latest_run:
