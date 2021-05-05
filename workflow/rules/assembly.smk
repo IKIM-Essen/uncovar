@@ -32,8 +32,8 @@ rule assembly_megahit:
 
 rule assembly_metaspades:
     input:
-        fastq1="results/{date}/clipped-reads/{sample}.1.fastq.gz",
-        fastq2="results/{date}/clipped-reads/{sample}.2.fastq.gz",
+        fastq1="results/{date}/con-clipped-reads/{sample}.1.fastq.gz",
+        fastq2="results/{date}/con-clipped-reads/{sample}.2.fastq.gz",
     output:
         contigs="results/{date}/assembly/metaspades/{sample}/{sample}.contigs.fasta",
     params:
