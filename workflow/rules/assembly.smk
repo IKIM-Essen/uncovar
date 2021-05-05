@@ -71,9 +71,7 @@ rule assembly_minimus:
         "(seqtk seq -a {input} > {output.reads_fasta} && "
         "toAmos -s {output.reads_fasta} -o {output.afg} && "
         "cd {params.outdir} && "
-        "minimus {wildcards.sample} && "
-        "ls -alh && "
-        "mv my_reads.fasta {wildcards.sample}.fasta) > {log} 2>&1"
+        "minimus {wildcards.sample}) 2> {log} 2>&1"
 
 
 rule assembly_megahit:
