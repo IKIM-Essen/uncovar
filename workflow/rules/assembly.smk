@@ -12,6 +12,84 @@ rule count_assembly_reads:
         "zcat {input.fastq1} |wc -l > {output.read_count} 2> {log}"
 
 
+rule pear_merge:
+    input:
+        read1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        read2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        assembled="results/{date}/merged-reads/pear/{sample}_assembled.fq.gz",
+        discarded="results/{date}/merged-reads/pear/{sample}_discarded.fq.gz",
+        unassembled_read1=(
+            "results/{date}/merged-reads/pear/{sample}_unassembled_r1.fq.gz"
+        ),
+        unassembled_read2=(
+            "results/{date}/merged-reads/pear/{sample}_unassembled_r2.fq.gz"
+        ),
+    log:
+        "logs/{date}/pear/{sample}.log",
+    params:
+        pval=".01",
+        extra="",
+    threads: 4
+    wrapper:
+        "0.74.0/bio/pear"
+
+
+rule bbmerge_merge:
+    input:
+        read1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        read2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        merged="results/{date}/merged-reads/bbmerge/{sample}/{sample}_merged.fq",
+        unmerged="results/{date}/merged-reads/bbmerge/{sample}/{sample}_unmerged.fq",
+        ihist="results/{date}/merged-reads/bbmerge/{sample}/{sample}_ihist.txt",
+    log:
+        "logs/{date}/bbmerge_merge/{sample}.log",
+    conda:
+        "../envs/bbmap.yaml"
+    shell:
+        "(bbmerge.sh in1={input.read1} in2={input.read2} out={output.merged} "
+        "outu={output.unmerged} ihist={output.ihist}) 2> {log}"
+
+
+rule assembly_minimus:
+    input:
+        "results/{date}/merged-reads/pear/{sample}_assembled.fq.gz",
+    output:
+        contigs="results/{date}/assembly/minimus/{sample}/{sample}.fasta",
+        reads_fasta=temp(
+            "results/{date}/assembly/minimus/{sample}/reads_{sample}.fasta"
+        ),
+        afg=temp("results/{date}/assembly/minimus/{sample}/{sample}.afg"),
+    log:
+        "logs/{date}/assembly_minimus/{sample}.log",
+    params:
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    conda:
+        "../envs/minimus.yaml"
+    shell:
+        "(seqtk seq -a {input} > {output.reads_fasta} && "
+        "echo seqtk was successful && "
+        "toAmos -s {output.reads_fasta} -o {output.afg} && "
+        "echo toAmos was successful && "
+        "cd {params.outdir} && "
+        "minimus {wildcards.sample} && "
+        "echo minimus was successful && "
+        "mv my_reads.fasta {wildcards.sample}.fasta) > {log} 2>&1"
+
+
+rule assembly_haploflow:
+    input:
+        "results/{date}/merged-reads/pear/{sample}_assembled.fq.gz",
+    output:
+        "results/{date}/assembly/haploflow/{sample}/{sample}.fasta",
+    log:
+        "logs/{date}/assembly_haploflow/{sample}.log",
+    conda:
+        "../envs/haploflow.yaml"
+    shell:
+        "(haploflow {input} {output}) 2> {log}"
+
 rule assembly_megahit:
     input:
         fastq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
