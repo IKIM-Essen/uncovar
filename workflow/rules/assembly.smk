@@ -74,6 +74,7 @@ rule assembly_minimus:
         "minimus {wildcards.sample} && "
         "mv my_reads.fasta {wildcards.sample}.fasta) > {log} 2>&1"
 
+
 rule assembly_megahit:
     input:
         fastq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
