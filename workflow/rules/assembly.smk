@@ -69,26 +69,10 @@ rule assembly_minimus:
         "../envs/minimus.yaml"
     shell:
         "(seqtk seq -a {input} > {output.reads_fasta} && "
-        "echo seqtk was successful && "
         "toAmos -s {output.reads_fasta} -o {output.afg} && "
-        "echo toAmos was successful && "
         "cd {params.outdir} && "
         "minimus {wildcards.sample} && "
-        "echo minimus was successful && "
         "mv my_reads.fasta {wildcards.sample}.fasta) > {log} 2>&1"
-
-
-rule assembly_haploflow:
-    input:
-        "results/{date}/merged-reads/pear/{sample}_assembled.fq.gz",
-    output:
-        "results/{date}/assembly/haploflow/{sample}/{sample}.fasta",
-    log:
-        "logs/{date}/assembly_haploflow/{sample}.log",
-    conda:
-        "../envs/haploflow.yaml"
-    shell:
-        "(haploflow {input} {output}) 2> {log}"
 
 rule assembly_megahit:
     input:
@@ -128,7 +112,7 @@ rule assembly_metaspades:
 
 rule order_contigs:
     input:
-        contigs=get_contigs,
+        contigs="results/{date}/assembly/minimus/{sample}/{sample}.fasta",
         reference="resources/genomes/main.fasta",
     output:
         temp("results/{date}/ordered-contigs-all/{sample}.fasta"),
