@@ -82,7 +82,7 @@ def get_fastqs(wildcards):
 
 
 def get_resource(name):
-    return str((Path(workflow.snakefile).parent.parent / "resources") / name)
+    return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name)
 
 
 def get_report_input(pattern):
@@ -266,7 +266,7 @@ def get_reads_after_qc(wildcards, read="both"):
 
     if is_amplicon_data(wildcards.sample):
         pattern = expand(
-            "results/{date}/clipped-reads/{sample}.{read}.fastq.gz",
+            "results/{date}/con-clipped-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
@@ -416,7 +416,7 @@ def get_recal_input(wildcards):
 def get_depth_input(wildcards):
     if is_amplicon_data(wildcards.sample):
         # use clipped reads
-        return "results/{date}/clipped-reads/{sample}.primerclipped.bam"
+        return "results/{date}/con-clipped-reads/{sample}.primerclipped.bam"
     # use trimmed reads
     amplicon_reference = config["adapters"]["amplicon-reference"]
     return "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam".format(
