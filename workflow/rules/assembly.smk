@@ -72,6 +72,7 @@ rule assembly_minimus:
         "toAmos -s {output.reads_fasta} -o {output.afg} && "
         "cd {params.outdir} && "
         "minimus {wildcards.sample} && "
+        "ls -alh && "
         "mv my_reads.fasta {wildcards.sample}.fasta) > {log} 2>&1"
 
 
