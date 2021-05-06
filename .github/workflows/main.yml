@@ -35,6 +35,8 @@ jobs:
 
   Linting:
     runs-on: ubuntu-latest
+    env:
+      GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
     steps:
       - uses: actions/checkout@v2
       - name: Lint workflow
@@ -48,17 +50,21 @@ jobs:
 
   Testing:
     runs-on: ubuntu-latest
-
+    env:
+      GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
     needs:
       - Formatting
       - Linting
-    
     strategy:
       matrix:
         rule: [all, all -npr, benchmark_assembly, benchmark_strain_calling, benchmark_mixtures, benchmark_non_sars_cov_2]
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Set environment variable
+        run: |
+          export GISAID_API_TOKEN=${{ secrets.GISAID_API_TOKEN }}
 
       - name: Free some disk space
         run: |

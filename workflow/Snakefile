@@ -10,6 +10,12 @@ report: "report/workflow.rst"
 container: "docker://condaforge/mambaforge"
 
 
+if config["strain-calling"]["use-kallisto"]:
+
+    envvars:
+        "GISAID_API_TOKEN",
+
+
 include: "rules/common.smk"
 include: "rules/utils.smk"
 include: "rules/ref.smk"
@@ -69,7 +75,7 @@ checkpoint all:
             "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
             date=get_all_run_dates(),
             mode=["major", "any"],
-        ),
+        ) if config["strain-calling"]["use-kallisto"] else "",
         expand(
             "results/{date}/polished-contigs/{sample}.fasta",
             zip,
@@ -86,7 +92,9 @@ checkpoint all:
             "results/{zip1}/plots/strain-calls/{zip2}.strains.{{exp}}.svg",
             zip_wildcard_1=get_dates(),
             zip_wildcard_2=get_samples(),
-            expand_wildcard=["kallisto", "pangolin"],
+            expand_wildcard=["kallisto", "pangolin"]
+            if config["strain-calling"]["use-kallisto"]
+            else ["pangolin"],
         ),
         zip_expand(
             "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.bcf",

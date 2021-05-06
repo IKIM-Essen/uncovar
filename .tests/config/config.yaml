@@ -61,12 +61,10 @@ strain-calling:
   min-fraction: 0.02
   # flag for using gisaid or genbank 
   use-gisaid: False
-  # path to meta data from GISAID
-  gisaid-metadata: resources/gisaid/metadata_2021-02-09_18-08.tsv
-  # path to sequences fasta from GISAID
-  gisaid-metafasta: resources/gisaid/sequences_2021-02-09_08-13.fasta
   # paths to store genomes that are extracted from the full GISAID data
   extracted-strain-genomes: resources/genomes
+  # flag for using kallisto (for quantifying abundances of transcripts)
+  use-kallisto: True
 
 
 adapters:
