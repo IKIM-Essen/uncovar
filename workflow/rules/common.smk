@@ -149,7 +149,9 @@ def get_strain_genomes(wildcards):
     # Case 1: take custom genomes from gisaid
     custom_genomes = config["strain-calling"]["use-gisaid"]
     if custom_genomes:
-        with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
+        with checkpoints.extract_strain_genomes_from_gisaid.get(
+            date=wildcards.date
+        ).output[0].open() as f:
             strain_genomes = pd.read_csv(f, squeeze=True).to_list()
             strain_genomes.append("resources/genomes/main.fasta")
             return expand("{strains}", strains=strain_genomes)
@@ -182,7 +184,10 @@ def get_assembly_comparisons(bams=True):
             if bams
             else "resources/genomes/{accession}.fasta"
         )
-        return expand(pattern, accession=accessions,)
+        return expand(
+            pattern,
+            accession=accessions,
+        )
 
     return inner
 
@@ -364,7 +369,10 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
         [
             expand(ele, exp=expand_wildcard)
             for ele in expand(
-                expand_string, zip, zip1=zip_wildcard_1, zip2=zip_wildcard_2,
+                expand_string,
+                zip,
+                zip1=zip_wildcard_1,
+                zip2=zip_wildcard_2,
             )
         ],
         [],

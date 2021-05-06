@@ -192,12 +192,12 @@ rule snakemake_reports:
         # lambda wildcards: expand(
         #     "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
         #     sample=get_samples_for_date(wildcards.date),
-        # ),
+        # ) if config["strain-calling"]["use-kallisto"] else "",
         "results/{date}/qc_data",
         # expand(
         #     "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
         #     mode=["major", "any"],
-        # ),
+        # ) if config["strain-calling"]["use-kallisto"] else "",
         # lambda wildcards: expand(
         #     "results/{{date}}/plots/strain-calls/{sample}.strains.pangolin.svg",
         #     sample=get_samples_for_date(wildcards.date),

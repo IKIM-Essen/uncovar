@@ -101,3 +101,12 @@ rule update_lineages:
         "logs/{date}/pangolin/update.log",
     shell:
         "(mkdir -p {output} && wget -qO- https://github.com/cov-lineages/lineages/archive/master.tar.gz | tar xvz --strip-components=1 -C {output})> {log} 2>&1"
+
+
+rule get_gisaid_provision:
+    output:
+        temp("resources/gisaid/provision.json"),
+    log:
+        "logs/get_gisaid_provision.log",
+    shell:
+        "(curl -u $GISAID_API_TOKEN  https://www.epicov.org/epi3/3p/resseq02/export/provision.json.xz | xz -d -T0 > {output})> {log} 2>&1"
