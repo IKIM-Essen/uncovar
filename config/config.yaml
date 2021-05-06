@@ -58,6 +58,8 @@ strain-calling:
   use-gisaid: True
   # paths to store genomes that are extracted from the full GISAID data
   extracted-strain-genomes: resources/genomes
+  # flag for using kallisto (for quantifying abundances of transcripts)
+  use-kallisto: True
 
 
 rki-output:

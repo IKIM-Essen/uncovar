@@ -48,7 +48,7 @@ rule multiqc:
         lambda wildcards: expand(
             "logs/{{date}}/kallisto_quant/{sample}.log",
             sample=get_samples_for_date(wildcards.date),
-        ),
+        ) if config["strain-calling"]["use-kallisto"] else "",
     output:
         "results/{date}/qc/multiqc.html",
     params:
