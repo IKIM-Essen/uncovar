@@ -34,7 +34,7 @@ rule test_assembly_results:
     output:
         "results/benchmarking/{assembly_type}/{accession}.bam",
     log:
-        "logs/test-assembly-results/{accession}.log",
+        "logs/test-assembly-results/{assembly_type}/{accession}.log",
     conda:
         "../envs/minimap2.yaml"
     shell:
