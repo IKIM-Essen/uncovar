@@ -178,13 +178,19 @@ def get_assembly_comparisons(bams=True):
     def inner(wildcards):
         accessions = get_strain_accessions(wildcards)
         pattern = (
-            "results/benchmarking/assembly/{accession}.bam"
+            "results/benchmarking/{assembly_type}/{accession}.bam"
             if bams
             else "resources/genomes/{accession}.fasta"
         )
         return expand(pattern, accession=accessions,)
 
     return inner
+
+def get_assembly_result(wildcards):
+    if wildcards.assembly_type == "assembly":
+        return "results/benchmarking/polished-contigs/benchmark-sample-{accession}.fasta"
+    elif wildcards.assembly_type == "pseudoassembly":
+        return "results/benchmarking/pseudoassembled-contigs/benchmark-sample-{accession}.fasta"
 
 
 def get_non_cov2_calls(from_caller="pangolin"):

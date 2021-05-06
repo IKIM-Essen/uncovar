@@ -120,4 +120,4 @@ rule benchmark_strain_calling:
 
 rule benchmark_assembly:
     input:
-        "results/benchmarking/assembly.csv",
+        expand("results/benchmarking/{assembly_type}.csv", assembly_type=["assembly", "pseudoassembly"])
