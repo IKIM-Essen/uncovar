@@ -67,7 +67,7 @@ def write_sequence(
     if not isfile(genome_file):
         with open(genome_file, "w") as f:
             f.write(f">{covv_lineage}\n")
-            f.write(sequence)
+            f.write(f"{sequence}\n")
 
 
 if __name__ == "__main__":

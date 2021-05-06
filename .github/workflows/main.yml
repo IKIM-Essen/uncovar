@@ -60,6 +60,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Set environment variable
+        run: |
+          export GISAID_API_TOKEN=${{ secrets.GISAID_API_TOKEN }}
+
       - name: Free some disk space
         run: |
           sudo rm -rf "/usr/local/share/boost"

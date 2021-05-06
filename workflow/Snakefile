@@ -9,6 +9,9 @@ report: "report/workflow.rst"
 
 container: "docker://condaforge/mambaforge"
 
+envvars:
+    "GISAID_API_TOKEN"
+
 
 include: "rules/common.smk"
 include: "rules/utils.smk"

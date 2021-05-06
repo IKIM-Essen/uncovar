@@ -438,12 +438,6 @@ def get_adapters(wildcards):
     return config["adapters"]["illumina-revelo"]
 
 
-def get_gisaid_auth():
-    if config["strain-calling"]["use-gisaid"]:
-        with open(config["strain-calling"]["gisaid-auth-file"]) as f:
-            return f.readline().replace("\n", "")
-
-
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),
