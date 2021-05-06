@@ -75,6 +75,67 @@ rule assembly_minimus:
         "cat {wildcards.sample}.fasta"
 
 
+rule assembly_sga:
+    input:
+        read1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        read2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        preprocessed="results/{date}/assembly/sga/{sample}/{sample}.pp.fastq",
+        corrected="results/{date}/assembly/sga/{sample}/{sample}.ec.fastq",
+        filter_passed="results/{date}/assembly/sga/{sample}/{sample}.ec.filter.pass.fa",
+        asqg="results/{date}/assembly/sga/{sample}/{sample}.ec.filter.pass.asqg.gz",
+        contigs="results/{date}/assembly/sga/{sample}/{sample}.fasta"
+    params:
+        preprocessed=lambda w, output: output.preprocessed.split("/")[-1],
+        corrected=lambda w, output: output.corrected.split("/")[-1],
+        filter_passed=lambda w, output:output.filter_passed.split("/")[-1],
+        asqg=lambda w, output: output.asqg.split("/")[-1],
+        contigs=lambda w, output: output.contigs.split("/")[-1],
+        # Correction k-mer
+        correction_k="27",
+        # The minimum overlap to use when computing the graph.
+        # The final assembly can be performed with this overlap or greater
+        min_overlap="5",
+        # The overlap value to use for the final assembly
+        assemble_overlap="5",
+        # Branch trim length
+        trim_length="10",
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    log:
+        "logs/{date}/assembly/sga/{sample}.log",
+    threads: 64
+    conda:
+        "../envs/sga.yaml"
+    shell:
+        # Preprocess the data to remove ambiguous basecalls
+        "(sga preprocess --pe-mode 1 -o {output.preprocessed} {input.read1} {input.read2} && "
+        "printf \"\npreprocess done \n\" && "
+        # Error Correction
+        # Build the index that will be used for error correction
+        # As the error corrector does not require the reverse BWT, suppress
+        # construction of the reversed index
+        "cd {params.outdir} && "
+        "sga index -a ropebwt -t {threads} {params.preprocessed} && "
+        "printf \"\nindex done\n\" && "
+        # Perform k-mer based error correction.
+        # The k-mer cutoff parameter is learned automatically.
+        "sga correct -k {params.correction_k} --learn -t {threads} -o {params.corrected} {params.preprocessed} && "
+        "printf \"\ncorrect done \n\" && "
+        # Primary (contig) assembly
+        # Index the corrected data.
+        "sga index -a ropebwt -t {threads} {params.corrected} && "
+        "printf \"\nindex 2 done\n\" && "
+        # Remove exact-match duplicates and reads with low-frequency k-mers
+        "sga filter -x 2 -t {threads} {params.corrected} && "
+        "printf \"\nfilter done\n\" && "
+        # Compute the structure of the string graph
+        "sga overlap -m {params.min_overlap}  -t {threads} {params.filter_passed} && "
+        "printf \"\noverlap done\n\" && "
+        # Perform the contig assembly
+        "sga assemble -m {params.assemble_overlap} --min-branch-length {params.assemble_overlap} -o primary {params.asqg} && "
+        "mv primary-contigs.fa {params.contigs}) > {log} 2>&1"
+
+
 rule assembly_megahit:
     input:
         fastq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
@@ -113,7 +174,7 @@ rule assembly_metaspades:
 
 rule order_contigs:
     input:
-        contigs="results/{date}/assembly/minimus/{sample}/{sample}.fasta",
+        contigs="results/{date}/assembly/sga/{sample}/{sample}.fasta",
         reference="resources/genomes/main.fasta",
     output:
         temp("results/{date}/ordered-contigs-all/{sample}.fasta"),
@@ -127,9 +188,7 @@ rule order_contigs:
     shell:  # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
         "(mkdir -p {params.outdir}/{wildcards.sample} && cd {params.outdir}/{wildcards.sample} && "
         "ragoo.py ../../../../{input.contigs} ../../../../{input.reference} && "
-        "cd ../../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) > {log} 2>&1 && "
-        "cat {output}"
-
+        "cd ../../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output}) > {log} 2>&1"
 
 rule filter_chr0:
     input:
