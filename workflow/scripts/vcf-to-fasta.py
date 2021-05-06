@@ -14,30 +14,33 @@ IUPAC = {
     frozenset("A", "C", "T", "G"): "N",
 }
 
+
 def phred_to_prob(phred):
     return 10 ** (-phred / 10)
 
-with (
-    pysam.FastaFile(snakemake.input.fasta, "r") as infasta, 
-    pysam.VariantFile(snakemake.input.bcf, "rb") as invcf,    
-):
+
+with pysam.FastaFile(snakemake.input.fasta, "r") as infasta, pysam.VariantFile(
+    snakemake.input.bcf, "rb"
+) as invcf:
+
     assert len(infasta.references) == 1, "expected reference with single contig"
     contig = infasta.references[0]
     ref_seq = infasta.fetch(contig)
 
     seq = ""
-    last_pos = -1 # last considered reference position
+    last_pos = -1  # last considered reference position
     for record in invcf:
-        seq += ref_seq[last_pos + 1:record.pos]
+        seq += ref_seq[last_pos + 1 : record.pos]
 
-        prob_high = phred_to_prob(record.info["PROB_CLONAL"]) + phred_to_prob(record.info["PROB_SUBCLONAL_HIGH"])
+        prob_high = phred_to_prob(record.info["PROB_CLONAL"]) + phred_to_prob(
+            record.info["PROB_SUBCLONAL_HIGH"]
+        )
         prob_major = phred_to_prob(record.info["PROB_SUBCLONAL_MAJOR"])
 
-        apply = (
-            prob_high >= snakemake.params.min_prob_apply
-        )
+        apply = prob_high >= snakemake.params.min_prob_apply
         uncertain = (
-            prob_major >= snakemake.params.min_prob_apply or (prob_high + prob_major) >= 0.5
+            prob_major >= snakemake.params.min_prob_apply
+            or (prob_high + prob_major) >= 0.5
         )
         if not (apply or uncertain):
             # we simply ignore this record
@@ -58,7 +61,7 @@ with (
             del_len = record.info["SVLEN"]
             handle_deletion(del_len)
         elif alt_allele == "<DUP>":
-            dup_seq = ref_seq[record.pos:record.info["END"]]
+            dup_seq = ref_seq[record.pos : record.info["END"]]
             seq += dup_seq * 2
             last_pos += len(dup_seq)
         elif len(ref_allele) == len(alt_allele):
@@ -84,7 +87,7 @@ with (
             else:
                 seq += "N" * len(ins_seq)
             last_pos += 1
-    
+
     # add sequence until end
     seq += ref_seq[last_pos:]
 

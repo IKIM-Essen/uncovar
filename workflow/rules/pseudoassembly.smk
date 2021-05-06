@@ -4,9 +4,9 @@ rule vcf_to_fasta:
         fasta="resources/genomes/main.fasta",
         fai="resources/genomes/main.fasta.fai",
     output:
-        "results/{date}/pseudoassembled-contigs/{sample}.fasta"
+        "results/{date}/pseudoassembled-contigs/{sample}.fasta",
     params:
-        min_prob_apply=config["assembly"]["min-variant-prob"]
+        min_prob_apply=config["assembly"]["min-variant-prob"],
     conda:
         "../envs/pysam.yaml"
     script:
