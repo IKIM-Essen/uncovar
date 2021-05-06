@@ -37,6 +37,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Set environment variable
+        run: |
+          export GISAID_API_TOKEN=${{ secrets.GISAID_API_TOKEN }}
+          
       - name: Lint workflow
         uses: snakemake/snakemake-github-action@v1.15.0
         with:
