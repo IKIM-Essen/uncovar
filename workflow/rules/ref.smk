@@ -107,7 +107,7 @@ rule get_gisaid_provision:
     output:
         temp("resources/gisaid/provision.json"),
     params:
-        user_and_pw=os.environ["GISAID_API_TOKEN"]
+        user_and_pw=os.environ["GISAID_API_TOKEN"],
     log:
         "logs/get_gisaid_provision.log",
     shell:
