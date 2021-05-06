@@ -106,9 +106,7 @@ rule update_lineages:
 rule get_gisaid_provision:
     output:
         temp("resources/gisaid/provision.json"),
-    params:
-        user_and_pw=os.environ["GISAID_API_TOKEN"],
     log:
         "logs/get_gisaid_provision.log",
     shell:
-        "(curl -u {params.user_and_pw} https://www.epicov.org/epi3/3p/resseq02/export/provision.json.xz | xz -d -T0 > {output})> {log} 2>&1"
+        "(curl -u $GISAID_API_TOKEN  https://www.epicov.org/epi3/3p/resseq02/export/provision.json.xz | xz -d -T0 > {output})> {log} 2>&1"
