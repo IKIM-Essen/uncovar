@@ -1,3 +1,4 @@
+import re
 import pysam
 
 IUPAC = {
@@ -64,6 +65,9 @@ with pysam.FastaFile(snakemake.input.fasta, "r") as infasta, pysam.VariantFile(
             dup_seq = ref_seq[record.pos : record.info["END"]]
             seq += dup_seq * 2
             last_pos += len(dup_seq)
+        elif re.match("[A-Z]+$", alt_allele) is not None:
+            # TODO cover more variant types before publication
+            raise ValueError(f"Unexpected alt allele: {alt_allele} not yet supported")
         elif len(ref_allele) == len(alt_allele):
             # SNV or MNV
             if apply:
@@ -87,6 +91,8 @@ with pysam.FastaFile(snakemake.input.fasta, "r") as infasta, pysam.VariantFile(
             else:
                 seq += "N" * len(ins_seq)
             last_pos += 1
+        else:
+            raise ValueError(f"Unexpected alleles: {ref_allele}, {alt_allele}")
 
     # add sequence until end
     seq += ref_seq[last_pos:]
