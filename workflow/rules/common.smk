@@ -82,7 +82,7 @@ def get_fastqs(wildcards):
 
 
 def get_resource(name):
-    return str((Path(workflow.snakefile).parent.parent / "resources") / name)
+    return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name)
 
 
 def get_report_input(pattern):
@@ -178,7 +178,7 @@ def get_assembly_comparisons(bams=True):
     def inner(wildcards):
         accessions = get_strain_accessions(wildcards)
         pattern = (
-            "results/benchmarking/{assembly_type}/{accession}.bam"
+            "results/benchmarking/{{assembly_type}}/{accession}.bam"
             if bams
             else "resources/genomes/{accession}.fasta"
         )
@@ -197,6 +197,10 @@ def get_assembly_result(wildcards):
         )
     elif wildcards.assembly_type == "pseudoassembly":
         return "results/benchmarking/pseudoassembled-contigs/benchmark-sample-{accession}.fasta"
+    else:
+        raise ValueError(
+            f"unexpected value for wildcard assembly_type: {wildcards.assembly_type}"
+        )
 
 
 def get_non_cov2_calls(from_caller="pangolin"):
