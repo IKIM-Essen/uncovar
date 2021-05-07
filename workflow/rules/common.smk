@@ -178,7 +178,7 @@ def get_assembly_comparisons(bams=True):
     def inner(wildcards):
         accessions = get_strain_accessions(wildcards)
         pattern = (
-            "results/benchmarking/{{assembly_type}}/{accession}.bam"
+            "results/benchmarking/assembly/{{assembly_type}}/{accession}.bam"
             if bams
             else "resources/genomes/{accession}.fasta"
         )
