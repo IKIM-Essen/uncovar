@@ -97,7 +97,8 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
                         seq += IUPAC[bases]
                     else:
                         # add single base
-                        seq += bases.pop()
+                        base, = bases
+                        seq += base
             last_pos += len(alt_allele)
         elif len(ref_allele) > 1 and len(alt_allele) == 1:
             # deletion
