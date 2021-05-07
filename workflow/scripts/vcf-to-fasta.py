@@ -91,7 +91,13 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
             else:
                 # store IUPAC codes
                 for a, b in zip(*record.alleles):
-                    seq += IUPAC[frozenset((a.upper(), b.upper()))]
+                    bases = frozenset((a.upper(), b.upper()))
+                    if len(bases) > 1:
+                        # get IUPAC representation of bases
+                        seq += IUPAC[bases]
+                    else:
+                        # add single base
+                        seq += bases.pop()
             last_pos += len(alt_allele)
         elif len(ref_allele) > 1 and len(alt_allele) == 1:
             # deletion
