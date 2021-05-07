@@ -358,7 +358,7 @@ def get_bwa_index(wildcards):
 def get_target_events(wildcards):
     if wildcards.reference == "main" or wildcards.clonality != "clonal":
         # calling variants against the wuhan reference or we are explicitly interested in subclonal as well
-        return "SUBCLONAL CLONAL"
+        return "SUBCLONAL_MINOR SUBCLONAL_MAJOR SUBCLONAL_HIGH CLONAL"
     else:
         # only keep clonal variants
         return "CLONAL"
