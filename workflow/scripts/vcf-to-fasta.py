@@ -46,10 +46,11 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
 
         seq += "".join(chunk_seq)
 
-        prob_high = phred_to_prob(record.info["PROB_CLONAL"]) + phred_to_prob(
-            record.info["PROB_SUBCLONAL_HIGH"]
-        )
-        prob_major = phred_to_prob(record.info["PROB_SUBCLONAL_MAJOR"])
+        def get_prob(event):
+            return phred_to_prob(record.info[f"PROB_{event.upper()}"][0])
+
+        prob_high = get_prob("clonal") + get_prob("subclonal_high")
+        prob_major = get_prob("subclonal_major")
 
         is_low_coverage = record.format["DP"] < snakemake.params.min_coverage
         apply = prob_high >= snakemake.params.min_prob_apply
