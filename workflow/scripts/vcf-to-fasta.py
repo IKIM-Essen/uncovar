@@ -51,14 +51,15 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
         )
         prob_major = phred_to_prob(record.info["PROB_SUBCLONAL_MAJOR"])
 
+        is_low_coverage = record.format["DP"] < snakemake.params.min_coverage
         apply = prob_high >= snakemake.params.min_prob_apply
         uncertain = (
             prob_major >= snakemake.params.min_prob_apply
             or (prob_high + prob_major) >= 0.5
-            or record.format["DP"] < snakemake.params.min_coverage
         )
-        if not (apply or uncertain):
+        if not (apply or uncertain or is_low_coverage):
             # we simply ignore this record
+            last_pos = record.pos - 1
             continue
 
         assert len(record.alleles) == 2
