@@ -3,17 +3,17 @@ import pysam
 import numpy as np
 
 IUPAC = {
-    frozenset("A", "G"): "R",
-    frozenset("C", "T"): "Y",
-    frozenset("G", "C"): "S",
-    frozenset("A", "T"): "W",
-    frozenset("G", "T"): "K",
-    frozenset("A", "C"): "M",
-    frozenset("C", "G", "T"): "B",
-    frozenset("A", "G", "T"): "D",
-    frozenset("A", "C", "T"): "H",
-    frozenset("A", "C", "G"): "V",
-    frozenset("A", "C", "T", "G"): "N",
+    frozenset("AG"): "R",
+    frozenset("CT"): "Y",
+    frozenset("GC"): "S",
+    frozenset("AT"): "W",
+    frozenset("GT"): "K",
+    frozenset("AC"): "M",
+    frozenset("CGT"): "B",
+    frozenset("AGT"): "D",
+    frozenset("ACT"): "H",
+    frozenset("ACG"): "V",
+    frozenset("ACTG"): "N",
 }
 
 
