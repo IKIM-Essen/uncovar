@@ -1,5 +1,6 @@
 import re
 import pysam
+import numpy as np
 
 IUPAC = {
     frozenset("A", "G"): "R",
@@ -22,16 +23,28 @@ def phred_to_prob(phred):
 
 with pysam.FastaFile(snakemake.input.fasta, "r") as infasta, pysam.VariantFile(
     snakemake.input.bcf, "rb"
-) as invcf:
+) as invcf, pysam.AlignmentFile(snakemake.input.bam, "rb") as inbam:
 
     assert len(infasta.references) == 1, "expected reference with single contig"
     contig = infasta.references[0]
     ref_seq = infasta.fetch(contig)
+    cov_a, cov_c, cov_g, cov_t = inbam.count_coverage(contig)
+    coverage = np.add(np.add(np.add(cov_a, cov_c), cov_g), cov_t)
 
     seq = ""
     last_pos = -1  # last considered reference position
     for record in invcf:
-        seq += ref_seq[last_pos + 1 : record.pos]
+        chunk_seq = ref_seq[last_pos + 1 : record.pos]
+
+        # check for low coverage regions
+        chunk_low_cov = (
+            coverage[last_pos + 1 : record.pos] < snakemake.params.min_coverage
+        )
+
+        # mask low coverage regions
+        chunk_seq[[chunk_low_cov]] = "N"
+
+        seq += chunk_seq
 
         prob_high = phred_to_prob(record.info["PROB_CLONAL"]) + phred_to_prob(
             record.info["PROB_SUBCLONAL_HIGH"]
@@ -42,6 +55,7 @@ with pysam.FastaFile(snakemake.input.fasta, "r") as infasta, pysam.VariantFile(
         uncertain = (
             prob_major >= snakemake.params.min_prob_apply
             or (prob_high + prob_major) >= 0.5
+            or record.format["DP"] < snakemake.params.min_coverage
         )
         if not (apply or uncertain):
             # we simply ignore this record
