@@ -21,7 +21,7 @@ def phred_to_prob(phred):
     return 10 ** (-phred / 10)
 
 
-with pysam.FastaFile(snakemake.input.fasta, "r") as infasta, pysam.VariantFile(
+with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
     snakemake.input.bcf, "rb"
 ) as invcf, pysam.AlignmentFile(snakemake.input.bam, "rb") as inbam:
 
