@@ -306,9 +306,9 @@ def get_reads_after_qc(wildcards, read="both"):
 def get_min_coverage(wildcards):
     conf = config["RKI-quality-criteria"]
     if is_amplicon_data(wildcards.sample):
-        return config["min-depth-with-PCR-duplicates"]
+        return conf["min-depth-with-PCR-duplicates"]
     else:
-        return config["min-depth-without-PCR-duplicates"]
+        return conf["min-depth-without-PCR-duplicates"]
 
 
 def get_contigs(wildcards):
