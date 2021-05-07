@@ -34,17 +34,18 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
     seq = ""
     last_pos = -1  # last considered reference position
     for record in invcf:
-        chunk_seq = np.array(list(ref_seq[last_pos + 1 : record.pos]))
+        if record.pos > last_pos + 1:
+            chunk_seq = np.array(list(ref_seq[last_pos + 1 : record.pos]))
 
-        # check for low coverage regions
-        chunk_low_cov = (
-            coverage[last_pos + 1 : record.pos] < snakemake.params.min_coverage
-        )
+            # check for low coverage regions
+            chunk_low_cov = (
+                coverage[last_pos + 1 : record.pos] < snakemake.params.min_coverage
+            )
 
-        # mask low coverage regions
-        chunk_seq[chunk_low_cov] = "N"
+            # mask low coverage regions
+            chunk_seq[chunk_low_cov] = "N"
 
-        seq += "".join(chunk_seq)
+            seq += "".join(chunk_seq)
 
         def get_prob(event):
             return phred_to_prob(record.info[f"PROB_{event.upper()}"][0])
@@ -97,7 +98,7 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
                         seq += IUPAC[bases]
                     else:
                         # add single base
-                        base, = bases
+                        (base,) = bases
                         seq += base
             last_pos += len(alt_allele)
         elif len(ref_allele) > 1 and len(alt_allele) == 1:
