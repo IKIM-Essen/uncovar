@@ -81,7 +81,7 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
             dup_seq = ref_seq[record.pos : record.info["END"][0]]
             seq += dup_seq * 2
             last_pos += len(dup_seq)
-        elif re.match("[A-Z]+$", alt_allele) is not None:
+        elif re.match("[A-Z]+$", alt_allele) is None:
             # TODO cover more variant types before publication
             raise ValueError(f"Unexpected alt allele: {alt_allele} not yet supported")
         elif len(ref_allele) == len(alt_allele):
