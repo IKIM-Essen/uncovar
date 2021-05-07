@@ -52,7 +52,7 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
         prob_high = get_prob("clonal") + get_prob("subclonal_high")
         prob_major = get_prob("subclonal_major")
 
-        is_low_coverage = record.format["DP"] < snakemake.params.min_coverage
+        is_low_coverage = record.format["DP"][0] < snakemake.params.min_coverage
         apply = prob_high >= snakemake.params.min_prob_apply
         uncertain = (
             prob_major >= snakemake.params.min_prob_apply
@@ -75,10 +75,10 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
 
         if alt_allele == "<DEL>":
             seq += ref_allele
-            del_len = record.info["SVLEN"]
+            del_len = record.info["SVLEN"][0]
             handle_deletion(del_len)
         elif alt_allele == "<DUP>":
-            dup_seq = ref_seq[record.pos : record.info["END"]]
+            dup_seq = ref_seq[record.pos : record.info["END"][0]]
             seq += dup_seq * 2
             last_pos += len(dup_seq)
         elif re.match("[A-Z]+$", alt_allele) is not None:
