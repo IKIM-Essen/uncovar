@@ -1,3 +1,9 @@
+from snakemake.utils import min_version
+
+
+min_version("6.3.0")
+
+
 configfile: "config/config.yaml"
 
 
@@ -24,6 +30,7 @@ include: "rules/read_trimming.smk"
 include: "rules/read_clipping.smk"
 include: "rules/read_mapping.smk"
 include: "rules/assembly.smk"
+include: "rules/pseudoassembly.smk"
 include: "rules/strain_calling.smk"
 include: "rules/variant_calling.smk"
 include: "rules/variant_annotation.smk"
@@ -132,4 +139,7 @@ rule benchmark_strain_calling:
 
 rule benchmark_assembly:
     input:
-        "results/benchmarking/assembly.csv",
+        expand(
+            "results/benchmarking/assembly/{assembly_type}.csv",
+            assembly_type=["assembly", "pseudoassembly"],
+        ),

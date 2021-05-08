@@ -38,6 +38,11 @@ RKI-quality-criteria:
   # frameshift-Mutationen
 
 
+assembly:
+  # minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
+  min-variant-prob: 0.95
+
+
 variant-calling:
   # false discovery rate to control for
   fdr: 0.05

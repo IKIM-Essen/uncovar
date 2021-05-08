@@ -30,11 +30,11 @@ rule test_benchmark_results:
 rule test_assembly_results:
     input:
         "resources/genomes/{accession}.fasta",
-        "results/benchmarking/polished-contigs/benchmark-sample-{accession}.fasta",
+        get_assembly_result,
     output:
-        "results/benchmarking/assembly/{accession}.bam",
+        "results/benchmarking/assembly/{assembly_type}/{accession}.bam",
     log:
-        "logs/test-assembly-results/{accession}.log",
+        "logs/test-assembly-results/{assembly_type}/{accession}.log",
     conda:
         "../envs/minimap2.yaml"
     shell:
@@ -46,9 +46,9 @@ rule summarize_assembly_results:
         bams=get_assembly_comparisons(bams=True),
         refs=get_assembly_comparisons(bams=False),
     output:
-        "results/benchmarking/assembly.csv",
+        "results/benchmarking/assembly/{assembly_type}.csv",
     log:
-        "logs/assembly/assembly-results.log",
+        "logs/summarize-assembly-results/{assembly_type}/assembly-results.log",
     conda:
         "../envs/pysam.yaml"
     notebook:

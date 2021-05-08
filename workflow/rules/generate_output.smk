@@ -77,7 +77,7 @@ checkpoint rki_filter:
             sample=get_samples_for_date(wildcards.date),
         ),
     output:
-        temp("results/{date}/rki-filter/{date}.txt"),
+        "results/{date}/rki-filter/{date}.txt",
     params:
         min_identity=config["RKI-quality-criteria"]["min-identity"],
         max_n=config["RKI-quality-criteria"]["max-n"],
