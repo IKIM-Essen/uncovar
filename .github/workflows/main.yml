@@ -220,8 +220,8 @@ jobs:
       - name: Check pseudoassembly benchmark
         if: matrix.rule == 'benchmark_assembly'
         run: |
-          cat .tests/results/benchmarking/pseudoassembly.csv
-          if [[ $(tail -1 .tests/results/benchmarking/pseudoassembly.csv) < 0.95 ]]
+          cat .tests/results/benchmarking/assembly/pseudoassembly.csv
+          if [[ $(tail -1 .tests/results/benchmarking/assembly/pseudoassembly.csv) < 0.95 ]]
           then
             echo "Pseudoassembly bechmarking failed. There is at least one assembly where the contigs do not cover 95% of the original sequence (see above)."
             exit 1
@@ -232,8 +232,8 @@ jobs:
       - name: Check assembly bechmark
         if: matrix.rule == 'benchmark_assembly'
         run: |
-          cat .tests/results/benchmarking/assembly.csv
-          if [[ $(tail -1 .tests/results/benchmarking/assembly.csv) < 0.8 ]]
+          cat .tests/results/benchmarking/assembly/assembly.csv
+          if [[ $(tail -1 .tests/results/benchmarking/assembly/assembly.csv) < 0.8 ]]
           then
             echo "Assembly bechmarking failed. There is at least one assembly where the contigs do not cover 80% of the original sequence (see above)."
             exit 1
