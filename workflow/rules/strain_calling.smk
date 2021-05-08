@@ -1,28 +1,25 @@
 checkpoint extract_strain_genomes_from_gisaid:
     input:
-        metadata=lambda wildcards: config["strain-calling"]["gisaid-metadata"],
-        sequences=lambda wildcards: config["strain-calling"]["gisaid-metafasta"],
+        "resources/gisaid/provision.json",
     output:
-        temp("resources/gisaid/strain-genomes.txt"),
+        "results/{date}/tables/strain-genomes.txt",
     log:
-        "logs/extract-strain-genomes.log",
+        "logs/{date}/extract-strain-genomes.log",
     params:
         save_strains_to=lambda wildcards: config["strain-calling"][
             "extracted-strain-genomes"
         ],
-    conda:
-        "../envs/python.yaml"
     script:
-        "../scripts/extract-strain-genomes.py"
+        "../scripts/extract-strains-from-gisaid-provision.py"
 
 
 rule cat_genomes:
     input:
         get_strain_genomes,
     output:
-        temp("resources/strain-genomes.fasta"),
+        temp("results/{date}/kallisto/strain-genomes.fasta"),
     log:
-        "logs/cat-genomes.log",
+        "logs/{date}/cat-genomes.log",
     conda:
         "../envs/unix.yaml"
     shell:
@@ -31,13 +28,13 @@ rule cat_genomes:
 
 rule kallisto_index:
     input:
-        fasta="resources/strain-genomes.fasta",
+        fasta="results/{date}/kallisto/strain-genomes.fasta",
     output:
-        index=temp("resources/strain-genomes.idx"),
+        index=temp("results/{date}/kallisto/strain-genomes.idx"),
     params:
         extra="",
     log:
-        "logs/kallisto-index.log",
+        "logs/{date}/kallisto-index.log",
     threads: 8
     wrapper:
         "0.70.0/bio/kallisto/index"
@@ -46,7 +43,7 @@ rule kallisto_index:
 rule kallisto_quant:
     input:
         fastq=get_reads_after_qc,
-        index="resources/strain-genomes.idx",
+        index="results/{date}/kallisto/strain-genomes.idx",
     output:
         directory("results/{date}/quant/{sample}"),
     params:

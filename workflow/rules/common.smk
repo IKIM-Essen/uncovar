@@ -149,7 +149,9 @@ def get_strain_genomes(wildcards):
     # Case 1: take custom genomes from gisaid
     custom_genomes = config["strain-calling"]["use-gisaid"]
     if custom_genomes:
-        with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
+        with checkpoints.extract_strain_genomes_from_gisaid.get(
+            date=wildcards.date
+        ).output[0].open() as f:
             strain_genomes = pd.read_csv(f, squeeze=True).to_list()
             strain_genomes.append("resources/genomes/main.fasta")
             return expand("{strains}", strains=strain_genomes)
