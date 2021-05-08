@@ -56,6 +56,11 @@ variant-calling:
     high+moderate-impact: 'ANN["IMPACT"] in ["HIGH", "MODERATE"]'
 
 
+assembly:
+  # minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
+  min-variant-prob: 0.95
+
+
 strain-calling:
   # minimum reported strain fraction after quantification
   min-fraction: 0.02
