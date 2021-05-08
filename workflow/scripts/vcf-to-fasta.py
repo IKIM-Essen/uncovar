@@ -34,12 +34,13 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
     seq = ""
     last_pos = -1  # last considered reference position
     for record in invcf:
-        if record.pos > last_pos + 1:
-            chunk_seq = np.array(list(ref_seq[last_pos + 1 : record.pos]))
+        rec_pos = record.pos - 1  # convert to zero based
+        if rec_pos > last_pos + 1:
+            chunk_seq = np.array(list(ref_seq[last_pos + 1 : rec_pos]))
 
             # check for low coverage regions
             chunk_low_cov = (
-                coverage[last_pos + 1 : record.pos] < snakemake.params.min_coverage
+                coverage[last_pos + 1 : rec_pos] < snakemake.params.min_coverage
             )
 
             # mask low coverage regions
@@ -60,7 +61,7 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
             or (prob_high + prob_major) >= 0.5
         )
 
-        last_pos = record.pos - 1
+        last_pos = rec_pos - 1
         if not (apply or uncertain or is_low_coverage):
             # we simply ignore this record
             continue
@@ -80,7 +81,7 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
             del_len = record.info["SVLEN"][0]
             handle_deletion(del_len)
         elif alt_allele == "<DUP>":
-            dup_seq = ref_seq[record.pos : record.info["END"][0]]
+            dup_seq = ref_seq[rec_pos : record.info["END"][0]]
             seq += dup_seq * 2
             last_pos += len(dup_seq)
         elif re.match("[A-Z]+$", alt_allele) is None:
@@ -116,6 +117,13 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
             else:
                 seq += "N" * len(ins_seq)
             last_pos += 1
+        elif len(ref_allele) > 1 and len(alt_allele) > 1:
+            # replacement
+            last_pos += len(ref_allele)
+            if apply:
+                seq += alt_allele
+            else:
+                seq += "N" * len(alt_allele)
         else:
             raise ValueError(f"Unexpected alleles: {ref_allele}, {alt_allele}")
 
