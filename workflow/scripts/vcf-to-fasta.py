@@ -47,6 +47,11 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
             chunk_seq[chunk_low_cov] = "N"
 
             seq += "".join(chunk_seq)
+        elif rec_pos < last_pos:
+            # This must be an alternative allele to the last considered record.
+            # But the last considered record had at least VAF>=0.5.
+            # Hence, this must be a minor allele, and can therefore be ignored.
+            continue
 
         def get_prob(event):
             return phred_to_prob(record.info[f"PROB_{event.upper()}"][0])
