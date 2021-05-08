@@ -67,7 +67,7 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
         )
 
         last_pos = rec_pos - 1
-        if not (apply or uncertain or is_low_coverage):
+        if not (apply or uncertain) or is_low_coverage:
             # we simply ignore this record
             continue
 
