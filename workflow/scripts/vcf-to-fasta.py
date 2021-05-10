@@ -1,6 +1,9 @@
 import re
 import pysam
 import numpy as np
+import sys
+
+sys.stderr = open(snakemake.log[0], "w")
 
 IUPAC = {
     frozenset("AG"): "R",
@@ -149,5 +152,5 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
 
 
 with open(snakemake.output[0], "w") as outfasta:
-    print(f">{contig}", file=outfasta)
+    print(f">{snakemake.params.sample}", file=outfasta)
     print(seq, file=outfasta)
