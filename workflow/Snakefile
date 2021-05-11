@@ -155,3 +155,4 @@ rule benchmark_mixtures:
         expand(
             "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
             caller=["kallisto", "pangolin"],
+        ),
