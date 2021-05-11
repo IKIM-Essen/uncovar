@@ -10,6 +10,7 @@ rule vcf_to_fasta:
     params:
         min_prob_apply=config["assembly"]["min-variant-prob"],
         min_coverage=get_min_coverage,
+        sample=lambda wildcards: wildcards.sample,
     log:
         "logs/{date}/vcf-to-fasta/{sample}.log",
     conda:
