@@ -124,7 +124,7 @@ rule virologist_report:
             sample=get_samples_for_date(wildcards.date),
         ),
         reads_used_for_assembly=lambda wildcards: expand(
-            "results/{{date}}/tables/read_counts/{sample}.txt",
+            "results/{{date}}/tables/read_pair_counts/{sample}.txt",
             sample=get_samples_for_date(wildcards.date),
         ),
         initial_contigs=lambda wildcards: get_expanded_contigs(wildcards),
@@ -145,10 +145,9 @@ rule virologist_report:
             sample=get_samples_for_date(wildcards.date),
         ),
     output:
-        all_data="results/{date}/virologist/report.csv",
         qc_data="results/{date}/virologist/qc_report.csv",
     log:
-        "logs/{date}/viro_report.log",
+        "logs/{date}/overview-table.log",
     params:
         voc=config.get("voc"),
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
@@ -156,7 +155,7 @@ rule virologist_report:
         "../envs/pysam.yaml"
     threads: 1
     script:
-        "../scripts/generate_virologist_output.py"
+        "../scripts/generate-overview-table.py"
 
 
 rule qc_html_report:
@@ -174,7 +173,7 @@ rule qc_html_report:
         "../envs/rbt.yaml"
     params:
         formatter=get_resource("report-table-formatter.js"),
-        pin_until="sample",
+        pin_until="Sample",
     log:
         "logs/{date}/qc_report_html.log",
     shell:
