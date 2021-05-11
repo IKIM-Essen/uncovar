@@ -40,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Lint workflow
-        uses: snakemake/snakemake-github-action@v1.15.0
+        uses: snakemake/snakemake-github-action@v1.18.0
         with:
           directory: .
           snakefile: workflow/Snakefile
@@ -71,8 +71,9 @@ jobs:
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
-      - name: Install tree
-        run: sudo apt-get install tree
+      - name: Install dependcies
+        run: |
+          sudo apt-get install tree
 
       - name: Get date
         id: get-date
@@ -178,20 +179,18 @@ jobs:
         run: tree .tests/ -C
 
       - name: Test rule ${{ matrix.rule }}
-        uses: snakemake/snakemake-github-action@v1.15.0
+        uses: snakemake/snakemake-github-action@v1.18.0
         with:
           directory: .tests
           snakefile: workflow/Snakefile
-          stagein: mamba install -n snakemake -c conda-forge peppy -y
           args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
 
       - name: Test report
-        uses: snakemake/snakemake-github-action@v1.15.0
+        uses: snakemake/snakemake-github-action@v1.18.0
         if: startsWith(matrix.rule, 'all -npr') != true
         with:
           directory: .tests
           snakefile: workflow/Snakefile
-          stagein: mamba install -n snakemake -c conda-forge peppy
           args: "${{ matrix.rule }} --report report.zip"
 
       - name: Upload report
@@ -229,11 +228,23 @@ jobs:
             echo "Strain calling was successful in all cases."
           fi
 
+      - name: Check pseudoassembly benchmark
+        if: matrix.rule == 'benchmark_assembly'
+        run: |
+          cat .tests/results/benchmarking/assembly/pseudoassembly.csv
+          if [[ $(tail -1 .tests/results/benchmarking/assembly/pseudoassembly.csv) < 0.95 ]]
+          then
+            echo "Pseudoassembly bechmarking failed. There is at least one assembly where the contigs do not cover 95% of the original sequence (see above)."
+            exit 1
+          else
+            echo "Pseudoassembly was successful."
+          fi
+
       - name: Check assembly bechmark
         if: matrix.rule == 'benchmark_assembly'
         run: |
-          cat .tests/results/benchmarking/assembly.csv
-          if [[ $(tail -1 .tests/results/benchmarking/assembly.csv) < 0.8 ]]
+          cat .tests/results/benchmarking/assembly/assembly.csv
+          if [[ $(tail -1 .tests/results/benchmarking/assembly/assembly.csv) < 0.8 ]]
           then
             echo "Assembly bechmarking failed. There is at least one assembly where the contigs do not cover 80% of the original sequence (see above)."
             exit 1

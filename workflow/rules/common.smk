@@ -93,7 +93,7 @@ def get_fastqs(wildcards):
 
 
 def get_resource(name):
-    return str((Path(workflow.snakefile).parent.parent / "resources") / name)
+    return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name)
 
 
 def get_report_input(pattern):
@@ -191,7 +191,7 @@ def get_assembly_comparisons(bams=True):
     def inner(wildcards):
         accessions = get_strain_accessions(wildcards)
         pattern = (
-            "results/benchmarking/assembly/{accession}.bam"
+            "results/benchmarking/assembly/{{assembly_type}}/{accession}.bam"
             if bams
             else "resources/genomes/{accession}.fasta"
         )
@@ -201,6 +201,19 @@ def get_assembly_comparisons(bams=True):
         )
 
     return inner
+
+
+def get_assembly_result(wildcards):
+    if wildcards.assembly_type == "assembly":
+        return (
+            "results/benchmarking/polished-contigs/benchmark-sample-{accession}.fasta"
+        )
+    elif wildcards.assembly_type == "pseudoassembly":
+        return "results/benchmarking/pseudoassembled-contigs/benchmark-sample-{accession}.fasta"
+    else:
+        raise ValueError(
+            f"unexpected value for wildcard assembly_type: {wildcards.assembly_type}"
+        )
 
 
 def get_non_cov2_calls(from_caller="pangolin"):
@@ -303,6 +316,14 @@ def get_reads_after_qc(wildcards, read="both"):
     return pattern
 
 
+def get_min_coverage(wildcards):
+    conf = config["RKI-quality-criteria"]
+    if is_amplicon_data(wildcards.sample):
+        return conf["min-depth-with-PCR-duplicates"]
+    else:
+        return conf["min-depth-without-PCR-duplicates"]
+
+
 def get_contigs(wildcards):
     if is_amplicon_data(wildcards.sample):
         pattern = (
@@ -350,7 +371,7 @@ def get_bwa_index(wildcards):
 def get_target_events(wildcards):
     if wildcards.reference == "main" or wildcards.clonality != "clonal":
         # calling variants against the wuhan reference or we are explicitly interested in subclonal as well
-        return "SUBCLONAL CLONAL"
+        return "SUBCLONAL_MINOR SUBCLONAL_MAJOR SUBCLONAL_HIGH CLONAL"
     else:
         # only keep clonal variants
         return "CLONAL"
