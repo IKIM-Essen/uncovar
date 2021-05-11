@@ -1,3 +1,9 @@
+from snakemake.utils import min_version
+
+
+min_version("6.3.0")
+
+
 configfile: "config/config.yaml"
 
 
@@ -10,6 +16,12 @@ report: "report/workflow.rst"
 container: "docker://condaforge/mambaforge"
 
 
+if config["strain-calling"]["use-kallisto"]:
+
+    envvars:
+        "GISAID_API_TOKEN",
+
+
 include: "rules/common.smk"
 include: "rules/utils.smk"
 include: "rules/ref.smk"
@@ -18,6 +30,7 @@ include: "rules/read_trimming.smk"
 include: "rules/read_clipping.smk"
 include: "rules/read_mapping.smk"
 include: "rules/assembly.smk"
+include: "rules/pseudoassembly.smk"
 include: "rules/strain_calling.smk"
 include: "rules/variant_calling.smk"
 include: "rules/variant_annotation.smk"
@@ -56,18 +69,20 @@ rule save_latest_run:
 checkpoint all:
     input:
         expand(
-            "results/{date}/qc/multiqc.html", date=get_all_run_dates(),
+            "results/{date}/qc/multiqc.html",
+            date=get_all_run_dates(),
         ),
         expand("results/reports/{date}.zip", date=get_all_run_dates()),
         expand("results/rki/{date}_uk-essen_rki.fasta", date=get_all_run_dates()),
         expand(
-            "results/{date}/plots/all.strains.pangolin.svg", date=get_all_run_dates(),
+            "results/{date}/plots/all.strains.pangolin.svg",
+            date=get_all_run_dates(),
         ),
         expand(
             "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
             date=get_all_run_dates(),
             mode=["major", "any"],
-        ),
+        ) if config["strain-calling"]["use-kallisto"] else "",
         expand(
             "results/{date}/polished-contigs/{sample}.fasta",
             zip,
@@ -84,7 +99,9 @@ checkpoint all:
             "results/{zip1}/plots/strain-calls/{zip2}.strains.{{exp}}.svg",
             zip_wildcard_1=get_dates(),
             zip_wildcard_2=get_samples(),
-            expand_wildcard=["kallisto", "pangolin"],
+            expand_wildcard=["kallisto", "pangolin"]
+            if config["strain-calling"]["use-kallisto"]
+            else ["pangolin"],
         ),
         zip_expand(
             "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.bcf",
@@ -103,7 +120,8 @@ checkpoint all:
             date=get_all_run_dates(),
         ),
         expand(
-            "results/{date}/qc_data/", date=get_all_run_dates(),
+            "results/{date}/qc_data/",
+            date=get_all_run_dates(),
         ),
     output:
         touch(
@@ -121,4 +139,7 @@ rule benchmark_strain_calling:
 
 rule benchmark_assembly:
     input:
-        "results/benchmarking/assembly.csv",
+        expand(
+            "results/benchmarking/assembly/{assembly_type}.csv",
+            assembly_type=["assembly", "pseudoassembly"],
+        ),

@@ -77,7 +77,7 @@ checkpoint rki_filter:
             sample=get_samples_for_date(wildcards.date),
         ),
     output:
-        temp("results/{date}/rki-filter/{date}.txt"),
+        "results/{date}/rki-filter/{date}.txt",
     params:
         min_identity=config["RKI-quality-criteria"]["min-identity"],
         max_n=config["RKI-quality-criteria"]["max-n"],
@@ -191,12 +191,12 @@ rule snakemake_reports:
         # lambda wildcards: expand(
         #     "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
         #     sample=get_samples_for_date(wildcards.date),
-        # ),
+        # ) if config["strain-calling"]["use-kallisto"] else "",
         "results/{date}/qc_data",
         # expand(
         #     "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
         #     mode=["major", "any"],
-        # ),
+        # ) if config["strain-calling"]["use-kallisto"] else "",
         # lambda wildcards: expand(
         #     "results/{{date}}/plots/strain-calls/{sample}.strains.pangolin.svg",
         #     sample=get_samples_for_date(wildcards.date),

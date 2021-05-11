@@ -5,5 +5,7 @@ samples:
 
 events:
   low: "sample:]0.0,0.1["
-  subclonal: "sample:[0.1,1.0["
+  subclonal_minor: "sample:[0.1,0.5["
+  subclonal_major: "sample:[0.5,0.9["
+  subclonal_high: "sample:[0.9,1.0["
   clonal: "sample:1.0"
