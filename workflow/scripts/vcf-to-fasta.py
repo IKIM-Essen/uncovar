@@ -1,6 +1,9 @@
 import re
 import pysam
 import numpy as np
+import sys
+
+sys.stderr = open(snakemake.log[0], "w")
 
 IUPAC = {
     frozenset("AG"): "R",
@@ -53,21 +56,31 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
             # Hence, this must be a minor allele, and can therefore be ignored.
             continue
 
+        last_pos = rec_pos - 1
+
+
+        dp_sample = record.samples[0]["DP"][0]
+        if dp_sample is None:
+            dp_sample= 0
+
+        # ignore low coverage records (subsequent iteration will add an N for that locus then)
+        is_low_coverage = dp_sample < snakemake.params.min_coverage
+        if is_low_coverage:
+            continue
+
         def get_prob(event):
             return phred_to_prob(record.info[f"PROB_{event.upper()}"][0])
 
         prob_high = get_prob("clonal") + get_prob("subclonal_high")
         prob_major = get_prob("subclonal_major")
 
-        is_low_coverage = record.samples[0]["DP"][0] < snakemake.params.min_coverage
         apply = prob_high >= snakemake.params.min_prob_apply
         uncertain = (
             prob_major >= snakemake.params.min_prob_apply
             or (prob_high + prob_major) >= 0.5
         )
 
-        last_pos = rec_pos - 1
-        if not (apply or uncertain) or is_low_coverage:
+        if not (apply or uncertain):
             # we simply ignore this record
             continue
 
@@ -77,6 +90,8 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
         # REF: A, ALT: <DEL>
 
         def handle_deletion(del_len):
+            global last_pos
+            global seq
             if not apply:
                 seq += "N" * del_len
             last_pos += del_len + 1
@@ -137,5 +152,5 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
 
 
 with open(snakemake.output[0], "w") as outfasta:
-    print(f">{contig}", file=outfasta)
+    print(f">{snakemake.params.sample}", file=outfasta)
     print(seq, file=outfasta)
