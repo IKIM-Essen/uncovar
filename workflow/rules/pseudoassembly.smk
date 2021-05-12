@@ -26,7 +26,7 @@ rule compare_assemblies:
     output:
         "results/{date}/aligned/assemblies/{sample}.bam",
     log:
-        "logs/{date}/aligned/assemblies/{sample}log"
+        "logs/{date}/aligned/assemblies/{sample}log",
     conda:
         "../envs/minimap2.yaml"
     shell:
@@ -42,9 +42,9 @@ rule aggregate_assembly_comparisons:
     output:
         "results/{date}/tables/assembly_comparison.tsv",
     params:
-        samples = lambda wildcards: get_samples_for_date(wildcards.date)
+        samples=lambda wildcards: get_samples_for_date(wildcards.date),
     log:
-        "logs/{date}/aggregate-assembly-comparisons.log"
+        "logs/{date}/aggregate-assembly-comparisons.log",
     conda:
         "../envs/pysam.yaml"
     script:
