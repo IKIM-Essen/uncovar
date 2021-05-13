@@ -20,9 +20,6 @@ def aggregate_assembly_comparisons(bam_files: List[str], samples: List[str], out
                 sample_data["Edit distance"] = record.get_tag("NM")
                 sample_data["Cigarstring"] = record.cigarstring
                 
-                print(
-                    sample, record.cigarstring, record.get_tag("NM")
-                )
         data.append(sample_data)
 
     pd.DataFrame(data).to_csv(output, sep="\t", index=False)
