@@ -7,7 +7,7 @@ VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
 
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
-BENCHMARK_DATE_WILDCARD="benchmarking"
+BENCHMARK_DATE_WILDCARD = "benchmarking"
 
 
 def get_samples():
