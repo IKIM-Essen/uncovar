@@ -1,9 +1,9 @@
 rule masking:
     input:
         bamfile="results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
-        sequence="results/{date}/polished-contigs/{sample}.fasta",
+        sequence="results/{date}/contigs/polished/{sample}.fasta",
     output:
-        masked_sequence="results/{date}/contigs-masked/{sample}.fasta",
+        masked_sequence="results/{date}/contigs/masked/{sample}.fasta",
         coverage="results/{date}/tables/coverage/{sample}.txt",
     params:
         min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
@@ -115,7 +115,7 @@ rule virologist_report:
         ),
         initial_contigs=lambda wildcards: get_expanded_contigs(wildcards),
         polished_contigs=lambda wildcards: expand(
-            "results/{{date}}/polished-contigs/{sample}.fasta",
+            "results/{{date}}/contigs/polished/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
         ),
         kraken=lambda wildcards: expand(
@@ -174,7 +174,7 @@ rule snakemake_reports:
         "results/{date}/plots/coverage-reference-genome.svg",
         "results/{date}/plots/coverage-assembled-genome.svg",
         lambda wildcards: expand(
-            "results/{{date}}/polished-contigs/{sample}.fasta",
+            "results/{{date}}/contigs/polished/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
         ),
         # lambda wildcards: expand(

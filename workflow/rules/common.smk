@@ -195,10 +195,10 @@ def get_assembly_comparisons(bams=True):
 def get_assembly_result(wildcards):
     if wildcards.assembly_type == "assembly":
         return (
-            "results/benchmarking/polished-contigs/benchmark-sample-{accession}.fasta"
+            "results/benchmarking/contigs/polished/benchmark-sample-{accession}.fasta"
         )
     elif wildcards.assembly_type == "pseudoassembly":
-        return "results/benchmarking/pseudoassembled-contigs/benchmark-sample-{accession}.fasta"
+        return "results/benchmarking/contigs/pseudoassembled/benchmark-sample-{accession}.fasta"
     else:
         raise ValueError(
             f"unexpected value for wildcard assembly_type: {wildcards.assembly_type}"
@@ -233,7 +233,7 @@ def get_reference(suffix=""):
             return "resources/genomes/main-and-human-genome.fna.gz"
         elif wildcards.reference.startswith("polished-"):
             # return polished contigs
-            return "results/{date}/polished-contigs/{sample}.fasta".format(
+            return "results/{date}/contigs/polished/{sample}.fasta".format(
                 sample=wildcards.reference.replace("polished-", ""), **wildcards
             )
         elif wildcards.reference == config["adapters"]["amplicon-reference"]:
@@ -243,7 +243,7 @@ def get_reference(suffix=""):
             )
         else:
             # return assembly result
-            return "results/{date}/ordered-contigs/{reference}.fasta{suffix}".format(
+            return "results/{date}/contigs/ordered/{reference}.fasta{suffix}".format(
                 suffix=suffix, **wildcards
             )
 
@@ -404,11 +404,11 @@ def get_quast_fastas(wildcards):
     if wildcards.stage == "unpolished":
         return get_contigs(wildcards)
     elif wildcards.stage == "polished":
-        return "results/{date}/polished-contigs/{sample}.fasta"
+        return "results/{date}/contigs/polished/{sample}.fasta"
     elif wildcards.stage == "masked":
-        return "results/{date}/contigs-masked/{sample}.fasta"
+        return "results/{date}/contigs/masked/{sample}.fasta"
     elif wildcards.stage == "pseudoassembly":
-        return "results/{date}/pseudoassembled-contigs/{sample}.fasta"
+        return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
 
 
 def get_strain(path_to_pangolin_call):
@@ -463,9 +463,9 @@ def get_adapters(wildcards):
 
 def get_final_assemblies(wildcards):
     if wildcards.assembly_type == "masked-assembly":
-        pattern = "results/{{date}}/contigs-masked/{sample}.fasta"
+        pattern = "results/{{date}}/contigs/masked/{sample}.fasta"
     elif wildcards.assembly_type == "pseudo-assembly":
-        pattern = "results/{{date}}/contigs-masked/{sample}.fasta"
+        pattern = "results/{{date}}/contigs/pseudoassembled/{sample}.fasta"
 
     return expand(pattern, sample=get_samples_for_date(wildcards.date))
 
@@ -490,8 +490,8 @@ def get_assemblies_for_submission(wildcards, agg_typ):
     ).output[0].open() as f:
         pseudo_samples = pd.read_csv(f, squeeze=True).astype(str).to_list()
 
-    pseudo_assembly_pattern = "results/{{date}}/pseudoassembled-contigs/{sample}.fasta"
-    normal_assembly_pattern = "results/{{date}}/contigs-masked/{sample}.fasta"
+    pseudo_assembly_pattern = "results/{{date}}/contigs/pseudoassembled/{sample}.fasta"
+    normal_assembly_pattern = "results/{{date}}/contigs/masked/{sample}.fasta"
 
     # get accepted sampels for rki submission
     if agg_typ == "accepted samples":
@@ -511,12 +511,12 @@ def get_assemblies_for_submission(wildcards, agg_typ):
     # for the pangolin call
     if agg_typ == "single sample":
         if wildcards.sample in masked_samples:
-            return "results/{date}/polished-contigs/{sample}.fasta"
+            return "results/{date}/contigs/polished/{sample}.fasta"
         elif wildcards.sample in pseudo_samples:
-            return "results/{date}/pseudoassembled-contigs/{sample}.fasta"
+            return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
         # for not accepted samples use the polished-contigs
         else:
-            return "results/{date}/polished-contigs/{sample}.fasta"
+            return "results/{date}/contigs/polished/{sample}.fasta"
 
     # for the qc report
     if agg_typ == "all samples":

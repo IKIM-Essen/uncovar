@@ -53,7 +53,7 @@ rule order_contigs:
         contigs=get_contigs,
         reference="resources/genomes/main.fasta",
     output:
-        temp("results/{date}/ordered-contigs-all/{sample}.fasta"),
+        temp("results/{date}/contigs/ordered-unfiltered/{sample}.fasta"),
     log:
         "logs/{date}/ragoo/{sample}.log",
     params:
@@ -69,9 +69,9 @@ rule order_contigs:
 
 rule filter_chr0:
     input:
-        "results/{date}/ordered-contigs-all/{sample}.fasta",
+        "results/{date}/contigs/ordered-unfiltered/{sample}.fasta",
     output:
-        "results/{date}/ordered-contigs/{sample}.fasta",
+        "results/{date}/contigs/ordered/{sample}.fasta",
     log:
         "logs/{date}/ragoo/{sample}_cleaned.log",
     params:
@@ -84,12 +84,12 @@ rule filter_chr0:
 
 rule polish_contigs:
     input:
-        fasta="results/{date}/ordered-contigs/{sample}.fasta",
+        fasta="results/{date}/contigs/ordered/{sample}.fasta",
         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf",
         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf.csi",
     output:
         report(
-            "results/{date}/polished-contigs/{sample}.fasta",
+            "results/{date}/contigs/polished/{sample}.fasta",
             category="5. Assembly",
             caption="../report/assembly.rst",
         ),
