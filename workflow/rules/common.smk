@@ -407,6 +407,8 @@ def get_quast_fastas(wildcards):
         return "results/{date}/polished-contigs/{sample}.fasta"
     elif wildcards.stage == "masked":
         return "results/{date}/contigs-masked/{sample}.fasta"
+    elif wildcards.stage == "pseudoassembly":
+        return "results/{date}/pseudoassembled-contigs/{sample}.fasta"
 
 
 def get_strain(path_to_pangolin_call):
@@ -457,6 +459,76 @@ def get_adapters(wildcards):
     if is_amplicon_data(wildcards.sample):
         return config["adapters"]["illumina-nimagen"]
     return config["adapters"]["illumina-revelo"]
+
+
+def get_final_assemblies(wildcards):
+    if wildcards.assembly_type == "masked-assembly":
+        pattern = "results/{{date}}/contigs-masked/{sample}.fasta"
+    elif wildcards.assembly_type == "pseudo-assembly":
+        pattern = "results/{{date}}/contigs-masked/{sample}.fasta"
+
+    return expand(pattern, sample=get_samples_for_date(wildcards.date))
+
+
+def get_final_assemblies_identity(wildcards):
+    if wildcards.assembly_type == "masked-assembly":
+        pattern = "results/{{date}}/quast/masked/{sample}/report.tsv"
+    elif wildcards.assembly_type == "pseudo-assembly":
+        pattern = "results/{{date}}/quast/pseudoassembly/{sample}/report.tsv"
+
+    return expand(pattern, sample=get_samples_for_date(wildcards.date))
+
+
+def get_assemblies_for_submission(wildcards, agg_typ):
+    with checkpoints.rki_filter.get(
+        date=wildcards.date, assembly_type="masked-assembly"
+    ).output[0].open() as f:
+        masked_samples = pd.read_csv(f, squeeze=True).astype(str).to_list()
+
+    with checkpoints.rki_filter.get(
+        date=wildcards.date, assembly_type="pseudo-assembly"
+    ).output[0].open() as f:
+        pseudo_samples = pd.read_csv(f, squeeze=True).astype(str).to_list()
+
+    pseudo_assembly_pattern = "results/{{date}}/pseudoassembled-contigs/{sample}.fasta"
+    normal_assembly_pattern = "results/{{date}}/contigs-masked/{sample}.fasta"
+
+    # get accepted sampels for rki submission
+    if agg_typ == "accepted samples":
+        accepted_assemblies = []
+        
+        for sample in set(masked_samples + pseudo_samples):
+            if sample in masked_samples:
+                accepted_assemblies.append(
+                    normal_assembly_pattern.format(sample=sample)
+                )
+            else:
+                accepted_assemblies.append(
+                    pseudo_assembly_pattern.format(sample=sample)
+                )
+        return accepted_assemblies
+
+    # for the pangolin call
+    if agg_typ == "single sample":
+        if wildcards.sample in masked_samples:
+            return "results/{date}/polished-contigs/{sample}.fasta"
+        elif wildcards.sample in pseudo_samples:
+            return "results/{date}/pseudoassembled-contigs/{sample}.fasta"
+        # for not accepted samples use the polished-contigs
+        else:
+            return "results/{date}/polished-contigs/{sample}.fasta"
+
+    # for the qc report
+    if agg_typ == "all samples":
+        assembly_type_used = []
+        for sample in get_samples_for_date(wildcards.date):
+            if sample in masked_samples:
+                assembly_type_used.append(f"{sample},normal")
+            elif sample in pseudo_samples:
+                assembly_type_used.append(f"{sample},pseudo")
+            else:
+                assembly_type_used.append(f"{sample},not-accepted")
+        return assembly_type_used
 
 
 wildcard_constraints:

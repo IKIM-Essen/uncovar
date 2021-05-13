@@ -114,7 +114,9 @@ rule plot_all_strains_kallisto:
 
 rule pangolin:
     input:
-        contigs="results/{date}/polished-contigs/{sample}.fasta",
+        contigs=lambda wildcards: get_assemblies_for_submission(
+            wildcards, agg_typ="single sample"
+        ),
         pangoLEARN="results/{date}/pangolin/pangoLEARN",
         lineages="results/{date}/pangolin/lineages",
     output:
