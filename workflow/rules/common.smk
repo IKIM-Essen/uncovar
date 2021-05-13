@@ -7,6 +7,7 @@ VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
 
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
+BENCHMARK_DATE_WILDCARD="benchmarking"
 
 
 def get_samples():
@@ -73,7 +74,7 @@ def get_fastqs(wildcards):
         # this is for testing non-sars-cov2-genomes
         accession = wildcards.sample[len(NON_COV2_TEST_PREFIX) :]
         return expand(
-            "resources/test-cases/{accession}/reads.{read}.fastq.gz",
+            "resources/benchmarking/{accession}/reads.{read}.fastq.gz",
             accession=accession,
             read=[1, 2],
         )
@@ -208,9 +209,9 @@ def get_assembly_result(wildcards):
 def get_non_cov2_calls(from_caller="pangolin"):
     accessions = get_non_cov2_accessions()
     pattern = (
-        "results/test-cases/tables/strain-calls/non-cov2-{accession}.strains.pangolin.csv"
+        "results/benchmarking/tables/strain-calls/non-cov2-{accession}.strains.pangolin.csv"
         if from_caller == "pangolin"
-        else "results/test-cases/tables/strain-calls/non-cov2-{accession}.strains.kallisto.tsv"
+        else "results/benchmarking/tables/strain-calls/non-cov2-{accession}.strains.kallisto.tsv"
         if from_caller == "kallisto"
         else []
     )
@@ -480,15 +481,18 @@ def get_final_assemblies_identity(wildcards):
 
 
 def get_assemblies_for_submission(wildcards, agg_typ):
-    with checkpoints.rki_filter.get(
-        date=wildcards.date, assembly_type="masked-assembly"
-    ).output[0].open() as f:
-        masked_samples = pd.read_csv(f, squeeze=True).astype(str).to_list()
+    if wildcards.date != BENCHMARK_DATE_WILDCARD:
+        with checkpoints.rki_filter.get(
+            date=wildcards.date, assembly_type="masked-assembly"
+        ).output[0].open() as f:
+            masked_samples = pd.read_csv(f, squeeze=True).astype(str).to_list()
 
-    with checkpoints.rki_filter.get(
-        date=wildcards.date, assembly_type="pseudo-assembly"
-    ).output[0].open() as f:
-        pseudo_samples = pd.read_csv(f, squeeze=True).astype(str).to_list()
+        with checkpoints.rki_filter.get(
+            date=wildcards.date, assembly_type="pseudo-assembly"
+        ).output[0].open() as f:
+            pseudo_samples = pd.read_csv(f, squeeze=True).astype(str).to_list()
+    else:
+        masked_samples = [wildcards.sample]
 
     pseudo_assembly_pattern = "results/{{date}}/contigs/pseudoassembled/{sample}.fasta"
     normal_assembly_pattern = "results/{{date}}/contigs/masked/{sample}.fasta"
