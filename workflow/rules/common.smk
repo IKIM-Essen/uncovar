@@ -496,7 +496,7 @@ def get_assemblies_for_submission(wildcards, agg_typ):
     # get accepted sampels for rki submission
     if agg_typ == "accepted samples":
         accepted_assemblies = []
-        
+
         for sample in set(masked_samples + pseudo_samples):
             if sample in masked_samples:
                 accepted_assemblies.append(

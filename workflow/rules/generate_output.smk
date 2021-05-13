@@ -72,7 +72,7 @@ checkpoint rki_filter:
         min_identity=config["RKI-quality-criteria"]["min-identity"],
         max_n=config["RKI-quality-criteria"]["max-n"],
     log:
-        "results/{date}/rki-filter/{assembly_type}.log",
+        "logs/{date}/rki-filter/{assembly_type}.log",
     conda:
         "../envs/python.yaml"
     script:
