@@ -516,7 +516,7 @@ def get_assemblies_for_submission(wildcards, agg_typ):
         return accepted_assemblies
 
     # for the pangolin call
-    if agg_typ == "single sample":
+    elif agg_typ == "single sample":
         if wildcards.sample in masked_samples:
             return "results/{date}/contigs/polished/{sample}.fasta"
         elif wildcards.sample in pseudo_samples:
