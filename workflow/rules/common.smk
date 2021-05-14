@@ -480,7 +480,7 @@ def get_final_assemblies_identity(wildcards):
     return expand(pattern, sample=get_samples_for_date(wildcards.date))
 
 
-def get_assemblies_for_submission(wildcards, agg_typ):
+def get_assemblies_for_submission(wildcards, agg_type):
     if wildcards.date != BENCHMARK_DATE_WILDCARD:
         with checkpoints.rki_filter.get(
             date=wildcards.date, assembly_type="masked-assembly"
@@ -499,7 +499,7 @@ def get_assemblies_for_submission(wildcards, agg_typ):
     normal_assembly_pattern = "results/{{date}}/contigs/masked/{sample}.fasta"
 
     # get accepted samples for rki submission
-    if agg_typ == "accepted samples":
+    if agg_type == "accepted samples":
         accepted_assemblies = []
 
         for sample in set(masked_samples + pseudo_samples):
@@ -516,7 +516,7 @@ def get_assemblies_for_submission(wildcards, agg_typ):
         return accepted_assemblies
 
     # for the pangolin call
-    elif agg_typ == "single sample":
+    elif agg_type == "single sample":
         if wildcards.sample in masked_samples:
             return "results/{date}/contigs/polished/{sample}.fasta"
         elif wildcards.sample in pseudo_samples:
@@ -526,7 +526,7 @@ def get_assemblies_for_submission(wildcards, agg_typ):
             return "results/{date}/contigs/polished/{sample}.fasta"
 
     # for the qc report
-    if agg_typ == "all samples":
+    if agg_type == "all samples":
         assembly_type_used = []
         for sample in get_samples_for_date(wildcards.date):
             if sample in masked_samples:
