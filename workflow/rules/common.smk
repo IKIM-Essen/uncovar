@@ -526,7 +526,7 @@ def get_assemblies_for_submission(wildcards, agg_typ):
             return "results/{date}/contigs/polished/{sample}.fasta"
 
     # for the qc report
-    if agg_typ == "all samples":
+    elif agg_typ == "all samples":
         assembly_type_used = []
         for sample in get_samples_for_date(wildcards.date):
             if sample in masked_samples:
