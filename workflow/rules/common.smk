@@ -498,7 +498,7 @@ def get_assemblies_for_submission(wildcards, agg_typ):
     pseudo_assembly_pattern = "results/{{date}}/contigs/pseudoassembled/{sample}.fasta"
     normal_assembly_pattern = "results/{{date}}/contigs/masked/{sample}.fasta"
 
-    # get accepted sampels for rki submission
+    # get accepted samples for rki submission
     if agg_typ == "accepted samples":
         accepted_assemblies = []
 
