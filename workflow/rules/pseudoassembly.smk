@@ -21,8 +21,8 @@ rule vcf_to_fasta:
 
 rule compare_assemblies:
     input:
-        assembly="results/{date}/polished-contigs/{sample}.fasta",
-        pseudoassembly="results/{date}/pseudoassembled-contigs/{sample}.fasta",
+        assembly="results/{date}/contigs/polished/{sample}.fasta",
+        pseudoassembly="results/{date}/contigs/pseudoassembled/{sample}.fasta",
     output:
         "results/{date}/aligned/assemblies/{sample}.bam",
     log:
