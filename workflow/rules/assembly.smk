@@ -9,7 +9,7 @@ rule count_assembly_reads:
     conda:
         "../envs/unix.yaml"
     shell:
-        "(echo \"$(( $(zcat {input.fastq1} | wc -l) / 4 ))\" > {output.read_count}) 2> {log}"
+        '(echo "$(( $(zcat {input.fastq1} | wc -l) / 4 ))" > {output.read_count}) 2> {log}'
 
 
 rule assembly_megahit:
