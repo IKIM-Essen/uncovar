@@ -234,13 +234,13 @@ jobs:
       - name: Print non-sars-cov-2 kallisto calls
         if: matrix.rule == 'test_non_cov2'
         run: |
-          cat .tests/results/test-cases/tables/strain-calls/non-cov2-*.strains.kallisto.tsv
+          cat .tests/results/benchmarking/tables/strain-calls/non-cov2-*.strains.kallisto.tsv
 
       - name: Test non-sars-cov-2 coronaviruses
         if: matrix.rule == 'test_non_cov2'
         run: |
-          cat .tests/results/test-cases/non-sars-cov-2.csv
-          if (cat .tests/results/test-cases/non-sars-cov-2.csv | grep 'is sars-cov-2' > /dev/null)
+          cat .tests/results/benchmarking/non-sars-cov-2.csv
+          if (cat .tests/results/benchmarking/non-sars-cov-2.csv | grep 'is sars-cov-2' > /dev/null)
           then
               echo "Workflow failed! A non-sars-cov-2 genome was identified as sars-cov-2 (see above)."
               exit 1
