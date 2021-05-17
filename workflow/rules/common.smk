@@ -82,7 +82,7 @@ def get_fastqs(wildcards):
 
 
 def get_resource(name):
-    return str((Path(workflow.snakefile).parent.parent / "resources") / name)
+    return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name)
 
 
 def get_report_input(pattern):
@@ -149,7 +149,9 @@ def get_strain_genomes(wildcards):
     # Case 1: take custom genomes from gisaid
     custom_genomes = config["strain-calling"]["use-gisaid"]
     if custom_genomes:
-        with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
+        with checkpoints.extract_strain_genomes_from_gisaid.get(
+            date=wildcards.date
+        ).output[0].open() as f:
             strain_genomes = pd.read_csv(f, squeeze=True).to_list()
             strain_genomes.append("resources/genomes/main.fasta")
             return expand("{strains}", strains=strain_genomes)
@@ -178,13 +180,29 @@ def get_assembly_comparisons(bams=True):
     def inner(wildcards):
         accessions = get_strain_accessions(wildcards)
         pattern = (
-            "results/benchmarking/assembly/{accession}.bam"
+            "results/benchmarking/assembly/{{assembly_type}}/{accession}.bam"
             if bams
             else "resources/genomes/{accession}.fasta"
         )
-        return expand(pattern, accession=accessions,)
+        return expand(
+            pattern,
+            accession=accessions,
+        )
 
     return inner
+
+
+def get_assembly_result(wildcards):
+    if wildcards.assembly_type == "assembly":
+        return (
+            "results/benchmarking/polished-contigs/benchmark-sample-{accession}.fasta"
+        )
+    elif wildcards.assembly_type == "pseudoassembly":
+        return "results/benchmarking/pseudoassembled-contigs/benchmark-sample-{accession}.fasta"
+    else:
+        raise ValueError(
+            f"unexpected value for wildcard assembly_type: {wildcards.assembly_type}"
+        )
 
 
 def get_non_cov2_calls(from_caller="pangolin"):
@@ -287,6 +305,14 @@ def get_reads_after_qc(wildcards, read="both"):
     return pattern
 
 
+def get_min_coverage(wildcards):
+    conf = config["RKI-quality-criteria"]
+    if is_amplicon_data(wildcards.sample):
+        return conf["min-depth-with-PCR-duplicates"]
+    else:
+        return conf["min-depth-without-PCR-duplicates"]
+
+
 def get_contigs(wildcards):
     if is_amplicon_data(wildcards.sample):
         pattern = (
@@ -334,7 +360,7 @@ def get_bwa_index(wildcards):
 def get_target_events(wildcards):
     if wildcards.reference == "main" or wildcards.clonality != "clonal":
         # calling variants against the wuhan reference or we are explicitly interested in subclonal as well
-        return "SUBCLONAL CLONAL"
+        return "SUBCLONAL_MINOR SUBCLONAL_MAJOR SUBCLONAL_HIGH CLONAL"
     else:
         # only keep clonal variants
         return "CLONAL"
@@ -364,7 +390,10 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
         [
             expand(ele, exp=expand_wildcard)
             for ele in expand(
-                expand_string, zip, zip1=zip_wildcard_1, zip2=zip_wildcard_2,
+                expand_string,
+                zip,
+                zip1=zip_wildcard_1,
+                zip2=zip_wildcard_2,
             )
         ],
         [],

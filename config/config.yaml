@@ -38,6 +38,11 @@ RKI-quality-criteria:
   # frameshift-Mutationen
 
 
+assembly:
+  # minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
+  min-variant-prob: 0.95
+
+
 variant-calling:
   # false discovery rate to control for
   fdr: 0.05
@@ -56,12 +61,10 @@ strain-calling:
   min-fraction: 0.02
   # flag for using gisaid or genbank 
   use-gisaid: True
-  # path to meta data from GISAID
-  gisaid-metadata: resources/gisaid/metadata_2021-04-11.tsv
-  # path to sequences fasta from GISAID
-  gisaid-metafasta: resources/gisaid/sequences_2021-04-11.fasta
   # paths to store genomes that are extracted from the full GISAID data
   extracted-strain-genomes: resources/genomes
+  # flag for using kallisto (for quantifying abundances of transcripts)
+  use-kallisto: True
 
 
 rki-output:
@@ -88,10 +91,10 @@ non_cov2_genomes:
   - NC_019843
   # - NC_004718 # This results in 30246 long (polished) contig, which pangolin can't process
 
-# variants of concern
-
+# variants of concern (protein name -> variants)
 voc:
-  - N501Y
-  - E484K
-  - K417N
-  - H69_V70del
+  S:
+    - N501Y
+    - E484K
+    - K417N
+    - H69_V70del
