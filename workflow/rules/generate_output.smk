@@ -1,9 +1,9 @@
 rule masking:
     input:
         bamfile="results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
-        sequence="results/{date}/polished-contigs/{sample}.fasta",
+        sequence="results/{date}/contigs/polished/{sample}.fasta",
     output:
-        masked_sequence="results/{date}/contigs-masked/{sample}.fasta",
+        masked_sequence="results/{date}/contigs/masked/{sample}.fasta",
         coverage="results/{date}/tables/coverage/{sample}.txt",
     params:
         min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
@@ -64,25 +64,15 @@ rule plot_coverage_final_sequence:
 
 checkpoint rki_filter:
     input:
-        quast=lambda wildcards: expand(
-            "results/{date}/quast/masked/{sample}/report.tsv",
-            zip,
-            date=[wildcards.date] * len(get_samples_for_date(wildcards.date)),
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        contigs=lambda wildcards: expand(
-            "results/{date}/contigs-masked/{sample}.fasta",
-            zip,
-            date=[wildcards.date] * len(get_samples_for_date(wildcards.date)),
-            sample=get_samples_for_date(wildcards.date),
-        ),
+        quast=get_final_assemblies_identity,
+        contigs=get_final_assemblies,
     output:
-        "results/{date}/rki-filter/{date}.txt",
+        "results/{date}/rki-filter/{assembly_type}.txt",
     params:
         min_identity=config["RKI-quality-criteria"]["min-identity"],
         max_n=config["RKI-quality-criteria"]["max-n"],
     log:
-        "logs/{date}/rki-filter.log",
+        "logs/{date}/rki-filter/{assembly_type}.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -91,12 +81,8 @@ checkpoint rki_filter:
 
 rule rki_report:
     input:
-        filtered_samples="results/{date}/rki-filter/{date}.txt",
-        contigs=lambda wildcards: expand(
-            "results/{date}/contigs-masked/{sample}.fasta",
-            zip,
-            date=[wildcards.date] * len(get_samples_for_date(wildcards.date)),
-            sample=get_samples_for_date(wildcards.date, filtered=True),
+        contigs=lambda wildcards: get_assemblies_for_submission(
+            wildcards, "accepted samples"
         ),
     output:
         fasta=report(
@@ -129,7 +115,11 @@ rule virologist_report:
         ),
         initial_contigs=lambda wildcards: get_expanded_contigs(wildcards),
         polished_contigs=lambda wildcards: expand(
-            "results/{{date}}/polished-contigs/{sample}.fasta",
+            "results/{{date}}/contigs/polished/{sample}.fasta",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        pseudo_contigs=lambda wildcards: expand(
+            "results/{{date}}/contigs/pseudoassembled/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
         ),
         kraken=lambda wildcards: expand(
@@ -149,6 +139,9 @@ rule virologist_report:
     log:
         "logs/{date}/overview-table.log",
     params:
+        assembly_used=lambda wildcards: get_assemblies_for_submission(
+            wildcards, "all samples"
+        ),
         voc=config.get("voc"),
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
     conda:
@@ -185,7 +178,7 @@ rule snakemake_reports:
         "results/{date}/plots/coverage-reference-genome.svg",
         "results/{date}/plots/coverage-assembled-genome.svg",
         lambda wildcards: expand(
-            "results/{{date}}/polished-contigs/{sample}.fasta",
+            "results/{{date}}/contigs/polished/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
         ),
         # lambda wildcards: expand(

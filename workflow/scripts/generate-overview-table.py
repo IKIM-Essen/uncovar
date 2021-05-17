@@ -44,11 +44,24 @@ def register_contig_lengths(assemblies, name):
             data.loc[sample, name] = max(len(contig.sequence) for contig in infile)
 
 
-# add lenghts of Initial Contigs
+# add lengths of Initial contigs
 register_contig_lengths(snakemake.input.initial_contigs, "Initial Contig (bp)")
 
-# add lenghts of polished contigs
+# add lengths of polished contigs
 register_contig_lengths(snakemake.input.polished_contigs, "Final Contig (bp)")
+
+# add lengths of pseudo assembly
+register_contig_lengths(snakemake.input.pseudo_contigs, "Pseudo Contig (bp)")
+
+# add type of assembly use:
+for ele in snakemake.params.assembly_used:
+    sample, used = ele.split(",")
+    if "pseudo" == used:
+        data.loc[sample, "RKI Submission"] = "Pseudo"
+    elif "normal" == used:
+        data.loc[sample, "RKI Submission"] = "Normal"
+    elif "not-accepted" == used:
+        data.loc[sample, "RKI Submission"] = "-"
 
 # add kraken estimates
 species_columns = pd.DataFrame()
@@ -115,6 +128,7 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
             varcount = f" ({varcount})"
         pangolin_call = f"{lineage}{varcount}"
     data.loc[sample, "Pangolin Strain (#SNPs)"] = pangolin_call
+
 
 # add variant calls
 AA_ALPHABET_TRANSLATION = {
@@ -191,6 +205,7 @@ int_cols = [
     "Used Reads (#)",
     "Initial Contig (bp)",
     "Final Contig (bp)",
+    "Pseudo Contig (bp)",
 ]
 data[int_cols] = data[int_cols].applymap(lambda x: "{0:,}".format(int(x)))
 
