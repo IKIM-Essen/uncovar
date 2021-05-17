@@ -118,6 +118,10 @@ rule virologist_report:
             "results/{{date}}/contigs/polished/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
         ),
+        pseudo_contigs=lambda wildcards: expand(
+            "results/{{date}}/contigs/pseudoassembled/{sample}.fasta",
+            sample=get_samples_for_date(wildcards.date),
+        ),
         kraken=lambda wildcards: expand(
             "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
             sample=get_samples_for_date(wildcards.date),
