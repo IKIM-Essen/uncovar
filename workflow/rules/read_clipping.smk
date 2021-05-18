@@ -33,7 +33,7 @@ rule clip_primer:
     shell:
         """
         samtools sort -@ {threads} -o {output.sortbam} {input.bam} > {log} 2>&1
-        
+
         cd {params.dir}
         bamclipper.sh -b {params.bam} -p {params.dir_depth}{input.bed} -n {threads} >> {params.dir_depth}{log} 2>&1
         cd {params.dir_depth}
@@ -75,15 +75,26 @@ rule sort_aln_for_plots:
         "../envs/samtools.yaml"
     shell:
         "samtools sort -o {output} {input} > {log} 2>&1"
-    
 
 
 rule plot_primer_clipping:
     input:
-        unclipped=lambda wildcards: expand("results/{{date}}/clipped-reads/{sample}.bam", sample=get_samples_for_date(wildcards.date)),
-        index_unclipped=lambda wildcards: expand("results/{{date}}/clipped-reads/{sample}.bam.bai", sample=get_samples_for_date(wildcards.date)),
-        clipped=lambda wildcards: expand("results/{{date}}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam", sample=get_samples_for_date(wildcards.date)),
-        index_clipped=lambda wildcards: expand("results/{{date}}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam.bai", sample=get_samples_for_date(wildcards.date)),
+        unclipped=lambda wildcards: expand(
+            "results/{{date}}/clipped-reads/{sample}.bam",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        index_unclipped=lambda wildcards: expand(
+            "results/{{date}}/clipped-reads/{sample}.bam.bai",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        clipped=lambda wildcards: expand(
+            "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        index_clipped=lambda wildcards: expand(
+            "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam.bai",
+            sample=get_samples_for_date(wildcards.date),
+        ),
     output:
         plot="results/{date}/plots/all.svg",
     log:
