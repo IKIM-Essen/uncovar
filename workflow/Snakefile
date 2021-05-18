@@ -73,7 +73,9 @@ checkpoint all:
             date=get_all_run_dates(),
         ),
         expand("results/reports/{date}.zip", date=get_all_run_dates()),
-        expand("results/{date}/tables/assembly_comparison.tsv", date=get_all_run_dates()),
+        expand(
+            "results/{date}/tables/assembly_comparison.tsv", date=get_all_run_dates()
+        ),
         expand("results/rki/{date}_uk-essen_rki.fasta", date=get_all_run_dates()),
         expand(
             "results/{date}/plots/all.strains.pangolin.svg",
