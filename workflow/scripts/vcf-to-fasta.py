@@ -40,7 +40,7 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
     last_pos = -1  # last considered reference position
     for record in invcf:
         rec_pos = record.pos - 1  # convert to zero based
-        if rec_pos > last_pos + 1:
+        if rec_pos > last_pos + 2:
             chunk_seq = np.array(list(ref_seq[last_pos + 1 : rec_pos]))
 
             # check for low coverage regions
@@ -48,10 +48,7 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
                 coverage[last_pos + 1 : rec_pos] < snakemake.params.min_coverage
             )
 
-            print(chunk_low_cov)
-            # mask low coverage regions
-            if len(chunk_low_cov)>0:
-                chunk_seq[chunk_low_cov] = "N"
+            chunk_seq[chunk_low_cov] = "N"
 
             seq += "".join(chunk_seq)
         elif rec_pos < last_pos:
