@@ -48,7 +48,8 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
                 coverage[last_pos + 1 : rec_pos] < snakemake.params.min_coverage
             )
 
-            chunk_seq[chunk_low_cov] = "N"
+            if len(chunk_seq[chunk_low_cov]) > 0:
+                chunk_seq[chunk_low_cov] = "N"
 
             seq += "".join(chunk_seq)
         elif rec_pos < last_pos:
