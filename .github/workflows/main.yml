@@ -62,19 +62,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set environment variable
-        run: |
-          export GISAID_API_TOKEN=${{ secrets.GISAID_API_TOKEN }}
-
-      - name: Free some disk space
-        run: |
-          sudo rm -rf "/usr/local/share/boost"
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-
-      - name: Install dependcies
-        run: |
-          sudo apt-get install tree
-
       - name: Get date
         id: get-date
         run: |
@@ -175,9 +162,6 @@ jobs:
           curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=MW735442.1&db=nuccore&report=fasta" | grep "\S" > .tests/resources/genomes/B.1.1.7.fasta
           curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=MT324062.1&db=nuccore&report=fasta" | grep "\S" > .tests/resources/genomes/B.1.351.fasta
 
-      - name: Print tree
-        run: tree .tests/ -C
-
       - name: Test rule ${{ matrix.rule }}
         uses: snakemake/snakemake-github-action@v1.18.0
         with:
@@ -216,7 +200,7 @@ jobs:
       # - name: Test params changes
       #     args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba -R `snakemake --list-params-changes`"
 
-      - name: Check strain calling bechmark
+      - name: Check strain calling benchmark
         if: matrix.rule == 'benchmark_strain_calling'
         run: |
           cat .tests/results/benchmarking/strain-calling.csv
@@ -240,7 +224,7 @@ jobs:
             echo "Pseudoassembly was successful."
           fi
 
-      - name: Check assembly bechmark
+      - name: Check assembly benchmark
         if: matrix.rule == 'benchmark_assembly'
         run: |
           cat .tests/results/benchmarking/assembly/assembly.csv
@@ -255,13 +239,13 @@ jobs:
       - name: Print non-sars-cov-2 kallisto calls
         if: matrix.rule == 'benchmark_non_sars_cov_2'
         run: |
-          cat .tests/results/test-cases/tables/strain-calls/non-cov2-*.strains.kallisto.tsv
+          cat .tests/results/benchmarking/tables/strain-calls/non-cov2-*.strains.kallisto.tsv
 
       - name: Test non-sars-cov-2 coronaviruses
         if: matrix.rule == 'benchmark_non_sars_cov_2'
         run: |
-          cat .tests/results/test-cases/non-sars-cov-2.csv
-          if (cat .tests/results/test-cases/non-sars-cov-2.csv | grep 'is sars-cov-2' > /dev/null)
+          cat .tests/results/benchmarking/non-sars-cov-2.csv
+          if (cat .tests/results/benchmarking/non-sars-cov-2.csv | grep 'is sars-cov-2' > /dev/null)
           then
               echo "Workflow failed! A non-sars-cov-2 genome was identified as sars-cov-2 (see above)."
               exit 1
@@ -272,8 +256,6 @@ jobs:
       - name: Print disk space
         run: sudo df -h
 
-      - name: Print tree
-        run: tree .tests/ -C
 
       - name: Change permissions for caching
         run: sudo chmod -R 755 .tests/.snakemake/conda
