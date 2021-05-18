@@ -60,11 +60,11 @@ rule test_non_cov2:
         pangolin=get_non_cov2_calls(from_caller="pangolin"),
         kallisto=get_non_cov2_calls(from_caller="kallisto"),
     output:
-        "results/test-cases/non-sars-cov-2.csv",
+        "results/benchmarking/non-sars-cov-2.csv",
     params:
         accessions=get_non_cov2_accessions(),
     log:
-        "logs/test-cases/summarize_non_cov2.log",
+        "logs/benchmarking/summarize_non_cov2.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -73,15 +73,15 @@ rule test_non_cov2:
 
 rule report_non_cov2:
     input:
-        summary="results/test-cases/non-sars-cov-2.csv",
+        summary="results/benchmarking/non-sars-cov-2.csv",
         call_plots=expand(
-            "results/test-cases/plots/strain-calls/non-cov2-{accession}.strains.{caller}.svg",
+            "results/benchmarking/plots/strain-calls/non-cov2-{accession}.strains.{caller}.svg",
             accession=get_non_cov2_accessions(),
             caller=["pangolin", "kallisto"],
         ),
     output:
         report(
-            directory("results/test-cases/html"),
+            directory("results/benchmarking/html"),
             htmlindex="index.html",
             category="Test results",
         ),

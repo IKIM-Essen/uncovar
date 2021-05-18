@@ -87,7 +87,7 @@ checkpoint all:
             mode=["major", "any"],
         ) if config["strain-calling"]["use-kallisto"] else "",
         expand(
-            "results/{date}/polished-contigs/{sample}.fasta",
+            "results/{date}/contigs/polished/{sample}.fasta",
             zip,
             date=get_dates(),
             sample=get_samples(),
