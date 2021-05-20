@@ -203,6 +203,7 @@ rule snakemake_reports:
         "results/{date}/qc/laboratory/multiqc.html",
         "results/rki/{date}_uk-essen_rki.csv",
         "results/rki/{date}_uk-essen_rki.fasta",
+        "results/{date}/plots/primer-clipping-intervals.svg",
         expand(
             "results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf",
             filter=config["variant-calling"]["filters"],

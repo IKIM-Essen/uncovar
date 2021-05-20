@@ -75,7 +75,12 @@ rule plot_primer_clipping:
             sample=get_samples_for_date(wildcards.date),
         ),
     output:
-        plot="results/{date}/plots/primer-clipping-intervals.svg",
+        plot=report(
+            "results/{date}/plots/primer-clipping-intervals.svg",
+            caption="../report/amplicon-primer-clipping.rst",
+            category="3. Sequencing Details",
+            subcategory="4. Check for correct amplicon primer clipping",
+        ),
     log:
         "logs/{date}/plot-primer-clipping.log",
     params:
