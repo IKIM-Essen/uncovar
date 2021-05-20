@@ -10,6 +10,7 @@ rule clip_primer:
         ),
     output:
         sortbam=temp("results/{date}/clipped-reads/{sample}.bam"),
+        sortindex=temp("results/{date}/clipped-reads/{sample}.bam.bai"),
         clippedbam=temp("results/{date}/clipped-reads/{sample}.primerclipped.bam"),
         hardclippedbam=temp(
             "results/{date}/clipped-reads/{sample}.primerclipped.hard.bam"
@@ -33,7 +34,7 @@ rule clip_primer:
     shell:
         """
         samtools sort -@ {threads} -o {output.sortbam} {input.bam} > {log} 2>&1
-
+        samtools index {output.sortbam} >> {log} 2>&1
         cd {params.dir}
         bamclipper.sh -b {params.bam} -p {params.dir_depth}{input.bed} -n {threads} >> {params.dir_depth}{log} 2>&1
         cd {params.dir_depth}
@@ -62,10 +63,10 @@ rule plot_primer_clipping:
             "results/{{date}}/clipped-reads/{sample}.bam",
             sample=get_samples_for_date(wildcards.date),
         ),
-        index_unclipped=lambda wildcards: expand(
-            "results/{{date}}/clipped-reads/{sample}.bam.bai",
-            sample=get_samples_for_date(wildcards.date),
-        ),
+        # index_unclipped=lambda wildcards: expand(
+        #     "results/{{date}}/clipped-reads/{sample}.bam.bai",
+        #     sample=get_samples_for_date(wildcards.date),
+        # ),
         clipped=lambda wildcards: expand(
             "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam",
             sample=get_samples_for_date(wildcards.date),
