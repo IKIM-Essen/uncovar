@@ -10,7 +10,7 @@ rule clip_primer:
         ),
     output:
         sortbam=temp("results/{date}/clipped-reads/{sample}.bam"),
-        sortindex=temp("results/{date}/clipped-reads/{sample}.bam.bai"),
+        sortindex="results/{date}/clipped-reads/{sample}.bam.bai",
         clippedbam=temp("results/{date}/clipped-reads/{sample}.primerclipped.bam"),
         hardclippedbam=temp(
             "results/{date}/clipped-reads/{sample}.primerclipped.hard.bam"
