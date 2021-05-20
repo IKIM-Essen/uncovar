@@ -43,27 +43,6 @@ rule clip_primer:
         """
 
 
-rule clp_aln:
-    input:
-        reads=[
-            "results/{date}/clipped-reads/{sample}.1.fastq.gz",
-            "results/{date}/clipped-reads/{sample}.2.fastq.gz",
-        ],
-        idx=get_bwa_index,
-    output:
-        "results/{date}/clipped-aln/ref~{reference}/{sample}.bam",
-    log:
-        "logs/{date}/clipped-aln/ref~{reference}/{sample}.log",
-    params:
-        index=lambda w, input: os.path.splitext(input.idx[0])[0],
-        extra="",
-        sort="samtools",
-        sort_order="coordinate",
-    threads: 8
-    wrapper:
-        "0.69.0/bio/bwa/mem"
-
-
 rule sort_aln_for_plots:
     input:
         "results/{date}/clipped-reads/{sample}.primerclipped.hard.bam",
@@ -96,12 +75,12 @@ rule plot_primer_clipping:
             sample=get_samples_for_date(wildcards.date),
         ),
     output:
-        plot="results/{date}/plots/all.svg",
+        plot="results/{date}/plots/primer-clipping-intervals.svg",
     log:
-        "logs/{date}/plot-primer-clipping/{date}.log",
-    threads: 16
+        "logs/{date}/plot-primer-clipping.log",
     params:
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
+        bed=config["adapters"]["amplicon-primers"],
     conda:
         "../envs/python.yaml"
     script:

@@ -4,7 +4,7 @@ from intervaltree import Interval, IntervalTree
 import altair as alt
 
 # read primer bedpe to df
-PRIMER = pd.read_csv("resources/primer.bedpe", delimiter="\t", header=None)
+PRIMER = pd.read_csv(snakemake.params.get("bed", ""), delimiter="\t", header=None)
 PRIMER.drop(PRIMER.columns[[0, 3]], axis=1, inplace=True)
 PRIMER.columns = ["p1_start", "p1_end", "p2_start", "p2_end"]
 
@@ -103,11 +103,11 @@ def count_intervals(file):
                     counter_nothing,
                 ],
                 "class": [
-                    "w/ primer",
-                    "w/ primer within",
-                    "w/o primer",
-                    "w/o primer within",
-                    "none",
+                    "uncut primer exact",
+                    "uncut primer within",
+                    "cut primer exact",
+                    "cut primer within",
+                    "no mathing win",
                 ],
             }
         )
@@ -119,7 +119,6 @@ def plot_classes(counters, state):
         alt.Chart(counters)
         .mark_bar()
         .encode(
-            # y=alt.Y("class", title=""),
             y="class",
             x="n_count",
             row=alt.Row("sample:N"),
