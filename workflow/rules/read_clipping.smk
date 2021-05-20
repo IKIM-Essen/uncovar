@@ -19,7 +19,6 @@ rule clip_primer:
     input:
         sortbam="results/{date}/clipped-reads/{sample}.bam",
         sortindex="results/{date}/clipped-reads/{sample}.bam.bai",
-        ),
         bed=config["adapters"]["amplicon-primers"],
         ref_fasta="resources/genomes/{reference}.fasta".format(
             reference=config["adapters"]["amplicon-reference"]

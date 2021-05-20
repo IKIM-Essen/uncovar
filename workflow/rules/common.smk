@@ -485,12 +485,16 @@ def get_assemblies_for_submission(wildcards, agg_type):
         with checkpoints.rki_filter.get(
             date=wildcards.date, assembly_type="masked-assembly"
         ).output[0].open() as f:
-            masked_samples = pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
+            masked_samples = (
+                pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
+            )
 
         with checkpoints.rki_filter.get(
             date=wildcards.date, assembly_type="pseudo-assembly"
         ).output[0].open() as f:
-            pseudo_samples = pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
+            pseudo_samples = (
+                pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
+            )
     # for testing of pangolin don't create pseudo-assembly
     else:
         masked_samples = [wildcards.sample]
