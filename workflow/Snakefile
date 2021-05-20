@@ -148,7 +148,7 @@ rule benchmark_assembly:
 
 rule benchmark_non_sars_cov_2:
     input:
-        "results/test-cases/non-sars-cov-2.csv",
+        "results/benchmarking/non-sars-cov-2.csv",
 
 
 rule benchmark_mixtures:
