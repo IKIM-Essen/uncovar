@@ -1,6 +1,6 @@
 import pandas as pd
 import pysam
-from intervaltree import Interval, IntervalTree
+from intervaltree import IntervalTree
 import altair as alt
 
 # read primer bedpe to df
