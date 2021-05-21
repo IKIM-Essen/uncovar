@@ -21,6 +21,8 @@ IUPAC = {
 
 
 def phred_to_prob(phred):
+    if phred is None:
+        return 0
     return 10 ** (-phred / 10)
 
 
@@ -38,7 +40,7 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
     last_pos = -1  # last considered reference position
     for record in invcf:
         rec_pos = record.pos - 1  # convert to zero based
-        if rec_pos > last_pos + 1:
+        if rec_pos > last_pos + 2:
             chunk_seq = np.array(list(ref_seq[last_pos + 1 : rec_pos]))
 
             # check for low coverage regions
@@ -46,8 +48,8 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
                 coverage[last_pos + 1 : rec_pos] < snakemake.params.min_coverage
             )
 
-            # mask low coverage regions
-            chunk_seq[chunk_low_cov] = "N"
+            if len(chunk_seq[chunk_low_cov]) > 0:
+                chunk_seq[chunk_low_cov] = "N"
 
             seq += "".join(chunk_seq)
         elif rec_pos < last_pos:
@@ -101,7 +103,7 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
             del_len = record.info["SVLEN"][0]
             handle_deletion(del_len)
         elif alt_allele == "<DUP>":
-            dup_seq = ref_seq[rec_pos : record.info["END"][0]]
+            dup_seq = ref_seq[rec_pos : record.stop]
             seq += dup_seq * 2
             last_pos += len(dup_seq)
         elif re.match("[A-Z]+$", alt_allele) is None:
