@@ -72,19 +72,19 @@ rule plot_primer_clipping:
     input:
         unclipped=lambda wildcards: expand(
             "results/{{date}}/clipped-reads/{sample}.bam",
-            sample=get_samples_for_date(wildcards.date),
+            sample=get_samples_for_date_amplicon(wildcards.date),
         ),
         index_unclipped=lambda wildcards: expand(
             "results/{{date}}/clipped-reads/{sample}.bam.bai",
-            sample=get_samples_for_date(wildcards.date),
+            sample=get_samples_for_date_amplicon(wildcards.date),
         ),
         clipped=lambda wildcards: expand(
             "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam",
-            sample=get_samples_for_date(wildcards.date),
+            sample=get_samples_for_date_amplicon(wildcards.date),
         ),
         index_clipped=lambda wildcards: expand(
             "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam.bai",
-            sample=get_samples_for_date(wildcards.date),
+            sample=get_samples_for_date_amplicon(wildcards.date),
         ),
     output:
         plot=report(
