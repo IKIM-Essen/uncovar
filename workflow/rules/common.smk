@@ -517,7 +517,6 @@ def get_assemblies_for_submission(wildcards, agg_type):
         accepted_assemblies = []
 
         for sample in set(masked_samples + pseudo_samples):
-            print(set(masked_samples + pseudo_samples))
             if sample in masked_samples:
                 accepted_assemblies.append(
                     normal_assembly_pattern.format(sample=sample)
@@ -526,7 +525,6 @@ def get_assemblies_for_submission(wildcards, agg_type):
                 accepted_assemblies.append(
                     pseudo_assembly_pattern.format(sample=sample)
                 )
-            print(accepted_assemblies)
         return accepted_assemblies
 
     # for the pangolin call
