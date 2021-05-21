@@ -203,7 +203,7 @@ rule snakemake_reports:
         "results/{date}/qc/laboratory/multiqc.html",
         "results/rki/{date}_uk-essen_rki.csv",
         "results/rki/{date}_uk-essen_rki.fasta",
-        "results/{date}/plots/primer-clipping-intervals.svg",
+        lambda wildcards: "results/{date}/plots/primer-clipping-intervals.svg" if len(get_samples_for_date_amplicon(wildcards.date)) > 0 else "",
         expand(
             "results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf",
             filter=config["variant-calling"]["filters"],
