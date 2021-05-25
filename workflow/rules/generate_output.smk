@@ -207,7 +207,7 @@ rule snakemake_reports:
             "results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf",
             filter=config["variant-calling"]["filters"],
         ), 
-        lambda wildcards: "results/{{date}}/plots/primer-clipping-intervals.svg" if len(get_samples_for_date_amplicon(wildcards.date)) > 0 else [],
+        lambda wildcards: "results/{date}/plots/primer-clipping-intervals.svg" if len(get_samples_for_date_amplicon(wildcards.date)) > 0 else [],
     output:
         "results/reports/{date}.zip",
     params:
