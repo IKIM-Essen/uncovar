@@ -7,13 +7,14 @@ rule sort_bam:
     output:
         temp("results/{date}/clipped-reads/{sample}.bam"),
     log:
-        "logs/{date}/sort-bam/{sample}.log"
+        "logs/{date}/sort-bam/{sample}.log",
     params:
-        extra = "-m 4G",
-        tmp_dir = "/tmp/"
+        extra="-m 4G",
+        tmp_dir="/tmp/",
     threads: 8
     wrapper:
         "0.74.0/bio/samtools/sort"
+
 
 rule clip_primer:
     input:

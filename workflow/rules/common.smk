@@ -429,15 +429,15 @@ def is_amplicon_data(sample):
 
 
 def get_samples_for_date_amplicon(date):
-    samples=get_samples_for_date(date)
+    samples = get_samples_for_date(date)
     amplicon_samples = []
-    
+
     for sample in samples:
         if is_amplicon_data(sample):
             amplicon_samples.append(sample)
     return amplicon_samples
 
-  
+
 def get_varlociraptor_bias_flags(wildcards):
     if is_amplicon_data(wildcards.sample):
         # no bias detection possible
