@@ -428,6 +428,16 @@ def is_amplicon_data(sample):
         return False
 
 
+def get_samples_for_date_amplicon(date):
+    samples=get_samples_for_date(date)
+    amplicon_samples = []
+    
+    for sample in samples:
+        if is_amplicon_data(sample):
+            amplicon_samples.append(sample)
+    return amplicon_samples
+
+  
 def get_varlociraptor_bias_flags(wildcards):
     if is_amplicon_data(wildcards.sample):
         # no bias detection possible
@@ -485,12 +495,17 @@ def get_assemblies_for_submission(wildcards, agg_type):
         with checkpoints.rki_filter.get(
             date=wildcards.date, assembly_type="masked-assembly"
         ).output[0].open() as f:
-            masked_samples = pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
+
+            masked_samples = (
+                pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
+            )
 
         with checkpoints.rki_filter.get(
             date=wildcards.date, assembly_type="pseudo-assembly"
         ).output[0].open() as f:
-            pseudo_samples = pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
+            pseudo_samples = (
+                pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
+            )
     # for testing of pangolin don't create pseudo-assembly
     else:
         masked_samples = [wildcards.sample]
