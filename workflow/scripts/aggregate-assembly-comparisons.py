@@ -11,13 +11,15 @@ import pysam
 
 def aggregate_assembly_comparisons(bam_files: List[str], samples: List[str], output: str):
     data = []
-    print(bam_files)
     for sample, bam_file_path in zip(samples, bam_files):
         sample_data = defaultdict()
         with pysam.AlignmentFile(bam_file_path) as bam_file:
             for record in bam_file:
                 sample_data["Sample"] = sample
-                sample_data["Edit distance"] = record.get_tag("NM")
+                try:
+                    sample_data["Edit distance"] = record.get_tag("NM")
+                except KeyError:
+                    sample_data["Edit distance"] = "tag 'NM' not present"
                 sample_data["Cigarstring"] = record.cigarstring
                 
         data.append(sample_data)

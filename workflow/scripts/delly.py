@@ -11,8 +11,7 @@ extra = snakemake.params.get("extra", "")
 log = snakemake.log_fmt_shell(stdout=True, stderr=True)
 
 with pysam.AlignmentFile(snakemake.input.sample) as bam:
-    read_count = sum(1 for read in bam)
-    if read_count < 10000:
+    if bam.mapped < 10000:
         # Not enough reads to perform SV calling.
         # Output empty BCF.
         header = pysam.VariantHeader()
