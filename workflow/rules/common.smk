@@ -426,10 +426,9 @@ def get_quast_fastas(wildcards):
 def get_random_strain():
 
     print(">>> I`m here <<<")
-
     with checkpoints.extract_strain_genomes_from_gisaid.get(
-        date="benchmarking"
-    ).output.open() as f:
+        date=BENCHMARK_DATE_WILDCARD
+    ).output[0].open() as f:
         print("<<< I`m not here >>>")
         lines = f.read().splitlines()
         rnd_strain_path = random.choice(lines)
@@ -463,7 +462,7 @@ def generate_mixtures(wildcards):
         mixture_list = config["mixtures"]["predefined_mixtures"]
 
     print("<<< I`m also not here >>>")
-
+    print(mixture_list)
     return mixture_list
 
 
@@ -496,7 +495,7 @@ def get_genome_fasta(wildcards):
         MIXTURE_PART_INDICATOR in wildcards.accession
         and MIXTURE_PERCENTAGE_INDICATOR in wildcards.accession
     ):
-        with checkpoints.extract_strain_genomes_from_gisaid.get().output[0].open() as f:
+        with checkpoints.extract_strain_genomes_from_gisaid.get(date=BENCHMARK_DATE_WILDCARD).output[0].open() as f:
             acc, _ = wildcards.accession.split(MIXTURE_PERCENTAGE_INDICATOR)
             acc = acc.replace("-", ".").replace(MIXTURE_PART_INDICATOR, "")
             return "resources/genomes/{accession}.fasta".format(accession=acc)
