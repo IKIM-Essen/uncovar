@@ -87,12 +87,12 @@ rule rki_report:
     output:
         fasta=report(
             "results/rki/{date}_uk-essen_rki.fasta",
-            category="4. RKI Submission",
+            category="6. RKI Submission",
             caption="../report/rki-submission-fasta.rst",
         ),
         table=report(
             "results/rki/{date}_uk-essen_rki.csv",
-            category="4. RKI Submission",
+            category="6. RKI Submission",
             caption="../report/rki-submission-csv.rst",
         ),
     params:
