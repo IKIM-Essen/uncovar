@@ -23,7 +23,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         image: my-app
-        tags: latest,${{ env.STATE_RELEASE_VERSION }}
+        tags: latest ${{ github.sha }} ${{ env.STATE_RELEASE_VERSION }}
         dockerfiles: |
           ./Dockerfile
 
