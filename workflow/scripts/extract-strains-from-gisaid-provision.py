@@ -22,6 +22,7 @@ def extrace_strains_from_provision(
     provision = select_oldest_strains(provision)
 
     # save strain genomes
+    provision["covv_lineage"] = provision["covv_lineage"].str.replace("/","_")
     provision["covv_lineage_fasta"] = provision["covv_lineage"].values + ".fasta"
     np.vectorize(write_sequence)(
         provision["covv_lineage"].values,
