@@ -161,6 +161,8 @@ rule report_non_cov2:
 
 
 checkpoint generate_mixtures:
+    input:
+        "results/benchmarking/tables/strain-genomes.txt",
     output:
         "results/benchmarking/tables/mixtures.txt",
     params:
