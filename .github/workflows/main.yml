@@ -162,8 +162,8 @@ jobs:
           mkdir -p .tests/results/benchmarking/tables
           echo -e "resources/genomes/B.1.1.7.fasta\nresources/genomes/B.1.351.fasta\n" > .tests/results/benchmarking/tables/strain-genomes.txt
           mkdir -p .tests/resources/genomes
-          curl https://www.ncbi.nlm.nih.gov/nuccore/NC_045512.2?report=fasta&log$=seqview&format=text > resources/genomes/B.1.1.7.fasta
-          curl https://www.ncbi.nlm.nih.gov/nuccore/NC_045512.2?report=fasta&log$=seqview&format=text > resources/genomes/B.1.351.fasta
+          curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314997.1&rettype=fasta" > resources/genomes/B.1.1.7.fasta
+          curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314998.1&rettype=fasta" > resources/genomes/B.1.351.fasta
 
 
       - name: Test rule ${{ matrix.rule }}
