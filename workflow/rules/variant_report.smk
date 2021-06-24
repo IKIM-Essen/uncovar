@@ -42,7 +42,7 @@ rule ucsc_vcf:
         report(
             "results/{date}/ucsc-vcfs/{target}.{filter}.vcf",
             caption="../report/variant-calls.rst",
-            category="6. Variant Call Files",
+            category="5. Variant Call Files",
             subcategory="{filter}",
         ),
     log:
@@ -63,7 +63,7 @@ rule aggregate_ucsc_vcfs:
         report(
             "results/{date}/ucsc-vcfs/all.{date}.{filter}.vcf",
             caption="../report/ucsc.rst",
-            category="6. Variant Call Files",
+            category="5. Variant Call Files",
             subcategory="Overview",
         ),
     log:
