@@ -22,7 +22,7 @@ jobs:
       pre: echo ::save-state name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
       uses: redhat-actions/buildah-build@v2
       with:
-        image: my-app
+        image: uncovar
         tags: latest ${{ github.sha }} ${{ env.STATE_RELEASE_VERSION }}
         dockerfiles: |
           ./Dockerfile
