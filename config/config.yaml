@@ -91,6 +91,23 @@ non_cov2_genomes:
   - NC_019843
   # - NC_004718 # This results in 30246 long (polished) contig, which pangolin can't process
 
+# For testing the read bases strain calling
+mixtures:
+  # maximal number of reads to generate
+  max_reads: 584903
+  # number of mixtures to generate
+  no_mixtures: 500
+  # number of strains to mix
+  no_strains: 2
+  # or you can specify the mix you would like to have 
+  # this assumes, that strain files are available under resources/genomes
+  # the used number of strains must match the no_strains defined above
+  use_predefined_mixtures: False
+  # use the following format: "_MIX_B-1-1-7_PERC_90_MIX_B-1-351_PERC_10"
+  predefined_mixtures:
+    - "_MIX_B-1-1-7_PERC_50_MIX_B-1-351_PERC_50"
+    - "_MIX_B-1-1-7_PERC_90_MIX_B-1-351_PERC_10"
+
 # variants of concern (protein name -> variants)
 voc:
   S:

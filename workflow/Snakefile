@@ -146,3 +146,16 @@ rule benchmark_assembly:
             "results/benchmarking/assembly/{assembly_type}.csv",
             assembly_type=["assembly", "pseudoassembly"],
         ),
+
+
+rule benchmark_non_sars_cov_2:
+    input:
+        "results/benchmarking/non-sars-cov-2.csv",
+
+
+rule benchmark_mixtures:
+    input:
+        expand(
+            "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
+            caller=["kallisto", "pangolin"],
+        ),

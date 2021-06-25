@@ -1,12 +1,16 @@
 from pathlib import Path
-import re
 import pandas as pd
+import re
+import random
 
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
 
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
+MIXTURE_PREFIX = "mixture-sample-"
+MIXTURE_PART_INDICATOR = "_MIX_"
+MIXTURE_PERCENTAGE_INDICATOR = "_PERC_"
 BENCHMARK_DATE_WILDCARD = "benchmarking"
 
 
@@ -76,6 +80,13 @@ def get_fastqs(wildcards):
         return expand(
             "resources/benchmarking/{accession}/reads.{read}.fastq.gz",
             accession=accession,
+            read=[1, 2],
+        )
+    if wildcards.sample.startswith(MIXTURE_PREFIX):
+        mixture = wildcards.sample[len(MIXTURE_PREFIX) :]
+        return expand(
+            "resources/mixtures/{mixtures}/reads.{read}.fastq.gz",
+            mixtures=mixture,
             read=[1, 2],
         )
     # default case, look up FASTQs in the sample sheet
@@ -412,13 +423,111 @@ def get_quast_fastas(wildcards):
         return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
 
 
+def get_random_strain():
+
+    print(">>> I`m here <<<")
+    with checkpoints.extract_strain_genomes_from_gisaid.get(
+        date=BENCHMARK_DATE_WILDCARD
+    ).output[0].open() as f:
+        print("<<< I`m not here >>>")
+        lines = f.read().splitlines()
+        rnd_strain_path = random.choice(lines)
+        strain = rnd_strain_path.replace(".fasta", "").split("/")[-1]
+        return strain
+
+
+def generate_mixtures(wildcards):
+    if not config["mixtures"]["use_predefined_mixtures"]:
+        no_mixtures = config["mixtures"]["no_mixtures"]
+        no_strains = config["mixtures"]["no_strains"]
+        mixture_list = []
+
+        for mix in range(no_mixtures):
+
+            fractions = [random.randint(1, 100) for _ in range(no_strains)]
+            s = sum(fractions)
+            fractions = [round(i / s * 100) for i in fractions]
+
+            s = sum(fractions)
+            if s != 100:
+                fractions[-1] += 100 - s
+
+            mixture = ""
+            for frac in fractions:
+                strain = get_random_strain()
+                mixture += f"{MIXTURE_PART_INDICATOR}{strain}{MIXTURE_PERCENTAGE_INDICATOR}{frac}"
+
+            mixture_list.append(mixture.replace(".", "-"))
+    else:
+        mixture_list = config["mixtures"]["predefined_mixtures"]
+
+    print("<<< I`m also not here >>>")
+    print(mixture_list)
+    return mixture_list
+
+
+def get_mixture_results(wildcards):
+    mixture_list = []
+
+    with checkpoints.generate_mixtures.get().output[0].open() as f:
+        for mix in f.read().splitlines():
+            mixture_list.append(mix)
+
+    if wildcards.caller == "pangolin":
+        return expand(
+            "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.csv",
+            prefix=MIXTURE_PREFIX,
+            caller=wildcards.caller,
+            mixtures=mixture_list,
+        )
+    else:
+        return expand(
+            "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.tsv",
+            prefix=MIXTURE_PREFIX,
+            caller=wildcards.caller,
+            mixtures=mixture_list,
+        )
+
+
+def get_genome_fasta(wildcards):
+    # mixtures sample, use provided (GISAID) genomes to generate mixtures of these
+    if (
+        MIXTURE_PART_INDICATOR in wildcards.accession
+        and MIXTURE_PERCENTAGE_INDICATOR in wildcards.accession
+    ):
+        with checkpoints.extract_strain_genomes_from_gisaid.get(
+            date=BENCHMARK_DATE_WILDCARD
+        ).output[0].open() as f:
+            acc, _ = wildcards.accession.split(MIXTURE_PERCENTAGE_INDICATOR)
+            acc = acc.replace("-", ".").replace(MIXTURE_PART_INDICATOR, "")
+            return "resources/genomes/{accession}.fasta".format(accession=acc)
+    # normal genome, download via entrez
+    else:
+        return "resources/genomes/{accession}.fasta".format(
+            accession=wildcards.accession
+        )
+
+
+def no_reads(wildcards):
+    max_reads = config["mixtures"]["max_reads"]
+    if MIXTURE_PART_INDICATOR in wildcards.accession:
+        _, fraction = wildcards.accession.split(MIXTURE_PERCENTAGE_INDICATOR)
+        return round(int(fraction) * max_reads / 100)
+    else:
+        return max_reads
+
+
 def get_strain(path_to_pangolin_call):
     pangolin_results = pd.read_csv(path_to_pangolin_call)
     return pangolin_results.loc[0]["lineage"]
 
 
 def is_amplicon_data(sample):
-    if sample.startswith(BENCHMARK_PREFIX) or sample.startswith(NON_COV2_TEST_PREFIX):
+    if (
+        sample.startswith(BENCHMARK_PREFIX)
+        or sample.startswith(NON_COV2_TEST_PREFIX)
+        or sample.startswith(MIXTURE_PREFIX)
+    ):
         # benchmark data, not amplicon based
         return False
     sample = pep.sample_table.loc[sample]
