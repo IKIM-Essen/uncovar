@@ -1,3 +1,4 @@
+print(">>> Am i here? <<<")
 import sys
 
 sys.stderr = open(snakemake.log[0], "w")
@@ -21,6 +22,7 @@ def extrace_strains_from_provision(
     provision = select_oldest_strains(provision)
 
     # save strain genomes
+    provision["covv_lineage"] = provision["covv_lineage"].str.replace("/","_")
     provision["covv_lineage_fasta"] = provision["covv_lineage"].values + ".fasta"
     np.vectorize(write_sequence)(
         provision["covv_lineage"].values,
@@ -63,6 +65,7 @@ def select_oldest_strains(df: pd.DataFrame):
 def write_sequence(
     covv_lineage: str, covv_lineage_fasta: str, sequence: str, out_path: str
 ):
+    print(f"{covv_lineage_fasta}", file=sys.stderr)    
     genome_file = join(out_path, covv_lineage_fasta)
     if not isfile(genome_file):
         with open(genome_file, "w") as f:
