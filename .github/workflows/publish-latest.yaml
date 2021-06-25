@@ -22,7 +22,7 @@ jobs:
       id: build-image
       uses: redhat-actions/buildah-build@v2
       with:
-        image: my-app
+        image: uncovar
         tags: latest ${{ github.sha }}
         dockerfiles: |
           ./Dockerfile
