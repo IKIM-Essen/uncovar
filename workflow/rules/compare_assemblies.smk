@@ -1,7 +1,7 @@
 rule assembly_megahit:
     input:
-        fastq1="results/{date}/nonhuman-reads/{sample}.1.fastq.gz",
-        fastq2="results/{date}/nonhuman-reads/{sample}.2.fastq.gz",
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
         contigs="results/{date}/assembly/megahit/{sample}/{sample}.contigs.fasta",
     log:
@@ -16,10 +16,27 @@ rule assembly_megahit:
         "mv {params.outdir}/final.contigs.fa {output.contigs} ) > {log} 2>&1"
 
 
+rule assembly_trinity:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        "results/{date}/assembly/trinity/{sample}/{sample}.contigs.fasta",
+    log:
+        'logs/{date}/trinity/{sample}.log'
+    params:
+        extra=""
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    threads: 8
+    shell:
+        "(Trinity --left {input.fastq1} --right {input.fastq2} --CPU {snakemake.threads} --seqType fq --output {params.outdir} && "
+        "mv {params.outdir}/Trinity.fasta {output.contigs} ) > {log} 2>&1"
+
+
 rule assembly_metaspades:
     input:
-        fastq1="results/{date}/clipped-reads/{sample}.1.fastq.gz",
-        fastq2="results/{date}/clipped-reads/{sample}.2.fastq.gz",
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
         contigs="results/{date}/assembly/metaspades/{sample}/{sample}.contigs.fasta",
     params:
@@ -31,6 +48,60 @@ rule assembly_metaspades:
         "../envs/spades.yaml"
     shell:
         "(metaspades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
+        "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
+
+
+rule assembly_coronaspades:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        contigs="results/{date}/assembly/coronaspades/{sample}/{sample}.contigs.fasta",
+    params:
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    log:
+        "logs/{date}/coronaSPAdes/{sample}.log",
+    threads: 8
+    conda:
+        "../envs/spades.yaml"
+    shell:
+        "(coronaspades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
+        "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
+
+
+rule assembly_spades:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        contigs="results/{date}/assembly/spades/{sample}/{sample}.contigs.fasta",
+    params:
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    log:
+        "logs/{date}/SPAdes/{sample}.log",
+    threads: 8
+    conda:
+        "../envs/spades.yaml"
+    shell:
+        "(spades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
+        "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
+
+
+rule assembly_rnaviralspades:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        contigs="results/{date}/assembly/rnaviralspades/{sample}/{sample}.contigs.fasta",
+    params:
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    log:
+        "logs/{date}/rnaviralSPAdes/{sample}.log",
+    threads: 8
+    conda:
+        "../envs/spades.yaml"
+    shell:
+        "(rnaviralspades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
         "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
 
 
