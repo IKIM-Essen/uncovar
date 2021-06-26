@@ -23,9 +23,9 @@ rule assembly_trinity:
     output:
         "results/{date}/assembly/trinity/{sample}/{sample}.contigs.fasta",
     log:
-        'logs/{date}/trinity/{sample}.log'
+        "logs/{date}/trinity/{sample}.log",
     params:
-        extra=""
+        extra="",
         outdir=lambda w, output: os.path.dirname(output[0]),
     threads: 8
     shell:
@@ -92,7 +92,9 @@ rule assembly_rnaviralspades:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        contigs="results/{date}/assembly/rnaviralspades/{sample}/{sample}.contigs.fasta",
+        contigs=(
+            "results/{date}/assembly/rnaviralspades/{sample}/{sample}.contigs.fasta"
+        ),
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
     log:
