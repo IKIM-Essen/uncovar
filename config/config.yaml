@@ -41,6 +41,8 @@ RKI-quality-criteria:
 assembly:
   # minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
   min-variant-prob: 0.95
+  # turn on and off assembler comparison
+  compare-assemblers: True
 
 
 variant-calling:
