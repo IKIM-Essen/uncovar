@@ -128,7 +128,7 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
     #         varcount = f" ({varcount})"
         # pangolin_call = f"{lineage}{varcount}"
         pangolin_call = f"{lineage}"
-    data.loc[sample, "Pangolin Strain (#SNPs)"] = pangolin_call
+    data.loc[sample, "Pangolin Strain"] = pangolin_call
 
 
 # add variant calls
