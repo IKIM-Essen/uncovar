@@ -92,13 +92,19 @@ rule report_non_cov2:
     shell:
         "rbt csv-report -s '\t' {input.summary} {output}"
 
+
 rule get_read_length_statistics:
     input:
-        expand("results/{date}/tables/read_pair_counts/{sample}.txt", zip, date = get_dates(), sample=get_samples()), 
+        expand(
+            "results/{date}/tables/read_pair_counts/{sample}.txt",
+            zip,
+            date=get_dates(),
+            sample=get_samples(),
+        ),
     output:
         "results/benchmarking/tables/read_statistics.txt",
     log:
-        "logs/get_read_statistics.log"
+        "logs/get_read_statistics.log",
     conda:
         "../envs/python.yaml"
     script:
