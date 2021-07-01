@@ -265,6 +265,7 @@ rule assembly_comparison_trinity:
 #         cd ../../../../../ && mv {params.outdir}/{wildcards.sample}-contigs.fa {output} ) > {log} 2>&1
 #     """
 
+
 rule assembly_comparison_velvet:
     input:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
@@ -397,17 +398,48 @@ rule filter_chr0_assembly_comparison:
 
 rule plot_assemblies:
     input:
-        initial=lambda wildcards: expand("results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta", sample=get_samples_for_date(wildcards.date), assembler=["megahit", "trinity", "velvet", "metaspades", "coronaspades", "spades", "rnaviralspades"]),
-        final=lambda wildcards: expand("results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.ordered.filtered.fasta", sample=get_samples_for_date(wildcards.date), assembler=["megahit", "trinity", "velvet", "metaspades", "coronaspades", "spades", "rnaviralspades"]),
+        initial=lambda wildcards: expand(
+            "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
+            sample=get_samples_for_date(wildcards.date),
+            assembler=[
+                "megahit",
+                "trinity",
+                "velvet",
+                "metaspades",
+                "coronaspades",
+                "spades",
+                "rnaviralspades",
+            ],
+        ),
+        final=lambda wildcards: expand(
+            "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.ordered.filtered.fasta",
+            sample=get_samples_for_date(wildcards.date),
+            assembler=[
+                "megahit",
+                "trinity",
+                "velvet",
+                "metaspades",
+                "coronaspades",
+                "spades",
+                "rnaviralspades",
+            ],
+        ),
     output:
-        "results/{date}/plots/all_assemblies.svg"
+        "results/{date}/plots/all_assemblies.svg",
     log:
-        "logs/{date}/all_assemblies_plot.log"
+        "logs/{date}/all_assemblies_plot.log",
     params:
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
-        assembler=["megahit", "trinity", "velvet", "metaspades", "coronaspades", "SPAdes", "rnaviralspades"],
+        assembler=[
+            "megahit",
+            "trinity",
+            "velvet",
+            "metaspades",
+            "coronaspades",
+            "SPAdes",
+            "rnaviralspades",
+        ],
     conda:
         "../envs/python.yaml"
     script:
         "../scripts/plot-assembly-comparison.py"
-

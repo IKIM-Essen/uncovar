@@ -142,6 +142,7 @@ rule compare_assemlbers:
             date=get_all_run_dates(),
         ),
 
+
 rule benchmark_strain_calling:
     input:
         "results/benchmarking/strain-calling.csv",
