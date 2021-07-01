@@ -135,6 +135,13 @@ checkpoint all:
         ),
 
 
+rule compare_assemlbers:
+    input:
+        expand(
+            "results/{date}/plots/all_assemblies.svg",
+            date=get_all_run_dates(),
+        ),
+
 rule benchmark_strain_calling:
     input:
         "results/benchmarking/strain-calling.csv",
