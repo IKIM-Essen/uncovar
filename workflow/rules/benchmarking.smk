@@ -204,3 +204,210 @@ rule plot_strain_call_error:
         "../envs/python.yaml"
     script:
         "../scripts/plot-caller-error.py"
+
+
+rule assembly_comparison_megahit:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        contigs="results/{date}/assembly/{sample}/megahit/{sample}.contigs.fasta",
+    log:
+        "logs/{date}/megahit/{sample}.log",
+    params:
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    threads: 8
+    conda:
+        "../envs/megahit.yaml"
+    shell:
+        "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f && "
+        "mv {params.outdir}/final.contigs.fa {output.contigs} ) > {log} 2>&1"
+
+
+rule assembly_comparison_trinity:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        "results/{date}/assembly/{sample}/trinity/{sample}.contigs.fasta",
+    log:
+        "logs/{date}/trinity/{sample}.log",
+    params:
+        extra="",
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    threads: 8
+    conda:
+        "../envs/trinity.yaml"
+    shell:
+        "(Trinity --left {input.fastq1} --max_memory 16G --right {input.fastq2} --CPU {threads} --seqType fq --output {params.outdir} && "
+        "mv {params.outdir}/Trinity.fasta {output} ) > {log} 2>&1"
+
+
+# rule assembly_comparison_abyss:
+#     input:
+#         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+#         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+#     output:
+#         "results/{date}/assembly/{sample}/abyss/{sample}.contigs.fasta",
+#     log:
+#         "logs/{date}/abyss/{sample}.log",
+#     params:
+#         extra="",
+#         outdir=lambda w, output: os.path.dirname(output[0]),
+#     threads: 8
+#     conda:
+#         "../envs/abyss.yaml"
+#     shell:
+#         """
+#         if [ -d "{params.outdir}" ]; then rm -Rf {params.outdir}; fi
+#         (mkdir -p {params.outdir} && cd {params.outdir}
+#         abyss-pe np={threads} name={wildcards.sample} k=96 in='../../../../../{input.fastq1} ../../../../../{input.fastq2}'
+#         cd ../../../../../ && mv {params.outdir}/{wildcards.sample}-contigs.fa {output} ) > {log} 2>&1
+#     """
+
+rule assembly_comparison_velvet:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        "results/{date}/assembly/{sample}/velvet/{sample}.contigs.fasta",
+    log:
+        "logs/{date}/velvet/{sample}.log",
+    params:
+        extra="",
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    threads: 8
+    conda:
+        "../envs/velvet.yaml"
+    shell:
+        """
+        velveth {params.outdir} 21 -fastq.gz -shortPaired {input.fastq1} {input.fastq2} > {log} 2>&1
+        velvetg {params.outdir} -ins_length 150 -exp_cov 10 >> {log} 2>&1
+        mv {params.outdir}/contigs.fa {output} >> {log} 2>&1
+        """
+
+
+rule assembly_comparison_metaspades:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        contigs="results/{date}/assembly/{sample}/metaspades/{sample}.contigs.fasta",
+    params:
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    log:
+        "logs/{date}/metaSPAdes/{sample}.log",
+    threads: 8
+    conda:
+        "../envs/spades.yaml"
+    shell:
+        "(metaspades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
+        "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
+
+
+rule assembly_comparison_coronaspades:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        contigs="results/{date}/assembly/{sample}/coronaspades/{sample}.contigs.fasta",
+    params:
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    log:
+        "logs/{date}/coronaSPAdes/{sample}.log",
+    threads: 8
+    conda:
+        "../envs/spades.yaml"
+    shell:
+        "(coronaspades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
+        "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
+
+
+rule assembly_comparison_spades:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        contigs="results/{date}/assembly/{sample}/spades/{sample}.contigs.fasta",
+    params:
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    log:
+        "logs/{date}/SPAdes/{sample}.log",
+    threads: 8
+    conda:
+        "../envs/spades.yaml"
+    shell:
+        "(spades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
+        "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
+
+
+rule assembly_comparison_rnaviralspades:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        contigs=(
+            "results/{date}/assembly/{sample}/rnaviralspades/{sample}.contigs.fasta"
+        ),
+    params:
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    log:
+        "logs/{date}/rnaviralSPAdes/{sample}.log",
+    threads: 8
+    conda:
+        "../envs/spades.yaml"
+    shell:
+        "(rnaviralspades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
+        "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
+
+
+rule order_contigs_assembly_comparison:
+    input:
+        contigs="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
+        reference="resources/genomes/main.fasta",
+    output:
+        "results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta",
+    log:
+        "logs/{date}/ragoo/{assembler}_{sample}.log",
+    params:
+        outdir=lambda x, output: os.path.dirname(output[0]),
+    threads: 8
+    conda:
+        "../envs/ragoo.yaml"
+    shell:  # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
+        "(cd {params.outdir} && "
+        "ragoo.py ../../../../../{input.contigs} ../../../../../{input.reference} && "
+        "cd ../../../../../ && mv {params.outdir}/ragoo_output/ragoo.fasta {output}) > {log} 2>&1"
+
+
+rule filter_chr0_assembly_comparison:
+    input:
+        "results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta",
+    output:
+        "results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.ordered.filtered.fasta",
+    log:
+        "logs/{date}/ragoo/{assembler}/{sample}_cleaned.log",
+    params:
+        sample=lambda wildcards: wildcards.sample,
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/ragoo-remove-chr0.py"
+
+
+rule plot_assemblies:
+    input:
+        initial=lambda wildcards: expand("results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta", sample=get_samples_for_date(wildcards.date), assembler=["megahit", "trinity", "velvet", "metaspades", "coronaspades", "spades", "rnaviralspades"]),
+        final=lambda wildcards: expand("results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.ordered.filtered.fasta", sample=get_samples_for_date(wildcards.date), assembler=["megahit", "trinity", "velvet", "metaspades", "coronaspades", "spades", "rnaviralspades"]),
+    output:
+        "results/{date}/plots/all_assemblies.svg"
+    log:
+        "logs/{date}/all_assemblies_plot.log"
+    params:
+        samples=lambda wildcards: get_samples_for_date(wildcards.date),
+        assembler=["megahit", "trinity", "velvet", "metaspades", "coronaspades", "SPAdes", "rnaviralspades"],
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot-assembly-comparison.py"
+
