@@ -205,6 +205,7 @@ rule plot_strain_call_error:
     script:
         "../scripts/plot-caller-error.py"
 
+
 rule get_read_length_statistics:
     input:
         expand(
