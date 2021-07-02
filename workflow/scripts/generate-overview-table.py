@@ -116,18 +116,20 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
     if lineage == "None":
         pangolin_call = "no strain called"
     else:
-        match = re.match(
-            "((?P<varcount>\d+/\d+) .+ SNPs$)|(seq_len:\d+)$|($)",
-            pangolin_results.fillna("").loc[0, "note"].strip(),
-        )
-        assert (
-            match is not None
-        ), "unexpected pangolin note, please update above regular expression"
-        varcount = match.group("varcount") or ""
-        if varcount:
-            varcount = f" ({varcount})"
-        pangolin_call = f"{lineage}{varcount}"
-    data.loc[sample, "Pangolin Strain (#SNPs)"] = pangolin_call
+        # TODO parse scorpio output
+    #     match = re.match(
+    #         "((?P<varcount>\d+/\d+) .+ SNPs$)|(seq_len:\d+)$|($)",
+    #         pangolin_results.fillna("").loc[0, "note"].strip(),
+    #     )
+    #     assert (
+    #         match is not None
+    #     ), "unexpected pangolin note, please update above regular expression"
+    #     varcount = match.group("varcount") or ""
+    #     if varcount:
+    #         varcount = f" ({varcount})"
+        # pangolin_call = f"{lineage}{varcount}"
+        pangolin_call = f"{lineage}"
+    data.loc[sample, "Pangolin Strain"] = pangolin_call
 
 
 # add variant calls

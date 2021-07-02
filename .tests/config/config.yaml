@@ -98,7 +98,7 @@ non_cov2_genomes:
 # For testing the read bases strain calling
 mixtures:
   # maximal number of reads to generate
-  max_reads: 584903
+  max_reads: 294459
   # number of mixtures to generate
   no_mixtures: 500
   # number of strains to mix

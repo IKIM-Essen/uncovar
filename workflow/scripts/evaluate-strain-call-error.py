@@ -50,7 +50,7 @@ def eval_pangolin_error(pangolin_csvs, sm_output, max_reads, prefix, separator, 
 
     for i, path in enumerate(pangolin_csvs):
         pangolin_df = pd.read_csv(path, delimiter=",")
-        pangolin_df.rename(columns={"lineage":"target_id", "probability":"est_fraction"}, inplace=True)
+        pangolin_df.rename(columns={"lineage":"target_id", "scorpio_support":"est_fraction"}, inplace=True)
         pangolin_df.drop(columns=["taxon", "pangoLEARN_version", "status", "note"], inplace = True)
         pangolin_df["mix"] = int(i)
 
