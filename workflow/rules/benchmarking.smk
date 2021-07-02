@@ -204,3 +204,21 @@ rule plot_strain_call_error:
         "../envs/python.yaml"
     script:
         "../scripts/plot-caller-error.py"
+
+
+rule get_read_length_statistics:
+    input:
+        expand(
+            "results/{date}/tables/read_pair_counts/{sample}.txt",
+            zip,
+            date=get_dates(),
+            sample=get_samples(),
+        ),
+    output:
+        "results/benchmarking/tables/read_statistics.txt",
+    log:
+        "logs/get_read_statistics.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/get-read-statistics.py"
