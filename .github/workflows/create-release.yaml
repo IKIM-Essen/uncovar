@@ -1,0 +1,45 @@
+name: Create release
+
+on:
+  push:
+    branches: 
+      - master
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Check if commit is named "Release x.x.x"
+        uses: actions-ecosystem/action-regex-match@v2
+        id: regex-release-match
+        with:
+          text: ${{ github.event.comment.body }}
+          regex: 'Release ([\d*\.]+)'
+
+      - name: Get "# Changelog" with changes
+        uses: actions-ecosystem/action-regex-match@v2
+        id: regex-changelog-match
+        with:
+          text: ${{ github.event.comment.body }}
+          regex: '# Changelog\n(?'changes'(^(\*.+)\n)+)'
+          flags: 'gm'
+
+      - name: Generate Changelog
+        if: ${{ steps.regex-release-match.outputs.match != '' }}
+        run: echo "# Release\n${{ steps.regex-release-match.outputs.group1 }}\n${{ steps.regex-changelog-match.outputs.match }}" > ${{ github.workflow }}-CHANGELOG.md
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: ${{ steps.regex-release-match.outputs.match != '' }}
+        with:
+          body_path: ${{ github.workflow }}-CHANGELOG.md
+          tag_name: ${{ steps.regex-release-match.outputs.group1 }}
+          files: |
+            ${{ github.workflow }}-CHANGELOG.md
+            LICENSE
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      
