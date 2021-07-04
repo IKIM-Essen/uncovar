@@ -10,14 +10,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Create Dockerfile
+    - name: Create dockerfile
       uses: snakemake/snakemake-github-action@v1.20.0
       with:
         directory: .
         snakefile: workflow/Snakefile
         args: "--containerize > Dockerfile"
 
-    - name: Build Image
+    - name: Build image
       id: build-image
       pre: echo ::save-state name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
       uses: redhat-actions/buildah-build@v2
@@ -27,7 +27,7 @@ jobs:
         dockerfiles: |
           ./Dockerfile
 
-    - name: Push To quay.io
+    - name: Push to quay.io
       id: push-to-quay
       uses: redhat-actions/push-to-registry@v2
       with:
