@@ -291,7 +291,7 @@ jobs:
           echo "Release ${{ steps.regex-release-match.outputs.match}}"
           echo "Changelog: ${{ steps.regex-changelog-match.outputs.match}}"
 
-      - name: Generate Changelog
+      - name: Generate changelog
         if: ${{ steps.regex-release-match.outputs.match != '' }}
         run: echo "# Release\n${{ steps.regex-release-match.outputs.group1 }}\n${{ steps.regex-changelog-match.outputs.match }}" > ${{ github.workflow }}-CHANGELOG.md
 
