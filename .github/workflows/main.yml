@@ -296,8 +296,8 @@ jobs:
         run: echo "# Release\n${{ steps.regex-release-match.outputs.group1 }}\n${{ steps.regex-changelog-match.outputs.match }}" > ${{ github.workflow }}-CHANGELOG.md
 
       - name: Change containerized tag
-          run: |
-            sed -i "/containerized/c\containerized: \"quay.io/uncovar/uncovar:${{ steps.regex-release-match.outputs.group1 }}\"" workflow/Snakefile 
+        run: |
+          sed -i "/containerized/c\containerized: \"quay.io/uncovar/uncovar:${{ steps.regex-release-match.outputs.group1 }}\"" workflow/Snakefile 
 
       - name: Release
         uses: softprops/action-gh-release@v1
