@@ -21,7 +21,7 @@ def extrace_strains_from_provision(
     provision = select_oldest_strains(provision)
 
     # save strain genomes
-    provision["covv_lineage"] = provision["covv_lineage"].str.replace("/","_")
+    provision["covv_lineage"] = provision["covv_lineage"].str.replace("/", "_")
     provision["covv_lineage_fasta"] = provision["covv_lineage"].values + ".fasta"
     np.vectorize(write_sequence)(
         provision["covv_lineage"].values,
@@ -67,8 +67,8 @@ def write_sequence(
     if not exists(out_path):
         makedirs(out_path)
 
-    print(f"{covv_lineage_fasta}", file=sys.stderr)    
-    
+    print(f"{covv_lineage_fasta}", file=sys.stderr)
+
     genome_file = join(out_path, covv_lineage_fasta)
     if not isfile(genome_file):
         with open(genome_file, "w") as f:
