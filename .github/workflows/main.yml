@@ -283,7 +283,7 @@ jobs:
         id: regex-changelog-match
         with:
           text: ${{ github.event.pull_request.body }}
-          regex: '# Changelog\n(?'changes'(^(\*.+)\n)+)'
+          regex: '# Changelog\n((^(\*.+)\n)+)'
           flags: 'gm'
 
       - name: Print matches
