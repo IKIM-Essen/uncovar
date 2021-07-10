@@ -231,7 +231,7 @@ rule plot_pangolin_conflict:
         "results/benchmarking/plots/{caller}_statistics.svg",
         "results/benchmarking/tables/{caller}_statistics.csv",
     log:
-        "logs/plot_pangolin_conflict_{caller}.log"
+        "logs/plot_pangolin_conflict_{caller}.log",
     params:
         max_reads=config["mixtures"]["max_reads"],
         prefix=MIXTURE_PREFIX,
