@@ -159,3 +159,4 @@ rule benchmark_mixtures:
             "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
             caller=["kallisto", "pangolin"],
         ),
+        "results/benchmarking/plots/pangolin-call-dependency.svg"
