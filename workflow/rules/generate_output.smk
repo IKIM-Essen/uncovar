@@ -187,11 +187,11 @@ rule plot_lineages_over_time:
             caption="../report/lineages-over-time.rst",
             category="1. Overview",
             subcategory="2. Lineages Development",
-        )
+        ),
     log:
         "logs/{date}/plot_lineages_over_time.log",
     params:
-        dates = lambda wildcards: get_dates_before_date(wildcards)
+        dates=lambda wildcards: get_dates_before_date(wildcards),
     conda:
         "../envs/python.yaml"
     script:
