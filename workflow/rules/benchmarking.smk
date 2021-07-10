@@ -222,3 +222,22 @@ rule get_read_length_statistics:
         "../envs/python.yaml"
     script:
         "../scripts/get-read-statistics.py"
+
+
+rule plot_pangolin_conflict:
+    input:
+        get_mixture_results,
+    output:
+        "results/benchmarking/plots/{caller}_statistics.svg",
+        "results/benchmarking/tables/{caller}_statistics.csv",
+    log:
+        "logs/plot_pangolin_conflict_{caller}.log"
+    params:
+        max_reads=config["mixtures"]["max_reads"],
+        prefix=MIXTURE_PREFIX,
+        separator=MIXTURE_PART_INDICATOR,
+        percentage=MIXTURE_PERCENTAGE_INDICATOR,
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot-pangolin-conflict.py"
