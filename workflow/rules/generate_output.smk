@@ -200,7 +200,7 @@ rule plot_lineages_over_time:
 
 rule snakemake_reports:
     input:
-        "results/{date}/plots/lineages-over-time.svg"
+        "results/{date}/plots/lineages-over-time.svg",
         "results/{date}/plots/coverage-reference-genome.svg",
         "results/{date}/plots/coverage-assembled-genome.svg",
         lambda wildcards: expand(
