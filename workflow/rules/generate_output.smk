@@ -188,7 +188,7 @@ rule snakemake_reports:
         "results/{date}/qc_data",
         expand(
             "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
-            mode=["major"], #, "any"
+            mode=["major"],  # , "any"
         ) if config["strain-calling"]["use-kallisto"] else "",
         # lambda wildcards: expand(
         #     "results/{{date}}/plots/strain-calls/{sample}.strains.pangolin.svg",
