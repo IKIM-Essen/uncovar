@@ -65,6 +65,14 @@ def get_latest_run_date():
     return pep.sample_table["run_id"].max()
 
 
+def get_samples_before_date(wildcards):
+    return list(pep.sample_table[pep.sample_table["run_id"] <= wildcards.date]["sample_name"].values)
+
+
+def get_dates_before_date(wildcards):
+    return list(pep.sample_table[pep.sample_table["run_id"] <= wildcards.date]["run_id"].values)
+
+
 def get_fastqs(wildcards):
     if wildcards.sample.startswith(BENCHMARK_PREFIX):
         # this is a simulated benchmark sample, do not look up FASTQs in the sample sheet
