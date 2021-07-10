@@ -233,8 +233,6 @@ rule plot_pangolin_conflict:
     log:
         "logs/plot_pangolin_conflict_{caller}.log",
     params:
-        max_reads=config["mixtures"]["max_reads"],
-        prefix=MIXTURE_PREFIX,
         separator=MIXTURE_PART_INDICATOR,
         percentage=MIXTURE_PERCENTAGE_INDICATOR,
     conda:
