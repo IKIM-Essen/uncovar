@@ -230,7 +230,7 @@ rule plot_dependency_of_pangolin_call:
     output:
         "results/benchmarking/plots/{caller}-call-dependency.svg",
     log:
-        "logs/plot_dependency_of_{caller}_call.log"
+        "logs/plot_dependency_of_{caller}_call.log",
     params:
         prefix=MIXTURE_PREFIX,
         separator=MIXTURE_PART_INDICATOR,
