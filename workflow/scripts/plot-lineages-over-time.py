@@ -34,9 +34,13 @@ def plot_lineages_over_time(sm_input, sm_output, dates):
             x=alt.X("Date:T", scale=alt.Scale(nice={"interval": "day", "step": 7})),
             y=alt.Y("count()", stack=True),
             stroke="Lineage",
-            color=alt.Color("Lineage", scale=alt.Scale(scheme="tableau10")),
+            color=alt.Color(
+                "Lineage",
+                scale=alt.Scale(scheme="tableau10"),
+                legend=alt.Legend(orient="top"),
+            ),
         )
-    )
+    ).properties(width=800)
 
     area_plot.save(sm_output)
 
