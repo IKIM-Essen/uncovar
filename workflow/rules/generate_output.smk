@@ -248,4 +248,4 @@ rule snakemake_reports:
     log:
         "logs/snakemake_reports/{date}.log",
     shell:
-        "snakemake --nolock --report-stylesheet resources/custom-stylesheet.css {input} --report {output} {params.for_testing}"
+        "snakemake --nolock --report-stylesheet resources/custom-stylesheet.css {input} --report {output} {params.for_testing} > {log} 2>&1"
