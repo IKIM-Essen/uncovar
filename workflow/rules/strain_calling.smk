@@ -78,8 +78,8 @@ rule plot_strains_kallisto:
         report(
             "results/{date}/plots/strain-calls/{sample}.strains.kallisto.svg",
             caption="../report/strain-calls-kallisto.rst",
-            category="Kallisto strain calls",
-            subcategory="Per sample",
+            category="1. Overview",
+            subcategory="3. Lineage Composition per Sample",
         ),
     log:
         "logs/{date}/plot-strains-kallisto/{sample}.log",
