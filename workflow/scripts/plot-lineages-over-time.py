@@ -12,6 +12,10 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
         pangolin_outputs.append(pangolin_call)
 
     pangolin_calls = pd.concat(pangolin_outputs, axis=0, ignore_index=True)
+
+    # write out as table
+    pangolin_calls.to_csv(sm_output_table)
+
     pangolin_calls = pangolin_calls[pangolin_calls["lineage"] != "None"]
 
     # get occurrences
@@ -23,9 +27,6 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
     pangolin_calls.loc[
         pangolin_calls["lineage_count"] < 10, "lineage"
     ] = "other (< 10 occ.)"
-
-    # write out as table
-    pangolin_calls.to_csv(sm_output_table)
 
     source = pangolin_calls.copy()
     source.rename(columns={"lineage": "Lineage", "date": "Date"}, inplace=True)
