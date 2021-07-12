@@ -4,7 +4,7 @@ import pandas as pd
 import altair as alt
 
 
-def plot_lineages_over_time(sm_input, sm_output, dates):
+def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
     pangolin_outputs = []
     for call, date in zip(sm_input, dates):
         pangolin_call = pd.read_csv(call)
@@ -23,6 +23,9 @@ def plot_lineages_over_time(sm_input, sm_output, dates):
     pangolin_calls.loc[
         pangolin_calls["lineage_count"] < 10, "lineage"
     ] = "other (< 10 occ.)"
+
+    # write out as table
+    pangolin_calls.to_csv(sm_output_table)
 
     source = pangolin_calls.copy()
     source.rename(columns={"lineage": "Lineage", "date": "Date"}, inplace=True)
@@ -47,4 +50,4 @@ def plot_lineages_over_time(sm_input, sm_output, dates):
 
 if __name__ == "__main__":
     dates = snakemake.params.get("dates", "")
-    plot_lineages_over_time(snakemake.input, snakemake.output[0], dates)
+    plot_lineages_over_time(snakemake.input, snakemake.output[0], dates, snakemake.output[1])

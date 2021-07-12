@@ -188,6 +188,7 @@ rule plot_lineages_over_time:
             category="1. Overview",
             subcategory="2. Lineages Development",
         ),
+        "results/{date}/tables/lineages-over-time.csv",
     log:
         "logs/{date}/plot_lineages_over_time.log",
     params:
