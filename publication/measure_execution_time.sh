@@ -7,7 +7,7 @@
 NO_READS=300000
 
 # number of snakemake executions
-NO_ITER=10
+NO_ITER=11
 
 # Outfile for time measurements
 OUTPUT_LOG=time.log
