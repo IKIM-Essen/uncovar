@@ -173,8 +173,35 @@ rule qc_html_report:
         "rbt csv-report {input} --formatter {params.formatter} --pin-until {params.pin_until} {output} > {log} 2>&1"
 
 
+rule plot_lineages_over_time:
+    input:
+        lambda wildcards: expand(
+            "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
+            zip,
+            date=get_dates_before_date(wildcards),
+            sample=get_samples_before_date(wildcards),
+        ),
+    output:
+        report(
+            "results/{date}/plots/lineages-over-time.svg",
+            caption="../report/lineages-over-time.rst",
+            category="1. Overview",
+            subcategory="2. Lineages Development",
+        ),
+        "results/{date}/tables/lineages-over-time.csv",
+    log:
+        "logs/{date}/plot_lineages_over_time.log",
+    params:
+        dates=lambda wildcards: get_dates_before_date(wildcards),
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot-lineages-over-time.py"
+
+
 rule snakemake_reports:
     input:
+        "results/{date}/plots/lineages-over-time.svg",
         "results/{date}/plots/coverage-reference-genome.svg",
         "results/{date}/plots/coverage-assembled-genome.svg",
         lambda wildcards: expand(
