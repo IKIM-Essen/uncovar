@@ -264,7 +264,7 @@ jobs:
       - name: Change permissions for caching
         run: sudo chmod -R 755 .tests/.snakemake/conda
 
-  create_release:
+  Release:
     needs:
       - Testing
     runs-on: ubuntu-latest
