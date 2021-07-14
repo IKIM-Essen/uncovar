@@ -233,6 +233,8 @@ rule plot_dependency_of_pangolin_call:
         "logs/plot_dependency_of_{caller}_call.log",
     params:
         prefix=MIXTURE_PREFIX,
+    conda:
+        "../envs/python.yaml"
     script:
         "../scripts/plot-dependency-of-pangolin-call.py"
 
