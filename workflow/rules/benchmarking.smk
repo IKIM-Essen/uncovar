@@ -224,6 +224,21 @@ rule get_read_length_statistics:
         "../scripts/get-read-statistics.py"
 
 
+rule plot_dependency_of_pangolin_call:
+    input:
+        get_mixture_results,
+    output:
+        "results/benchmarking/plots/{caller}-call-dependency.svg",
+    log:
+        "logs/plot_dependency_of_{caller}_call.log",
+    params:
+        prefix=MIXTURE_PREFIX,
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot-dependency-of-pangolin-call.py"
+
+
 rule plot_pangolin_conflict:
     input:
         get_mixture_results,
