@@ -233,9 +233,22 @@ rule plot_dependency_of_pangolin_call:
         "logs/plot_dependency_of_{caller}_call.log",
     params:
         prefix=MIXTURE_PREFIX,
+    script:
+        "../scripts/plot-dependency-of-pangolin-call.py"
+
+
+rule plot_pangolin_conflict:
+    input:
+        get_mixture_results,
+    output:
+        "results/benchmarking/plots/{caller}_statistics.svg",
+        "results/benchmarking/tables/{caller}_statistics.csv",
+    log:
+        "logs/plot_pangolin_conflict_{caller}.log",
+    params:
         separator=MIXTURE_PART_INDICATOR,
         percentage=MIXTURE_PERCENTAGE_INDICATOR,
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/plot-dependency-of-pangolin-call.py"
+        "../scripts/plot-pangolin-conflict.py"

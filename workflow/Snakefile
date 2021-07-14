@@ -160,3 +160,6 @@ rule benchmark_mixtures:
             caller=["kallisto", "pangolin"],
         ),
         "results/benchmarking/plots/pangolin-call-dependency.svg",
+        "results/benchmarking/tables/pangolin_statistics.csv" if config["mixtures"][
+            "no_strains"
+        ] == 1 else [],
