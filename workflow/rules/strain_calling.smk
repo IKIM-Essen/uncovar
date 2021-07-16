@@ -79,7 +79,7 @@ rule plot_strains_kallisto:
             "results/{date}/plots/strain-calls/{sample}.strains.kallisto.svg",
             caption="../report/strain-calls-kallisto.rst",
             category="1. Overview",
-            subcategory="3. Lineage Composition per Sample",
+            subcategory="4. Lineage Fraction per Sample",
         ),
     log:
         "logs/{date}/plot-strains-kallisto/{sample}.log",
