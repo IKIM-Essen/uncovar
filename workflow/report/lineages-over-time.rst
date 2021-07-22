@@ -1,0 +1,1 @@
+Development of lineages over time. Low occurring lineages are grouped together.
