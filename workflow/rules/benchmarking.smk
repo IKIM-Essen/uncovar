@@ -243,27 +243,27 @@ rule assembly_comparison_trinity:
         "mv {params.outdir}/Trinity.fasta {output} ) > {log} 2>&1"
 
 
-# rule assembly_comparison_abyss:
-#     input:
-#         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
-#         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
-#     output:
-#         "results/{date}/assembly/{sample}/abyss/{sample}.contigs.fasta",
-#     log:
-#         "logs/{date}/abyss/{sample}.log",
-#     params:
-#         extra="",
-#         outdir=lambda w, output: os.path.dirname(output[0]),
-#     threads: 8
-#     conda:
-#         "../envs/abyss.yaml"
-#     shell:
-#         """
-#         if [ -d "{params.outdir}" ]; then rm -Rf {params.outdir}; fi
-#         (mkdir -p {params.outdir} && cd {params.outdir}
-#         abyss-pe np={threads} name={wildcards.sample} k=96 in='../../../../../{input.fastq1} ../../../../../{input.fastq2}'
-#         cd ../../../../../ && mv {params.outdir}/{wildcards.sample}-contigs.fa {output} ) > {log} 2>&1
-#     """
+rule assembly_comparison_abyss:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        "results/{date}/assembly/{sample}/abyss/{sample}.contigs.fasta",
+    log:
+        "logs/{date}/abyss/{sample}.log",
+    params:
+        extra="",
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    threads: 8
+    conda:
+        "../envs/abyss.yaml"
+    shell:
+        """
+        if [ -d "{params.outdir}" ]; then rm -Rf {params.outdir}; fi
+        (mkdir -p {params.outdir} && cd {params.outdir}
+        abyss-pe np={threads} name={wildcards.sample} k=96 in='../../../../../{input.fastq1} ../../../../../{input.fastq2}'
+        cd ../../../../../ && mv {params.outdir}/{wildcards.sample}-contigs.fa {output} ) > {log} 2>&1
+        """
 
 
 rule assembly_comparison_velvet:
@@ -402,26 +402,28 @@ rule plot_assemblies:
             "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
             sample=get_samples_for_date(wildcards.date),
             assembler=[
-                "megahit",
-                "trinity",
-                "velvet",
-                "metaspades",
-                "coronaspades",
-                "spades",
-                "rnaviralspades",
+                "abyss",
+                # "megahit",
+                # "trinity",
+                # "velvet",
+                # "metaspades",
+                # "coronaspades",
+                # "spades",
+                # "rnaviralspades",
             ],
         ),
         final=lambda wildcards: expand(
             "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.ordered.filtered.fasta",
             sample=get_samples_for_date(wildcards.date),
             assembler=[
-                "megahit",
-                "trinity",
-                "velvet",
-                "metaspades",
-                "coronaspades",
-                "spades",
-                "rnaviralspades",
+                "abyss",
+                # "megahit",
+                # "trinity",
+                # "velvet",
+                # "metaspades",
+                # "coronaspades",
+                # "spades",
+                # "rnaviralspades",
             ],
         ),
     output:
@@ -431,13 +433,14 @@ rule plot_assemblies:
     params:
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
         assembler=[
-            "megahit",
-            "trinity",
-            "velvet",
-            "metaspades",
-            "coronaspades",
-            "SPAdes",
-            "rnaviralspades",
+            "abyss",
+            # "megahit",
+            # "trinity",
+            # "velvet",
+            # "metaspades",
+            # "coronaspades",
+            # "SPAdes",
+            # "rnaviralspades",
         ],
     conda:
         "../envs/python.yaml"
