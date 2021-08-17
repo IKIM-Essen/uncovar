@@ -33,10 +33,15 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
 
     area_plot = (
         alt.Chart(source)
-        .mark_area(opacity=0.5, interpolate="monotone")
+        .mark_bar(opacity=0.8)
         .encode(
-            x=alt.X("Date:T", scale=alt.Scale(nice={"interval": "day", "step": 7})),
-            y=alt.Y("count()", stack=True),
+            x=alt.X("Date:O"),
+            y=alt.Y(
+                "count()",
+                stack="normalize",
+                axis=alt.Axis(format="%"),
+                title="Fraction in Run",
+            ),
             stroke="Lineage",
             color=alt.Color(
                 "Lineage",
@@ -51,4 +56,6 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
 
 if __name__ == "__main__":
     dates = snakemake.params.get("dates", "")
-    plot_lineages_over_time(snakemake.input, snakemake.output[0], dates, snakemake.output[1])
+    plot_lineages_over_time(
+        snakemake.input, snakemake.output[0], dates, snakemake.output[1]
+    )
