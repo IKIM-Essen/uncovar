@@ -1,13 +1,13 @@
 {
-    "Pangolin Strain (#SNPs)": function format(value) {
+    "Pangolin Strain": function format(value) {
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
         })
 
         if (value !== "no strain called") {
-            var lineage = value.split(' ')[0];
-            var link = `<a data-toggle="tooltip" data-placement="top" title="Linkout to cov-lineages" href='https://cov-lineages.org/lineages/lineage_${lineage}.html' target='_blank'>${lineage}</a>`;
-            return link + value.split(lineage).pop();
+            // var lineage = value.split(' ')[0];
+            var link = `<a data-toggle="tooltip" data-placement="top" title="View ${value} on outbreak.info" href='https://outbreak.info/situation-reports?pango=${value}' target='_blank'>${value}</a>`;
+            return link; //+ value.split(lineage).pop();
         } else {
             return value;
         }
