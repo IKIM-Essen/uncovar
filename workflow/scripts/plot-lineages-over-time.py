@@ -40,7 +40,7 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
                 "count()",
                 stack="normalize",
                 axis=alt.Axis(format="%"),
-                title="Share in Run",
+                title="Fraction in Run",
             ),
             stroke="Lineage",
             color=alt.Color(
