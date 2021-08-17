@@ -36,7 +36,12 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
         .mark_bar(opacity=0.8)
         .encode(
             x=alt.X("Date:O"),
-            y=alt.Y("count()", stack="normalize", axis=alt.Axis(format='%'), title="Share in Run"),
+            y=alt.Y(
+                "count()",
+                stack="normalize",
+                axis=alt.Axis(format="%"),
+                title="Share in Run",
+            ),
             stroke="Lineage",
             color=alt.Color(
                 "Lineage",
@@ -51,4 +56,6 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
 
 if __name__ == "__main__":
     dates = snakemake.params.get("dates", "")
-    plot_lineages_over_time(snakemake.input, snakemake.output[0], dates, snakemake.output[1])
+    plot_lineages_over_time(
+        snakemake.input, snakemake.output[0], dates, snakemake.output[1]
+    )
