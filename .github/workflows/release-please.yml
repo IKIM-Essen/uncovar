@@ -19,4 +19,4 @@ jobs:
       - name: Change containerized tag
         if: ${{ steps.release.outputs.release_created }}
         run: |
-          sed -i "/containerized/c\containerized: \"quay.io/uncovar/uncovar:${{ steps.release.outputs.tag_name }}\"" workflow/Snakefile 
+          sed -i "/containerized/c\containerized: \"quay.io/uncovar/uncovar#${{ steps.release.outputs.major }}.{{ steps.release.outputs.minor }}.{{ steps.release.outputs.patch }}\"" workflow/Snakefile 
