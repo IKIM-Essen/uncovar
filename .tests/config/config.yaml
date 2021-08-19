@@ -10,6 +10,16 @@ benchmark-genomes:
   - MT451810
 
 
+# genome to use as reference. Must be a NCBI accession
+virus-reference-genome:
+  - NC_045512.2
+
+
+# download path of human genome reference
+human-genome-download-path:
+  - ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.28_GRCh38.p13/GCA_000001405.28_GRCh38.p13_genomic.fna.gz
+
+
 data-handling:
   # path of incoming data
   incoming: ../incoming/

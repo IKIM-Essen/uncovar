@@ -1,13 +1,20 @@
 pepfile: config/pep/config.yaml
 
-# for testing, uncomment to limit to n strain genomes
-# limit-strain-genomes: 5
+
+# genome to use as reference. Must be a NCBI accession
+virus-reference-genome:
+  - NC_045512.2
+
+# download path of human genome reference
+human-genome-download-path:
+  - ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.28_GRCh38.p13/GCA_000001405.28_GRCh38.p13_genomic.fna.gz
 
 
 data-handling:
-  # path of incoming data, which is moved to the data directory
+  # path of incoming data, which is moved to the 
+  # data directory by the preprocessing script
   incoming: ../incoming/
-  # path to store data in the workflow
+  # path to store data within the workflow
   data: data/
   # path to archive data from incoming and 
   # the results from the latest run to
@@ -25,7 +32,7 @@ RKI-quality-criteria:
     min-length-reads: 200
     # average quality of acceptable reads (PHRED)
     min-PHRED: 10
-  # identity to NC_045512.22 of reconstructed genome
+  # identity to virus reference genome (see-above) of reconstructed genome
   min-identity: 0.9
   # share N in the reconstructed genome
   max-n: 0.05
@@ -76,7 +83,9 @@ adapters:
   #  Illumina TruSeq adapters
   illumina-revelo: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
   illumina-nimagen: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+  # amplicon primers to remove
   amplicon-primers: "resources/primer.bedpe"
+  # reference of the amplicon primers
   amplicon-reference: "MN908947"
 
 
