@@ -14,17 +14,27 @@ jobs:
           release-type: simple
           package-name: release-please-action
 
+      - name: Check if PR is created
+        id: pr_created
+        run: |
+        if [[ "$scale" =~ ^[0-9]+$ ]]
+          then
+            echo "::set-output name=pr::$(echo true)"
+          else
+            echo "::set-output name=pr::$(echo false)"
+        fi
+          
       - uses: actions/checkout@v2
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.release_created }} && ${{ steps.pr_created.outputs.pr }}
 
       - name: Export version as environment variable
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.release_created }} && ${{ steps.pr_created.outputs.pr }}
         run: |
           echo "VERSION=${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}" >> $GITHUB_ENV
           echo "Version: ${{ env.VERSION }}"
       
       - name: Checkout release PR
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.release_created }} && ${{ steps.pr_created.outputs.pr }}
         run: |
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
@@ -33,12 +43,12 @@ jobs:
           git checkout pr/${{ steps.release.outputs.pr }}
 
       - name: Change containerized tag
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.release_created }} && ${{ steps.pr_created.outputs.pr }}
         run: |
           sed -i "/containerized/c\containerized: \"quay.io/uncovar/uncovar#${{ env.VERSION }}\"" workflow/Snakefile
 
       - name: Push changed containerized tag
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.release_created }} && ${{ steps.pr_created.outputs.pr }}
         run: |
           git add workflow/Snakefile
           git commit -m "Changed containerized tag to ${{ env.VERSION }}"
