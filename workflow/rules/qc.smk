@@ -203,7 +203,8 @@ rule extract_reads_of_interest:
         temp("results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam"),
     log:
         "logs/{date}/extract_reads_of_interest/{sample}.log",
-    threads: 1
+    params:
+        reference_genome=config["virus-reference-genome"],
     conda:
         "../envs/python.yaml"
     script:

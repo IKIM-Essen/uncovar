@@ -21,7 +21,7 @@ def remove_chr0(data_path, out_path):
         i = 1
         for record in SeqIO.parse(handle, "fasta"):
             if "Chr0" not in record.name:
-                # rename id from NC_045512.2_RaGOO to actual sample name
+                # rename id from "virus-reference-genome"_RaGOO to actual sample name
                 record.id = sample + ".{}".format(i)
                 valid_records.append(record)
                 i += 1
