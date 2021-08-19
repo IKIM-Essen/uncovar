@@ -13,7 +13,11 @@ rule get_genome:
     output:
         "resources/genomes/{accession}.fasta",
     params:
-        accession=lambda w: "NC_045512.2" if w.accession == "main" else w.accession,
+        accession=(
+            lambda w: config["virus-reference-genome"]
+            if w.accession == "main"
+            else w.accession
+        ),
     log:
         "logs/genomes/get-genome/{accession}.log",
     conda:
@@ -79,10 +83,11 @@ rule get_human_genome:
         "logs/get-human-genome.log",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
+        human_genome=config["human-genome-download-path"],
     conda:
         "../envs/unix.yaml"
     shell:
-        "curl -SL -o {output} ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.28_GRCh38.p13/GCA_000001405.28_GRCh38.p13_genomic.fna.gz 2> {log}"
+        "curl -SL -o {output} {params.human_genome} 2> {log}"
 
 
 rule update_pangoLEARN:
