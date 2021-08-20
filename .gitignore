@@ -15,6 +15,7 @@
 !config/pep/*
 !LICENSE
 !README.md
+!.snakemake-workflow-catalog.yml
 !.gitignore
 !.gitattributes
 !.editorconfig
