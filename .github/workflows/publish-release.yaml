@@ -1,0 +1,41 @@
+name: Publish Release to Registry
+
+on:    
+  release:
+      types: [published]
+
+jobs:
+  update:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Create dockerfile
+      uses: snakemake/snakemake-github-action@v1.20.0
+      with:
+        directory: .
+        snakefile: workflow/Snakefile
+        args: "--containerize > Dockerfile"
+
+    - name: Build image
+      id: build-image
+      pre: echo ::save-state name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: uncovar
+        tags: latest ${{ github.sha }} ${{ env.STATE_RELEASE_VERSION }}
+        dockerfiles: |
+          ./Dockerfile
+
+    - name: Push to quay.io
+      id: push-to-quay
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-image.outputs.image }}
+        tags: ${{ steps.build-image.outputs.tags }}
+        registry: uncovar/uncovar
+        username: uncovar+robot
+        password: ${{ secrets.QUAYIO_PASSWORD }}
+
+    - name: Print image url
+      run: echo "Release image pushed to ${{ steps.push-to-quay.outputs.registry-paths }}"

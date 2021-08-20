@@ -16,6 +16,9 @@ report: "report/workflow.rst"
 container: "docker://condaforge/mambaforge"
 
 
+containerized: "quay.io/uncovar/uncovar#0.0.0"
+
+
 if config["strain-calling"]["use-kallisto"]:
 
     envvars:

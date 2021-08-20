@@ -260,6 +260,5 @@ jobs:
       - name: Print disk space
         run: sudo df -h
 
-
       - name: Change permissions for caching
         run: sudo chmod -R 755 .tests/.snakemake/conda
