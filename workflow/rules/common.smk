@@ -471,7 +471,6 @@ def generate_mixtures(wildcards):
             mixture_list.append(mixture.replace(".", "-"))
     else:
         mixture_list = config["mixtures"]["predefined_mixtures"]
-
     return mixture_list
 
 
