@@ -245,6 +245,8 @@ rule snakemake_reports:
             if config.get("benchmark-genomes", [])
             else ""
         ),
+    conda:
+        "../envs/snakemake.yaml"
     log:
         "logs/snakemake_reports/{date}.log",
     shell:
