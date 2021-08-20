@@ -4,9 +4,9 @@
 
 [optional footer]
 
-<details><summary>Commit Structur</summary>
+<details><summary>Expected commit message structure</summary>
 
-The commit message should be structured as follows:
+Commit messages (in particular the merge commit of a pull request) should be structured as follows:
 
 ```
 <type>[optional scope]: <description>
