@@ -17,12 +17,12 @@ jobs:
       - name: Check if PR is created
         id: pr_created
         run: |
-        if [[ "$scale" =~ ^[0-9]+$ ]]
-          then
-            echo "::set-output name=pr::$(echo true)"
-          else
-            echo "::set-output name=pr::$(echo false)"
-        fi
+          if [[ "$scale" =~ ^[0-9]+$ ]]
+            then
+              echo "::set-output name=pr::$(echo true)"
+            else
+              echo "::set-output name=pr::$(echo false)"
+          fi
           
       - uses: actions/checkout@v2
         if: ${{ steps.release.outputs.release_created }} && ${{ steps.pr_created.outputs.pr }}
