@@ -9,6 +9,7 @@
 !workflow/rules/annotation/*
 !workflow/resources/*
 !config
+!config/REAMDE.md
 !config/config.yaml
 !config/multiqc_config.yaml
 !config/pep
