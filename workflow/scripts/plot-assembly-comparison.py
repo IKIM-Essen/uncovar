@@ -1,7 +1,6 @@
-import os
 import sys
+from altair.vegalite.v4.schema.channels import Opacity
 import pandas as pd
-from pandas.core.indexes.base import Index
 import pysam
 import altair as alt
 
@@ -20,93 +19,131 @@ def make_assembler_lists(assemblies):
                     dict[assembler] = [file]
     return dict
 
-def register_contig_lengths(assemblies_init, assemblies_final, assembler, data):
-    for sample, file1, file2 in zip(snakemake.params.samples, assemblies_init, assemblies_final):
+def register_contig_lengths(assemblies_init, assemblies_final, N50, assembler, data):
+    for sample, amplicon_state, file1, file2, quast in zip(snakemake.params.samples, snakemake.params.amplicon_state, assemblies_init, assemblies_final, N50):
         with pysam.FastxFile(file1) as infile_init:
             with pysam.FastxFile(file2) as infile_final:
+                quastDf =  pd.read_csv(quast,  sep='\t')
                 data = data.append({
                     'Sample': sample,
-                    'Assembler': assembler, 
+                    'Assembler': assembler,
+                    'Amplicon':amplicon_state, 
                     'bp': max(len(contig.sequence) for contig in infile_init),
                     'Contig': 'initial',
+                    'N50': quastDf.loc[0, 'N50'],
+                    'Genome fraction (%)': quastDf.loc[0, 'Genome fraction (%)'] if 'Genome fraction (%)' in quastDf.columns else float('nan'),
                     },
                     ignore_index=True
                 )
                 data = data.append({
                     'Sample': sample,
-                    'Assembler': assembler, 
+                    'Assembler': assembler,
+                    'Amplicon':amplicon_state, 
                     'bp': max(len(contig.sequence) for contig in infile_final),
                     'Contig': 'final',
                     },
                     ignore_index=True
                 )
     return data
-                # data.loc[sample, "Assembler"] = assembler
-                # data.loc[sample, "Initial Contig (bp)"] = max(len(contig.sequence) for contig in infile_init)
-                # data.loc[sample, "Final Contig (bp)"] = max(len(contig.sequence) for contig in infile_final)
 
 dict_init = make_assembler_lists(snakemake.input.initial)
 dict_final = make_assembler_lists(snakemake.input.final)
+dict_N50 = make_assembler_lists(snakemake.input.quast)
 for assembler in dict_init:
-    data=register_contig_lengths(dict_init[assembler], dict_final[assembler], assembler, data)
+    data=register_contig_lengths(dict_init[assembler], dict_final[assembler], dict_N50[assembler], assembler, data)
 
-# data.reset_index(inplace=True)
-
-
-# init = alt.Chart(data).mark_boxplot(color='#57A44C').encode(
-#     alt.Y('Initial Contig (bp)',
-#           axis=alt.Axis(title='# bp')),
-# )
-plot1 = alt.Chart(data).mark_boxplot(color='#08A4C2').encode(
-    alt.Y('bp'),
-    color='Contig',
-    x=('Assembler')
+data.replace({'Amplicon': {0: 'Shotgun', 1: 'Amplicon'}}, inplace=True)
+data.replace({'Assembler': {
+    "megahit-std": 'MEGAHIT',
+    "megahit-meta-large": "MEGAHIT meta-large",
+    "megahit-meta-sensitive": "MEGAHIT meta-sensitive",
+    "trinity": "Trinty",
+    "velvet": "Velvet",
+    "metaspades": "SPAdes meta",
+    "spades": "SPAdes",
+    "coronaspades": "SPAdes corona",
+    "rnaviralspades": "SPAdes RNA viral",
+     }}, inplace=True
 )
 
-plot2 = alt.Chart(data).mark_boxplot().encode(
-    x=alt.X('bp',  scale=alt.Scale(domain=[0, 30000]), axis=alt.Axis(tickCount=9)),
-    y=alt.Y('Contig', title=None, sort='descending'),
-    color=alt.Color('Contig', scale=alt.Scale(scheme='tableau20'), legend=None),
-    row='Assembler',
-    
-)
+data.to_csv(snakemake.output[1])
 
-plot3 =  alt.Chart(data).mark_circle(size=8).encode(
-    x=alt.X(
-        'bp',
-        title=None,
-        axis=alt.Axis(values=[0], ticks=True, grid=False, labels=False),
-        scale=alt.Scale(),
+height=300
+width=50
+
+plot_bp = alt.Chart(data).encode(
+    y=alt.Y('bp',  scale=alt.Scale(domain=[0, 35000], clamp=True), axis=alt.Axis(tickCount=9)),
+    x=alt.X('Contig', title=None, sort='descending'),
+    color=alt.Color('Assembler', scale=alt.Scale(scheme='turbo'), legend=None),
+).properties(height=height, width=width)
+
+combined_bp = plot_bp.mark_boxplot(opacity=0.5) + plot_bp.mark_point(opacity=0.5, filled=True)
+combined_bp = combined_bp.facet(
+    column= alt.Column('Assembler:N',
+        title="",
+        header=alt.Header(labelAngle=-45, labelOrient='bottom', labelPadding=-5)
+    ), 
+    row=alt.Row('Amplicon:N',
+        title="",
+        sort='descending',
     ),
-    y=alt.Y('Contig'),
-    color=alt.Color('Contig', legend=None),
-    row=alt.Row(
-        'Assembler',
-        # header=alt.Header(
-        #     labelAngle=-90,
-        #     titleOrient='top',
-        #     labelOrient='bottom',
-        #     labelAlign='right',
-        #     labelPadding=3,
-        # ),
-    ),
-).transform_calculate(
-    # Generate Gaussian jitter with a Box-Muller transform
-    jitter='sqrt(-2*log(random()))*cos(2*PI*random())'
-# ).configure_facet(
-#     spacing=0
+).configure_axis(
+    labelFontSize=12,
+    titleFontSize=12
 ).configure_view(
     stroke=None
 )
 
-print(data)
-# line = base.mark_line(stroke='#5276A7', interpolate='monotone').encode(
-#     alt.Y('Initial Contig (bp) megahit',
-#           axis=alt.Axis(title='Precipitation (inches)', titleColor='#5276A7'))
+plot_N50 = alt.Chart(data).mark_boxplot(opacity=0.5).encode(
+    y=alt.Y('N50',  scale=alt.Scale(domain=[0, 35000], clamp=True), axis=alt.Axis(tickCount=9)),
+    color=alt.Color('Assembler', scale=alt.Scale(scheme='turbo'), legend=None),
+    column=alt.Column('Assembler:N',
+        title="",
+        header=alt.Header(labelAngle=-45, labelOrient='bottom', labelPadding=-5)
+    ),
+    row=alt.Row('Amplicon:N',
+        title="",
+        sort='descending',
+    ), 
+).configure_axis(
+    grid=False,
+    labelFontSize=12,
+    titleFontSize=12
+).configure_view(
+    stroke=None
+).properties(
+    height=height, width=width
+)
 
-plot1.save(snakemake.output[0])
-plot2.save(snakemake.output[0])
-# (plot2+plot3).save(snakemake.output[0])
-# with open(snakemake.output[0], "w") as outfile:
+plot_genome_frac = alt.Chart(data).mark_point(opacity=0.5).encode(
+    x=alt.X('jitter:Q',
+        title=None,
+        axis=alt.Axis(ticks=True, grid=False, labels=False),
+        scale=alt.Scale(),
+    ),
+    y=alt.Y('Genome fraction (%)',  scale=alt.Scale(domain=[0, 100]), axis=alt.Axis(tickCount=9)),
+    color=alt.Color('Assembler', scale=alt.Scale(scheme='turbo'), legend=None),
+    column=alt.Column('Assembler:N',
+        title="",
+        header=alt.Header(labelAngle=-45, labelOrient='bottom', labelPadding=-5)
+    ),
+    row=alt.Row('Amplicon:N',
+        title="",
+        sort='descending',
+    ), 
+).configure_axis(
+    grid=False,
+    labelFontSize=12,
+    titleFontSize=12
+).transform_calculate(
+    jitter='sqrt(-2*log(random()))*cos(2*PI*random())'
+).configure_view(
+    stroke=None
+).configure_axis(
+    labelFontSize=12,
+    titleFontSize=12
+).properties(height=height, width=width)
 
-#     pass
+combined_bp.save(snakemake.output[0])
+plot_N50.save(snakemake.output[2])
+plot_genome_frac.save(snakemake.output[3])
