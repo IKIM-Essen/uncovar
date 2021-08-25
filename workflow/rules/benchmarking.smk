@@ -229,7 +229,9 @@ rule assembly_comparison_megahit_meta_large:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        contigs="results/{date}/assembly/{sample}/megahit-meta-large/{sample}.contigs.fasta",
+        contigs=(
+            "results/{date}/assembly/{sample}/megahit-meta-large/{sample}.contigs.fasta"
+        ),
     log:
         "logs/{date}/megahit-meta-large/{sample}.log",
     params:
