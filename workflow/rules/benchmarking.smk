@@ -206,14 +206,14 @@ rule plot_strain_call_error:
         "../scripts/plot-caller-error.py"
 
 
-rule assembly_comparison_megahit:
+rule assembly_comparison_megahit_std:
     input:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        contigs="results/{date}/assembly/{sample}/megahit/{sample}.contigs.fasta",
+        contigs="results/{date}/assembly/{sample}/megahit-std/{sample}.contigs.fasta",
     log:
-        "logs/{date}/megahit/{sample}.log",
+        "logs/{date}/megahit-std/{sample}.log",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
     threads: 8
@@ -221,6 +221,42 @@ rule assembly_comparison_megahit:
         "../envs/megahit.yaml"
     shell:
         "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f && "
+        "mv {params.outdir}/final.contigs.fa {output.contigs} ) > {log} 2>&1"
+
+
+rule assembly_comparison_megahit_meta_large:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        contigs="results/{date}/assembly/{sample}/megahit-meta-large/{sample}.contigs.fasta",
+    log:
+        "logs/{date}/megahit-meta-large/{sample}.log",
+    params:
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    threads: 8
+    conda:
+        "../envs/megahit.yaml"
+    shell:
+        "(megahit -1 {input.fastq1} -2 {input.fastq2} --presets meta-large --out-dir {params.outdir} -f && "
+        "mv {params.outdir}/final.contigs.fa {output.contigs} ) > {log} 2>&1"
+
+
+rule assembly_comparison_megahit_meta_sensitive:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        contigs="results/{date}/assembly/{sample}/megahit-meta-sensitive/{sample}.contigs.fasta",
+    log:
+        "logs/{date}/megahit-meta-sensitive/{sample}.log",
+    params:
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    threads: 8
+    conda:
+        "../envs/megahit.yaml"
+    shell:
+        "(megahit -1 {input.fastq1} -2 {input.fastq2} --presets meta-sensitive --out-dir {params.outdir} -f && "
         "mv {params.outdir}/final.contigs.fa {output.contigs} ) > {log} 2>&1"
 
 
@@ -243,27 +279,27 @@ rule assembly_comparison_trinity:
         "mv {params.outdir}/Trinity.fasta {output} ) > {log} 2>&1"
 
 
-rule assembly_comparison_abyss:
-    input:
-        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
-        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
-    output:
-        "results/{date}/assembly/{sample}/abyss/{sample}.contigs.fasta",
-    log:
-        "logs/{date}/abyss/{sample}.log",
-    params:
-        extra="",
-        outdir=lambda w, output: os.path.dirname(output[0]),
-    threads: 8
-    conda:
-        "../envs/abyss.yaml"
-    shell:
-        """
-        if [ -d "{params.outdir}" ]; then rm -Rf {params.outdir}; fi
-        (mkdir -p {params.outdir} && cd {params.outdir}
-        abyss-pe np={threads} name={wildcards.sample} k=96 in='../../../../../{input.fastq1} ../../../../../{input.fastq2}'
-        cd ../../../../../ && mv {params.outdir}/{wildcards.sample}-contigs.fa {output} ) > {log} 2>&1
-        """
+# rule assembly_comparison_abyss:
+#     input:
+#         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+#         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+#     output:
+#         "results/{date}/assembly/{sample}/abyss/{sample}.contigs.fasta",
+#     log:
+#         "logs/{date}/abyss/{sample}.log",
+#     params:
+#         extra="",
+#         outdir=lambda w, output: os.path.dirname(output[0]),
+#     threads: 8
+#     conda:
+#         "../envs/abyss.yaml"
+#     shell:
+#         """
+#         if [ -d "{params.outdir}" ]; then rm -Rf {params.outdir}; fi
+#         (mkdir -p {params.outdir} && cd {params.outdir}
+#         abyss-pe np={threads} name={wildcards.sample} k=96 in='../../../../../{input.fastq1} ../../../../../{input.fastq2}'
+#         cd ../../../../../ && mv {params.outdir}/{wildcards.sample}-contigs.fa {output} ) > {log} 2>&1
+#         """
 
 
 rule assembly_comparison_velvet:
@@ -396,52 +432,110 @@ rule filter_chr0_assembly_comparison:
         "../scripts/ragoo-remove-chr0.py"
 
 
+rule align_contigs_assembly_comparison:
+    input:
+        target="resources/genomes/main.fasta",
+        query="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
+    output:
+        "results/{date}/assembly/{sample}/{assembler}/main_{sample}.bam",
+    log:
+        "results/{date}/assembly/{sample}/{assembler}/main_{sample}.log",
+    conda:
+        "../envs/minimap2.yaml"
+    shell:
+        "minimap2 -ax asm5 {input.target} {input.query} -o {output} 2> {log}"
+
+
+rule quast_assembly_comparison:
+    input:
+        fasta="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
+        bam="results/{date}/assembly/{sample}/{assembler}/main_{sample}.bam",
+        reference="resources/genomes/main.fasta",
+    output:
+        "results/{date}/assembly/{sample}/{assembler}/quast/report.tsv",
+    params:
+        outdir=lambda x, output: os.path.dirname(output[0]),
+    log:
+        "logs/{date}/assembly/quast/{assembler}/{sample}.log",
+    conda:
+        "../envs/quast.yaml"
+    threads: 8
+    shell:
+        "quast.py --min-contig 1 --threads {threads} -o {params.outdir} -r {input.reference} --bam {input.bam} {input.fasta} > {log} 2>&1"
+
+
 rule plot_assemblies:
     input:
         initial=lambda wildcards: expand(
             "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
             sample=get_samples_for_date(wildcards.date),
             assembler=[
-                "abyss",
-                # "megahit",
-                # "trinity",
-                # "velvet",
-                # "metaspades",
-                # "coronaspades",
-                # "spades",
-                # "rnaviralspades",
+                # "abyss",
+                "megahit-std",
+                "megahit-meta-large",
+                "megahit-meta-sensitive",
+                "trinity",
+                "velvet",
+                "metaspades",
+                "coronaspades",
+                "spades",
+                "rnaviralspades",
             ],
         ),
         final=lambda wildcards: expand(
             "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.ordered.filtered.fasta",
             sample=get_samples_for_date(wildcards.date),
             assembler=[
-                "abyss",
-                # "megahit",
-                # "trinity",
-                # "velvet",
-                # "metaspades",
-                # "coronaspades",
-                # "spades",
-                # "rnaviralspades",
+                # "abyss",
+                "megahit-std",
+                "megahit-meta-large",
+                "megahit-meta-sensitive",
+                "trinity",
+                "velvet",
+                "metaspades",
+                "coronaspades",
+                "spades",
+                "rnaviralspades",
+            ],
+        ),
+        quast=lambda wildcards: expand(
+            "results/{{date}}/assembly/{sample}/{assembler}/quast/transposed_report.tsv",
+            sample=get_samples_for_date(wildcards.date),
+            assembler=[
+                # "abyss",
+                "megahit-std",
+                "megahit-meta-large",
+                "megahit-meta-sensitive",
+                "trinity",
+                "velvet",
+                "metaspades",
+                "coronaspades",
+                "spades",
+                "rnaviralspades",
             ],
         ),
     output:
-        "results/{date}/plots/all_assemblies.svg",
+        "results/{date}/plots/all_assemblies_largest_contigs.svg",
+        "results/{date}/plots/all_assemblies_table.csv",
+        "results/{date}/plots/all_assemblies_N50.svg",
+        "results/{date}/plots/all_assemblies_genome_fraction.svg",
     log:
         "logs/{date}/all_assemblies_plot.log",
     params:
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
         assembler=[
-            "abyss",
-            # "megahit",
-            # "trinity",
-            # "velvet",
-            # "metaspades",
-            # "coronaspades",
-            # "SPAdes",
-            # "rnaviralspades",
+            # "abyss",
+            "megahit-std",
+            "megahit-meta-large",
+            "megahit-meta-sensitive",
+            "trinity",
+            "velvet",
+            "metaspades",
+            "coronaspades",
+            "spades",
+            "rnaviralspades",
         ],
+        amplicon_state=lambda wildcards: get_list_of_amplicon_states(wildcards.date),
     conda:
         "../envs/python.yaml"
     script:
