@@ -117,6 +117,17 @@ mixtures:
     - "_MIX_B-1-1-7_PERC_50_MIX_B-1-351_PERC_50"
     - "_MIX_B-1-1-7_PERC_90_MIX_B-1-351_PERC_10"
 
+read_lineage_call:
+  number_of_samples: 2
+  number_of_reads:
+    - 100
+    - 1000
+  length_of_reads:
+    - 100
+    - 150
+    - 250
+
+
 # variants of concern (protein name -> variants)
 voc:
   S:
