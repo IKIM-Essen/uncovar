@@ -606,7 +606,6 @@ def get_final_assemblies_identity(wildcards):
     return expand(pattern, sample=get_samples_for_date(wildcards.date))
 
 
-
 def get_assemblies_for_submission(agg_type):
     def inner(wildcards):
         if wildcards.date != BENCHMARK_DATE_WILDCARD:
@@ -628,7 +627,9 @@ def get_assemblies_for_submission(agg_type):
         else:
             masked_samples = [wildcards.sample]
 
-        pseudo_assembly_pattern = "results/{{date}}/contigs/pseudoassembled/{sample}.fasta"
+        pseudo_assembly_pattern = (
+            "results/{{date}}/contigs/pseudoassembled/{sample}.fasta"
+        )
         normal_assembly_pattern = "results/{{date}}/contigs/masked/{sample}.fasta"
 
         # get accepted samples for rki submission
@@ -667,7 +668,7 @@ def get_assemblies_for_submission(agg_type):
                 else:
                     assembly_type_used.append(f"{sample},not-accepted")
             return assembly_type_used
-    
+
     return inner
 
 
@@ -682,6 +683,7 @@ def expand_samples_by_func(paths, func, **kwargs):
             sample=get_samples_for_date(wildcards.date),
             **kwargs,
         )
+
     return inner
 
 
@@ -689,7 +691,7 @@ def expand_samples_for_date(paths, **kwargs):
     return expand_samples_by_func(paths, get_samples_for_date, **kwargs)
 
 
-def expand_samples_for_date_amplicon(path, **kwargs):
+def expand_samples_for_date_amplicon(paths, **kwargs):
     return expand_samples_by_func(paths, get_samples_for_date_amplicon, **kwargs)
 
 

@@ -61,7 +61,8 @@ rule order_contigs:
         outdir=get_output_dir,
     conda:
         "../envs/ragoo.yaml"
-    shadow: True
+    shadow:
+        "minimal"
     shell:
         "(mkdir -p {params.outdir}/{wildcards.sample} && cd {params.outdir}/{wildcards.sample} &&"
         " ragoo.py ../../../../../{input.contigs} ../../../../../{input.reference} &&"

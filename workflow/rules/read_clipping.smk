@@ -62,7 +62,7 @@ rule sort_aln_for_plots:
     output:
         "results/{date}/clipped-reads/{sample}.primerclipped.hard.sorted.bam",
     params:
-        extra = "-m 4G",
+        extra="-m 4G",
     log:
         "logs/{date}/sort-aln-for-plots/{sample}.log",
     wrapper:
@@ -71,10 +71,18 @@ rule sort_aln_for_plots:
 
 rule plot_primer_clipping:
     input:
-        unclipped=expand_samples_for_date_amplicon("results/{{date}}/clipped-reads/{sample}.bam"),
-        index_unclipped=expand_samples_for_date_amplicon("results/{{date}}/clipped-reads/{sample}.bam.bai"),
-        clipped=expand_samples_for_date_amplicon("results/{{date}}/clipped-reads/{sample}.primerclipped.hard.sorted.bam"),
-        index_clipped=expand_samples_for_date_amplicon("results/{{date}}/clipped-reads/{sample}.primerclipped.hard.sorted.bam.bai"),
+        unclipped=expand_samples_for_date_amplicon(
+            "results/{{date}}/clipped-reads/{sample}.bam"
+        ),
+        index_unclipped=expand_samples_for_date_amplicon(
+            "results/{{date}}/clipped-reads/{sample}.bam.bai"
+        ),
+        clipped=expand_samples_for_date_amplicon(
+            "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.sorted.bam"
+        ),
+        index_clipped=expand_samples_for_date_amplicon(
+            "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.sorted.bam.bai"
+        ),
     output:
         plot=report(
             "results/{date}/plots/primer-clipping-intervals.svg",
