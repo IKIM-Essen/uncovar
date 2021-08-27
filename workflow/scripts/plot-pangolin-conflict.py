@@ -22,7 +22,7 @@ def plot_pangolin_conflict(sm_input, sm_output):
         )
         true_lineage = true_lineage.replace("-", ".")
         percent = percent.replace(".strains.pangolin.csv", "")
-        
+
         # create df for one call
         pangolin_output = pd.read_csv(input)
         pangolin_output["true_lineage"] = true_lineage
