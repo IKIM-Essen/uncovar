@@ -10,8 +10,6 @@ rule fastp_pe:
         ),
         html="results/{date}/trimmed/{sample}.html",
         json="results/{date}/trimmed/{sample}.fastp.json",
-    log:
-        "logs/{date}/fastp/{sample}.log",
     params:
         adapters=get_adapters,
         extra="--qualified_quality_phred {} ".format(
@@ -19,6 +17,8 @@ rule fastp_pe:
         ) + "--length_required {}".format(
             config["RKI-quality-criteria"]["illumina"]["min-length-reads"]
         ),
+    log:
+        "logs/{date}/fastp/{sample}.log",
     threads: 2
     wrapper:
         "0.70.0/bio/fastp"

@@ -1,5 +1,7 @@
+import sys
+
 sys.stderr = open(snakemake.log[0], "w")
-sample = snakemake.params.get("sample", "")
+sample = snakemake.wildcards.sample
 
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord

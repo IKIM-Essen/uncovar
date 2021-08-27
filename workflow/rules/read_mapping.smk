@@ -14,8 +14,6 @@ rule bwa_index:
         prefix=lambda w, output: os.path.splitext(output[0])[0],
     log:
         "logs/{date}/bwa-index/ref~{reference}.log",
-    resources:
-        mem_mb=369000,
     wrapper:
         "0.69.0/bio/bwa/index"
 
@@ -33,11 +31,9 @@ rule bwa_large_index:
             ".sa",
         ),
     params:
-        prefix=lambda w, output: os.path.splitext(output[0])[0],
+        prefix=lambda w, output: get_bwa_index_prefix(output[0]),
     log:
         "logs/bwa-index/ref~{reference}.log",
-    resources:
-        mem_mb=369000,
     wrapper:
         "0.69.0/bio/bwa/index"
 
@@ -51,7 +47,7 @@ rule map_reads:
     log:
         "logs/{date}/bwa-mem/ref~{reference}/{sample}.log",
     params:
-        index=lambda w, input: os.path.splitext(input.idx[0])[0],
+        index=lambda w, input: get_bwa_index_prefix(input.idx),
         extra="",
         sort="samtools",
         sort_order="coordinate",

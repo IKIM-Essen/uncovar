@@ -55,10 +55,7 @@ rule ucsc_vcf:
 
 rule aggregate_ucsc_vcfs:
     input:
-        lambda wildcards: expand(
-            "results/{{date}}/ucsc-vcfs/{sample}.{{filter}}.vcf",
-            sample=get_samples_for_date(wildcards.date),
-        ),
+        expand_samples_for_date("results/{{date}}/ucsc-vcfs/{sample}.{{filter}}.vcf"),
     output:
         report(
             "results/{date}/ucsc-vcfs/all.{date}.{filter}.vcf",
