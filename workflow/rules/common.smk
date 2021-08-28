@@ -727,10 +727,12 @@ wildcard_constraints:
 
 
 def get_read_calls(wildcard):
-    lineages = []
-    for i in range(config["read_lineage_call"]["number_of_samples"]):
-        strain = get_random_strain().replace(".", "-")
-        lineages.append(strain)
+
+    with checkpoints.select_random_lineages.get(
+        date=BENCHMARK_DATE_WILDCARD
+    ).output[0].open() as f:
+        lineages = f.read().splitlines()
+
     return expand(
         "results/benchmarking/tables/collected_lineage_calls_on_{lineage}_{number}_{length}.tsv",
         lineage=lineages,
