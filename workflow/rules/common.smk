@@ -13,9 +13,10 @@ MIXTURE_PART_INDICATOR = "_MIX_"
 MIXTURE_PERCENTAGE_INDICATOR = "_PERC_"
 BENCHMARK_DATE_WILDCARD = "benchmarking"
 READ_TEST_PREFIX = "read-sample-"
-READ_NUMBER_INDICATOR="_READ_NUMBER_"
-READ_LENGTH_INDICATOR="_READ_LENGTH_"
-READ_STATE_INDICATOR="_STATE_"
+READ_NUMBER_INDICATOR = "_READ_NUMBER_"
+READ_LENGTH_INDICATOR = "_READ_LENGTH_"
+READ_STATE_INDICATOR = "_STATE_"
+
 
 def get_samples():
     return list(pep.sample_table["sample_name"].values)
@@ -100,7 +101,7 @@ def get_fastqs(wildcards):
             accession=accession,
             read=[1, 2],
         )
-    # mixture 
+    # mixture
     if wildcards.sample.startswith(MIXTURE_PREFIX):
         mixture = wildcards.sample[len(MIXTURE_PREFIX) :]
         return expand(
@@ -653,7 +654,7 @@ def get_assemblies_for_submission(wildcards, agg_type):
         elif state == "polished_scaffold":
             return "results/{date}/contigs/polished/{sample}.fasta"
         elif state == "pseudo":
-            return "results/{date}/contigs/pseudoassembled/{sample}.fasta"           
+            return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
 
     if wildcards.date != BENCHMARK_DATE_WILDCARD:
         with checkpoints.rki_filter.get(
@@ -726,10 +727,8 @@ wildcard_constraints:
 
 
 def get_read_calls(wildcard):
-    lineages=[]
-    for i in range(
-        config["read_lineage_call"]["number_of_samples"]
-    ):
+    lineages = []
+    for i in range(config["read_lineage_call"]["number_of_samples"]):
         strain = get_random_strain().replace(".", "-")
         lineages.append(strain)
     return expand(

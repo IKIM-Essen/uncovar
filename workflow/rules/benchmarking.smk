@@ -11,8 +11,7 @@ rule simulate_strain_reads:
         "logs/mason/benchmarking/{accession}.log",
     conda:
         "../envs/mason.yaml"
-    threads:
-        4
+    threads: 4
     shell:  # median reads in data: 584903
         "mason_simulator -ir {input} -n {params.no_reads} --illumina-read-length {params.length_reads} --num-threads {threads} -o {output.left} -or {output.right} --fragment-mean-size 400 2> {log}"
 
@@ -268,20 +267,20 @@ rule collect_lineage_calls_of_various_stages:
             length_indi=READ_LENGTH_INDICATOR,
             state_indi=READ_STATE_INDICATOR,
         ),
-        pangolin = expand(
+        pangolin=expand(
             "results/benchmarking/tables/strain-calls/{prefix}{{lineage}}{number_indi}{{number}}{length_indi}{{length}}{state_indi}{state}.strains.pangolin.csv",
             prefix=READ_TEST_PREFIX,
             number_indi=READ_NUMBER_INDICATOR,
             length_indi=READ_LENGTH_INDICATOR,
             state_indi=READ_STATE_INDICATOR,
-            state= ["contig", "scaffold", "polished_scaffold", "pseudo"]
+            state=["contig", "scaffold", "polished_scaffold", "pseudo"],
         ),
     output:
         "results/benchmarking/tables/collected_lineage_calls_on_{lineage}_{number}_{length}.tsv",
     params:
-        states=["contig", "scaffold", "polished_scaffold", "pseudo"]
+        states=["contig", "scaffold", "polished_scaffold", "pseudo"],
     log:
-        "logs/collect_lineage_calls/{lineage}_{number}_{length}.log"
+        "logs/collect_lineage_calls/{lineage}_{number}_{length}.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -294,7 +293,7 @@ rule get_largest_contig:
     output:
         "results/{date}/tables/largest_contig/{sample}.fasta",
     log:
-        "logs/{date}/get_largest_contig/{sample}.log"
+        "logs/{date}/get_largest_contig/{sample}.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -303,11 +302,11 @@ rule get_largest_contig:
 
 rule aggregate_read_calls:
     input:
-        get_read_calls
+        get_read_calls,
     output:
         "results/benchmarking/tables/aggregated_read_calls.tsv",
     log:
-        "logs/aggregate_read_calls.log"
+        "logs/aggregate_read_calls.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -320,7 +319,7 @@ rule plot_read_call:
     output:
         "results/benchmarking/plots/aggregated_read_calls.svg",
     log:
-        "logs/plot_read_call.log"
+        "logs/plot_read_call.log",
     conda:
         "../envs/python.yaml"
     notebook:
