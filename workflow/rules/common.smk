@@ -647,7 +647,7 @@ def get_assemblies_for_submission(wildcards, agg_type):
     if wildcards.sample.startswith(READ_TEST_PREFIX):
         _, state = wildcards.sample.split(READ_STATE_INDICATOR)
         if state == "contig":
-            return "results/{date}/table/largest_contig/{sample}.fasta"
+            return "results/{date}/tables/largest_contig/{sample}.fasta"
         elif state == "scaffold":
             return "results/{date}/contigs/ordered/{sample}.fasta"
         elif state == "polished_scaffold":
@@ -733,7 +733,7 @@ def get_read_calls(wildcard):
         strain = get_random_strain().replace(".", "-")
         lineages.append(strain)
     return expand(
-        "results/benchmarking/tables/collect_lineage_calls_on_{lineage}_{number}_{length}.tsv",
+        "results/benchmarking/tables/collected_lineage_calls_on_{lineage}_{number}_{length}.tsv",
         lineage=lineages,
         number=config["read_lineage_call"]["number_of_reads"],
         length=config["read_lineage_call"]["length_of_reads"],

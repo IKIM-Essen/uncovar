@@ -13,8 +13,12 @@ def get_largest_contig(sm_input, sm_output):
 
     contigs.sort(key=lambda x: x[2])
 
-    name = f">{contigs[-1][0]}"
-    sequence = contigs[-1][1]
+    try:
+        name = f">{contigs[-1][0]}"
+        sequence = contigs[-1][1]
+    except:
+        name=">filler-contig"
+        sequence="N"
 
     with open(sm_output, "w") as writer:
         writer.write(

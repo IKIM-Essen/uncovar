@@ -12,9 +12,9 @@ rule simulate_strain_reads:
     conda:
         "../envs/mason.yaml"
     threads:
-        8
+        4
     shell:  # median reads in data: 584903
-        "mason_simulator -ir {input} -n {params.no_reads} --illumina-read-length {params.length_reads} --num-threads {threads} -o {output.left} -or {output.right} 2> {log}"
+        "mason_simulator -ir {input} -n {params.no_reads} --illumina-read-length {params.length_reads} --num-threads {threads} -o {output.left} -or {output.right} --fragment-mean-size 400 2> {log}"
 
 
 rule mix_strain_reads:
@@ -277,7 +277,7 @@ rule collect_lineage_calls_of_various_stages:
             state= ["contig", "scaffold", "polished_scaffold", "pseudo"]
         ),
     output:
-        "results/benchmarking/tables/collect_lineage_calls_on_{lineage}_{number}_{length}.tsv",
+        "results/benchmarking/tables/collected_lineage_calls_on_{lineage}_{number}_{length}.tsv",
     params:
         states=["contig", "scaffold", "polished_scaffold", "pseudo"]
     log:
@@ -292,11 +292,11 @@ rule get_largest_contig:
     input:
         "results/{date}/assembly/megahit/{sample}/{sample}.contigs.fasta",
     output:
-        "results/{date}/table/largest_contig/{sample}.fasta",
+        "results/{date}/tables/largest_contig/{sample}.fasta",
     log:
         "logs/{date}/get_largest_contig/{sample}.log"
     conda:
-        "../envs/biopython.yaml"
+        "../envs/python.yaml"
     script:
         "../scripts/get_largest_contig.py"
 
@@ -312,3 +312,16 @@ rule aggregate_read_calls:
         "../envs/python.yaml"
     script:
         "../scripts/aggregate_read_calls.py"
+
+
+rule plot_read_call:
+    input:
+        "results/benchmarking/tables/aggregated_read_calls.tsv",
+    output:
+        "results/benchmarking/plots/aggregated_read_calls.svg",
+    log:
+        "logs/plot_read_call.log"
+    conda:
+        "../envs/python.yaml"
+    notebook:
+        "../notebooks/plot-read-call.py.ipynb"

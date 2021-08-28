@@ -12,7 +12,7 @@ def aggregate_calls(sm_input, sm_output):
         all_calls.append(call)
 
     all_calls =  pd.concat(all_calls, axis=0, ignore_index=True)
-    all_calls.to_csv(sm_output, sep="\t")
+    all_calls.to_csv(sm_output, sep="\t", index=False)
     
 
 if __name__ == "__main__":

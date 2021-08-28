@@ -47,10 +47,22 @@ rule assembly_metaspades:
         "(metaspades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
         "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
 
+rule check_contigs:
+    input:
+        get_contigs
+    output:
+        "results/{date}/contigs/checked/{sample}.fasta",
+    log:
+        "logs/{date}/check_contigs/{sample}.log"
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/check_contigs.py"
+
 
 rule order_contigs:
     input:
-        contigs=get_contigs,
+        contigs="results/{date}/contigs/checked/{sample}.fasta",
         reference="resources/genomes/main.fasta",
     output:
         temp("results/{date}/contigs/ordered-unfiltered/{sample}.fasta"),
