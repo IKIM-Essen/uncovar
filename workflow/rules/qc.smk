@@ -2,8 +2,8 @@ rule fastqc:
     input:
         get_fastqs,
     output:
-        html="results/{date}/qc/fastqc/{sample}.html",
-        zip="results/{date}/qc/fastqc/{sample}_fastqc.zip",
+        html=temp("results/{date}/qc/fastqc/{sample}.html"),
+        zip=temp("results/{date}/qc/fastqc/{sample}_fastqc.zip"),
     log:
         "logs/{date}/fastqc/{sample}.log",
     threads: 1
@@ -99,7 +99,7 @@ rule samtools_flagstat:
     input:
         "results/{date}/recal/ref~main/{sample}.bam",
     output:
-        "results/{date}/qc/samtools_flagstat/{sample}.bam.flagstat",
+        temp("results/{date}/qc/samtools_flagstat/{sample}.bam.flagstat"),
     log:
         "logs/{date}/samtools/{sample}_flagstat.log",
     wrapper:
@@ -110,7 +110,7 @@ rule samtools_depth:
     input:
         get_depth_input,
     output:
-        "results/{date}/qc/samtools_depth/{sample}.txt",
+        temp("results/{date}/qc/samtools_depth/{sample}.txt"),
     log:
         "logs/{date}/samtools/{sample}_depth.txt",
     conda:
@@ -145,7 +145,7 @@ rule species_diversity_before:
         kraken_output=temp(
             "results/{date}/species-diversity/{sample}/{sample}.kraken"
         ),
-        report="results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+        report=temp("results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2"),
     log:
         "logs/{date}/kraken/{sample}.log",
     params:
@@ -172,7 +172,7 @@ rule create_krona_chart:
         ),
         taxonomy_database="resources/krona/",
     output:
-        "results/{date}/species-diversity/{sample}/{sample}.html",
+        temp("results/{date}/species-diversity/{sample}/{sample}.html"),
     log:
         "logs/{date}/krona/{sample}.log",
     conda:
@@ -186,7 +186,7 @@ rule combine_references:
         "resources/genomes/main.fasta",
         "resources/genomes/human-genome.fna.gz",
     output:
-        "resources/genomes/main-and-human-genome.fna.gz",
+        temp("resources/genomes/main-and-human-genome.fna.gz"),
     log:
         "logs/combine-reference-genomes.log",
     conda:
@@ -241,7 +241,7 @@ rule species_diversity_after:
         kraken_output=temp(
             "results/{date}/species-diversity-nonhuman/{sample}/{sample}.kraken"
         ),
-        report="results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
+        report=temp("results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2"),
     log:
         "logs/{date}/kraken/{sample}_nonhuman.log",
     threads: 8
@@ -258,7 +258,7 @@ rule create_krona_chart_after:
         kraken_output="results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
         taxonomy_database="resources/krona/",
     output:
-        "results/{date}/species-diversity-nonhuman/{sample}/{sample}.html",
+        temp("results/{date}/species-diversity-nonhuman/{sample}/{sample}.html"),
     log:
         "logs/{date}/krona/{sample}_nonhuman.log",
     conda:

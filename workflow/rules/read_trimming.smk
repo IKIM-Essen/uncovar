@@ -8,8 +8,8 @@ rule fastp_pe:
                 "results/{date}/trimmed/{sample}.2.fastq.gz",
             ]
         ),
-        html="results/{date}/trimmed/{sample}.html",
-        json="results/{date}/trimmed/{sample}.fastp.json",
+        html=temp("results/{date}/trimmed/{sample}.html"),
+        json=temp("results/{date}/trimmed/{sample}.fastp.json"),
     log:
         "logs/{date}/fastp/{sample}.log",
     params:

@@ -72,7 +72,7 @@ rule filter_chr0:
     input:
         "results/{date}/contigs/ordered-unfiltered/{sample}.fasta",
     output:
-        "results/{date}/contigs/ordered/{sample}.fasta",
+        temp("results/{date}/contigs/ordered/{sample}.fasta"),
     log:
         "logs/{date}/ragoo/{sample}_cleaned.log",
     params:
@@ -109,7 +109,7 @@ rule align_contigs:
         target="resources/genomes/main.fasta",
         query=get_quast_fastas,
     output:
-        "results/{date}/aligned/ref~main/{stage}~{sample}.bam",
+        temp("results/{date}/aligned/ref~main/{stage}~{sample}.bam"),
     log:
         "results/{date}/aligned/ref~main/{stage}~{sample}.log",
     conda:
@@ -124,7 +124,7 @@ rule quast:
         bam="results/{date}/aligned/ref~main/{stage}~{sample}.bam",
         reference="resources/genomes/main.fasta",
     output:
-        "results/{date}/quast/{stage}/{sample}/report.tsv",
+        temp("results/{date}/quast/{stage}/{sample}/report.tsv"),
     params:
         outdir=lambda x, output: os.path.dirname(output[0]),
     log:

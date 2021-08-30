@@ -41,7 +41,7 @@ rule render_scenario:
     input:
         local(get_resource("scenario.yaml")),
     output:
-        "results/{date}/scenarios/{sample}.yaml",
+        temp("results/{date}/scenarios/{sample}.yaml"),
     log:
         "logs/{date}/render-scenario/{sample}.log",
     conda:
@@ -60,7 +60,7 @@ rule varlociraptor_preprocess:
         bam="results/{date}/recal/ref~{reference}/{sample}.bam",
         bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        "results/{date}/observations/ref~{reference}/{sample}.{varrange}.bcf",
+        temp("results/{date}/observations/ref~{reference}/{sample}.{varrange}.bcf"),
     params:
         depth=config["variant-calling"]["max-read-depth"],
     log:

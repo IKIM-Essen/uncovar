@@ -53,7 +53,7 @@ rule merge_calls:
         calls=get_merge_calls_input(".bcf"),
         idx=get_merge_calls_input(".bcf.csi"),
     output:
-        "results/{date}/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.bcf",
+        temp("results/{date}/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.bcf"),
     log:
         "logs/{date}/merge-calls/ref~{reference}/{sample}.{clonality}.{filter}.log",
     params:

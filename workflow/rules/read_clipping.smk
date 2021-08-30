@@ -32,8 +32,8 @@ rule clip_primer:
         sorthardclippedbam=temp(
             "results/{date}/clipped-reads/{sample}.primerclipped.hard.sorted.bam"
         ),
-        fq1="results/{date}/clipped-reads/{sample}.1.fastq.gz",
-        fq2="results/{date}/clipped-reads/{sample}.2.fastq.gz",
+        fq1=temp("results/{date}/clipped-reads/{sample}.1.fastq.gz"),
+        fq2=temp("results/{date}/clipped-reads/{sample}.2.fastq.gz"),
     log:
         "logs/{date}/primer-clipping/{sample}.log",
     params:
@@ -60,7 +60,7 @@ rule sort_aln_for_plots:
     input:
         "results/{date}/clipped-reads/{sample}.primerclipped.hard.bam",
     output:
-        "results/{date}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam",
+        temp("results/{date}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam"),
     log:
         "logs/{date}/sort-aln-for-plots/{sample}.log",
     conda:

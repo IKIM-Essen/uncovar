@@ -20,8 +20,8 @@ rule annotate_variants:
         problematic="resources/problematic-sites.vcf.gz",
         problematic_tbi="resources/problematic-sites.vcf.gz.tbi",
     output:
-        calls="results/{date}/annotated-calls/ref~main/{sample}.bcf",
-        stats="results/{date}/annotated-calls/ref~main/{sample}.html",
+        calls=temp("results/{date}/annotated-calls/ref~main/{sample}.bcf"),
+        stats=temp("results/{date}/annotated-calls/ref~main/{sample}.html"),
     params:
         # Pass a list of plugins to use, see https://www.ensembl.org/info/docs/tools/vep/script/vep_plugins.html
         # Plugin args can be added as well, e.g. via an entry "MyPlugin,1,FOO", see docs.

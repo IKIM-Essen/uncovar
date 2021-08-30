@@ -24,7 +24,7 @@ rule compare_assemblies:
         assembly="results/{date}/contigs/polished/{sample}.fasta",
         pseudoassembly="results/{date}/contigs/pseudoassembled/{sample}.fasta",
     output:
-        "results/{date}/aligned/assemblies/{sample}.bam",
+        temp("results/{date}/aligned/assemblies/{sample}.bam"),
     log:
         "logs/{date}/aligned/assemblies/{sample}log",
     conda:
