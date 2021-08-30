@@ -10,10 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     
-      - uses: google-github-actions/release-please-action@v2.19.2
+      - uses: GoogleCloudPlatform/release-please-action@v2
         id: release
         with:
           release-type: simple
+          command: github-release
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
 
       - name: Check if PR is created
         id: pr_created
