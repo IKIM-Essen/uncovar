@@ -9,11 +9,11 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: GoogleCloudPlatform/release-please-action@v2
+    
+      - uses: google-github-actions/release-please-action@v2.19.2
         id: release
         with:
           release-type: simple
-          package-name: release-please-action
 
       - name: Check if PR is created
         id: pr_created
