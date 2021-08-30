@@ -727,7 +727,6 @@ wildcard_constraints:
 
 
 def get_read_calls(wildcard):
-
     with checkpoints.select_random_lineages.get(
         date=BENCHMARK_DATE_WILDCARD
     ).output[0].open() as f:

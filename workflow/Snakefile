@@ -166,3 +166,7 @@ rule benchmark_mixtures:
         "results/benchmarking/tables/pangolin_statistics.csv" if config["mixtures"][
             "no_strains"
         ] == 1 else [],
+
+rule benchmark_reads:
+    input:
+        "results/benchmarking/plots/aggregated_read_calls.svg"
