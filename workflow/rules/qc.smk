@@ -145,7 +145,9 @@ rule species_diversity_before:
         kraken_output=temp(
             "results/{date}/species-diversity/{sample}/{sample}.kraken"
         ),
-        report=temp("results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2"),
+        report=temp(
+            "results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2"
+        ),
     log:
         "logs/{date}/kraken/{sample}.log",
     params:
@@ -241,7 +243,9 @@ rule species_diversity_after:
         kraken_output=temp(
             "results/{date}/species-diversity-nonhuman/{sample}/{sample}.kraken"
         ),
-        report=temp("results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2"),
+        report=temp(
+            "results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2"
+        ),
     log:
         "logs/{date}/kraken/{sample}_nonhuman.log",
     threads: 8

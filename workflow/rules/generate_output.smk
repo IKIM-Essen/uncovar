@@ -3,8 +3,8 @@ rule masking:
         bamfile="results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
         sequence="results/{date}/contigs/polished/{sample}.fasta",
     output:
-        temp(masked_sequence="results/{date}/contigs/masked/{sample}.fasta"),
-        temp(coverage="results/{date}/tables/coverage/{sample}.txt"),
+        masked_sequence=temp("results/{date}/contigs/masked/{sample}.fasta"),
+        coverage=temp("results/{date}/tables/coverage/{sample}.txt"),
     params:
         min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
         min_allele=config["RKI-quality-criteria"]["min-allele"],
