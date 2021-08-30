@@ -9,7 +9,9 @@ import pandas as pd
 import pysam
 
 
-def aggregate_assembly_comparisons(bam_files: List[str], samples: List[str], output: str):
+def aggregate_assembly_comparisons(
+    bam_files: List[str], samples: List[str], output: str
+):
     data = []
     for sample, bam_file_path in zip(samples, bam_files):
         sample_data = defaultdict()
@@ -21,12 +23,13 @@ def aggregate_assembly_comparisons(bam_files: List[str], samples: List[str], out
                 except KeyError:
                     sample_data["Edit distance"] = "tag 'NM' not present"
                 sample_data["Cigarstring"] = record.cigarstring
-                
+
         data.append(sample_data)
 
     pd.DataFrame(data).to_csv(output, sep="\t", index=False)
-            
 
 
 if __name__ == "__main__":
-    aggregate_assembly_comparisons(snakemake.input, snakemake.params.samples, snakemake.output[0])
+    aggregate_assembly_comparisons(
+        snakemake.input, snakemake.params.samples, snakemake.output[0]
+    )
