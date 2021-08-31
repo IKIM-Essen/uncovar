@@ -34,9 +34,8 @@ jobs:
         run: |
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
-          git config --add remote.origin.fetch '+refs/pull/*/head:refs/remotes/origin/pr/*'
           git fetch origin
-          git checkout pr/${{ steps.release.outputs.pr }}
+          git pull origin pull/${{ steps.release.outputs.pr }}/head
 
       - name: Export version as environment variable
         if: ${{ steps.release.outputs.release_created }} && ${{ steps.pr_created.outputs.pr }}
