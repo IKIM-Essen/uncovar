@@ -544,7 +544,7 @@ rule plot_assemblies:
     script:
         "../scripts/plot-assembly-comparison.py"
 
-        
+
 rule get_read_length_statistics:
     input:
         expand(
