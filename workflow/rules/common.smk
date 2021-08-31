@@ -65,6 +65,20 @@ def get_latest_run_date():
     return pep.sample_table["run_id"].max()
 
 
+def get_samples_before_date(wildcards):
+    return list(
+        pep.sample_table[pep.sample_table["run_id"] <= wildcards.date][
+            "sample_name"
+        ].values
+    )
+
+
+def get_dates_before_date(wildcards):
+    return list(
+        pep.sample_table[pep.sample_table["run_id"] <= wildcards.date]["run_id"].values
+    )
+
+
 def get_fastqs(wildcards):
     if wildcards.sample.startswith(BENCHMARK_PREFIX):
         # this is a simulated benchmark sample, do not look up FASTQs in the sample sheet
@@ -424,12 +438,9 @@ def get_quast_fastas(wildcards):
 
 
 def get_random_strain():
-
-    print(">>> I`m here <<<")
     with checkpoints.extract_strain_genomes_from_gisaid.get(
         date=BENCHMARK_DATE_WILDCARD
     ).output[0].open() as f:
-        print("<<< I`m not here >>>")
         lines = f.read().splitlines()
         rnd_strain_path = random.choice(lines)
         strain = rnd_strain_path.replace(".fasta", "").split("/")[-1]
@@ -460,9 +471,6 @@ def generate_mixtures(wildcards):
             mixture_list.append(mixture.replace(".", "-"))
     else:
         mixture_list = config["mixtures"]["predefined_mixtures"]
-
-    print("<<< I`m also not here >>>")
-    print(mixture_list)
     return mixture_list
 
 

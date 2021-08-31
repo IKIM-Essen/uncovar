@@ -1,6 +1,6 @@
 import pysam
 
-sars_cov2_id = "NC_045512"
+sars_cov2_id, _ = snakemake.params.get("reference_genome")[0].split(".", 1)
 
 
 def is_sars_cov2(record, mate=False):

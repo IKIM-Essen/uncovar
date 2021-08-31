@@ -78,8 +78,8 @@ rule plot_strains_kallisto:
         report(
             "results/{date}/plots/strain-calls/{sample}.strains.kallisto.svg",
             caption="../report/strain-calls-kallisto.rst",
-            category="Kallisto strain calls",
-            subcategory="Per sample",
+            category="1. Overview",
+            subcategory="4. Lineage Fraction per Sample",
         ),
     log:
         "logs/{date}/plot-strains-kallisto/{sample}.log",
@@ -102,7 +102,7 @@ rule plot_all_strains_kallisto:
             "results/{date}/plots/all.{mode,(major|any)}-strain.strains.kallisto.svg",
             caption="../report/all-strain-calls-kallisto.rst",
             category="1. Overview",
-            subcategory="2. Strain Calls",
+            subcategory="3. Strain Calls",
         ),
     log:
         "logs/{date}/plot-strains/all.{mode}.log",
@@ -161,7 +161,7 @@ rule plot_all_strains_pangolin:
             "results/{date}/plots/all.strains.pangolin.svg",
             caption="../report/all-strain-calls-pangolin.rst",
             category="1. Overview",
-            subcategory="2. Strain Calls",
+            subcategory="3. Strain Calls",
         ),
     log:
         "logs/{date}/plot-strains-pangolin/all.log",

@@ -173,23 +173,50 @@ rule qc_html_report:
         "rbt csv-report {input} --formatter {params.formatter} --pin-until {params.pin_until} {output} > {log} 2>&1"
 
 
+rule plot_lineages_over_time:
+    input:
+        lambda wildcards: expand(
+            "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
+            zip,
+            date=get_dates_before_date(wildcards),
+            sample=get_samples_before_date(wildcards),
+        ),
+    output:
+        report(
+            "results/{date}/plots/lineages-over-time.svg",
+            caption="../report/lineages-over-time.rst",
+            category="1. Overview",
+            subcategory="2. Lineages Development",
+        ),
+        "results/{date}/tables/lineages-over-time.csv",
+    log:
+        "logs/{date}/plot_lineages_over_time.log",
+    params:
+        dates=lambda wildcards: get_dates_before_date(wildcards),
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot-lineages-over-time.py"
+
+
 rule snakemake_reports:
     input:
+        "results/{date}/plots/lineages-over-time.svg",
         "results/{date}/plots/coverage-reference-genome.svg",
         "results/{date}/plots/coverage-assembled-genome.svg",
         lambda wildcards: expand(
             "results/{{date}}/contigs/polished/{sample}.fasta",
             sample=get_samples_for_date(wildcards.date),
         ),
-        # lambda wildcards: expand(
-        #     "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
-        #     sample=get_samples_for_date(wildcards.date),
-        # ) if config["strain-calling"]["use-kallisto"] else "",
+        lambda wildcards: expand(
+            "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
+            sample=get_samples_for_date(wildcards.date),
+        ) if config["strain-calling"]["use-kallisto"] else "",
         "results/{date}/qc_data",
-        # expand(
-        #     "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
-        #     mode=["major", "any"],
-        # ) if config["strain-calling"]["use-kallisto"] else "",
+        expand(
+            "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
+            mode=["major"],  # , "any"
+        ) if config["strain-calling"]["use-kallisto"] else "",
         # lambda wildcards: expand(
         #     "results/{{date}}/plots/strain-calls/{sample}.strains.pangolin.svg",
         #     sample=get_samples_for_date(wildcards.date),
@@ -218,7 +245,9 @@ rule snakemake_reports:
             if config.get("benchmark-genomes", [])
             else ""
         ),
+    conda:
+        "../envs/snakemake.yaml"
     log:
         "logs/snakemake_reports/{date}.log",
     shell:
-        "snakemake --nolock --report-stylesheet resources/custom-stylesheet.css {input} --report {output} {params.for_testing}"
+        "snakemake --nolock --report-stylesheet resources/custom-stylesheet.css {input} --report {output} {params.for_testing} > {log} 2>&1"

@@ -16,6 +16,9 @@ report: "report/workflow.rst"
 container: "docker://condaforge/mambaforge"
 
 
+containerized: "quay.io/uncovar/uncovar#0.0.0"
+
+
 if config["strain-calling"]["use-kallisto"]:
 
     envvars:
@@ -167,3 +170,7 @@ rule benchmark_mixtures:
             "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
             caller=["kallisto", "pangolin"],
         ),
+        "results/benchmarking/plots/pangolin-call-dependency.svg",
+        "results/benchmarking/tables/pangolin_statistics.csv" if config["mixtures"][
+            "no_strains"
+        ] == 1 else [],

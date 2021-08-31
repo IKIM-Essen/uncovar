@@ -60,10 +60,9 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
 
         last_pos = rec_pos - 1
 
-
         dp_sample = record.samples[0]["DP"][0]
         if dp_sample is None:
-            dp_sample= 0
+            dp_sample = 0
 
         # ignore low coverage records (subsequent iteration will add an N for that locus then)
         is_low_coverage = dp_sample < snakemake.params.min_coverage
