@@ -543,3 +543,53 @@ rule plot_assemblies:
         "../envs/python.yaml"
     script:
         "../scripts/plot-assembly-comparison.py"
+
+        
+rule get_read_length_statistics:
+    input:
+        expand(
+            "results/{date}/tables/read_pair_counts/{sample}.txt",
+            zip,
+            date=get_dates(),
+            sample=get_samples(),
+        ),
+    output:
+        "results/benchmarking/tables/read_statistics.txt",
+    log:
+        "logs/get_read_statistics.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/get-read-statistics.py"
+
+
+rule plot_dependency_of_pangolin_call:
+    input:
+        get_mixture_results,
+    output:
+        "results/benchmarking/plots/{caller}-call-dependency.svg",
+    log:
+        "logs/plot_dependency_of_{caller}_call.log",
+    params:
+        prefix=MIXTURE_PREFIX,
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot-dependency-of-pangolin-call.py"
+
+
+rule plot_pangolin_conflict:
+    input:
+        get_mixture_results,
+    output:
+        "results/benchmarking/plots/{caller}_statistics.svg",
+        "results/benchmarking/tables/{caller}_statistics.csv",
+    log:
+        "logs/plot_pangolin_conflict_{caller}.log",
+    params:
+        separator=MIXTURE_PART_INDICATOR,
+        percentage=MIXTURE_PERCENTAGE_INDICATOR,
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot-pangolin-conflict.py"

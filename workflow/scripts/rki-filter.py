@@ -77,9 +77,9 @@ def filter_and_save(
     Args:
         identity (dict): Dict consisting of sample name and genome fractions
         n_share (dict): Dict consisting of sample name and share of Ns
-        min_identity (float): Min identity to NC_045512.22 of reconstructed genome
+        min_identity (float): Min identity to virus reference genome of reconstructed genome
         max_n (float): Max share of N in the reconstructed genome
-        save_path (str): Path to save the filtered sample to as .txt 
+        save_path (str): Path to save the filtered sample to as .txt
     """
 
     # aggregate all result into one df

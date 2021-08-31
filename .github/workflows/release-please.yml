@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+      
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+    
+      - uses: GoogleCloudPlatform/release-please-action@v2
+        id: release
+        with:
+          release-type: simple
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Check if PR is created
+        id: pr_created
+        run: |
+          if [[ ${{ steps.release.outputs.pr }} =~ ^[0-9]+$ ]]
+            then
+              echo "::set-output name=pr::$(echo true)"
+            else
+              echo "::set-output name=pr::$(echo false)"
+          fi
+          
+      - uses: actions/checkout@v2
+        if: ${{ steps.release.outputs.release_created }} && ${{ steps.pr_created.outputs.pr }}
+
+      - name: Checkout release PR locally
+        if: ${{ steps.release.outputs.release_created }} && ${{ steps.pr_created.outputs.pr }}
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+          git fetch origin
+          git pull origin pull/${{ steps.release.outputs.pr }}/head
+
+      - name: Export version as environment variable
+        if: ${{ steps.release.outputs.release_created }} && ${{ steps.pr_created.outputs.pr }}
+        run: |
+          echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
+          echo "Version: ${{ env.VERSION }}"
+          echo ${{ steps.release.outputs.tag_name }}
+      
+      - name: Switch to release PR on origin
+        if: ${{ steps.release.outputs.release_created }} && ${{ steps.pr_created.outputs.pr }}
+        run: |
+          git checkout release-v${{ env.VERSION }}
+
+      - name: Change containerized tag
+        if: ${{ steps.release.outputs.release_created }} && ${{ steps.pr_created.outputs.pr }}
+        run: |
+          sed -i "/containerized/c\containerized: \"quay.io/uncovar/uncovar#${{ env.VERSION }}\"" workflow/Snakefile
+
+      - name: Push changed containerized tag
+        if: ${{ steps.release.outputs.release_created }} && ${{ steps.pr_created.outputs.pr }}
+        run: |
+          git add workflow/Snakefile
+          git commit -m "Changed containerized tag to ${{ env.VERSION }}"
+          git push
