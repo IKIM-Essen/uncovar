@@ -455,6 +455,7 @@ rule quast_assembly_comparison:
         reference="resources/genomes/main.fasta",
     output:
         "results/{date}/assembly/{sample}/{assembler}/quast/report.tsv",
+        "results/{date}/assembly/{sample}/{assembler}/quast/transposed_report.tsv",
     params:
         outdir=lambda x, output: os.path.dirname(output[0]),
     log:
