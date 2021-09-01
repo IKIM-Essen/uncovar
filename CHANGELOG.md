@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.1](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.0...v0.1.1) (2021-09-01)
+
+
+### Bug Fixes
+
+* change trigger of registry release action ([#223](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/223)) ([1464ece](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/1464ece23a689df6f5c9ef0db3a1252b53612cfc))
+
 ## 0.1.0 (2021-08-31)
 
 
