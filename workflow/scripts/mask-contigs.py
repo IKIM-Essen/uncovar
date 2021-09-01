@@ -52,6 +52,7 @@ def extract_coverage_and_mask(
     ) as sequence_handle, open(coverage_path, "w") as coverage:
 
         # get sequence(s) in fasta file
+        # TODO replace FASTA parsing with pysam code
         sequence_dict = {}
         for line in sequence_handle:
             line = line.strip()
@@ -65,7 +66,8 @@ def extract_coverage_and_mask(
             raise ValueError("Sequence contains more than one contig.")
 
         # convert sequence string to list of characters so that we can change characters
-        sequence = list(list(sequence_dict.values())[0])
+        sequence_name = next(sequence_dict.keys())
+        sequence = next(sequence_dict.values())
 
         # write header of coverage file
         if len(coverage_header) > 0:
@@ -157,21 +159,19 @@ def extract_coverage_and_mask(
 
                     sequence[pileupcolumn.reference_pos] = iupac_mask
 
-    # join list of characters to sequence
-    sequence = "".join(sequence)
-    header = list(sequence_dict.keys())[0].split(".")[0] + "\n"
+    header, ragoo_suffix = sequence_name.split(".", 1)
 
     # write masked fasta file
     with open(masked_sequence_path, "w") as w:
-        w.write(header), w.write(sequence)
+        print(header, file=w)
+        print(sequence, file=w)
 
 
-if __name__ == "__main__":
-    extract_coverage_and_mask(
-        snakemake.input.bamfile,
-        snakemake.input.sequence,
-        snakemake.output.masked_sequence,
-        snakemake.output.coverage,
-        snakemake.params.get("min_coverage", ""),
-        snakemake.params.get("min_allele", ""),
-    )
+extract_coverage_and_mask(
+    snakemake.input.bamfile,
+    snakemake.input.sequence,
+    snakemake.output.masked_sequence,
+    snakemake.output.coverage,
+    snakemake.params.min_coverage,
+    snakemake.params.min_allele,
+)

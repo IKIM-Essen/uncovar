@@ -1,3 +1,7 @@
+import sys
+
+sys.stderr = open(snakemake.log[0], "w")
+
 import pandas as pd
 import pysam
 from intervaltree import IntervalTree
@@ -45,46 +49,48 @@ def count_intervals(file):
                 and mate_pair_intervals[pair][0] != None
                 and mate_pair_intervals[pair][1] != None
             ):
+                left, right = mate_pair_intervals[pair]
                 if primer_intervals.envelop(
-                    mate_pair_intervals[pair][0], mate_pair_intervals[pair][1] + 1
+                    left, right + 1
                 ):
+                    # TODO: put the code below into a function to avoid the redundancy here?
                     if (
                         sorted(
                             primer_intervals.envelop(
-                                mate_pair_intervals[pair][0],
-                                mate_pair_intervals[pair][1] + 1,
+                                left,
+                                right + 1,
                             )
                         )[0].begin
-                        == mate_pair_intervals[pair][0]
+                        == left
                         and sorted(
                             primer_intervals.envelop(
-                                mate_pair_intervals[pair][0],
-                                mate_pair_intervals[pair][1] + 1,
+                                left,
+                                right + 1,
                             )
                         )[0].end
-                        == mate_pair_intervals[pair][1] + 1
+                        == right + 1
                     ):
                         counter_primer += 1
                     else:
                         counter_primer_within += 1
                 elif no_primer_intervals.envelop(
-                    mate_pair_intervals[pair][0] + 1, mate_pair_intervals[pair][1]
+                    left + 1, right
                 ):
                     if (
                         sorted(
                             no_primer_intervals.envelop(
-                                mate_pair_intervals[pair][0] + 1,
-                                mate_pair_intervals[pair][1],
+                                left + 1,
+                                right,
                             )
                         )[0].begin
-                        == mate_pair_intervals[pair][0] + 1
+                        == left + 1
                         and sorted(
                             no_primer_intervals.envelop(
-                                mate_pair_intervals[pair][0] + 1,
-                                mate_pair_intervals[pair][1],
+                                left + 1,
+                                right,
                             )
                         )[0].end
-                        == mate_pair_intervals[pair][1]
+                        == right
                     ):
                         counter_no_primer += 1
                     else:
@@ -114,7 +120,7 @@ def count_intervals(file):
         return counters
 
 
-def plot_classes(counters, state):
+def plot_classes(counters):
     bars = (
         alt.Chart(counters)
         .mark_bar()
@@ -145,6 +151,6 @@ for sample, file in iter_with_samples(snakemake.input.clipped):
     counts_after["sample"] = sample
     counts_after["state"] = "after"
     all_df = all_df.append(counts_after, ignore_index=True)
-bars, text = plot_classes(all_df, "after")
+bars, text = plot_classes(all_df)
 
 (bars).properties(title="Amplicon matching").save(snakemake.output.plot)
