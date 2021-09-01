@@ -46,15 +46,15 @@ def load_pangolin_df(i, path):
     return pangolin_df
 
 
-def eval_error(
-    paths, sm_output, max_reads, prefix, separator, percentage, load_func
-):
+def eval_error(paths, sm_output, max_reads, prefix, separator, percentage, load_func):
     results_df = pd.DataFrame()
 
     for i, path in enumerate(paths):
         df = load_func(i, path)
 
-        org_mix_df = extract_mixture_sample(path, prefix, separator, percentage, i, max_reads)
+        org_mix_df = extract_mixture_sample(
+            path, prefix, separator, percentage, i, max_reads
+        )
 
         df = df.merge(org_mix_df, how="outer").fillna(0)
 

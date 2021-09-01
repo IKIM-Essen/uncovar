@@ -7,7 +7,11 @@ import altair as alt
 
 
 def mask(strain):
-    return strain if strain in ["other", "unmapped", "B.1.1.7", "B.1.351"] else "some strain"
+    return (
+        strain
+        if strain in ["other", "unmapped", "B.1.1.7", "B.1.351"]
+        else "some strain"
+    )
 
 
 def plot_error_heatmap(sm_input, sm_output, type="heatmap"):

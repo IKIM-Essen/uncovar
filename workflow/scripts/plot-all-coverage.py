@@ -51,4 +51,5 @@ def plot_coverage(sm_input, sm_output, min_coverage):
             width="container", height=150
         ).save(sm_output)
 
+
 plot_coverage(snakemake.input, snakemake.output[0], snakemake.params.min_coverage)

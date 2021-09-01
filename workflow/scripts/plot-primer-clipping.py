@@ -50,9 +50,7 @@ def count_intervals(file):
                 and mate_pair_intervals[pair][1] != None
             ):
                 left, right = mate_pair_intervals[pair]
-                if primer_intervals.envelop(
-                    left, right + 1
-                ):
+                if primer_intervals.envelop(left, right + 1):
                     # TODO: put the code below into a function to avoid the redundancy here?
                     if (
                         sorted(
@@ -73,9 +71,7 @@ def count_intervals(file):
                         counter_primer += 1
                     else:
                         counter_primer_within += 1
-                elif no_primer_intervals.envelop(
-                    left + 1, right
-                ):
+                elif no_primer_intervals.envelop(left + 1, right):
                     if (
                         sorted(
                             no_primer_intervals.envelop(

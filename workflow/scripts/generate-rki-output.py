@@ -21,7 +21,7 @@ for file in snakemake.input.contigs:
                 header2seq[">" + file.split("/")[-1].split(".")[0]] += line
                 length += len(line)
 
-# TODO replace the following with either a pandas dataframe based code or with the 
+# TODO replace the following with either a pandas dataframe based code or with the
 # Python csv module (delimiter=";")
 outtab = open(snakemake.output.table, "a")
 outfile = open(snakemake.output.fasta, "a")
