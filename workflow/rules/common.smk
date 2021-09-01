@@ -678,7 +678,7 @@ def get_output_dir(wildcards, output):
 
 def expand_samples_by_func(paths, func, **kwargs):
     def inner(wildcards):
-        expand(
+        return expand(
             paths,
             sample=get_samples_for_date(wildcards.date),
             **kwargs,
