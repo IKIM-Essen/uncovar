@@ -45,7 +45,7 @@ jobs:
           echo ${{ steps.release.outputs.tag_name }}
       
       - name: Switch to release PR on origin
-        if: ${{ steps.pr_created.outputs.pr }}
+        if: ${{ steps.pr_created.outputs.pr }} || ${{ steps.release.outputs.release_created }}
         run: |
           git checkout release-v${{ env.VERSION }}
 
@@ -72,11 +72,10 @@ jobs:
       - name: Build image
         if: ${{ steps.release.outputs.release_created }}
         id: build-image
-        pre: echo ::save-state name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
         uses: redhat-actions/buildah-build@v2
         with:
           image: uncovar
-          tags: latest ${{ github.sha }} ${{ env.STATE_RELEASE_VERSION }}
+          tags: latest ${{ github.sha }} ${{ env.VERSION }}
           dockerfiles: |
             ./Dockerfile
 
