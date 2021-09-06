@@ -2,7 +2,7 @@ name: Publish Release to Registry
 
 on:    
   release:
-      types: [published]
+      types: [created]
 
 jobs:
   update:
