@@ -8,11 +8,12 @@ sys.stderr = open(snakemake.log[0], "w")
 
 data = pd.DataFrame()
 
+
 def register_lengths(sample, file_list, state, amplicon_state, data):
     for file, assembler in zip(file_list, snakemake.params.assembler):
         if state in ("initial", "final"):
             with pysam.FastxFile(file) as infile:
-                
+
                 data = data.append(
                     {
                         "Sample": sample,
@@ -26,24 +27,45 @@ def register_lengths(sample, file_list, state, amplicon_state, data):
         else:
             quastDf = pd.read_csv(file, sep="\t")
             data = data.append(
-                    {
-                        "Sample": sample,
-                        "Assembler": assembler,
-                        "Amplicon": amplicon_state,
-                        "length (bp)": quastDf.loc[0, "N50"],
-                        "State": "N50",
-                        "Genome fraction (%)": quastDf.loc[0, "Genome fraction (%)"]
-                        if "Genome fraction (%)" in quastDf.columns
-                        else float("nan"),
-                    },
-                    ignore_index=True,
-                )
+                {
+                    "Sample": sample,
+                    "Assembler": assembler,
+                    "Amplicon": amplicon_state,
+                    "length (bp)": quastDf.loc[0, "N50"],
+                    "State": "N50",
+                    "Genome fraction (%)": quastDf.loc[0, "Genome fraction (%)"]
+                    if "Genome fraction (%)" in quastDf.columns
+                    else float("nan"),
+                },
+                ignore_index=True,
+            )
     return data
 
-for sample, amplicon_state in zip(snakemake.params.samples, snakemake.params.amplicon_state):
-    data = register_lengths(sample, [x for x in snakemake.input.initial if sample in x], "initial", amplicon_state, data)
-    data = register_lengths(sample, [x for x in snakemake.input.final if sample in x], "final", amplicon_state, data)
-    data = register_lengths(sample, [x for x in snakemake.input.quast if sample in x], "N50", amplicon_state, data)
+
+for sample, amplicon_state in zip(
+    snakemake.params.samples, snakemake.params.amplicon_state
+):
+    data = register_lengths(
+        sample,
+        [x for x in snakemake.input.initial if sample in x],
+        "initial",
+        amplicon_state,
+        data,
+    )
+    data = register_lengths(
+        sample,
+        [x for x in snakemake.input.final if sample in x],
+        "final",
+        amplicon_state,
+        data,
+    )
+    data = register_lengths(
+        sample,
+        [x for x in snakemake.input.quast if sample in x],
+        "N50",
+        amplicon_state,
+        data,
+    )
 
 print(data)
 
@@ -84,9 +106,7 @@ plot_bp = (
     .properties(height=height, width=width)
 )
 
-combined_bp = plot_bp.mark_point(
-     opacity=0.5, filled=True
- )
+combined_bp = plot_bp.mark_point(opacity=0.5, filled=True)
 combined_bp = (
     combined_bp.facet(
         column=alt.Column(
@@ -111,7 +131,7 @@ plot_genome_frac = (
     .encode(
         x=alt.X(
             "jitter:Q",
-            stack='zero',
+            stack="zero",
             title=None,
             axis=alt.Axis(ticks=False, grid=False, labels=False),
             scale=alt.Scale(),
