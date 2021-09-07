@@ -696,7 +696,6 @@ def expand_samples_for_date_assembler(paths, **kwargs):
     )
 
 
-
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),

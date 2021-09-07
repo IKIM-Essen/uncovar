@@ -519,4 +519,3 @@ rule plot_pangolin_conflict:
         "../envs/python.yaml"
     script:
         "../scripts/plot-pangolin-conflict.py"
-        
