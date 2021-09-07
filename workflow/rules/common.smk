@@ -679,6 +679,24 @@ def get_assemblies_for_submission(wildcards, agg_type):
         return assembly_type_used
 
 
+def expand_samples_by_func(paths, func, **kwargs):
+    def inner(wildcards):
+        return expand(
+            paths,
+            sample=get_samples_for_date(wildcards.date),
+            **kwargs,
+        )
+
+    return inner
+
+
+def expand_samples_for_date_assembler(paths, **kwargs):
+    return expand_samples_by_func(
+        paths, get_samples_for_date, assembler=config.get("assemblers_for_comparison")
+    )
+
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),
