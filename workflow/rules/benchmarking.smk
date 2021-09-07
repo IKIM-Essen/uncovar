@@ -446,71 +446,24 @@ rule quast_assembly_comparison:
 
 rule plot_assemblies:
     input:
-        initial=lambda wildcards: expand(
-            "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
-            sample=get_samples_for_date(wildcards.date),
-            assembler=[
-                "megahit-std",
-                "megahit-meta-large",
-                "megahit-meta-sensitive",
-                "trinity",
-                "velvet",
-                "metaspades",
-                "coronaspades",
-                "spades",
-                "rnaviralspades",
-            ],
+        initial=expand_samples_for_date_assembler(
+            "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta"
         ),
-        final=lambda wildcards: expand(
-            "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.ordered.filtered.fasta",
-            sample=get_samples_for_date(wildcards.date),
-            assembler=[
-                "megahit-std",
-                "megahit-meta-large",
-                "megahit-meta-sensitive",
-                "trinity",
-                "velvet",
-                "metaspades",
-                "coronaspades",
-                "spades",
-                "rnaviralspades",
-            ],
+        final=expand_samples_for_date_assembler(
+            "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.ordered.filtered.fasta"
         ),
-        quast=lambda wildcards: expand(
-            "results/{{date}}/assembly/{sample}/{assembler}/quast/transposed_report.tsv",
-            sample=get_samples_for_date(wildcards.date),
-            assembler=[
-                "megahit-std",
-                "megahit-meta-large",
-                "megahit-meta-sensitive",
-                "trinity",
-                "velvet",
-                "metaspades",
-                "coronaspades",
-                "spades",
-                "rnaviralspades",
-            ],
+        quast=expand_samples_for_date_assembler(
+            "results/{{date}}/assembly/{sample}/{assembler}/quast/transposed_report.tsv"
         ),
     output:
         "results/{date}/plots/all_assemblies_largest_contigs.svg",
         "results/{date}/plots/all_assemblies_table.csv",
-        "results/{date}/plots/all_assemblies_N50.svg",
         "results/{date}/plots/all_assemblies_genome_fraction.svg",
     log:
         "logs/{date}/all_assemblies_plot.log",
     params:
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
-        assembler=[
-            "megahit-std",
-            "megahit-meta-large",
-            "megahit-meta-sensitive",
-            "trinity",
-            "velvet",
-            "metaspades",
-            "coronaspades",
-            "spades",
-            "rnaviralspades",
-        ],
+        assembler=config.get("assemblers_for_comparison"),
         amplicon_state=lambda wildcards: get_list_of_amplicon_states(wildcards.date),
     conda:
         "../envs/python.yaml"
@@ -566,3 +519,4 @@ rule plot_pangolin_conflict:
         "../envs/python.yaml"
     script:
         "../scripts/plot-pangolin-conflict.py"
+        
