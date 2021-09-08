@@ -66,8 +66,7 @@ def extract_coverage_and_mask(
             raise ValueError("Sequence contains more than one contig.")
 
         # convert sequence string to list of characters so that we can change characters
-        sequence_name = next(sequence_dict.keys())
-        sequence = next(sequence_dict.values())
+        sequence = list(list(sequence_dict.values())[0])
 
         # write header of coverage file
         if len(coverage_header) > 0:
@@ -159,7 +158,10 @@ def extract_coverage_and_mask(
 
                     sequence[pileupcolumn.reference_pos] = iupac_mask
 
-    header, ragoo_suffix = sequence_name.split(".", 1)
+    # join list of characters to sequence
+    sequence = "".join(sequence)
+    # TODO replace this mess with more clearer code
+    header = list(sequence_dict.keys())[0].split(".")[0] + "\n"
 
     # write masked fasta file
     with open(masked_sequence_path, "w") as w:
@@ -167,11 +169,12 @@ def extract_coverage_and_mask(
         print(sequence, file=w)
 
 
-extract_coverage_and_mask(
-    snakemake.input.bamfile,
-    snakemake.input.sequence,
-    snakemake.output.masked_sequence,
-    snakemake.output.coverage,
-    snakemake.params.min_coverage,
-    snakemake.params.min_allele,
-)
+if __name__ == "__main__":
+    extract_coverage_and_mask(
+        snakemake.input.bamfile,
+        snakemake.input.sequence,
+        snakemake.output.masked_sequence,
+        snakemake.output.coverage,
+        snakemake.params.min_coverage,
+        snakemake.params.min_allele,
+    )
