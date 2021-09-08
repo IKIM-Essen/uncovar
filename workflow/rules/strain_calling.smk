@@ -9,6 +9,8 @@ checkpoint extract_strain_genomes_from_gisaid:
         save_strains_to=lambda wildcards: config["strain-calling"][
             "extracted-strain-genomes"
         ],
+    conda:
+        "../envs/pandas.yaml"
     script:
         "../scripts/extract-strains-from-gisaid-provision.py"
 
