@@ -1,6 +1,7 @@
 rule masking:
     input:
         bamfile="results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
+        bai="results/{date}/mapped/ref~polished-{sample}/{sample}.bam.bai",
         sequence="results/{date}/contigs/polished/{sample}.fasta",
     output:
         masked_sequence="results/{date}/contigs/masked/{sample}.fasta",
