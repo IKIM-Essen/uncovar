@@ -138,10 +138,10 @@ checkpoint all:
         ),
 
 
-rule compare_assemlbers:
+rule compare_assemblers:
     input:
         expand(
-            "results/{date}/plots/all_assemblies.svg",
+            "results/{date}/plots/assembler-comparison.svg",
             date=get_all_run_dates(),
         ),
 
