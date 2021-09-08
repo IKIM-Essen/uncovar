@@ -11,9 +11,8 @@ data = pd.DataFrame()
 
 def register_lengths(sample, file_list, state, amplicon_state, data):
     for file, assembler in zip(file_list, snakemake.params.assembler):
-        if state in ("initial", "final"):
+        if state in ("initial", "scaffolded"):
             with pysam.FastxFile(file) as infile:
-
                 data = data.append(
                     {
                         "Sample": sample,
@@ -45,29 +44,19 @@ def register_lengths(sample, file_list, state, amplicon_state, data):
 for sample, amplicon_state in zip(
     snakemake.params.samples, snakemake.params.amplicon_state
 ):
-    data = register_lengths(
-        sample,
-        [x for x in snakemake.input.initial if sample in x],
-        "initial",
-        amplicon_state,
-        data,
-    )
-    data = register_lengths(
-        sample,
-        [x for x in snakemake.input.final if sample in x],
-        "final",
-        amplicon_state,
-        data,
-    )
-    data = register_lengths(
-        sample,
-        [x for x in snakemake.input.quast if sample in x],
-        "N50",
-        amplicon_state,
-        data,
-    )
 
-print(data)
+    def load(inputfile, label=None):
+        return register_lengths(
+            sample,
+            [x for x in snakemake.input.get(inputfile) if sample in x],
+            label or inputfile,
+            amplicon_state,
+            data,
+        )
+
+    data = load("initial")
+    data = load("final", "scaffolded")
+    data = load("quast", "N50")
 
 data.replace({"Amplicon": {0: "Shotgun", 1: "Amplicon"}}, inplace=True)
 data.replace(
@@ -100,13 +89,14 @@ plot_bp = (
             scale=alt.Scale(domain=[0, 35000], clamp=True),
             axis=alt.Axis(tickCount=5),
         ),
-        x=alt.X("State", title=None, sort="descending"),
+        x=alt.X("State", title=None, sort=["initial", "scaffolded", "N50"]),
         color=alt.Color("Assembler", scale=alt.Scale(scheme="turbo"), legend=None),
     )
     .properties(height=height, width=width)
 )
 
 combined_bp = plot_bp.mark_point(opacity=0.5, filled=True)
+# combined_bp = plot_bp.mark_boxplot(opacity=0.8, color='black')
 combined_bp = (
     combined_bp.facet(
         column=alt.Column(
