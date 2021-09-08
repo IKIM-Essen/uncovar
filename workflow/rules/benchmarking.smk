@@ -214,6 +214,8 @@ rule assembly_comparison_megahit:
         contigs=(
             "results/{date}/assembly/{sample}/megahit-{preset}/{sample}.contigs.fasta"
         ),
+    wildcard_constraints:
+        preset="std|meta-large|meta-sensitive"
     log:
         "logs/{date}/megahit-{preset}/{sample}.log",
     params:
@@ -273,16 +275,18 @@ rule assembly_comparison_spades:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        contigs="results/{date}/assembly/{sample}/{spadesflavor}spades/{sample}.contigs.fasta",
+        contigs="results/{date}/assembly/{sample}/{spadesflavor}/{sample}.contigs.fasta",
+    wildcard_constraints:
+        spadesflavor="spades|rnaviralspades|metaspades|coronaspades",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
     log:
-        "logs/{date}/{spadesflavor}spades/{sample}.log",
+        "logs/{date}/{spadesflavor}/{sample}.log",
     threads: 8
     conda:
         "../envs/spades.yaml"
     shell:
-        "({spadesflavor}spades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
+        "({wildcards.spadesflavor}.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
         "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
 
 
