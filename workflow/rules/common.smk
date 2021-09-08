@@ -696,6 +696,13 @@ def expand_samples_for_date_assembler(paths, **kwargs):
     )
 
 
+def get_megahit_preset(wildcards):
+    if wildcards.preset == "std":
+        return ""
+    else:
+        return f"--preset {wildcards.preset}"
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),
