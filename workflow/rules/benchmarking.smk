@@ -215,7 +215,7 @@ rule assembly_comparison_megahit:
             "results/{date}/assembly/{sample}/megahit-{preset}/{sample}.contigs.fasta"
         ),
     wildcard_constraints:
-        preset="std|meta-large|meta-sensitive"
+        preset="std|meta-large|meta-sensitive",
     log:
         "logs/{date}/megahit-{preset}/{sample}.log",
     params:
@@ -275,7 +275,9 @@ rule assembly_comparison_spades:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        contigs="results/{date}/assembly/{sample}/{spadesflavor}/{sample}.contigs.fasta",
+        contigs=(
+            "results/{date}/assembly/{sample}/{spadesflavor}/{sample}.contigs.fasta"
+        ),
     wildcard_constraints:
         spadesflavor="spades|rnaviralspades|metaspades|coronaspades",
     params:
