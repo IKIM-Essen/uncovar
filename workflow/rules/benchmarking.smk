@@ -206,59 +206,22 @@ rule plot_strain_call_error:
         "../scripts/plot-caller-error.py"
 
 
-rule assembly_comparison_megahit_std:
+rule assembly_comparison_megahit:
     input:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        contigs="results/{date}/assembly/{sample}/megahit-std/{sample}.contigs.fasta",
+        contigs="results/{date}/assembly/{sample}/megahit-{preset}/{sample}.contigs.fasta",
     log:
-        "logs/{date}/megahit-std/{sample}.log",
+        "logs/{date}/megahit-{preset}/{sample}.log",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
+        preset=get_megahit_preset
     threads: 8
     conda:
         "../envs/megahit.yaml"
     shell:
-        "(megahit -1 {input.fastq1} -2 {input.fastq2} --out-dir {params.outdir} -f && "
-        "mv {params.outdir}/final.contigs.fa {output.contigs} ) > {log} 2>&1"
-
-
-rule assembly_comparison_megahit_meta_large:
-    input:
-        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
-        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
-    output:
-        contigs=(
-            "results/{date}/assembly/{sample}/megahit-meta-large/{sample}.contigs.fasta"
-        ),
-    log:
-        "logs/{date}/megahit-meta-large/{sample}.log",
-    params:
-        outdir=lambda w, output: os.path.dirname(output[0]),
-    threads: 8
-    conda:
-        "../envs/megahit.yaml"
-    shell:
-        "(megahit -1 {input.fastq1} -2 {input.fastq2} --presets meta-large --out-dir {params.outdir} -f && "
-        "mv {params.outdir}/final.contigs.fa {output.contigs} ) > {log} 2>&1"
-
-
-rule assembly_comparison_megahit_meta_sensitive:
-    input:
-        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
-        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
-    output:
-        contigs="results/{date}/assembly/{sample}/megahit-meta-sensitive/{sample}.contigs.fasta",
-    log:
-        "logs/{date}/megahit-meta-sensitive/{sample}.log",
-    params:
-        outdir=lambda w, output: os.path.dirname(output[0]),
-    threads: 8
-    conda:
-        "../envs/megahit.yaml"
-    shell:
-        "(megahit -1 {input.fastq1} -2 {input.fastq2} --presets meta-sensitive --out-dir {params.outdir} -f && "
+        "(megahit -1 {input.fastq1} -2 {input.fastq2} {params.preset} --out-dir {params.outdir} -f && "
         "mv {params.outdir}/final.contigs.fa {output.contigs} ) > {log} 2>&1"
 
 
@@ -303,77 +266,21 @@ rule assembly_comparison_velvet:
         """
 
 
-rule assembly_comparison_metaspades:
-    input:
-        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
-        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
-    output:
-        contigs="results/{date}/assembly/{sample}/metaspades/{sample}.contigs.fasta",
-    params:
-        outdir=lambda w, output: os.path.dirname(output[0]),
-    log:
-        "logs/{date}/metaSPAdes/{sample}.log",
-    threads: 8
-    conda:
-        "../envs/spades.yaml"
-    shell:
-        "(metaspades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
-        "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
-
-
-rule assembly_comparison_coronaspades:
-    input:
-        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
-        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
-    output:
-        contigs="results/{date}/assembly/{sample}/coronaspades/{sample}.contigs.fasta",
-    params:
-        outdir=lambda w, output: os.path.dirname(output[0]),
-    log:
-        "logs/{date}/coronaSPAdes/{sample}.log",
-    threads: 8
-    conda:
-        "../envs/spades.yaml"
-    shell:
-        "(coronaspades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
-        "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
-
-
 rule assembly_comparison_spades:
     input:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        contigs="results/{date}/assembly/{sample}/spades/{sample}.contigs.fasta",
+        contigs="results/{date}/assembly/{sample}/{spadesflavor}spades/{sample}.contigs.fasta",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
     log:
-        "logs/{date}/SPAdes/{sample}.log",
+        "logs/{date}/{spadesflavor}spades/{sample}.log",
     threads: 8
     conda:
         "../envs/spades.yaml"
     shell:
-        "(spades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
-        "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
-
-
-rule assembly_comparison_rnaviralspades:
-    input:
-        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
-        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
-    output:
-        contigs=(
-            "results/{date}/assembly/{sample}/rnaviralspades/{sample}.contigs.fasta"
-        ),
-    params:
-        outdir=lambda w, output: os.path.dirname(output[0]),
-    log:
-        "logs/{date}/rnaviralSPAdes/{sample}.log",
-    threads: 8
-    conda:
-        "../envs/spades.yaml"
-    shell:
-        "(rnaviralspades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
+        "({spadesflavor}spades.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
         "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
 
 
@@ -456,9 +363,9 @@ rule plot_assemblies:
             "results/{{date}}/assembly/{sample}/{assembler}/quast/transposed_report.tsv"
         ),
     output:
-        "results/{date}/plots/all_assemblies_largest_contigs.svg",
-        "results/{date}/plots/all_assemblies_table.csv",
-        "results/{date}/plots/all_assemblies_genome_fraction.svg",
+        "results/{date}/plots/assembler-comparison.svg",
+        "results/{date}/plots/assembler-comparison.csv",
+        "results/{date}/plots/assembler-comparison_genome_fraction.svg",
     log:
         "logs/{date}/all_assemblies_plot.log",
     params:
