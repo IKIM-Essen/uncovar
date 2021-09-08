@@ -211,12 +211,14 @@ rule assembly_comparison_megahit:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        contigs="results/{date}/assembly/{sample}/megahit-{preset}/{sample}.contigs.fasta",
+        contigs=(
+            "results/{date}/assembly/{sample}/megahit-{preset}/{sample}.contigs.fasta"
+        ),
     log:
         "logs/{date}/megahit-{preset}/{sample}.log",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
-        preset=get_megahit_preset
+        preset=get_megahit_preset,
     threads: 8
     conda:
         "../envs/megahit.yaml"
