@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.1.2](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.1...v0.1.2) (2021-09-06)
+
+
+### Bug Fixes
+
+* merge push to quay.io into release please ([#231](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/231)) ([e9d782d](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/e9d782dc5db6bd24d097d95f6f945cb02a1ff3aa))
+* remove pre von relase action ([#232](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/232)) ([301043f](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/301043f7e1b5a913f3b216eaf66640ae79756f67))
+
 ### [0.1.1](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.0...v0.1.1) (2021-09-01)
 
 
