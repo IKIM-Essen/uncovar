@@ -49,44 +49,46 @@ def count_intervals(file):
                 and mate_pair_intervals[pair][0] != None
                 and mate_pair_intervals[pair][1] != None
             ):
-                left, right = mate_pair_intervals[pair]
-                if primer_intervals.envelop(left, right + 1):
-                    # TODO: put the code below into a function to avoid the redundancy here?
+                if primer_intervals.envelop(
+                    mate_pair_intervals[pair][0], mate_pair_intervals[pair][1] + 1
+                ):
                     if (
                         sorted(
                             primer_intervals.envelop(
-                                left,
-                                right + 1,
+                                mate_pair_intervals[pair][0],
+                                mate_pair_intervals[pair][1] + 1,
                             )
                         )[0].begin
-                        == left
+                        == mate_pair_intervals[pair][0]
                         and sorted(
                             primer_intervals.envelop(
-                                left,
-                                right + 1,
+                                mate_pair_intervals[pair][0],
+                                mate_pair_intervals[pair][1] + 1,
                             )
                         )[0].end
-                        == right + 1
+                        == mate_pair_intervals[pair][1] + 1
                     ):
                         counter_primer += 1
                     else:
                         counter_primer_within += 1
-                elif no_primer_intervals.envelop(left + 1, right):
+                elif no_primer_intervals.envelop(
+                    mate_pair_intervals[pair][0] + 1, mate_pair_intervals[pair][1]
+                ):
                     if (
                         sorted(
                             no_primer_intervals.envelop(
-                                left + 1,
-                                right,
+                                mate_pair_intervals[pair][0] + 1,
+                                mate_pair_intervals[pair][1],
                             )
                         )[0].begin
-                        == left + 1
+                        == mate_pair_intervals[pair][0] + 1
                         and sorted(
                             no_primer_intervals.envelop(
-                                left + 1,
-                                right,
+                                mate_pair_intervals[pair][0] + 1,
+                                mate_pair_intervals[pair][1],
                             )
                         )[0].end
-                        == right
+                        == mate_pair_intervals[pair][1]
                     ):
                         counter_no_primer += 1
                     else:
@@ -147,6 +149,7 @@ for sample, file in iter_with_samples(snakemake.input.clipped):
     counts_after["sample"] = sample
     counts_after["state"] = "after"
     all_df = all_df.append(counts_after, ignore_index=True)
+    
 bars, text = plot_classes(all_df)
 
 (bars).properties(title="Amplicon matching").save(snakemake.output.plot)
