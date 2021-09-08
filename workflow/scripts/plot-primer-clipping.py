@@ -149,7 +149,7 @@ for sample, file in iter_with_samples(snakemake.input.clipped):
     counts_after["sample"] = sample
     counts_after["state"] = "after"
     all_df = all_df.append(counts_after, ignore_index=True)
-    
+
 bars, text = plot_classes(all_df)
 
 (bars).properties(title="Amplicon matching").save(snakemake.output.plot)
