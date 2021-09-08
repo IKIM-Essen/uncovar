@@ -11,7 +11,7 @@ rule bwa_index:
             ".sa",
         ),
     params:
-        prefix=lambda w, output: os.path.splitext(output[0])[0],
+        prefix=lambda w, output: get_bwa_index_prefix(output),
     log:
         "logs/{date}/bwa-index/ref~{reference}.log",
     wrapper:
@@ -31,7 +31,7 @@ rule bwa_large_index:
             ".sa",
         ),
     params:
-        prefix=lambda w, output: get_bwa_index_prefix(output[0]),
+        prefix=lambda w, output: get_bwa_index_prefix(output),
     log:
         "logs/bwa-index/ref~{reference}.log",
     wrapper:
