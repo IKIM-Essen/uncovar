@@ -107,7 +107,7 @@ rule align_contigs:
         target="resources/genomes/main.fasta",
         query=get_quast_fastas,
     output:
-        temp("results/{date}/aligned/ref~main/{stage}~{sample}.bam"),
+        "results/{date}/aligned/ref~main/{stage}~{sample}.bam",
     log:
         "results/{date}/aligned/ref~main/{stage}~{sample}.log",
     conda:
