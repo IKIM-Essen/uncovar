@@ -26,9 +26,7 @@ rule annotate_variants:
         # Pass a list of plugins to use, see https://www.ensembl.org/info/docs/tools/vep/script/vep_plugins.html
         # Plugin args can be added as well, e.g. via an entry "MyPlugin,1,FOO", see docs.
         plugins=["LoFtool"],
-        extra=lambda w, input: "--vcf_info_field ANN --hgvsg --hgvs --synonyms {synonyms} --custom {input.problematic},,vcf,exact,0,".format(
-            input=input, synonyms=get_resource("synonyms.txt")
-        ),
+        extra=get_vep_args,
     log:
         "logs/{date}/vep/{sample}.log",
     wrapper:

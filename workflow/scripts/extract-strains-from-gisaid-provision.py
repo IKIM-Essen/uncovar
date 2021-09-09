@@ -2,14 +2,13 @@ import sys
 
 sys.stderr = open(snakemake.log[0], "w")
 
-from os.path import join, isfile, exists
-from os import makedirs
+import os
 
 import numpy as np
 import pandas as pd
 
 
-def extrace_strains_from_provision(
+def extract_strains_from_provision(
     path_to_provision: str, path_to_strain_summary: str, path_to_strain_genomes: str
 ):
     # select strain genomes
@@ -31,7 +30,7 @@ def extrace_strains_from_provision(
     )
 
     # save strain genome summary
-    provision["covv_lineage_fasta"] = np.vectorize(join)(
+    provision["covv_lineage_fasta"] = np.vectorize(os.path.join)(
         path_to_strain_genomes, provision["covv_lineage_fasta"].values
     )
     provision["covv_lineage_fasta"].to_csv(
@@ -64,21 +63,19 @@ def select_oldest_strains(df: pd.DataFrame):
 def write_sequence(
     covv_lineage: str, covv_lineage_fasta: str, sequence: str, out_path: str
 ):
-    if not exists(out_path):
-        makedirs(out_path)
+    os.makedirs(out_path, exist_ok=True)
 
     print(f"{covv_lineage_fasta}", file=sys.stderr)
 
-    genome_file = join(out_path, covv_lineage_fasta)
-    if not isfile(genome_file):
+    genome_file = os.path.join(out_path, covv_lineage_fasta)
+    if not os.path.isfile(genome_file):
         with open(genome_file, "w") as f:
-            f.write(f">{covv_lineage}\n")
-            f.write(f"{sequence}\n")
+            print(f">{covv_lineage}", file=f)
+            print(f"{sequence}", file=f)
 
 
-if __name__ == "__main__":
-    extrace_strains_from_provision(
-        path_to_provision=snakemake.input[0],
-        path_to_strain_summary=snakemake.output[0],
-        path_to_strain_genomes=snakemake.params.get("save_strains_to", ""),
-    )
+extract_strains_from_provision(
+    path_to_provision=snakemake.input[0],
+    path_to_strain_summary=snakemake.output[0],
+    path_to_strain_genomes=snakemake.params.save_strains_to,
+)

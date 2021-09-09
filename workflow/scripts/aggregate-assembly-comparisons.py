@@ -29,7 +29,6 @@ def aggregate_assembly_comparisons(
     pd.DataFrame(data).to_csv(output, sep="\t", index=False)
 
 
-if __name__ == "__main__":
-    aggregate_assembly_comparisons(
-        snakemake.input, snakemake.params.samples, snakemake.output[0]
-    )
+aggregate_assembly_comparisons(
+    snakemake.input, snakemake.params.samples, snakemake.output[0]
+)

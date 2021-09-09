@@ -7,14 +7,14 @@ rule freebayes:
         index="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
         temp("results/{date}/candidate-calls/ref~{reference}/{sample}.small.bcf"),
-    log:
-        "logs/{date}/freebayes/ref~{reference}/{sample}.log",
     params:
         # genotyping is performed by varlociraptor, hence we deactivate it in freebayes by 
         # always setting --pooled-continuous
         extra=(
             "--pooled-continuous --min-alternate-count 1 --min-alternate-fraction 0.01"
         ),
+    log:
+        "logs/{date}/freebayes/ref~{reference}/{sample}.log",
     wrapper:
         "0.68.0/bio/freebayes"
 
@@ -27,12 +27,10 @@ rule delly:
         sample_idx="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
         temp("results/{date}/candidate-calls/ref~{reference}/{sample}.structural.bcf"),
-    params:
-        extra="",
-    conda:
-        "../envs/delly.yaml"
     log:
         "logs/{date}/delly/ref~{reference}/{sample}.log",
+    conda:
+        "../envs/delly.yaml"
     script:
         "../scripts/delly.py"
 

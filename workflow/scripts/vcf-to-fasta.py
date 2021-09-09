@@ -153,5 +153,5 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
 
 
 with open(snakemake.output[0], "w") as outfasta:
-    print(f">{snakemake.params.sample}", file=outfasta)
+    print(f">{snakemake.wildcards.sample}", file=outfasta)
     print(seq, file=outfasta)
