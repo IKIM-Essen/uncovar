@@ -71,6 +71,7 @@ rule save_latest_run:
 
 checkpoint all:
     input:
+        expand("results/{date}/plots/lineages-over-time.svg", date=get_all_run_dates()),
         expand(
             "results/{date}/qc/multiqc.html",
             date=get_all_run_dates(),
