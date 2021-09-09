@@ -80,10 +80,10 @@ rule plot_primer_clipping:
             "results/{{date}}/clipped-reads/{sample}.bam.bai"
         ),
         clipped=expand_samples_for_date_amplicon(
-            "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.sorted.bam"
+            "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam"
         ),
         index_clipped=expand_samples_for_date_amplicon(
-            "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.sorted.bam.bai"
+            "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam.bai"
         ),
     output:
         plot=report(
