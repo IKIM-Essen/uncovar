@@ -1,11 +1,12 @@
 import sys
+
+sys.stderr = open(snakemake.log[0], "w")
+
 import json
 import re
 
 import pandas as pd
 import pysam
-
-sys.stderr = open(snakemake.log[0], "w")
 
 KRAKEN_FILTER_KRITERIA = "D"
 

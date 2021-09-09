@@ -1,3 +1,7 @@
+import sys
+
+sys.stderr = open(snakemake.log[0], "w")
+
 import pandas as pd
 import altair as alt
 
@@ -48,7 +52,4 @@ def plot_coverage(sm_input, sm_output, min_coverage):
         ).save(sm_output)
 
 
-sys.stderr = open(snakemake.log[0], "w")
-min_coverage = snakemake.params.get("min_coverage", "")
-
-plot_coverage(snakemake.input, snakemake.output[0], min_coverage)
+plot_coverage(snakemake.input, snakemake.output[0], snakemake.params.min_coverage)
