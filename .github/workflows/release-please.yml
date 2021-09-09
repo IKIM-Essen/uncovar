@@ -30,7 +30,7 @@ jobs:
         if: ${{ steps.pr_created.outputs.pr }}
 
       - name: Checkout release PR locally
-        if: ${{ steps.pr_created.outputs.pr }}
+        if: ${{ steps.pr_created.outputs.pr }} && ${{ !steps.release.outputs.release_created }}
         run: |
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
@@ -38,24 +38,24 @@ jobs:
           git pull origin pull/${{ steps.release.outputs.pr }}/head
 
       - name: Export version as environment variable
-        if: ${{ steps.pr_created.outputs.pr }}
+        if: ${{ steps.pr_created.outputs.pr }} && ${{ !steps.release.outputs.release_created }}
         run: |
           echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
           echo "Version: ${{ env.VERSION }}"
           echo ${{ steps.release.outputs.tag_name }}
       
       - name: Switch to release PR on origin
-        if: ${{ steps.pr_created.outputs.pr }} || ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.pr_created.outputs.pr }} && ${{ !steps.release.outputs.release_created }}
         run: |
           git checkout release-v${{ env.VERSION }}
 
       - name: Change containerized tag
-        if: ${{ steps.pr_created.outputs.pr }}
+        if: ${{ steps.pr_created.outputs.pr }} && ${{ !steps.release.outputs.release_created }}
         run: |
           sed -i "/containerized/c\containerized: \"quay.io/uncovar/uncovar#${{ env.VERSION }}\"" workflow/Snakefile
 
       - name: Push changed containerized tag
-        if: ${{ steps.pr_created.outputs.pr }}
+        if: ${{ steps.pr_created.outputs.pr }} && ${{ !steps.release.outputs.release_created }}
         run: |
           git add workflow/Snakefile
           git commit -m "Changed containerized tag to ${{ env.VERSION }}"
