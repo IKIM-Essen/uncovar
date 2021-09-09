@@ -89,14 +89,18 @@ plot_bp = (
             scale=alt.Scale(domain=[0, 35000], clamp=True),
             axis=alt.Axis(tickCount=5),
         ),
-        x=alt.X("State", title=None, sort=["initial", "scaffolded", "N50"]),
+        x=alt.X("State", title=None, sort=["N50", "initial", "scaffolded"]),
         color=alt.Color("Assembler", scale=alt.Scale(scheme="turbo"), legend=None),
     )
     .properties(height=height, width=width)
 )
 
-combined_bp = plot_bp.mark_point(opacity=0.5, filled=True)
-# combined_bp = plot_bp.mark_boxplot(opacity=0.8, color='black')
+combined_bp = plot_bp.mark_point(opacity=0.5, filled=True) + plot_bp.mark_boxplot(
+    opacity=0.8, 
+    box={'stroke': 'black', 'strokeWidth': 1, 'fill': 'none'}, 
+    median={'stroke': 'black', 'strokeWidth': 1},
+    outliers=False
+)
 combined_bp = (
     combined_bp.facet(
         column=alt.Column(
