@@ -1,5 +1,6 @@
 import sys
 from altair.vegalite.v4.schema.channels import Opacity
+from altair.vegalite.v4.schema.core import TitleOrient
 import pandas as pd
 import pysam
 import altair as alt
@@ -58,19 +59,19 @@ for sample, amplicon_state in zip(
     data = load("final", "scaffolded")
     data = load("quast", "N50")
 
-data.replace({"Amplicon": {0: "Shotgun", 1: "Amplicon"}}, inplace=True)
+data.replace({"Amplicon": {0: "a) Shotgun", 1: "b) Amplicon"}}, inplace=True)
 data.replace(
     {
         "Assembler": {
             "megahit-std": "MEGAHIT",
-            "megahit-meta-large": "MEGAHIT meta-large",
-            "megahit-meta-sensitive": "MEGAHIT meta-sensitive",
+            "megahit-meta-large": "MEGAHIT (meta-large)",
+            "megahit-meta-sensitive": "MEGAHIT (meta-sensitive)",
             "trinity": "Trinty",
             "velvet": "Velvet",
-            "metaspades": "SPAdes meta",
+            "metaspades": "SPAdes (metaSPAdes)",
             "spades": "SPAdes",
-            "coronaspades": "SPAdes corona",
-            "rnaviralspades": "SPAdes RNA viral",
+            "coronaspades": "SPAdes (coronaSPAdes)",
+            "rnaviralspades": "SPAdes (RNAviralSPAdes)",
         }
     },
     inplace=True,
@@ -79,7 +80,7 @@ data.replace(
 data.to_csv(snakemake.output[1])
 
 height = 200
-width = 50
+width = 65
 
 plot_bp = (
     alt.Chart(data)
@@ -89,17 +90,17 @@ plot_bp = (
             scale=alt.Scale(domain=[0, 35000], clamp=True),
             axis=alt.Axis(tickCount=5),
         ),
-        x=alt.X("State", title=None, sort=["N50", "initial", "scaffolded"]),
+        x=alt.X("State", sort=["N50", "initial", "scaffolded"]),
         color=alt.Color("Assembler", scale=alt.Scale(scheme="turbo"), legend=None),
     )
     .properties(height=height, width=width)
 )
 
 combined_bp = plot_bp.mark_point(opacity=0.5, filled=True) + plot_bp.mark_boxplot(
-    opacity=0.8, 
-    box={'stroke': 'black', 'strokeWidth': 1, 'fill': 'none'}, 
-    median={'stroke': 'black', 'strokeWidth': 1},
-    outliers=False
+    opacity=0.8,
+    box={"stroke": "black", "strokeWidth": 1, "fill": "none"},
+    median={"stroke": "black", "strokeWidth": 1},
+    outliers=False,
 )
 combined_bp = (
     combined_bp.facet(
@@ -111,7 +112,16 @@ combined_bp = (
         row=alt.Row(
             "Amplicon:N",
             title="",
-            sort="descending",
+            sort="ascending",
+            header=alt.Header(
+                labelAngle=-360,
+                labelAlign="center",
+                labelAnchor="end",
+                labelPadding=-90,
+                labelOrient="left",
+                labelFontWeight="bold",
+                labelFontSize=12,
+            ),
         ),
     )
     .configure_axisX(labelAngle=-45)
@@ -121,18 +131,19 @@ combined_bp = (
 
 plot_genome_frac = (
     alt.Chart(data)
-    .mark_point(opacity=0.2)
+    .mark_point(opacity=0.5)
     .encode(
         x=alt.X(
             "jitter:Q",
             stack="zero",
-            title=None,
+            title="",
             axis=alt.Axis(ticks=False, grid=False, labels=False),
             scale=alt.Scale(),
         ),
         y=alt.Y(
             "Genome fraction (%)",
-            scale=alt.Scale(domain=[0, 100]),
+            stack=None,
+            title="Genome fraction (%)",
             axis=alt.Axis(tickCount=5),
         ),
         color=alt.Color("Assembler", scale=alt.Scale(scheme="turbo"), legend=None),
@@ -144,15 +155,25 @@ plot_genome_frac = (
         row=alt.Row(
             "Amplicon:N",
             title="",
-            sort="descending",
+            sort="ascending",
+            header=alt.Header(
+                labelAngle=-360,
+                labelAlign="center",
+                labelAnchor="end",
+                labelPadding=-90,
+                labelOrient="left",
+                labelFontWeight="bold",
+                labelFontSize=12,
+            ),
         ),
     )
     .configure_axisY(grid=True)
     .configure_axis(labelFontSize=12, titleFontSize=12)
-    .transform_calculate(jitter="20 * sqrt(-2*log(random()))*cos(2*PI*random())")
     .configure_view(stroke=None)
-    .properties(height=height, width=25)
+    .transform_calculate(jitter="20 * sqrt(-2*log(random()))*cos(2*PI*random())")
+    .properties(height=height, width=50)
 )
+
 
 combined_bp.save(snakemake.output[0])
 plot_genome_frac.save(snakemake.output[2])
