@@ -6,6 +6,7 @@
 ### Bug Fixes
 
 * add extract gisaid env ([#235](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/235)) ([2b94752](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/2b94752704a669d0a29d05eab23bb9e8d7d11fc5))
+* improve if statement with release check ([#239](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/239)) ([12cc85f](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/12cc85f672c71361da48b617869582207c5d3f3e))
 
 ### [0.1.2](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.1...v0.1.2) (2021-09-06)
 
