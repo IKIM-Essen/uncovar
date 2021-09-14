@@ -34,6 +34,18 @@ jobs:
         run: |
           echo ${{ steps.release.outputs.release_created }}
 
+      - name: PR If debug print
+        run: |
+          echo ${{ steps.pr_created.outputs.pr == "true" }}
+
+      - name: Release If debug print
+        run: |
+          echo ${{ steps.release.outputs.release_created == "true" }}
+
+      - name: Both debug print
+        run: |
+          echo ${{ steps.pr_created.outputs.pr == "true" && steps.release.outputs.release_created != "true" }} 
+
       - uses: actions/checkout@v2
 
       - name: Checkout release PR locally
