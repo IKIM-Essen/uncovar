@@ -325,7 +325,6 @@ rule aggregate_read_calls:
     script:
         "../scripts/aggregate_read_calls.py"
 
-
 rule plot_read_call:
     input:
         "results/benchmarking/tables/aggregated_read_calls.tsv",
