@@ -19,13 +19,21 @@ jobs:
       - name: Check if PR is created
         id: pr_created
         run: |
-          if [[ ${{ steps.release.outputs.pr }} =~ ^[0-9]+$ ]]
-            then
-              echo "::set-output name=pr::$(echo true)"
-            else
-              echo "::set-output name=pr::$(echo false)"
+          if [ "${{ steps.release.outputs.pr }}" -eq "${{ steps.release.outputs.pr }}" ] 2>/dev/null; then
+            echo "::set-output name=pr::$(echo true)"
+          else
+            [ -n "${{ steps.release.outputs.pr }}" ] && echo "::set-output name=pr::$(echo false)" && exit 0
+            echo "::set-output name=pr::$(echo false)"
           fi
-          
+
+      - name: PR exists debug print
+        run: |
+          echo ${{ steps.pr_created.outputs.pr }}
+
+      - name: Release debug print
+        run: |
+          echo ${{ steps.release.outputs.release_created }}
+
       - uses: actions/checkout@v2
         if: ${{ steps.pr_created.outputs.pr }}
 
