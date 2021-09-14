@@ -136,3 +136,9 @@ assemblers_for_comparison:
   - coronaspades
   - spades
   - rnaviralspades
+
+# assemblers used for sequencing method 
+assembler_shotgun:
+  megahit-std
+assembler_amplicon:
+  metaspades
