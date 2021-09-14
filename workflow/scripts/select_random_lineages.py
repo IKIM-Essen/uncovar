@@ -14,6 +14,7 @@ def select_random_lineages(sm_input, sm_output, number_of_samples):
 
     for i in range(number_of_samples):
         rnd_strain_path = random.choice(lines)
+        lines.remove(rnd_strain_path)
         strain = rnd_strain_path.replace(".fasta", "").split("/")[-1]
         strain = strain.replace(".", "-")
         lineages.append(strain)
