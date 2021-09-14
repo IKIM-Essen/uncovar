@@ -34,11 +34,22 @@ jobs:
         run: |
           echo ${{ steps.release.outputs.release_created }}
 
+      - name: PR If debug print
+        run: |
+          echo ${{ steps.pr_created.outputs.pr == "true" }}
+
+      - name: Release If debug print
+        run: |
+          echo ${{ steps.release.outputs.release_created == "true" }}
+
+      - name: Both debug print
+        run: |
+          echo ${{ steps.pr_created.outputs.pr == "true" && steps.release.outputs.release_created != "true" }} 
+
       - uses: actions/checkout@v2
-        if: ${{ steps.pr_created.outputs.pr }}
 
       - name: Checkout release PR locally
-        if: ${{ steps.pr_created.outputs.pr }} == "true" && ${{ steps.release.outputs.release_created }} != "true"
+        if: ${{ steps.pr_created.outputs.pr == "true" && steps.release.outputs.release_created != "true" }} 
         run: |
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
@@ -46,31 +57,31 @@ jobs:
           git pull origin pull/${{ steps.release.outputs.pr }}/head
 
       - name: Export version as environment variable
-        if: ${{ steps.pr_created.outputs.pr }} == "true" && ${{ steps.release.outputs.release_created }} != "true"
+        if: ${{ steps.pr_created.outputs.pr == "true" && steps.release.outputs.release_created != "true" }} 
         run: |
           echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
           echo "Version: ${{ env.VERSION }}"
           echo ${{ steps.release.outputs.tag_name }}
       
       - name: Switch to release PR on origin
-        if: ${{ steps.pr_created.outputs.pr }} == "true" && ${{ steps.release.outputs.release_created }} != "true"
+        if: ${{ steps.pr_created.outputs.pr == "true" && steps.release.outputs.release_created != "true" }} 
         run: |
           git checkout release-v${{ env.VERSION }}
 
       - name: Change containerized tag
-        if: ${{ steps.pr_created.outputs.pr }} == "true" && ${{ steps.release.outputs.release_created }} != "true"
+        if: ${{ steps.pr_created.outputs.pr == "true" && steps.release.outputs.release_created != "true" }} 
         run: |
           sed -i "/containerized/c\containerized: \"quay.io/uncovar/uncovar#${{ env.VERSION }}\"" workflow/Snakefile
 
       - name: Push changed containerized tag
-        if: ${{ steps.pr_created.outputs.pr }} == "true" && ${{ steps.release.outputs.release_created }} != "true"
+        if: ${{ steps.pr_created.outputs.pr == "true" && steps.release.outputs.release_created != "true" }} 
         run: |
           git add workflow/Snakefile
           git commit -m "Changed containerized tag to ${{ env.VERSION }}"
           git push
 
       - name: Create dockerfile
-        if: ${{ steps.release.outputs.release_created }} == "true"
+        if: ${{ steps.release.outputs.release_created == "true" }}
         uses: snakemake/snakemake-github-action@v1.20.0
         with:
           directory: .
@@ -78,7 +89,7 @@ jobs:
           args: "--containerize > Dockerfile"
 
       - name: Build image
-        if: ${{ steps.release.outputs.release_created }} == "true"
+        if: ${{ steps.release.outputs.release_created == "true" }}
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
@@ -88,7 +99,7 @@ jobs:
             ./Dockerfile
 
       - name: Push to quay.io
-        if: ${{ steps.release.outputs.release_created }} == "true"
+        if: ${{ steps.release.outputs.release_created == "true" }}
         id: push-to-quay
         uses: redhat-actions/push-to-registry@v2
         with:
@@ -99,5 +110,5 @@ jobs:
           password: ${{ secrets.QUAYIO_PASSWORD }}
 
       - name: Print image url
-        if: ${{ steps.release.outputs.release_created }} == "true"
+        if: ${{ steps.release.outputs.release_created == "true" }}
         run: echo "Release image pushed to ${{ steps.push-to-quay.outputs.registry-paths }}"
