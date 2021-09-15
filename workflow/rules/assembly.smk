@@ -24,7 +24,6 @@ rule assembly_megahit:
     log:
         "logs/{date}/megahit-{preset}/{sample}.log",
     params:
-
         outdir=get_output_dir,
         preset=get_megahit_preset,
     threads: 8
@@ -34,7 +33,6 @@ rule assembly_megahit:
         "(megahit -1 {input.fastq1} -2 {input.fastq2} {params.preset} --out-dir {params.outdir} -f && "
         " mv {params.outdir}/final.contigs.fa {output.contigs} )"
         " > {log} 2>&1"
-
 
 
 rule assembly_spades:

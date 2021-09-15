@@ -206,8 +206,6 @@ rule plot_strain_call_error:
         "../scripts/plot-caller-error.py"
 
 
-
-
 rule assembly_comparison_trinity:
     input:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
