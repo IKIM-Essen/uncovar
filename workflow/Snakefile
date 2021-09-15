@@ -16,7 +16,7 @@ report: "report/workflow.rst"
 container: "docker://condaforge/mambaforge"
 
 
-containerized: "quay.io/uncovar/uncovar#0.1.2"
+containerized: "quay.io/uncovar/uncovar#0.1.4"
 
 
 if config["strain-calling"]["use-kallisto"]:
@@ -105,9 +105,9 @@ checkpoint all:
             "results/{zip1}/plots/strain-calls/{zip2}.strains.{{exp}}.svg",
             zip_wildcard_1=get_dates(),
             zip_wildcard_2=get_samples(),
-            expand_wildcard=["kallisto", "pangolin"]
+            expand_wildcard=["kallisto"]
             if config["strain-calling"]["use-kallisto"]
-            else ["pangolin"],
+            else [""],
         ),
         zip_expand(
             "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.bcf",
