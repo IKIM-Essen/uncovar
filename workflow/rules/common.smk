@@ -338,6 +338,7 @@ def get_min_coverage(wildcards):
     else:
         return conf["min-depth-without-PCR-duplicates"]
 
+
 def return_assembler(wildcards):
     print(wildcards)
     if is_amplicon_data(wildcards.sample):
@@ -357,15 +358,20 @@ def get_contigs(wildcards):
 
 def get_expanded_contigs(wildcards):
     sample = get_samples_for_date(wildcards.date)
-    return ["results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
-                sample=s, assembler=return_assembler(wildcards)
-            ) for s in sample]
+    return [
+        "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
+            sample=s, assembler=return_assembler(wildcards)
+        )
+        for s in sample
+    ]
 
 
 def get_read_counts(wildcards):
-    return "results/{date}/assembly/{assembler}/{sample}.log".format(
-                assembler=return_assembler(wildcards), **wildcards
-            ),
+    return (
+        "results/{date}/assembly/{assembler}/{sample}.log".format(
+            assembler=return_assembler(wildcards), **wildcards
+        ),
+    )
 
 
 def get_bwa_index(wildcards):
@@ -538,13 +544,16 @@ def is_amplicon_data(sample):
 
 
 def get_samples_for_date_amplicon(date):
-    return [s for s in get_samples_for_date(date) if is_amplicon_data(s) ]
+    return [s for s in get_samples_for_date(date) if is_amplicon_data(s)]
+
 
 def get_list_of_amplicon_states(date):
     return [True if is_amplicon_data(s) else False for s in get_samples_for_date(date)]
 
+
 def get_list_of_amplicon_states_assembler(samples):
     return [return_assembler(s) for s in samples]
+
 
 def get_varlociraptor_bias_flags(wildcards):
     if is_amplicon_data(wildcards.sample):
