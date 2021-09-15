@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.4](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.3...v0.1.4) (2021-09-14)
+
+
+### Bug Fixes
+
+* change " to ' ([#246](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/246)) ([ffca497](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/ffca4975410e8e1e6de96f058c907e19bc5ed5d5))
+
 ### [0.1.3](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.2...v0.1.3) (2021-09-09)
 
 
