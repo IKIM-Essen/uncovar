@@ -206,27 +206,6 @@ rule plot_strain_call_error:
         "../scripts/plot-caller-error.py"
 
 
-rule assembly_comparison_megahit:
-    input:
-        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
-        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
-    output:
-        contigs=(
-            "results/{date}/assembly/{sample}/megahit-{preset}/{sample}.contigs.fasta"
-        ),
-    wildcard_constraints:
-        preset="std|meta-large|meta-sensitive",
-    log:
-        "logs/{date}/megahit-{preset}/{sample}.log",
-    params:
-        outdir=lambda w, output: os.path.dirname(output[0]),
-        preset=get_megahit_preset,
-    threads: 8
-    conda:
-        "../envs/megahit.yaml"
-    shell:
-        "(megahit -1 {input.fastq1} -2 {input.fastq2} {params.preset} --out-dir {params.outdir} -f && "
-        "mv {params.outdir}/final.contigs.fa {output.contigs} ) > {log} 2>&1"
 
 
 rule assembly_comparison_trinity:
@@ -270,63 +249,24 @@ rule assembly_comparison_velvet:
         """
 
 
-rule assembly_comparison_spades:
-    input:
-        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
-        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
-    output:
-        contigs=(
-            "results/{date}/assembly/{sample}/{spadesflavor}/{sample}.contigs.fasta"
-        ),
-    wildcard_constraints:
-        spadesflavor="spades|rnaviralspades|metaspades|coronaspades",
-    params:
-        outdir=lambda w, output: os.path.dirname(output[0]),
-    log:
-        "logs/{date}/{spadesflavor}/{sample}.log",
-    threads: 8
-    conda:
-        "../envs/spades.yaml"
-    shell:
-        "({wildcards.spadesflavor}.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
-        "mv {params.outdir}/contigs.fasta {output.contigs}) > {log} 2>&1"
-
-
-rule order_contigs_assembly_comparison:
+use rule order_contigs as order_contigs_assembly_comparison with:
     input:
         contigs="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
         reference="resources/genomes/main.fasta",
     output:
         "results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta",
-    log:
-        "logs/{date}/ragoo/{assembler}_{sample}.log",
-    params:
-        outdir=lambda x, output: os.path.dirname(output[0]),
-    threads: 8
-    conda:
-        "../envs/ragoo.yaml"
-    shell:  # currently there is no conda package for mac available. Manuell download via https://github.com/malonge/RaGOO
-        "(cd {params.outdir} && "
-        "ragoo.py ../../../../../{input.contigs} ../../../../../{input.reference} && "
-        "cd ../../../../../ && mv {params.outdir}/ragoo_output/ragoo.fasta {output}) > {log} 2>&1"
 
 
-rule filter_chr0_assembly_comparison:
+use rule filter as rule filter_chr0_assembly_comparison with:
     input:
         "results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta",
     output:
         "results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.ordered.filtered.fasta",
     log:
         "logs/{date}/ragoo/{assembler}/{sample}_cleaned.log",
-    params:
-        sample=lambda wildcards: wildcards.sample,
-    conda:
-        "../envs/python.yaml"
-    script:
-        "../scripts/ragoo-remove-chr0.py"
 
 
-rule align_contigs_assembly_comparison:
+use rule align_contigs as align_contigs_assembly_comparison with:
     input:
         target="resources/genomes/main.fasta",
         query="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
@@ -334,13 +274,9 @@ rule align_contigs_assembly_comparison:
         "results/{date}/assembly/{sample}/{assembler}/main_{sample}.bam",
     log:
         "results/{date}/assembly/{sample}/{assembler}/main_{sample}.log",
-    conda:
-        "../envs/minimap2.yaml"
-    shell:
-        "minimap2 -ax asm5 {input.target} {input.query} -o {output} 2> {log}"
 
 
-rule quast_assembly_comparison:
+rule rule quast_assembly as quast_assembly_comparison with:
     input:
         fasta="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
         bam="results/{date}/assembly/{sample}/{assembler}/main_{sample}.bam",
@@ -348,16 +284,7 @@ rule quast_assembly_comparison:
     output:
         "results/{date}/assembly/{sample}/{assembler}/quast/report.tsv",
         "results/{date}/assembly/{sample}/{assembler}/quast/transposed_report.tsv",
-    params:
-        outdir=lambda x, output: os.path.dirname(output[0]),
-    log:
-        "logs/{date}/assembly/quast/{assembler}/{sample}.log",
-    conda:
-        "../envs/quast.yaml"
-    threads: 8
-    shell:
-        "quast.py --min-contig 1 --threads {threads} -o {params.outdir} -r {input.reference} --bam {input.bam} {input.fasta} > {log} 2>&1"
-
+    
 
 rule plot_assemblies:
     input:
