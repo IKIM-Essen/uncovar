@@ -338,8 +338,9 @@ def get_min_coverage(wildcards):
     else:
         return conf["min-depth-without-PCR-duplicates"]
 
-def return_assembler(sample):
-    if is_amplicon_data(sample):
+def return_assembler(wildcards):
+    print(wildcards)
+    if is_amplicon_data(wildcards.sample):
         return config.get("assembler_amplicon")
     else:
         return config.get("assembler_shotgun")
@@ -348,7 +349,7 @@ def return_assembler(sample):
 def get_contigs(wildcards):
     pattern = (
         "results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
-            assembler=return_assembler(wildcards.sample), **wildcards
+            assembler=return_assembler(wildcards), **wildcards
         ),
     )
     return pattern
@@ -357,13 +358,13 @@ def get_contigs(wildcards):
 def get_expanded_contigs(wildcards):
     sample = get_samples_for_date(wildcards.date)
     return ["results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
-                sample=s, assembler=return_assembler(wildcards.sample)
+                sample=s, assembler=return_assembler(wildcards)
             ) for s in sample]
 
 
 def get_read_counts(wildcards):
     return "results/{date}/assembly/{assembler}/{sample}.log".format(
-                assembler=return_assembler(wildcards.sample), **wildcards
+                assembler=return_assembler(wildcards), **wildcards
             ),
 
 
