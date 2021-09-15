@@ -278,7 +278,7 @@ use rule align_contigs as align_contigs_assembly_comparison with:
         "results/{date}/assembly/{sample}/{assembler}/main_{sample}.log",
 
 
-rule rule quast_assembly as quast_assembly_comparison with:
+ rule quast_assembly as quast_assembly_comparison with:
     input:
         fasta="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
         bam="results/{date}/assembly/{sample}/{assembler}/main_{sample}.bam",
@@ -286,7 +286,9 @@ rule rule quast_assembly as quast_assembly_comparison with:
     output:
         "results/{date}/assembly/{sample}/{assembler}/quast/report.tsv",
         "results/{date}/assembly/{sample}/{assembler}/quast/transposed_report.tsv",
-    
+    log:
+        "logs/{date}/assembly/quast/{assembler}/{sample}.log",
+
 
 rule plot_assemblies:
     input:
