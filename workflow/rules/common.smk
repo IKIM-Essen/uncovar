@@ -338,42 +338,33 @@ def get_min_coverage(wildcards):
     else:
         return conf["min-depth-without-PCR-duplicates"]
 
+def return_assembler(sample):
+    if is_amplicon_data(sample):
+        return config.get("assembler_amplicon")
+    else:
+        return config.get("assembler_shotgun")
+
 
 def get_contigs(wildcards):
-    if is_amplicon_data(wildcards.sample):
-        pattern = (
-            "results/{date}/assembly/metaspades/{sample}/{sample}.contigs.fasta",
-        )
-    else:
-        pattern = ("results/{date}/assembly/megahit/{sample}/{sample}.contigs.fasta",)
+    pattern = (
+        "results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
+            assembler=return_assembler(wildcards.sample), **wildcards
+        ),
+    )
     return pattern
 
 
 def get_expanded_contigs(wildcards):
     sample = get_samples_for_date(wildcards.date)
-    sample_list = []
-    for s in sample:
-        if is_amplicon_data(s):
-            sample_list.append(
-                "results/{{date}}/assembly/metaspades/{sample}/{sample}.contigs.fasta".format(
-                    sample=s
-                )
-            ),
-        else:
-            sample_list.append(
-                "results/{{date}}/assembly/megahit/{sample}/{sample}.contigs.fasta".format(
-                    sample=s
-                )
-            ),
-    return sample_list
+    return ["results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
+                sample=s, assembler=return_assembler(wildcards.sample)
+            ) for s in sample]
 
 
 def get_read_counts(wildcards):
-    if is_amplicon_data(wildcards.sample):
-        pattern = ("results/{date}/assembly/metaspades/{sample}.log",)
-    else:
-        pattern = ("results/{date}/assembly/megahit/{sample}.log",)
-    return pattern
+    return "results/{date}/assembly/{assembler}/{sample}.log".format(
+                assembler=return_assembler(wildcards.sample), **wildcards
+            ),
 
 
 def get_bwa_index(wildcards):
@@ -546,25 +537,13 @@ def is_amplicon_data(sample):
 
 
 def get_samples_for_date_amplicon(date):
-    samples = get_samples_for_date(date)
-    amplicon_samples = []
-
-    for sample in samples:
-        if is_amplicon_data(sample):
-            amplicon_samples.append(sample)
-    return amplicon_samples
-
+    return [s for s in get_samples_for_date(date) if is_amplicon_data(s) ]
 
 def get_list_of_amplicon_states(date):
-    samples = get_samples_for_date(date)
-    amplicon_states = []
-    for sample in samples:
-        if is_amplicon_data(sample):
-            amplicon_states.append(True)
-        else:
-            amplicon_states.append(False)
-    return amplicon_states
+    return [True if is_amplicon_data(s) else False for s in get_samples_for_date(date)]
 
+def get_list_of_amplicon_states_assembler(samples):
+    return [return_assembler(s) for s in samples]
 
 def get_varlociraptor_bias_flags(wildcards):
     if is_amplicon_data(wildcards.sample):
@@ -692,7 +671,7 @@ def expand_samples_by_func(paths, func, **kwargs):
 
 def expand_samples_for_date_assembler(paths, **kwargs):
     return expand_samples_by_func(
-        paths, get_samples_for_date, assembler=config.get("assemblers_for_comparison")
+        paths, get_samples, assembler=config["assemblers_for_comparison"]
     )
 
 
