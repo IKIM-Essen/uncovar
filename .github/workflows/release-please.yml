@@ -8,6 +8,8 @@ on:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    env:
+      GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
     steps:
     
       - uses: GoogleCloudPlatform/release-please-action@v2
