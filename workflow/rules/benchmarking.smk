@@ -255,9 +255,11 @@ use rule order_contigs as order_contigs_assembly_comparison with:
         reference="resources/genomes/main.fasta",
     output:
         "results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta",
+    log:
+        "logs/{date}/ragoo/{assembler}/{sample}.log",
 
 
-use rule filter as rule filter_chr0_assembly_comparison with:
+use rule filter_chr0 as rule filter_chr0_assembly_comparison with:
     input:
         "results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta",
     output:
