@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.5](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.4...v0.1.5) (2021-09-15)
+
+
+### Bug Fixes
+
+* add GISAID var to env ([#248](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/248)) ([e859aed](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/e859aedea76e37594c6a1070827dbc59c3a69b83))
+
 ### [0.1.4](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.3...v0.1.4) (2021-09-14)
 
 
