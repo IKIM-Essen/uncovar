@@ -98,7 +98,7 @@ jobs:
           image: uncovar
           tags: latest ${{ github.sha }} ${{ env.VERSION }}
           dockerfiles: |
-            ./Dockerfile
+            Dockerfile
 
       - name: Push to quay.io
         if: ${{ steps.release.outputs.release_created == 'true' }}
