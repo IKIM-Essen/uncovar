@@ -4,7 +4,7 @@
 [![GitHub actions status](https://github.com/koesterlab/snakemake-workflow-sars-cov2/workflows/Tests/badge.svg?branch=master)](https://github.com/koesterlab/snakemake-workflow-sars-cov2/actions?query=branch%3Amaster+workflow%3ATests)
 [![Docker Repository on Quay](https://quay.io/repository/uncovar/uncovar/status "Docker Repository on Quay")](https://quay.io/repository/uncovar/uncovar)
 
-![UnCoVar2_no_sub](https://user-images.githubusercontent.com/77535027/133608842-9e8bace9-9d09-401c-800a-9131cb6f5c3e.png)
+![UnCoVar2](https://user-images.githubusercontent.com/77535027/133610563-d190e25c-504e-4953-92dd-f84a5b4a1191.png)
 
 ## Authors
 
