@@ -4,6 +4,8 @@
 [![GitHub actions status](https://github.com/koesterlab/snakemake-workflow-sars-cov2/workflows/Tests/badge.svg?branch=master)](https://github.com/koesterlab/snakemake-workflow-sars-cov2/actions?query=branch%3Amaster+workflow%3ATests)
 [![Docker Repository on Quay](https://quay.io/repository/uncovar/uncovar/status "Docker Repository on Quay")](https://quay.io/repository/uncovar/uncovar)
 
+![UnCoVar2_no_sub](https://user-images.githubusercontent.com/77535027/133593982-9c457596-7b14-4e1c-b1fa-e599fbdb9245.png)
+
 This workflow calls the SARS-Cov-2 strain and variants for given NGS samples.
 
 ## Authors
