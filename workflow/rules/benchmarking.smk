@@ -247,7 +247,7 @@ rule assembly_comparison_velvet:
         """
 
 
-use rule order_contigs as order_contigs_assembly_comparison with:
+rule order_contigs_assembly_comparison:
     input:
         contigs="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
         reference="resources/genomes/main.fasta",
@@ -255,6 +255,17 @@ use rule order_contigs as order_contigs_assembly_comparison with:
         "results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta",
     log:
         "logs/{date}/ragoo/{assembler}/{sample}.log",
+    params:
+        outdir=get_output_dir,
+    conda:
+        "../envs/ragoo.yaml"
+    shadow:
+        "minimal"
+    shell:
+        "(cd {params.outdir} &&"
+        " ragoo.py ../../../../../{input.contigs} ../../../../../{input.reference} &&"
+        " cd ../../../../../ && mv {params.outdir}/ragoo_output/ragoo.fasta {output})"
+        " > {log} 2>&1"
 
 
 use rule filter_chr0 as filter_chr0_assembly_comparison with:
