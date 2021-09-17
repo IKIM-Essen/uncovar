@@ -6,11 +6,11 @@ rule sort_bam:
         ),
     output:
         temp("results/{date}/clipped-reads/{sample}.bam"),
-    log:
-        "logs/{date}/sort-bam/{sample}.log",
     params:
         extra="-m 4G",
         tmp_dir="/tmp/",
+    log:
+        "logs/{date}/sort-bam/{sample}.log",
     threads: 8
     wrapper:
         "0.74.0/bio/samtools/sort"
@@ -30,21 +30,21 @@ rule clip_primer:
             "results/{date}/clipped-reads/{sample}.primerclipped.hard.bam"
         ),
         sorthardclippedbam=temp(
-            "results/{date}/clipped-reads/{sample}.primerclipped.hard.sorted.bam"
+            "results/{date}/clipped-reads/{sample}.primerclipped.hard.namesorted.bam"
         ),
         fq1="results/{date}/clipped-reads/{sample}.1.fastq.gz",
         fq2="results/{date}/clipped-reads/{sample}.2.fastq.gz",
-    log:
-        "logs/{date}/primer-clipping/{sample}.log",
     params:
         dir=lambda w, input: os.path.dirname(input.sortbam),
         bam=lambda w, input: input.sortbam.split("/")[-1],
         dir_depth=lambda w, input: "".join(
             ["../"] * (len(input.sortbam.split("/")) - 1)
         ),
+    log:
+        "logs/{date}/primer-clipping/{sample}.log",
     conda:
         "../envs/bamclipper.yaml"
-    threads: 10
+    threads: 4
     shell:
         """
         cd {params.dir}
@@ -60,32 +60,28 @@ rule sort_aln_for_plots:
     input:
         "results/{date}/clipped-reads/{sample}.primerclipped.hard.bam",
     output:
-        "results/{date}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam",
+        "results/{date}/clipped-reads/{sample}.primerclipped.hard.sorted.bam",
+    params:
+        extra="-m 4G",
     log:
         "logs/{date}/sort-aln-for-plots/{sample}.log",
-    conda:
-        "../envs/samtools.yaml"
-    shell:
-        "samtools sort -o {output} {input} > {log} 2>&1"
+    wrapper:
+        "0.77.0/bio/samtools/sort"
 
 
 rule plot_primer_clipping:
     input:
-        unclipped=lambda wildcards: expand(
-            "results/{{date}}/clipped-reads/{sample}.bam",
-            sample=get_samples_for_date_amplicon(wildcards.date),
+        unclipped=expand_samples_for_date_amplicon(
+            "results/{{date}}/clipped-reads/{sample}.bam"
         ),
-        index_unclipped=lambda wildcards: expand(
-            "results/{{date}}/clipped-reads/{sample}.bam.bai",
-            sample=get_samples_for_date_amplicon(wildcards.date),
+        index_unclipped=expand_samples_for_date_amplicon(
+            "results/{{date}}/clipped-reads/{sample}.bam.bai"
         ),
-        clipped=lambda wildcards: expand(
-            "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam",
-            sample=get_samples_for_date_amplicon(wildcards.date),
+        clipped=expand_samples_for_date_amplicon(
+            "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.sorted.bam"
         ),
-        index_clipped=lambda wildcards: expand(
-            "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.c_sort.bam.bai",
-            sample=get_samples_for_date_amplicon(wildcards.date),
+        index_clipped=expand_samples_for_date_amplicon(
+            "results/{{date}}/clipped-reads/{sample}.primerclipped.hard.sorted.bam.bai"
         ),
     output:
         plot=report(
@@ -94,11 +90,11 @@ rule plot_primer_clipping:
             category="3. Sequencing Details",
             subcategory="4. Check for correct amplicon primer clipping",
         ),
-    log:
-        "logs/{date}/plot-primer-clipping.log",
     params:
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
         bed=config["adapters"]["amplicon-primers"],
+    log:
+        "logs/{date}/plot-primer-clipping.log",
     conda:
         "../envs/python.yaml"
     script:
