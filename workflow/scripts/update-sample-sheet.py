@@ -7,8 +7,8 @@ import os
 
 import pandas as pd
 
-# define location of sample sheet and workflow config
-SAMPLE_SHEET = "config/pep/samples.csv"
+# define location of sample sheet and workflow configx
+SAMPLE_SHEET = snakemake.input[0] #"config/pep/samples.csv"
 CONFIG_YAML = "config/config.yaml"
 
 
@@ -66,7 +66,7 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
         print("Checking directories")
 
     # check if directory exist
-    for given_path in [IN_PATH, ARCHIVE_PATH, SAMPLE_SHEET, DATA_PATH]:
+    for given_path in [IN_PATH, ARCHIVE_PATH, DATA_PATH]:
         if not path.exists(given_path):
             raise Exception("Data directory (%s) not found" % given_path)
 
@@ -116,19 +116,18 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
 
         if verbose:
             print("Updating sample sheet")
-
         # create dataframe
         new_files_df = pd.DataFrame(files_to_copy, columns=["file"])
-        
+
         # get only files, that contain .fastq.gz
         new_files_df = new_files_df[new_files_df["file"].str.contains(".fastq.gz")]
         new_files_df = new_files_df[~new_files_df["file"].str.contains("Undetermined")]
-        
+
         # get id of sample, thus split at first '_'
         new_files_df["sample_name"] = new_files_df["file"].apply(
             lambda x: (x.split("_", 1)[0])
         )
-
+        
         # add path of file
         new_files_df["path"] = DATA_PATH + '/' + new_files_df["file"]
 
@@ -144,27 +143,34 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
 
         # drop not need columns
         new_files_df.drop(columns=["file", "sample_name", "read"], inplace=True)
-
+        
         # unstack multiindex
         new_files_df = new_files_df.unstack(1)
         new_files_df.sort_index(inplace=True)
         new_files_df.columns = ["fq1", "fq2"]
         new_files_df["run_id"] = today
         new_files_df["is_amplicon_data"] = 1
+        
 
         new_sample_sheet = (
             pd.read_csv(SAMPLE_SHEET, index_col="sample_name")
             .append(new_files_df)
             .sort_values(by=["run_id", "sample_name"])
         )
+        new_sample_sheet.index=new_sample_sheet.index.astype('str')
+
+        # remove last line of sample.csv
+        new_sample_sheet.drop('NAME', inplace=True, errors='ignore')
+
         # check for duplicates
-        new_sample_sheet.index = new_sample_sheet.index.where(~new_sample_sheet.index.duplicated(), new_sample_sheet.index + '_2')
+        # TODO: Generalize for more than two samples
+        new_sample_sheet.index = new_sample_sheet.index.where(~new_sample_sheet.index.duplicated(), new_sample_sheet.index.astype('str') + '_2')
         # save to csv
         if verbose:
             print("\t{} samples added".format(len(new_files_df)))
 
         if not dry_run:
-            new_sample_sheet.to_csv("config/pep/samples.csv")
+            new_sample_sheet.to_csv(snakemake.input[0])
 
         ##################################
         ## copying and moving the files ##
@@ -192,6 +198,7 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
     ]
     if not all_incoming_files:
         print("No files to move")
+
     else:
         if verbose:
             print("Moving files to " + ARCHIVE_PATH + today)
@@ -227,10 +234,8 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
         if not dry_run:
             if files_to_copy:
                 new_sample_sheet.to_csv(ARCHIVE_PATH + today + "/samples.csv")
-
-
-if __name__ == "__main__":
-    try:
-        update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML)
-    except Exception as exc:
-        print(exc)
+#if __name__ == "__main__":
+#    try:
+update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML)
+#    except Exception as exc:
+#        print(exc)
