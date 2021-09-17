@@ -8,19 +8,19 @@ import os
 import pandas as pd
 
 # define location of sample sheet and workflow configx
-SAMPLE_SHEET = snakemake.input[0] #"config/pep/samples.csv"
+SAMPLE_SHEET = snakemake.input[0]  # "config/pep/samples.csv"
 CONFIG_YAML = "config/config.yaml"
 
 
 def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
     """
-    This function 
+    This function
         - copies files from the incoming data directory to the snakemake data directory and
         - moves files from the incoming data directory to the archive directory and
         - updates the sample sheet with the files copied to the snakemake data directory.
 
     The paths of these directory must be defined in the config yaml of the workflow as follows:
-    
+
         data-handling:
             # path of incoming data
             incoming: [YOUR PATH]]
@@ -74,10 +74,12 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
     # get files that are in incoming and do not contain 'ndetermined' and '.fastq.gz' in their name and are not under a specific filesize
     incoming_files = []
     for f in listdir(IN_PATH):
-        if path.isfile(path.join(IN_PATH, f))\
-        and "ndetermined" not in f\
-        and ".fastq.gz" in f\
-        and os.stat(IN_PATH + f).st_size > 100:
+        if (
+            path.isfile(path.join(IN_PATH, f))
+            and "ndetermined" not in f
+            and ".fastq.gz" in f
+            and os.stat(IN_PATH + f).st_size > 100
+        ):
             incoming_files.append(f)
         else:
             print(f, "not used")
@@ -85,7 +87,7 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
     # add date subfolder in data path
     DATA_PATH += today
     if not path.isdir(DATA_PATH):
-            mkdir(DATA_PATH)
+        mkdir(DATA_PATH)
 
     # get files that are in outgoing directory
     data_files = [f for f in listdir(DATA_PATH) if path.isfile(path.join(DATA_PATH, f))]
@@ -127,9 +129,9 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
         new_files_df["sample_name"] = new_files_df["file"].apply(
             lambda x: (x.split("_", 1)[0])
         )
-        
+
         # add path of file
-        new_files_df["path"] = DATA_PATH + '/' + new_files_df["file"]
+        new_files_df["path"] = DATA_PATH + "/" + new_files_df["file"]
 
         # identify R1 or R2
         new_files_df["read"] = new_files_df["file"].apply(
@@ -143,28 +145,30 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
 
         # drop not need columns
         new_files_df.drop(columns=["file", "sample_name", "read"], inplace=True)
-        
+
         # unstack multiindex
         new_files_df = new_files_df.unstack(1)
         new_files_df.sort_index(inplace=True)
         new_files_df.columns = ["fq1", "fq2"]
         new_files_df["run_id"] = today
         new_files_df["is_amplicon_data"] = 1
-        
 
         new_sample_sheet = (
             pd.read_csv(SAMPLE_SHEET, index_col="sample_name")
             .append(new_files_df)
             .sort_values(by=["run_id", "sample_name"])
         )
-        new_sample_sheet.index=new_sample_sheet.index.astype('str')
+        new_sample_sheet.index = new_sample_sheet.index.astype("str")
 
         # remove last line of sample.csv
-        new_sample_sheet.drop('NAME', inplace=True, errors='ignore')
+        new_sample_sheet.drop("NAME", inplace=True, errors="ignore")
 
         # check for duplicates
         # TODO: Generalize for more than two samples
-        new_sample_sheet.index = new_sample_sheet.index.where(~new_sample_sheet.index.duplicated(), new_sample_sheet.index.astype('str') + '_2')
+        new_sample_sheet.index = new_sample_sheet.index.where(
+            ~new_sample_sheet.index.duplicated(),
+            new_sample_sheet.index.astype("str") + "_2",
+        )
         # save to csv
         if verbose:
             print("\t{} samples added".format(len(new_files_df)))
@@ -234,8 +238,6 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
         if not dry_run:
             if files_to_copy:
                 new_sample_sheet.to_csv(ARCHIVE_PATH + today + "/samples.csv")
-#if __name__ == "__main__":
-#    try:
+
+
 update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML)
-#    except Exception as exc:
-#        print(exc)

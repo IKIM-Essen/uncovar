@@ -48,7 +48,9 @@ rule multiqc:
         lambda wildcards: expand(
             "logs/{{date}}/kallisto_quant/{sample}.log",
             sample=get_samples_for_date(wildcards.date),
-        ) if config["strain-calling"]["use-kallisto"] else "",
+        )
+        if config["strain-calling"]["use-kallisto"]
+        else "",
     output:
         "results/{date}/qc/multiqc.html",
     params:
@@ -126,9 +128,7 @@ rule samtools_depth:
 rule species_diversity_before:
     input:
         db="resources/minikraken-8GB",
-        reads=expand(
-            "results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]
-        ),
+        reads=expand("results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
     output:
         classified_reads=temp(
             expand(
@@ -142,9 +142,7 @@ rule species_diversity_before:
                 read=[1, 2],
             )
         ),
-        kraken_output=temp(
-            "results/{date}/species-diversity/{sample}/{sample}.kraken"
-        ),
+        kraken_output=temp("results/{date}/species-diversity/{sample}/{sample}.kraken"),
         report="results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
     log:
         "logs/{date}/kraken/{sample}.log",
