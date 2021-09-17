@@ -1,5 +1,34 @@
 # Changelog
 
+### [0.1.6](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.5...v0.1.6) (2021-09-16)
+
+
+### Bug Fixes
+
+* change path of docker file ([#251](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/251)) ([1abebcf](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/1abebcff23ef6c4eb82a414a9a9ceadd84cc0c4d))
+
+### [0.1.5](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.4...v0.1.5) (2021-09-15)
+
+
+### Bug Fixes
+
+* add GISAID var to env ([#248](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/248)) ([e859aed](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/e859aedea76e37594c6a1070827dbc59c3a69b83))
+
+### [0.1.4](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.3...v0.1.4) (2021-09-14)
+
+
+### Bug Fixes
+
+* change " to ' ([#246](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/246)) ([ffca497](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/ffca4975410e8e1e6de96f058c907e19bc5ed5d5))
+
+### [0.1.3](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.2...v0.1.3) (2021-09-09)
+
+
+### Bug Fixes
+
+* add extract gisaid env ([#235](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/235)) ([2b94752](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/2b94752704a669d0a29d05eab23bb9e8d7d11fc5))
+* improve if statement with release check ([#239](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/239)) ([12cc85f](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/12cc85f672c71361da48b617869582207c5d3f3e))
+
 ### [0.1.2](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.1...v0.1.2) (2021-09-06)
 
 
