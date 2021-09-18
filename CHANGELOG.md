@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.6](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.5...v0.1.6) (2021-09-16)
+
+
+### Bug Fixes
+
+* change path of docker file ([#251](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/251)) ([1abebcf](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/1abebcff23ef6c4eb82a414a9a9ceadd84cc0c4d))
+
 ### [0.1.5](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.4...v0.1.5) (2021-09-15)
 
 
