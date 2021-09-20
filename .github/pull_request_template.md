@@ -1,8 +1,3 @@
-\<type\>[optional scope]: \<description\>
-
-[optional body]
-
-[optional footer]
 
 <details><summary>Expected commit message structure</summary>
 
