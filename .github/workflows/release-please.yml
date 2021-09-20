@@ -86,6 +86,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created == 'true' }}
         uses: snakemake/snakemake-github-action@v1.23.0
         with:
+          directory: .
           snakefile: workflow/Snakefile
           task: 'containerize'
 
