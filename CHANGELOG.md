@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.7](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.6...v0.1.7) (2021-09-20)
+
+
+### Bug Fixes
+
+* update snakemake actions for container file ([#256](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/256)) ([cb31e92](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/cb31e92d263dfcdc94675aa3ef8a9274b472654a))
+
 ### [0.1.6](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.5...v0.1.6) (2021-09-16)
 
 
