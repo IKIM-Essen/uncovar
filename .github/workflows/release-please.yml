@@ -82,13 +82,13 @@ jobs:
           git commit -m "Changed containerized tag to ${{ env.VERSION }}"
           git push
 
-      - name: Create dockerfile
+      - name: Create Dockerfile
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: snakemake/snakemake-github-action@v1.20.0
+        uses: snakemake/snakemake-github-action@v1.23.0
         with:
           directory: .
           snakefile: workflow/Snakefile
-          args: "--containerize > Dockerfile"
+          task: 'containerize'
 
       - name: Build image
         if: ${{ steps.release.outputs.release_created == 'true' }}
@@ -98,7 +98,7 @@ jobs:
           image: uncovar
           tags: latest ${{ github.sha }} ${{ env.VERSION }}
           dockerfiles: |
-            ./Dockerfile
+            Dockerfile
 
       - name: Push to quay.io
         if: ${{ steps.release.outputs.release_created == 'true' }}
