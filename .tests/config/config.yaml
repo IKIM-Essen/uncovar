@@ -144,5 +144,5 @@ assemblers_for_comparison:
 
 # assemblers used for sequencing method 
 assemblers_used:
- - shotgun: megahit-std
- - amplicon: metaspades
+ - shotgun: "megahit-std"
+ - amplicon: "metaspades"
