@@ -1,6 +1,4 @@
 import sys
-from altair.vegalite.v4.schema.channels import Opacity
-from altair.vegalite.v4.schema.core import TitleOrient
 import pandas as pd
 import pysam
 import altair as alt
@@ -96,7 +94,7 @@ plot_bp = (
     .properties(height=height, width=width)
 )
 
-combined_bp = plot_bp.mark_point(opacity=0.5, filled=True) + plot_bp.mark_boxplot(
+combined_bp = plot_bp.mark_point(opacity=1, filled=True) + plot_bp.mark_boxplot(
     opacity=0.8,
     box={"stroke": "black", "strokeWidth": 1, "fill": "none"},
     median={"stroke": "black", "strokeWidth": 1},
