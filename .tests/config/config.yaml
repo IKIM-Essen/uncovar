@@ -143,7 +143,6 @@ assemblers_for_comparison:
   - rnaviralspades
 
 # assemblers used for sequencing method 
-assembler_shotgun:
-  megahit-std
-assembler_amplicon:
-  metaspades
+assemblers_used:
+ - shotgun: megahit-std
+ - amplicon: metaspades

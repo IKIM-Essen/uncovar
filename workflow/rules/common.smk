@@ -346,9 +346,9 @@ def get_min_coverage(wildcards):
 
 def return_assembler(sample):
     if is_amplicon_data(sample):
-        return config.get("assembler_amplicon")
+        return config["assemblers_used"]["amplicon"]
     else:
-        return config.get("assembler_shotgun")
+        return config["assemblers_used"]["shotgun"]
 
 
 def get_contigs(wildcards):
