@@ -1,5 +1,19 @@
 # Changelog
 
+### [0.1.8](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.7...v0.1.8) (2021-09-20)
+
+
+### Bug Fixes
+
+* add missing path to the Dockerfile job ([#258](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/258)) ([e733d2d](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/e733d2dd1081e632ce39b71cb47d122225011b6d))
+
+### [0.1.7](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.6...v0.1.7) (2021-09-20)
+
+
+### Bug Fixes
+
+* update snakemake actions for container file ([#256](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/256)) ([cb31e92](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/cb31e92d263dfcdc94675aa3ef8a9274b472654a))
+
 ### [0.1.6](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.5...v0.1.6) (2021-09-16)
 
 
