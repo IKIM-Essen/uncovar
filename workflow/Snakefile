@@ -86,12 +86,12 @@ checkpoint all:
             date=get_all_run_dates(),
         ),
         expand(
-            "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
-            date=get_all_run_dates(),
-            mode=["major", "any"],
+        "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
+         date= get_all_run_dates(),
+         mode=["major","any"],
         )
-        if config["strain-calling"]["use-kallisto"]
-        else "",
+         if config["strain-calling"]["use-kallisto"]
+         else"",
         expand(
             "results/{date}/contigs/polished/{sample}.fasta",
             zip,
@@ -167,5 +167,5 @@ rule benchmark_mixtures:
         ),
         "results/benchmarking/plots/pangolin-call-dependency.svg",
         "results/benchmarking/tables/pangolin_statistics.csv"
-        if config["mixtures"]["no_strains"] == 1
-        else [],
+         if config["mixtures"]["no_strains"]==1
+         else[],
