@@ -175,8 +175,8 @@ jobs:
           args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
 
       - name: Debug report
-          run: |
-            ls -lah results/2021-01-01/plots/
+        run: |
+          ls -lah results/2021-01-01/plots/
 
       - name: Test report
         uses: snakemake/snakemake-github-action@v1.18.0
