@@ -177,7 +177,22 @@ jobs:
       - name: Debug report
         if: matrix.rule == 'all'
         run: |
-          ls -lah results/2021-01-01/plots/
+          ls -lah /github/workspace/.tests/
+
+      - name: Debug report
+        if: matrix.rule == 'all'
+        run: |
+          ls -lah /github/workspace/.tests/results/
+
+      - name: Debug report
+        if: matrix.rule == 'all'
+        run: |
+          ls -lah /github/workspace/.tests/results/2021-01-01/
+
+      - name: Debug report
+        if: matrix.rule == 'all'
+        run: |
+          ls -lah /github/workspace/.tests/results/2021-01-01/plots/
 
       - name: Test report
         uses: snakemake/snakemake-github-action@v1.18.0
