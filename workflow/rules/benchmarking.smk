@@ -302,24 +302,24 @@ use rule quast as quast_assembly_comparison with:
 rule plot_assemblies:
     input:
         initial=expand_samples_for_date_assembler(
-            "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta"
+            "results/{zip1}/assembly/{zip2}/{{exp}}/{zip2}.contigs.fasta"
         ),
         final=expand_samples_for_date_assembler(
-            "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.ordered.filtered.fasta"
+            "results/{zip1}/assembly/{zip2}/{{exp}}/{zip2}.contigs.ordered.filtered.fasta"
         ),
         quast=expand_samples_for_date_assembler(
-            "results/{{date}}/assembly/{sample}/{assembler}/quast/transposed_report.tsv"
+            "results/{zip1}/assembly/{zip2}/{{exp}}/quast/transposed_report.tsv"
         ),
     output:
-        "results/{date}/plots/assembler-comparison.svg",
-        "results/{date}/plots/assembler-comparison.csv",
-        "results/{date}/plots/assembler-comparison_genome_fraction.svg",
+        "results/benchmarking/plots/assembler-comparison.svg",
+        "results/benchmarking/plots/assembler-comparison.csv",
+        "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
     log:
-        "logs/{date}/all_assemblies_plot.log",
+        "logs/benchmarking/all_assemblies_plot.log",
     params:
-        samples=lambda wildcards: get_samples_for_date(wildcards.date),
+        samples=lambda wildcards: get_samples,
         assembler=config.get("assemblers_for_comparison"),
-        amplicon_state=lambda wildcards: get_list_of_amplicon_states(wildcards.date),
+        amplicon_state=lambda wildcards: get_list_of_amplicon_states,
     conda:
         "../envs/python.yaml"
     script:

@@ -411,7 +411,7 @@ def get_vembrane_expression(wildcards):
 def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
     """
     Zip by two wildcards and the expand the zip over another wildcard.
-    expand_string must contain {zip1}, {zip2} and {exp}.
+    expand_string must contain {zip1}, {zip2} and {{exp}}.
     """
 
     return sum(
@@ -551,8 +551,8 @@ def get_samples_for_date_amplicon(date):
     return [s for s in get_samples_for_date(date) if is_amplicon_data(s)]
 
 
-def get_list_of_amplicon_states(date):
-    return [True if is_amplicon_data(s) else False for s in get_samples_for_date(date)]
+def get_list_of_amplicon_states(wildcards):
+    return [True if is_amplicon_data(s) else False for s in get_samples]
 
 
 def get_list_of_amplicon_states_assembler(samples):
@@ -718,9 +718,12 @@ def expand_samples_by_func(paths, func, **kwargs):
     return inner
 
 
-def expand_samples_for_date_assembler(paths, **kwargs):
-    return expand_samples_by_func(
-        paths, get_samples, assembler=config["assemblers_for_comparison"]
+def expand_samples_for_date_assembler(paths):
+    return zip_expand(
+        paths, 
+        get_dates, 
+        get_samples,
+        config["assemblers_for_comparison"],
     )
 
 

@@ -143,10 +143,7 @@ checkpoint all:
 
 rule compare_assemblers:
     input:
-        expand(
-            "results/{date}/plots/assembler-comparison.svg",
-            date=get_latest_run_date(),
-        ),
+        "results/benchmarking/plots/assembler-comparison.svg",
 
 
 rule benchmark_strain_calling:
