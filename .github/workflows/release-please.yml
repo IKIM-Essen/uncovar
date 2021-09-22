@@ -120,9 +120,10 @@ jobs:
         with:
           image: uncovar
           context: /home/runner/work/snakemake-workflow-sars-cov2/snakemake-workflow-sars-cov2/
-          tags: latest ${{ env.VERSION }} ${{ github.sha }} ${{ env.VERSION }}
+          tags: latest ${{ env.VERSION }} ${{ github.sha }}
           containerfiles: |
             ./Dockerfile
+
 
       - name: Push to quay.io
         if: ${{ steps.release.outputs.release_created == 'true' }}
