@@ -48,6 +48,29 @@ jobs:
         run: |
           echo ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }} 
 
+      - name: Space
+        run: |
+          echo "Free space:"
+          df -h
+
+      - name: Maximize build space for container image
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+          remove-haskell: 'true'
+          remove-android: 'true'
+ 
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Space
+        run: |
+          echo "Free space:"
+          df -h
+
       - uses: actions/checkout@v2
 
       - name: Checkout release PR locally
