@@ -118,28 +118,12 @@ jobs:
           pwd
           ls -alh
 
-      - name: Build image
+      - name: Build and publish image to Quay
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        id: build-image
-        uses: redhat-actions/buildah-build@v2
+        uses: docker/build-push-action@v2
         with:
-          image: uncovar
-          tags: latest ${{ env.VERSION }} ${{ github.sha }}
-          containerfiles: |
-            ./Dockerfile
-
-
-      - name: Push to quay.io
-        if: ${{ steps.release.outputs.release_created == 'true' }}
-        id: push-to-quay
-        uses: redhat-actions/push-to-registry@v2
-        with:
-          image: ${{ steps.build-image.outputs.image }}
-          tags: ${{ steps.build-image.outputs.tags }}
-          registry: uncovar/uncovar
+          registry: quay.io
+          repository: uncovar/uncovar
           username: uncovar+robot
           password: ${{ secrets.QUAYIO_PASSWORD }}
-
-      - name: Print image url
-        if: ${{ steps.release.outputs.release_created == 'true' }}
-        run: echo "Release image pushed to ${{ steps.push-to-quay.outputs.registry-paths }}"
+          tags: "latest ${{ env.VERSION }} ${{ github.sha }}"
