@@ -82,7 +82,7 @@ jobs:
           git pull origin pull/${{ steps.release.outputs.pr }}/head
 
       - name: Export version as environment variable
-        if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }} 
+        if: ${{ steps.pr_created.outputs.pr == 'true' || steps.release.outputs.release_created != 'true' }} 
         run: |
           echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
           echo "Version: ${{ env.VERSION }}"
@@ -119,9 +119,11 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: uncovar
-          tags: latest ${{ github.sha }} ${{ env.VERSION }}
-          dockerfiles: |
-            Dockerfile
+          context: /home/runner/work/snakemake-workflow-sars-cov2/snakemake-workflow-sars-cov2/
+          tags: latest ${{ env.VERSION }} ${{ github.sha }}
+          containerfiles: |
+            ./Dockerfile
+
 
       - name: Push to quay.io
         if: ${{ steps.release.outputs.release_created == 'true' }}
