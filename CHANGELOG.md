@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.8...v0.2.0) (2021-09-22)
+
+
+### Features
+
+* adding new rule update_sample to workflow ([#254](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/254)) ([3878c1b](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/3878c1b0089396e79dac614c09bf3985d74de96b))
+
+
+### Bug Fixes
+
+* maximize build space for container image ([#261](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/261)) ([0de2cc9](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/0de2cc92c75bfa4f69ca48b576a57bd688f539b1))
+
 ### [0.1.8](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.7...v0.1.8) (2021-09-20)
 
 
