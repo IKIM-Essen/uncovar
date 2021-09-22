@@ -113,13 +113,17 @@ jobs:
           snakefile: workflow/Snakefile
           task: 'containerize'
 
+      - name: Debug print
+        run: |
+          pwd
+          ls -alh
+
       - name: Build image
         if: ${{ steps.release.outputs.release_created == 'true' }}
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
           image: uncovar
-          context: /home/runner/work/snakemake-workflow-sars-cov2/snakemake-workflow-sars-cov2/
           tags: latest ${{ env.VERSION }} ${{ github.sha }}
           containerfiles: |
             ./Dockerfile
