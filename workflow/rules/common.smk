@@ -66,6 +66,12 @@ def get_latest_run_date():
 
 
 def get_samples_before_date(wildcards):
+    print("~~~")
+    print(
+        pep.sample_table[pep.sample_table["run_id"] <= wildcards.date][
+            "sample_name"
+        ].values
+    )
     return list(
         pep.sample_table[pep.sample_table["run_id"] <= wildcards.date][
             "sample_name"
@@ -74,6 +80,8 @@ def get_samples_before_date(wildcards):
 
 
 def get_dates_before_date(wildcards):
+    print("~~~")
+    print(pep.sample_table[pep.sample_table["run_id"] <= wildcards.date]["run_id"].values)
     return list(
         pep.sample_table[pep.sample_table["run_id"] <= wildcards.date]["run_id"].values
     )
