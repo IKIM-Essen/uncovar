@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.2.2](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.1...v0.2.2) (2021-09-22)
+
+
+### Bug Fixes
+
+* rmv path for buildah ([#265](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/265)) ([2341a61](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/2341a61623d4a905c8ace15363e57db8ada173dd))
+
 ### [0.2.1](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.0...v0.2.1) (2021-09-22)
 
 
