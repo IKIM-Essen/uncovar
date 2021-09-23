@@ -29,9 +29,12 @@ AA_ALPHABET_TRANSLATION = {
     "Thr": "T",
 }
 
+
 def get_calls():
     variants = []
-    for file, date, sample in zip(snakemake.input.bcf, snakemake.params.dates, snakemake.params.samples):
+    for file, date, sample in zip(
+        snakemake.input.bcf, snakemake.params.dates, snakemake.params.samples
+    ):
         with pysam.VariantFile(file, "rb") as infile:
             for record in infile:
                 vaf = record.samples[0]["AF"][0]
@@ -49,14 +52,15 @@ def get_calls():
 
                         variants.append(
                             {
-                                "feature" : feature,
-                                "alteration" : alteration,
+                                "feature": feature,
+                                "alteration": alteration,
                                 "vaf": vaf,
-                                "date" : date,
-                                "sample" : sample
+                                "date": date,
+                                "sample": sample,
                             }
                         )
     return pd.DataFrame(variants)
+
 
 def plot_variants_over_time(sm_output, sm_output_table):
     calls = get_calls()
@@ -68,11 +72,9 @@ def plot_variants_over_time(sm_output, sm_output_table):
     calls["total occurrence"] = calls.groupby("alteration", as_index=False)[
         "alteration"
     ].transform(lambda s: s.count())
-    
+
     # # mask low occurrences
-    calls.loc[
-        calls["total occurrence"] < 10, "alteration"
-    ] = "other (< 10 occ.)"
+    calls.loc[calls["total occurrence"] < 10, "alteration"] = "other (< 10 occ.)"
 
     calls.rename(columns={"alteration": "Alteration", "date": "Date"}, inplace=True)
 
@@ -99,6 +101,4 @@ def plot_variants_over_time(sm_output, sm_output_table):
     area_plot.save(sm_output)
 
 
-plot_variants_over_time(
-    snakemake.output[0], snakemake.output[1]
-)
+plot_variants_over_time(snakemake.output[0], snakemake.output[1])
