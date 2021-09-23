@@ -73,7 +73,7 @@ def plot_variants_over_time(sm_output, sm_output_table):
         "alteration"
     ].transform(lambda s: s.count())
 
-    # # mask low occurrences
+    # mask low occurrences
     calls.loc[calls["total occurrence"] < 10, "alteration"] = "other (< 10 occ.)"
 
     calls.rename(columns={"alteration": "Alteration", "date": "Date"}, inplace=True)
@@ -99,6 +99,5 @@ def plot_variants_over_time(sm_output, sm_output_table):
     ).properties(width=800)
 
     area_plot.save(sm_output)
-
 
 plot_variants_over_time(snakemake.output[0], snakemake.output[1])
