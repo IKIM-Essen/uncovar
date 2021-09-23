@@ -153,7 +153,7 @@ rule combine_references:
         "resources/genomes/main.fasta",
         "resources/genomes/human-genome.fna.gz",
     output:
-        temp("resources/genomes/main-and-human-genome.fna.gz"),
+        "resources/genomes/main-and-human-genome.fna.gz",
     log:
         "logs/combine-reference-genomes.log",
     conda:
