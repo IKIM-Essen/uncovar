@@ -1,9 +1,10 @@
+sys.stderr = open(snakemake.log[0], "w")
+
 import sys
+
+import altair as alt
 import pandas as pd
 import pysam
-import altair as alt
-
-sys.stderr = open(snakemake.log[0], "w")
 
 data = pd.DataFrame()
 
