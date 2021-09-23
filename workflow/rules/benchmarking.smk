@@ -252,7 +252,9 @@ rule order_contigs_assembly_comparison:
         contigs="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
         reference="resources/genomes/main.fasta",
     output:
-        temp("results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta"),
+        temp(
+            "results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta"
+        ),
     log:
         "logs/{date}/ragoo/{assembler}/{sample}.log",
     params:
