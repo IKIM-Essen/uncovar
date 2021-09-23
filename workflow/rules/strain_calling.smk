@@ -3,12 +3,16 @@ checkpoint extract_strain_genomes_from_gisaid:
         "resources/gisaid/provision.json",
     output:
         "results/{date}/tables/strain-genomes.txt",
+    params:
+        save_strains_to=config["strain-calling"]["extracted-strain-genomes"],
     log:
         "logs/{date}/extract-strain-genomes.log",
     params:
         save_strains_to=lambda wildcards: config["strain-calling"][
             "extracted-strain-genomes"
         ],
+    conda:
+        "../envs/pandas.yaml"
     script:
         "../scripts/extract-strains-from-gisaid-provision.py"
 
@@ -50,7 +54,6 @@ rule kallisto_quant:
         extra="",
     log:
         "logs/{date}/kallisto_quant/{sample}.log",
-    threads: 1
     wrapper:
         "0.70.0/bio/kallisto/quant"
 
@@ -114,40 +117,20 @@ rule plot_all_strains_kallisto:
 
 rule pangolin:
     input:
-        contigs=lambda wildcards: get_assemblies_for_submission(
-            wildcards, "single sample"
-        ),
+        contigs=get_assemblies_for_submission("single sample"),
         pangoLEARN="results/{date}/pangolin/pangoLEARN",
         lineages="results/{date}/pangolin/lineages",
     output:
         "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
     log:
         "logs/{date}/pangolin/{sample}.log",
-    threads: 8
     params:
-        pango_data_path=lambda x, input: os.path.dirname(input.pangoLEARN),
+        pango_data_path=lambda w, input: os.path.dirname(input.pangoLEARN),
     conda:
         "../envs/pangolin.yaml"
+    threads: 8
     shell:
         "pangolin {input.contigs} --data {params.pango_data_path} --outfile {output} > {log} 2>&1"
-
-
-rule plot_strains_pangolin:
-    input:
-        "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
-    output:
-        report(
-            "results/{date}/plots/strain-calls/{sample}.strains.pangolin.svg",
-            caption="../report/strain-calls-pangolin.rst",
-            category="Pangolin strain calls",
-            subcategory="Per sample",
-        ),
-    log:
-        "logs/{date}/plot-strains-pangolin/{sample}.log",
-    conda:
-        "../envs/python.yaml"
-    notebook:
-        "../notebooks/plot-strains-pangolin.py.ipynb"
 
 
 rule plot_all_strains_pangolin:

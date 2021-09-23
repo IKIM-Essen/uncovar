@@ -1,6 +1,7 @@
 rule masking:
     input:
         bamfile="results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
+        bai="results/{date}/mapped/ref~polished-{sample}/{sample}.bam.bai",
         sequence="results/{date}/contigs/polished/{sample}.fasta",
     output:
         masked_sequence="results/{date}/contigs/masked/{sample}.fasta",
@@ -18,10 +19,7 @@ rule masking:
 
 rule plot_coverage_main_sequence:
     input:
-        lambda wildcards: expand(
-            "results/{{date}}/qc/samtools_depth/{sample}.txt",
-            sample=get_samples_for_date(wildcards.date),
-        ),
+        expand_samples_for_date("results/{{date}}/qc/samtools_depth/{sample}.txt"),
     output:
         report(
             "results/{date}/plots/coverage-reference-genome.svg",
@@ -29,10 +27,10 @@ rule plot_coverage_main_sequence:
             category="3. Sequencing Details",
             subcategory="2. Read Coverage of Reference Genome",
         ),
-    log:
-        "logs/{date}/plot-coverage-main-seq.log",
     params:
         min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
+    log:
+        "logs/{date}/plot-coverage-main-seq.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -41,10 +39,7 @@ rule plot_coverage_main_sequence:
 
 rule plot_coverage_final_sequence:
     input:
-        lambda wildcards: expand(
-            "results/{{date}}/tables/coverage/{sample}.txt",
-            sample=get_samples_for_date(wildcards.date),
-        ),
+        expand_samples_for_date("results/{{date}}/tables/coverage/{sample}.txt"),
     output:
         report(
             "results/{date}/plots/coverage-assembled-genome.svg",
@@ -52,10 +47,10 @@ rule plot_coverage_final_sequence:
             category="3. Sequencing Details",
             subcategory="3. Read Coverage of Reconstructed Genome",
         ),
-    log:
-        "logs/{date}/plot-coverage-final-seq.log",
     params:
         min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
+    log:
+        "logs/{date}/plot-coverage-final-seq.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -81,9 +76,7 @@ checkpoint rki_filter:
 
 rule rki_report:
     input:
-        contigs=lambda wildcards: get_assemblies_for_submission(
-            wildcards, "accepted samples"
-        ),
+        contigs=get_assemblies_for_submission("accepted samples"),
     output:
         fasta=report(
             "results/rki/{date}_uk-essen_rki.fasta",
@@ -105,48 +98,38 @@ rule rki_report:
 
 rule virologist_report:
     input:
-        reads_unfiltered=lambda wildcards: expand(
+        reads_unfiltered=expand_samples_for_date(
             "results/{{date}}/trimmed/{sample}.fastp.json",
-            sample=get_samples_for_date(wildcards.date),
         ),
-        reads_used_for_assembly=lambda wildcards: expand(
+        reads_used_for_assembly=expand_samples_for_date(
             "results/{{date}}/tables/read_pair_counts/{sample}.txt",
-            sample=get_samples_for_date(wildcards.date),
         ),
-        initial_contigs=lambda wildcards: get_expanded_contigs(wildcards),
-        polished_contigs=lambda wildcards: expand(
+        initial_contigs=get_expanded_contigs,
+        polished_contigs=expand_samples_for_date(
             "results/{{date}}/contigs/polished/{sample}.fasta",
-            sample=get_samples_for_date(wildcards.date),
         ),
-        pseudo_contigs=lambda wildcards: expand(
+        pseudo_contigs=expand_samples_for_date(
             "results/{{date}}/contigs/pseudoassembled/{sample}.fasta",
-            sample=get_samples_for_date(wildcards.date),
         ),
-        kraken=lambda wildcards: expand(
+        kraken=expand_samples_for_date(
             "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
-            sample=get_samples_for_date(wildcards.date),
         ),
-        pangolin=lambda wildcards: expand(
+        pangolin=expand_samples_for_date(
             "results/{{date}}/tables/strain-calls/{sample}.strains.pangolin.csv",
-            sample=get_samples_for_date(wildcards.date),
         ),
-        bcf=lambda wildcards: expand(
+        bcf=expand_samples_for_date(
             "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
-            sample=get_samples_for_date(wildcards.date),
         ),
     output:
         qc_data="results/{date}/virologist/qc_report.csv",
-    log:
-        "logs/{date}/overview-table.log",
     params:
-        assembly_used=lambda wildcards: get_assemblies_for_submission(
-            wildcards, "all samples"
-        ),
+        assembly_used=get_assemblies_for_submission("all samples"),
         voc=config.get("voc"),
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
+    log:
+        "logs/{date}/overview-table.log",
     conda:
         "../envs/pysam.yaml"
-    threads: 1
     script:
         "../scripts/generate-overview-table.py"
 
@@ -162,13 +145,13 @@ rule qc_html_report:
             category="1. Overview",
             subcategory="1. QC Report",
         ),
-    conda:
-        "../envs/rbt.yaml"
     params:
         formatter=get_resource("report-table-formatter.js"),
         pin_until="Sample",
     log:
         "logs/{date}/qc_report_html.log",
+    conda:
+        "../envs/rbt.yaml"
     shell:
         "rbt csv-report {input} --formatter {params.formatter} --pin-until {params.pin_until} {output} > {log} 2>&1"
 
@@ -189,10 +172,10 @@ rule plot_lineages_over_time:
             subcategory="2. Lineages Development",
         ),
         "results/{date}/tables/lineages-over-time.csv",
+    params:
+        dates=get_dates_before_date,
     log:
         "logs/{date}/plot_lineages_over_time.log",
-    params:
-        dates=lambda wildcards: get_dates_before_date(wildcards),
     conda:
         "../envs/python.yaml"
     script:
@@ -211,16 +194,16 @@ rule snakemake_reports:
         lambda wildcards: expand(
             "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
             sample=get_samples_for_date(wildcards.date),
-        ) if config["strain-calling"]["use-kallisto"] else "",
+        )
+        if config["strain-calling"]["use-kallisto"]
+        else [],
         "results/{date}/qc_data",
         expand(
             "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
-            mode=["major"],  # , "any"
-        ) if config["strain-calling"]["use-kallisto"] else "",
-        # lambda wildcards: expand(
-        #     "results/{{date}}/plots/strain-calls/{sample}.strains.pangolin.svg",
-        #     sample=get_samples_for_date(wildcards.date),
-        # ),
+            mode=["major"],
+        )
+        if config["strain-calling"]["use-kallisto"]
+        else [],
         "results/{date}/plots/all.strains.pangolin.svg",
         lambda wildcards: expand(
             "results/{{date}}/vcf-report/{target}.{filter}",
@@ -234,9 +217,9 @@ rule snakemake_reports:
             "results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf",
             filter=config["variant-calling"]["filters"],
         ),
-        lambda wildcards: "results/{date}/plots/primer-clipping-intervals.svg" if len(
-            get_samples_for_date_amplicon(wildcards.date)
-        ) > 0 else [],
+        lambda wildcards: "results/{date}/plots/primer-clipping-intervals.svg"
+        if len(get_samples_for_date_amplicon(wildcards.date)) > 0
+        else [],
     output:
         "results/reports/{date}.zip",
     params:
@@ -250,4 +233,6 @@ rule snakemake_reports:
     log:
         "logs/snakemake_reports/{date}.log",
     shell:
-        "snakemake --nolock --report-stylesheet resources/custom-stylesheet.css {input} --report {output} {params.for_testing} > {log} 2>&1"
+        "snakemake --nolock --report-stylesheet resources/custom-stylesheet.css {input} "
+        "--report {output} {params.for_testing} "
+        "> {log} 2>&1"
