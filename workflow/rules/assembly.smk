@@ -16,7 +16,7 @@ rule assembly_megahit:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        contigs=(
+        contigs=temp(
             "results/{date}/assembly/{sample}/megahit-{preset}/{sample}.contigs.fasta"
         ),
     wildcard_constraints:
@@ -40,7 +40,7 @@ rule assembly_spades:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        contigs=(
+        contigs=temp(
             "results/{date}/assembly/{sample}/{spadesflavor}/{sample}.contigs.fasta"
         ),
     wildcard_constraints:

@@ -211,7 +211,7 @@ rule assembly_comparison_trinity:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        "results/{date}/assembly/{sample}/trinity/{sample}.contigs.fasta",
+        temp("results/{date}/assembly/{sample}/trinity/{sample}.contigs.fasta"),
     log:
         "logs/{date}/trinity/{sample}.log",
     params:
@@ -230,7 +230,7 @@ rule assembly_comparison_velvet:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        "results/{date}/assembly/{sample}/velvet/{sample}.contigs.fasta",
+        temp("results/{date}/assembly/{sample}/velvet/{sample}.contigs.fasta"),
     log:
         "logs/{date}/velvet/{sample}.log",
     params:
@@ -252,7 +252,7 @@ rule order_contigs_assembly_comparison:
         contigs="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
         reference="resources/genomes/main.fasta",
     output:
-        "results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta",
+        temp("results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta"),
     log:
         "logs/{date}/ragoo/{assembler}/{sample}.log",
     params:
