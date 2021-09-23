@@ -327,7 +327,7 @@ rule plot_assemblies:
             "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
             category="Supplementary Figure 2: Genome Fraction",
             caption="../report/publication-genome-fraction.rst",
-        )
+        ),
     log:
         "logs/benchmarking/all_assemblies_plot.log",
     params:
