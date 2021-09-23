@@ -56,5 +56,8 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
 
 
 plot_lineages_over_time(
-    snakemake.input, snakemake.output.plot, snakemake.params.dates, snakemake.output.table
+    snakemake.input,
+    snakemake.output.plot,
+    snakemake.params.dates,
+    snakemake.output.table,
 )
