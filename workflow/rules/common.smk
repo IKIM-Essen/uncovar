@@ -645,16 +645,17 @@ def get_final_assemblies_identity(wildcards):
 
 
 def get_assemblies_for_submission(wildcards, agg_type):
-    if wildcards.sample.startswith(READ_TEST_PREFIX):
-        _, state = wildcards.sample.split(READ_STATE_INDICATOR)
-        if state == "contig":
-            return "results/{date}/tables/largest_contig/{sample}.fasta"
-        elif state == "scaffold":
-            return "results/{date}/contigs/ordered/{sample}.fasta"
-        elif state == "polished_scaffold":
-            return "results/{date}/contigs/polished/{sample}.fasta"
-        elif state == "pseudo":
-            return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
+    if "sample" in wildcards:
+        if wildcards.sample.startswith(READ_TEST_PREFIX):
+            _, state = wildcards.sample.split(READ_STATE_INDICATOR)
+            if state == "contig":
+                return "results/{date}/tables/largest_contig/{sample}.fasta"
+            elif state == "scaffold":
+                return "results/{date}/contigs/ordered/{sample}.fasta"
+            elif state == "polished_scaffold":
+                return "results/{date}/contigs/polished/{sample}.fasta"
+            elif state == "pseudo":
+                return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
 
     if wildcards.date != BENCHMARK_DATE_WILDCARD:
         with checkpoints.rki_filter.get(
