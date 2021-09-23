@@ -319,9 +319,9 @@ rule plot_assemblies:
     log:
         "logs/benchmarking/all_assemblies_plot.log",
     params:
-        samples=lambda wildcards: get_samples,
-        assembler=config.get("assemblers_for_comparison"),
-        amplicon_state=lambda wildcards: get_list_of_amplicon_states,
+        samples=get_samples(),
+        assembler=config["assemblers_for_comparison"],
+        amplicon_state=lambda wildcards: get_list_of_amplicon_states(wildcards),
     conda:
         "../envs/python.yaml"
     script:

@@ -552,7 +552,7 @@ def get_samples_for_date_amplicon(date):
 
 
 def get_list_of_amplicon_states(wildcards):
-    return [True if is_amplicon_data(s) else False for s in get_samples]
+    return [True if is_amplicon_data(s) else False for s in get_samples()]
 
 
 def get_list_of_amplicon_states_assembler(samples):
