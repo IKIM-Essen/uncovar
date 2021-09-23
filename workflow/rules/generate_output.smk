@@ -89,7 +89,7 @@ rule rki_report:
             caption="../report/rki-submission-csv.rst",
         ),
     params:
-        min_length=config["rki-output"]["minimum-length"],
+        min_length=config["quality-criteria"]["minimum-length"],
     log:
         "logs/{date}/rki-output/{date}.log",
     script:
