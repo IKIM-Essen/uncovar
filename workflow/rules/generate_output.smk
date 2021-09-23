@@ -166,12 +166,12 @@ rule plot_lineages_over_time:
         ),
     output:
         report(
-            "results/{date}/plots/lineages-over-time.svg",
+            plot="results/{date}/plots/lineages-over-time.svg",
             caption="../report/lineages-over-time.rst",
             category="1. Overview",
             subcategory="2. Lineages Development",
         ),
-        "results/{date}/tables/lineages-over-time.csv",
+        table="results/{date}/tables/lineages-over-time.csv",
     params:
         dates=lambda wildcards: get_dates_before_date(wildcards),
     log:
