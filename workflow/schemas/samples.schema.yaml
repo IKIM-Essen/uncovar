@@ -1,0 +1,29 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+
+description: an entry in the sample sheet
+
+# columns that the config/samples.csv file can have and which type they should be
+properties:
+  sample_name:
+    type: string
+    description: sample name/identifier
+  fq1:
+    type: string
+    description: path to read 1 in FASTQ format
+  fq2:
+    type: string
+    description: path to read 2 in FASTQ format
+  date:
+    type: string
+    description: sampling date of the sample
+  is_amplicon_data:
+    type: string
+    description: indicates whether the data was generated with a shotgun (0) or amplicon (1) sequencing
+
+# columns that the config/samples.csv file must have to pass schema validation
+required:
+  - sample_name
+  - fq1
+  - fq2
+  - date
+  - is_amplicon_data

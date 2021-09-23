@@ -39,8 +39,19 @@ quality-criteria:
   min-depth-without-PCR-duplicates: 10
   # minimum informative allele frequency
   min-allele: 0.9
-  # minimum length of final sequence 
+  # minimum length of final sequence in bp
   minimum-length: 20000
+
+adapters:
+  # Illumina TruSeq adapters
+  # adapters used for shotgun sequencing
+  illumina-shoutgun: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+  # adapters used for amplicon sequencing
+  illumina-amplicon: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+  # path to amplicon primers in bedpe format for hard-clipping
+  amplicon-primers: "resources/primer.bedpe"
+  # GenBank accession of reference sequence of the amplicon primers
+  amplicon-reference: "MN908947"
 
 assembly:
   # minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
@@ -71,15 +82,6 @@ strain-calling:
   extracted-strain-genomes: resources/genomes
   # flag for using kallisto (for quantifying abundances of transcripts)
   use-kallisto: True
-
-adapters:
-  #  Illumina TruSeq adapters
-  illumina-revelo: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
-  illumina-nimagen: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
-  # amplicon primers to remove
-  amplicon-primers: "resources/primer.bedpe"
-  # reference of the amplicon primers
-  amplicon-reference: "MN908947"
 
 # variants of concern (protein name -> variants)
 voc:

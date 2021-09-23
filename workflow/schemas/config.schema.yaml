@@ -1,0 +1,142 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+
+description: snakemake configuration file
+
+type: object
+
+# possible entries of the config file and which type they should be
+properties:
+  pepfile:
+    type: string
+    description: path to the config of the portable encapsulated projects file
+  virus-reference-genome:
+    type: array
+    items:
+      type: string
+    description: virus genome to use as reference. Must be a NCBI accession
+  human-genome-download-path:
+    type: array
+    items:
+      type: string
+    description: download path of human genome reference
+  data-handling:
+      properties: 
+        incoming: 
+          type: string
+          description: path of incoming data, which is moved to the data directory by the preprocessing script
+        data: 
+          type: string
+          description: path to store data within the workflow
+        archive: 
+          type: string
+          description: path to archive data from incoming and the results from the latest run to
+  quality-criteria:
+      properties:
+        illumina: 
+          properties: 
+            min-length-reads: 
+              type: integer
+              description: minimal length of acceptable reads for illumina reads
+            min-PHRED: 
+              type: integer
+              description: average quality of acceptable reads for illumina reads
+        ont: 
+          properties: 
+            min-length-reads: 
+              type: integer
+              description: minimal length of acceptable reads for  Oxfort Nanopore reads
+          min-PHRED: 
+              type: integer
+              description: average quality of acceptable reads for Oxfort Nanopore reads
+        min-identity: 
+          type: number
+          description: identity to virus reference genome of reconstructed sequence
+        max-n: 
+          type: number
+          description:  share N in the reconstructed sequence
+        min-depth-with-PCR-duplicates: 
+          type: number
+          description: minimum local sequencing depth without filtering of PCR duplicates
+        min-depth-without-PCR-duplicates: 
+          type: number
+          description: minimum local sequencing depth after filtering PCR duplicates
+        min-allele: 
+          type: number
+          description: minimum informative allele frequency
+        minimum-length: 
+          type: integer
+          description: minimum length of final sequence in bp
+  adapters:
+      properties: 
+        illumina-shoutgun: 
+          type: string
+          description: adapters used for shotgun sequencing
+        illumina-amplicon: 
+          type: string
+          description: adapters used for amplicon sequencing
+        amplicon-primers: 
+          type: string
+          description: path to amplicon primers in bedpe format for hard-clipping
+        amplicon-reference: 
+          type: string
+          description: GenBank accession of reference sequence of the amplicon primers
+  assembly:
+      properties: 
+        min-variant-prob: 
+          type: number
+          description: minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
+        shotgun: 
+          type: string
+          description: assemblers used for shotgun sequencing
+        amplicon: 
+          type: string
+          description: assemblers used for amplicon sequencing  
+  variant-calling:
+      properties: 
+        fdr: 
+          type: number
+          description: false discovery rate to control for
+        max-read-depth: 
+          type: integer
+          description: downsample loci to this read depth
+        report: 
+          properties: 
+            max-read-depth: 
+              type: number
+              description: downsample loci to this read depth for visualization in report
+        filters: 
+          properties: 
+            low-impact: 
+              type: string
+            high+moderate-impact: 
+              type: string
+  strain-calling:
+      properties: 
+        min-fraction: 
+          type: number
+          description: minimum reported strain fraction after quantification
+        use-gisaid: 
+          type: boolean
+          description: flag for using gisaid or genbank 
+        extracted-strain-genomes: 
+          type: string
+          description: path to store genomes that are extracted from the full GISAID data
+        use-kallisto: 
+          type: boolean
+          description: flag for using kallisto (for quantifying abundances of transcripts)
+
+
+
+
+
+# entries that have to be in the config file for successful validation
+required:
+  - pepfile
+  - virus-reference-genome
+  - human-genome-download-path
+  - data-handling
+  - quality-criteria
+  - adapters
+  - assembly
+  - variant-calling
+  - strain-calling
