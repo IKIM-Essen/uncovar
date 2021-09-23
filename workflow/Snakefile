@@ -175,6 +175,7 @@ rule benchmark_mixtures:
         if config["mixtures"]["no_strains"] == 1
         else [],
 
+
 rule benchmark_reads:
     input:
-        "results/benchmarking/plots/aggregated_read_calls.svg"
+        "results/benchmarking/plots/aggregated_read_calls.svg",

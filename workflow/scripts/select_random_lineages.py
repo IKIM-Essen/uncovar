@@ -1,13 +1,14 @@
 import sys
 
 sys.stderr = open(snakemake.log[0], "w")
-#parameter = snakemake.params.get("parameter", "")
+# parameter = snakemake.params.get("parameter", "")
 
 import random
 
+
 def select_random_lineages(sm_input, sm_output, number_of_samples):
 
-    with open (sm_input) as f:
+    with open(sm_input) as f:
         lines = f.read().splitlines()
 
     lineages = []
@@ -24,6 +25,7 @@ def select_random_lineages(sm_input, sm_output, number_of_samples):
             handler.write(element + "\n")
 
 
-
 if __name__ == "__main__":
-    select_random_lineages(snakemake.input[0], snakemake.output[0], snakemake.params.number_of_samples)
+    select_random_lineages(
+        snakemake.input[0], snakemake.output[0], snakemake.params.number_of_samples
+    )

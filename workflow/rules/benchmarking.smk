@@ -421,19 +421,21 @@ rule get_largest_contig:
     script:
         "../scripts/get_largest_contig.py"
 
+
 checkpoint select_random_lineages:
     input:
         "results/{date}/tables/strain-genomes.txt",
     output:
         "results/{date}/tables/selected-strain-genomes-reads.txt",
     params:
-        number_of_samples = config["read_lineage_call"]["number_of_samples"]
+        number_of_samples=config["read_lineage_call"]["number_of_samples"],
     log:
-        "logs/{date}/select_random_lineages.log"
+        "logs/{date}/select_random_lineages.log",
     conda:
         "../envs/python.yaml"
     script:
         "../scripts/select_random_lineages.py"
+
 
 rule aggregate_read_calls:
     input:
@@ -446,6 +448,7 @@ rule aggregate_read_calls:
         "../envs/python.yaml"
     script:
         "../scripts/aggregate_read_calls.py"
+
 
 rule plot_read_call:
     input:

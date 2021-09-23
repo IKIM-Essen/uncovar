@@ -686,38 +686,38 @@ def get_assemblies_for_submission(wildcards, agg_type):
     if agg_type == "accepted samples":
         accepted_assemblies = []
 
-            for sample in set(masked_samples + pseudo_samples):
-                if sample in masked_samples:
-                    accepted_assemblies.append(
-                        normal_assembly_pattern.format(sample=sample)
-                    )
-                else:
-                    accepted_assemblies.append(
-                        pseudo_assembly_pattern.format(sample=sample)
-                    )
-            return accepted_assemblies
-
-        # for the pangolin call
-        elif agg_type == "single sample":
-            if wildcards.sample in masked_samples:
-                return "results/{date}/contigs/polished/{sample}.fasta"
-            elif wildcards.sample in pseudo_samples:
-                return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
-            # for not accepted samples use the polished-contigs
+        for sample in set(masked_samples + pseudo_samples):
+            if sample in masked_samples:
+                accepted_assemblies.append(
+                    normal_assembly_pattern.format(sample=sample)
+                )
             else:
-                return "results/{date}/contigs/polished/{sample}.fasta"
+                accepted_assemblies.append(
+                    pseudo_assembly_pattern.format(sample=sample)
+                )
+        return accepted_assemblies
 
-        # for the qc report
-        elif agg_type == "all samples":
-            assembly_type_used = []
-            for sample in get_samples_for_date(wildcards.date):
-                if sample in masked_samples:
-                    assembly_type_used.append(f"{sample},normal")
-                elif sample in pseudo_samples:
-                    assembly_type_used.append(f"{sample},pseudo")
-                else:
-                    assembly_type_used.append(f"{sample},not-accepted")
-            return assembly_type_used
+    # for the pangolin call
+    elif agg_type == "single sample":
+        if wildcards.sample in masked_samples:
+            return "results/{date}/contigs/polished/{sample}.fasta"
+        elif wildcards.sample in pseudo_samples:
+            return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
+        # for not accepted samples use the polished-contigs
+        else:
+            return "results/{date}/contigs/polished/{sample}.fasta"
+
+    # for the qc report
+    elif agg_type == "all samples":
+        assembly_type_used = []
+        for sample in get_samples_for_date(wildcards.date):
+            if sample in masked_samples:
+                assembly_type_used.append(f"{sample},normal")
+            elif sample in pseudo_samples:
+                assembly_type_used.append(f"{sample},pseudo")
+            else:
+                assembly_type_used.append(f"{sample},not-accepted")
+        return assembly_type_used
 
     return inner
 
@@ -790,9 +790,9 @@ wildcard_constraints:
 
 
 def get_read_calls(wildcard):
-    with checkpoints.select_random_lineages.get(
-        date=BENCHMARK_DATE_WILDCARD
-    ).output[0].open() as f:
+    with checkpoints.select_random_lineages.get(date=BENCHMARK_DATE_WILDCARD).output[
+        0
+    ].open() as f:
         lineages = f.read().splitlines()
 
     return expand(
