@@ -158,11 +158,11 @@ rule qc_html_report:
 
 rule plot_lineages_over_time:
     input:
-        expand(
+        ambda wildcards: expand(
             "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
             zip,
-            date=lambda wildcards: get_dates_before_date(wildcards),
-            sample=lambda wildcards: get_samples_before_date(wildcards),
+            date=get_dates_before_date(wildcards),
+            sample=get_samples_before_date(wildcards),
         ),
     output:
         report(
