@@ -14,7 +14,10 @@ MIXTURE_PART_INDICATOR = "_MIX_"
 MIXTURE_PERCENTAGE_INDICATOR = "_PERC_"
 BENCHMARK_DATE_WILDCARD = "benchmarking"
 
+
 configfile: "config/config.yaml"
+
+
 validate(config, "../schemas/config.schema.yaml")
 
 validate(pep.sample_table, "../schemas/samples.schema.yaml")
