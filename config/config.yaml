@@ -91,6 +91,7 @@ voc:
     - K417N
     - H69_V70del
 
+
 ############################################
 #      Configuration for benchmarking      #
 ############################################
@@ -106,7 +107,7 @@ non_cov2_genomes:
   - NC_019843
   - NC_004718 
 
-# For testing the read bases strain calling
+# for testing the read bases strain calling
 mixtures:
   # maximal number of reads to generate
   max_reads: 294459
@@ -134,4 +135,3 @@ assemblers_for_comparison:
   - coronaspades
   - spades
   - rnaviralspades
-

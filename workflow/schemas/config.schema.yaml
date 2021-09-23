@@ -125,10 +125,6 @@ properties:
           type: boolean
           description: flag for using kallisto (for quantifying abundances of transcripts)
 
-
-
-
-
 # entries that have to be in the config file for successful validation
 required:
   - pepfile
