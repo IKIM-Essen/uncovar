@@ -195,7 +195,11 @@ rule plot_strain_call_error:
     input:
         "results/benchmarking/tables/{caller}-strain-call-error.csv",
     output:
-        "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
+        report(
+            "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
+            category="Figure 4: Strain Call Error",
+            caption="../report/strain-call-error.rst",
+        ),
         "results/benchmarking/plots/{caller}-strain-call-error-false-predictions.svg",
         "results/benchmarking/plots/{caller}-strain-call-error-content-false-predictions.svg",
     log:
@@ -228,7 +232,11 @@ rule plot_dependency_of_pangolin_call:
     input:
         get_mixture_results,
     output:
-        "results/benchmarking/plots/{caller}-call-dependency.svg",
+            report(
+            "results/benchmarking/plots/{caller}-call-dependency.svg",
+            category="Figure 3: Lineage Call Dependency",
+            caption="../report/lineage-call-dependency.rst",
+        ),
     log:
         "logs/plot_dependency_of_{caller}_call.log",
     params:
@@ -254,3 +262,14 @@ rule plot_pangolin_conflict:
         "../envs/python.yaml"
     script:
         "../scripts/plot-pangolin-conflict.py"
+
+
+rule get_publication_plots:
+    input:
+        expand(
+            [
+                "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
+                "results/benchmarking/plots/{caller}-call-dependency.svg",
+            ],
+            caller=["kallisto", "pangolin"],
+        ),
