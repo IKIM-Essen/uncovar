@@ -129,3 +129,20 @@ voc:
     - E484K
     - K417N
     - H69_V70del
+  
+# assemblers used for assembly comparison
+assemblers_for_comparison:
+  - megahit-std
+  - megahit-meta-large
+  - megahit-meta-sensitive
+  - trinity
+  - velvet
+  - metaspades
+  - coronaspades
+  - spades
+  - rnaviralspades
+
+# assemblers used for sequencing method 
+assemblers_used:
+  shotgun: "megahit-std"
+  amplicon: "metaspades"

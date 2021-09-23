@@ -141,6 +141,11 @@ checkpoint all:
         ),
 
 
+rule compare_assemblers:
+    input:
+        "results/benchmarking/plots/assembler-comparison.svg",
+
+
 rule benchmark_strain_calling:
     input:
         "results/benchmarking/strain-calling.csv",
