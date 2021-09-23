@@ -161,8 +161,8 @@ rule plot_lineages_over_time:
         expand(
             "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
             zip,
-            date=get_dates_before_date,
-            sample=get_samples_before_date,
+            date=lambda wildcards: get_dates_before_date(wildcards),
+            sample=lambda wildcards: get_samples_before_date(wildcards),
         ),
     output:
         report(
@@ -173,7 +173,7 @@ rule plot_lineages_over_time:
         ),
         "results/{date}/tables/lineages-over-time.csv",
     params:
-        dates=get_dates_before_date,
+        dates=lambda wildcards: get_dates_before_date(wildcards),
     log:
         "logs/{date}/plot_lineages_over_time.log",
     conda:
