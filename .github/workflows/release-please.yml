@@ -119,12 +119,15 @@ jobs:
           ls -alh
 
       - name: Set up QEMU
+        if: ${{ steps.release.outputs.release_created == 'true' }}
         uses: docker/setup-qemu-action@v1
 
       - name: Set up Docker Buildx
+        if: ${{ steps.release.outputs.release_created == 'true' }}
         uses: docker/setup-buildx-action@v1
 
       - name: Login to Quay Registry
+        if: ${{ steps.release.outputs.release_created == 'true' }}
         uses: docker/login-action@v1 
         with:
           registry: quay.io
@@ -140,4 +143,4 @@ jobs:
           tags: |
             quay.io/uncovar/uncovar:latest
             quay.io/uncovar/uncovar:${{ env.VERSION }}
-            quay.io/uncovar/uncovar:${{ github.sha }}"
+            quay.io/uncovar/uncovar:${{ github.sha }}
