@@ -82,7 +82,7 @@ jobs:
           git pull origin pull/${{ steps.release.outputs.pr }}/head
 
       - name: Export version as environment variable
-        if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }} 
+        if: ${{ steps.pr_created.outputs.pr == 'true' || steps.release.outputs.release_created != 'true' }} 
         run: |
           echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
           echo "Version: ${{ env.VERSION }}"
@@ -113,27 +113,34 @@ jobs:
           snakefile: workflow/Snakefile
           task: 'containerize'
 
-      - name: Build image
-        if: ${{ steps.release.outputs.release_created == 'true' }}
-        id: build-image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: uncovar
-          tags: latest ${{ github.sha }} ${{ env.VERSION }}
-          dockerfiles: |
-            Dockerfile
+      - name: Debug print
+        run: |
+          pwd
+          ls -alh
 
-      - name: Push to quay.io
+      - name: Set up QEMU
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        id: push-to-quay
-        uses: redhat-actions/push-to-registry@v2
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Quay Registry
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        uses: docker/login-action@v1 
         with:
-          image: ${{ steps.build-image.outputs.image }}
-          tags: ${{ steps.build-image.outputs.tags }}
-          registry: uncovar/uncovar
+          registry: quay.io
           username: uncovar+robot
           password: ${{ secrets.QUAYIO_PASSWORD }}
 
-      - name: Print image url
+      - name: Build and push
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        run: echo "Release image pushed to ${{ steps.push-to-quay.outputs.registry-paths }}"
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: |
+            quay.io/uncovar/uncovar:latest
+            quay.io/uncovar/uncovar:${{ env.VERSION }}
+            quay.io/uncovar/uncovar:${{ github.sha }}
