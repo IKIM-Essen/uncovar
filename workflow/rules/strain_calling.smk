@@ -117,7 +117,7 @@ rule plot_all_strains_kallisto:
 
 rule pangolin:
     input:
-        contigs=get_assemblies_for_submission("single sample"),
+        contigs=lambda wildcards: get_assemblies_for_submission(wildcards, "single sample"),
         pangoLEARN="results/{date}/pangolin/pangoLEARN",
         lineages="results/{date}/pangolin/lineages",
     output:

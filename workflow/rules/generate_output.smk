@@ -76,7 +76,7 @@ checkpoint rki_filter:
 
 rule rki_report:
     input:
-        contigs=get_assemblies_for_submission("accepted samples"),
+        contigs=lambda wildcards: get_assemblies_for_submission(wildcards, "accepted samples"),
     output:
         fasta=report(
             "results/rki/{date}_uk-essen_rki.fasta",
@@ -123,7 +123,7 @@ rule virologist_report:
     output:
         qc_data="results/{date}/virologist/qc_report.csv",
     params:
-        assembly_used=get_assemblies_for_submission("all samples"),
+        assembly_used=lambda wildcards: get_assemblies_for_submission(wildcards, "all samples"),
         voc=config.get("voc"),
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
     log:
