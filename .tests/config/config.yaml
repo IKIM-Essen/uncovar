@@ -9,16 +9,13 @@ benchmark-genomes:
   - MT470120
   - MT451810
 
-
 # genome to use as reference. Must be a NCBI accession
 virus-reference-genome:
   - NC_045512.2
 
-
 # download path of human genome reference
 human-genome-download-path:
   - ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.28_GRCh38.p13/GCA_000001405.28_GRCh38.p13_genomic.fna.gz
-
 
 data-handling:
   # path of incoming data
@@ -28,8 +25,7 @@ data-handling:
   # path to archive data from incoming to
   archive: ../archive/
 
-
-RKI-quality-criteria:
+quality-criteria:
   illumina:
     # minimal length of acceptable reads
     min-length-reads: 30
@@ -50,8 +46,15 @@ RKI-quality-criteria:
   min-depth-without-PCR-duplicates: 10
   # minimum informative allele frequency
   min-allele: 0.9
-  # frameshift-Mutationen
+  # minimum contig length
+  minimum-length: 20000
 
+adapters:
+  #  Illumina TruSeq adapters
+  illumina-revelo: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+  illumina-nimagen: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+  amplicon-primers: "resources/primer.bedpe"
+  amplicon-reference: "MN908947"
 
 variant-calling:
   # false discovery rate to control for
@@ -65,10 +68,13 @@ variant-calling:
     low-impact: 'ANN["IMPACT"] in ["LOW", "MODIFIER"]'
     high+moderate-impact: 'ANN["IMPACT"] in ["HIGH", "MODERATE"]'
 
-
 assembly:
   # minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
   min-variant-prob: 0.95
+  # assemblers used for shotgun sequencing  
+  shotgun: "megahit-std"
+  # assemblers used for amplicon sequencing  
+  amplicon: "metaspades"
 
 
 strain-calling:
@@ -80,18 +86,6 @@ strain-calling:
   extracted-strain-genomes: resources/genomes
   # flag for using kallisto (for quantifying abundances of transcripts)
   use-kallisto: True
-
-
-adapters:
-  #  Illumina TruSeq adapters
-  illumina-revelo: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
-  illumina-nimagen: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
-  amplicon-primers: "resources/primer.bedpe"
-  amplicon-reference: "MN908947"
-
-rki-output:
-# minimum contig length
-  minimum-length: 20000
 
 
 # NCBI reference sequences of non-SARS-CoV-2 coronavirus. 
@@ -141,8 +135,3 @@ assemblers_for_comparison:
   - coronaspades
   - spades
   - rnaviralspades
-
-# assemblers used for sequencing method 
-assemblers_used:
-  shotgun: "megahit-std"
-  amplicon: "metaspades"
