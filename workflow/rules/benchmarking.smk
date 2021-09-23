@@ -206,6 +206,128 @@ rule plot_strain_call_error:
         "../scripts/plot-caller-error.py"
 
 
+rule assembly_comparison_trinity:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        temp("results/{date}/assembly/{sample}/trinity/{sample}.contigs.fasta"),
+    log:
+        "logs/{date}/trinity/{sample}.log",
+    params:
+        extra="",
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    threads: 8
+    conda:
+        "../envs/trinity.yaml"
+    shell:
+        "(Trinity --left {input.fastq1} --max_memory 16G --right {input.fastq2} --CPU {threads} --seqType fq --output {params.outdir} && "
+        "mv {params.outdir}/Trinity.fasta {output} ) > {log} 2>&1"
+
+
+rule assembly_comparison_velvet:
+    input:
+        fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
+        fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
+    output:
+        temp("results/{date}/assembly/{sample}/velvet/{sample}.contigs.fasta"),
+    log:
+        "logs/{date}/velvet/{sample}.log",
+    params:
+        extra="",
+        outdir=lambda w, output: os.path.dirname(output[0]),
+    threads: 8
+    conda:
+        "../envs/velvet.yaml"
+    shell:
+        """
+        velveth {params.outdir} 21 -fastq.gz -shortPaired {input.fastq1} {input.fastq2} > {log} 2>&1
+        velvetg {params.outdir} -ins_length 150 -exp_cov 10 >> {log} 2>&1
+        mv {params.outdir}/contigs.fa {output} >> {log} 2>&1
+        """
+
+
+rule order_contigs_assembly_comparison:
+    input:
+        contigs="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
+        reference="resources/genomes/main.fasta",
+    output:
+        temp(
+            "results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta"
+        ),
+    log:
+        "logs/{date}/ragoo/{assembler}/{sample}.log",
+    params:
+        outdir=get_output_dir,
+    conda:
+        "../envs/ragoo.yaml"
+    shadow:
+        "minimal"
+    shell:
+        "(cd {params.outdir} &&"
+        " ragoo.py ../../../../../{input.contigs} ../../../../../{input.reference} &&"
+        " cd ../../../../../ && mv {params.outdir}/ragoo_output/ragoo.fasta {output})"
+        " > {log} 2>&1"
+
+
+use rule filter_chr0 as filter_chr0_assembly_comparison with:
+    input:
+        "results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta",
+    output:
+        "results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.ordered.filtered.fasta",
+    log:
+        "logs/{date}/ragoo/{assembler}/{sample}_cleaned.log",
+
+
+use rule align_contigs as align_contigs_assembly_comparison with:
+    input:
+        target="resources/genomes/main.fasta",
+        query="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
+    output:
+        "results/{date}/assembly/{sample}/{assembler}/main_{sample}.bam",
+    log:
+        "results/{date}/assembly/{sample}/{assembler}/main_{sample}.log",
+
+
+use rule quast as quast_assembly_comparison with:
+    input:
+        fasta="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
+        bam="results/{date}/assembly/{sample}/{assembler}/main_{sample}.bam",
+        reference="resources/genomes/main.fasta",
+    output:
+        "results/{date}/assembly/{sample}/{assembler}/quast/report.tsv",
+        "results/{date}/assembly/{sample}/{assembler}/quast/transposed_report.tsv",
+    log:
+        "logs/{date}/assembly/quast/{assembler}/{sample}.log",
+
+
+rule plot_assemblies:
+    input:
+        initial=get_samples_for_assembler_comparison(
+            "results/{zip1}/assembly/{zip2}/{{exp}}/{zip2}.contigs.fasta"
+        ),
+        final=get_samples_for_assembler_comparison(
+            "results/{zip1}/assembly/{zip2}/{{exp}}/{zip2}.contigs.ordered.filtered.fasta",
+        ),
+        quast=get_samples_for_assembler_comparison(
+            "results/{zip1}/assembly/{zip2}/{{exp}}/quast/transposed_report.tsv",
+        ),
+    output:
+        "results/benchmarking/plots/assembler-comparison.svg",
+        "results/benchmarking/plots/assembler-comparison.csv",
+        "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
+    log:
+        "logs/benchmarking/all_assemblies_plot.log",
+    params:
+        samples=get_samples(),
+        assembler=config["assemblers_for_comparison"],
+        amplicon_state=lambda wildcards: get_list_of_amplicon_states(wildcards),
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot-assembly-comparison.py"
+
+
 rule get_read_length_statistics:
     input:
         expand(
