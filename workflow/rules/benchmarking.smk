@@ -232,7 +232,7 @@ rule plot_dependency_of_pangolin_call:
     input:
         get_mixture_results,
     output:
-            report(
+        report(
             "results/benchmarking/plots/{caller}-call-dependency.svg",
             category="Figure 3: Lineage Call Dependency",
             caption="../report/lineage-call-dependency.rst",
