@@ -165,8 +165,8 @@ rule plot_lineages_over_time:
             sample=get_samples_before_date(wildcards),
         ),
     output:
-        report(
-            plot="results/{date}/plots/lineages-over-time.svg",
+        plot=report(
+            "results/{date}/plots/lineages-over-time.svg",
             caption="../report/lineages-over-time.rst",
             category="1. Overview",
             subcategory="2. Lineages Development",
