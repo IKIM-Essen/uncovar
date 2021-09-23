@@ -17,7 +17,7 @@ rule fastp_pe:
         extra="--qualified_quality_phred {} ".format(
             config["RKI-quality-criteria"]["illumina"]["min-PHRED"]
         )
-        +"--length_required {}".format(
+        + "--length_required {}".format(
             config["RKI-quality-criteria"]["illumina"]["min-length-reads"]
         ),
     log:
