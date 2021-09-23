@@ -46,7 +46,7 @@ Install Snakemake using [conda](https://conda.io/projects/conda/en/latest/user-g
 
     conda create -c bioconda -c conda-forge -n snakemake snakemake
 
-For installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
+For Snakemake installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
 ### Step 4: Execute workflow
 
