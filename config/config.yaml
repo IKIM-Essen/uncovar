@@ -18,7 +18,6 @@ data-handling:
   # the results from the latest run to
   archive: ../archive/
 
-
 quality-criteria:
   illumina:
     # minimal length of acceptable reads
@@ -30,9 +29,9 @@ quality-criteria:
     min-length-reads: 200
     # average quality of acceptable reads (PHRED)
     min-PHRED: 10
-  # identity to virus reference genome (see-above) of reconstructed genome
+  # identity to virus reference genome (see-above) of reconstructed sequence
   min-identity: 0.9
-  # share N in the reconstructed genome
+  # share N in the reconstructed sequence
   max-n: 0.05
   # minimum local sequencing depth without filtering of PCR duplicates
   min-depth-with-PCR-duplicates: 20
@@ -46,6 +45,10 @@ quality-criteria:
 assembly:
   # minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
   min-variant-prob: 0.95
+  # assemblers used for shotgun sequencing  
+  shotgun: "megahit-std"
+  # assemblers used for amplicon sequencing  
+  amplicon: "metaspades"
 
 
 variant-calling:
@@ -135,7 +138,3 @@ assemblers_for_comparison:
   - spades
   - rnaviralspades
 
-# assemblers used for sequencing method 
-assemblers_used:
-  shotgun: "megahit-std"
-  amplicon: "metaspades"
