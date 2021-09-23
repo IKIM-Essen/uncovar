@@ -182,9 +182,43 @@ rule plot_lineages_over_time:
         "../scripts/plot-lineages-over-time.py"
 
 
+rule plot_variants_over_time:
+    input:
+        bcf=lambda wildcards: expand(
+            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
+            zip,
+            date=get_dates_before_date(wildcards),
+            sample=get_samples_before_date(wildcards),
+        ),
+        csi=lambda wildcards: expand(
+            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf.csi",
+            zip,
+            date=get_dates_before_date(wildcards),
+            sample=get_samples_before_date(wildcards),
+        ),
+    output:
+        report(
+            "results/{date}/plots/variants-over-time.svg",
+            caption="../report/variants-over-time.rst",
+            category="1. Overview",
+            subcategory="3. Variant Development",
+        ),
+        "results/{date}/tables/variants-over-time.csv",
+    params:
+        dates=get_dates_before_date,
+        samples=get_samples_before_date,
+    log:
+        "logs/{date}/plot_variants_over_time.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot-variants-over-time.py"
+
+
 rule snakemake_reports:
     input:
         "results/{date}/plots/lineages-over-time.svg",
+        "results/{date}/plots/variants-over-time.svg",
         "results/{date}/plots/coverage-reference-genome.svg",
         "results/{date}/plots/coverage-assembled-genome.svg",
         lambda wildcards: expand(

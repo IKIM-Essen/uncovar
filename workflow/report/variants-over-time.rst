@@ -1,0 +1,1 @@
+Development of variants over time. Low occurring variants are grouped together.
