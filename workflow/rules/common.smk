@@ -718,11 +718,11 @@ def expand_samples_by_func(paths, func, **kwargs):
     return inner
 
 
-def get_samples_for_assembler_comparison(wildcards, paths):
+def get_samples_for_assembler_comparison(paths):
     return zip_expand(
         paths,
-        get_dates(wildcards),
-        get_samples(wildcards),
+        get_dates(),
+        get_samples(),
         config["assemblers_for_comparison"],
     )
 

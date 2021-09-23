@@ -303,15 +303,13 @@ use rule quast as quast_assembly_comparison with:
 
 rule plot_assemblies:
     input:
-        initial=lambda wildcards: get_samples_for_assembler_comparison(
-            wildcards, "results/{zip1}/assembly/{zip2}/{{exp}}/{zip2}.contigs.fasta"
+        initial=get_samples_for_assembler_comparison(
+            "results/{zip1}/assembly/{zip2}/{{exp}}/{zip2}.contigs.fasta"
         ),
-        final=lambda wildcards: get_samples_for_assembler_comparison(
-            wildcards,
+        final=get_samples_for_assembler_comparison(
             "results/{zip1}/assembly/{zip2}/{{exp}}/{zip2}.contigs.ordered.filtered.fasta",
         ),
-        quast=lambda wildcards: get_samples_for_assembler_comparison(
-            wildcards,
+        quast=get_samples_for_assembler_comparison(
             "results/{zip1}/assembly/{zip2}/{{exp}}/quast/transposed_report.tsv",
         ),
     output:
