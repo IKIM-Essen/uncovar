@@ -1,11 +1,12 @@
 import sys
+
+sys.stderr = open(snakemake.log[0], "w")
+
 import json
 import re
 
 import pandas as pd
 import pysam
-
-sys.stderr = open(snakemake.log[0], "w")
 
 KRAKEN_FILTER_KRITERIA = "D"
 
@@ -117,16 +118,16 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
         pangolin_call = "no strain called"
     else:
         # TODO parse scorpio output
-    #     match = re.match(
-    #         "((?P<varcount>\d+/\d+) .+ SNPs$)|(seq_len:\d+)$|($)",
-    #         pangolin_results.fillna("").loc[0, "note"].strip(),
-    #     )
-    #     assert (
-    #         match is not None
-    #     ), "unexpected pangolin note, please update above regular expression"
-    #     varcount = match.group("varcount") or ""
-    #     if varcount:
-    #         varcount = f" ({varcount})"
+        #     match = re.match(
+        #         "((?P<varcount>\d+/\d+) .+ SNPs$)|(seq_len:\d+)$|($)",
+        #         pangolin_results.fillna("").loc[0, "note"].strip(),
+        #     )
+        #     assert (
+        #         match is not None
+        #     ), "unexpected pangolin note, please update above regular expression"
+        #     varcount = match.group("varcount") or ""
+        #     if varcount:
+        #         varcount = f" ({varcount})"
         # pangolin_call = f"{lineage}{varcount}"
         pangolin_call = f"{lineage}"
     data.loc[sample, "Pangolin Strain"] = pangolin_call

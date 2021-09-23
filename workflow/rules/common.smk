@@ -132,6 +132,7 @@ def get_report_input(pattern):
 
 
 def get_report_bcfs(wildcards, input):
+    """Return paths to BCF files for reporting."""
     return expand(
         "{sample}={bcf}", zip, sample=get_report_samples(wildcards), bcf=input.bcfs
     )
@@ -289,6 +290,10 @@ def get_reference(suffix=""):
     return inner
 
 
+def get_bwa_index_prefix(index_paths):
+    return os.path.splitext(index_paths[0])[0]
+
+
 def get_reads(wildcards):
     # alignment against the human reference genome is done with trimmed reads,
     # since this alignment is used to generate the ordered, non human reads
@@ -352,41 +357,38 @@ def get_min_coverage(wildcards):
         return conf["min-depth-without-PCR-duplicates"]
 
 
-def get_contigs(wildcards):
-    if is_amplicon_data(wildcards.sample):
-        pattern = (
-            "results/{date}/assembly/metaspades/{sample}/{sample}.contigs.fasta",
-        )
+def return_assembler(sample):
+    if is_amplicon_data(sample):
+        return config["assemblers_used"]["amplicon"]
     else:
-        pattern = ("results/{date}/assembly/megahit/{sample}/{sample}.contigs.fasta",)
+        return config["assemblers_used"]["shotgun"]
+
+
+def get_contigs(wildcards):
+    pattern = (
+        "results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
+            assembler=return_assembler(wildcards.sample), **wildcards
+        ),
+    )
     return pattern
 
 
 def get_expanded_contigs(wildcards):
     sample = get_samples_for_date(wildcards.date)
-    sample_list = []
-    for s in sample:
-        if is_amplicon_data(s):
-            sample_list.append(
-                "results/{{date}}/assembly/metaspades/{sample}/{sample}.contigs.fasta".format(
-                    sample=s
-                )
-            ),
-        else:
-            sample_list.append(
-                "results/{{date}}/assembly/megahit/{sample}/{sample}.contigs.fasta".format(
-                    sample=s
-                )
-            ),
-    return sample_list
+    return [
+        "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
+            sample=s, assembler=return_assembler(s)
+        )
+        for s in sample
+    ]
 
 
 def get_read_counts(wildcards):
-    if is_amplicon_data(wildcards.sample):
-        pattern = ("results/{date}/assembly/metaspades/{sample}.log",)
-    else:
-        pattern = ("results/{date}/assembly/megahit/{sample}.log",)
-    return pattern
+    return (
+        "results/{date}/assembly/{assembler}/{sample}.log".format(
+            assembler=return_assembler(wildcards.sample), **wildcards
+        ),
+    )
 
 
 def get_bwa_index(wildcards):
@@ -422,7 +424,7 @@ def get_vembrane_expression(wildcards):
 def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
     """
     Zip by two wildcards and the expand the zip over another wildcard.
-    expand_string must contain {zip1}, {zip2} and {exp}.
+    expand_string must contain {zip1}, {zip2} and {{exp}}.
     """
 
     return sum(
@@ -583,13 +585,15 @@ def is_amplicon_data(sample):
 
 
 def get_samples_for_date_amplicon(date):
-    samples = get_samples_for_date(date)
-    amplicon_samples = []
+    return [s for s in get_samples_for_date(date) if is_amplicon_data(s)]
 
-    for sample in samples:
-        if is_amplicon_data(sample):
-            amplicon_samples.append(sample)
-    return amplicon_samples
+
+def get_list_of_amplicon_states(wildcards):
+    return [True if is_amplicon_data(s) else False for s in get_samples()]
+
+
+def get_list_of_amplicon_states_assembler(samples):
+    return [return_assembler(s) for s in samples]
 
 
 def get_varlociraptor_bias_flags(wildcards):
@@ -716,6 +720,65 @@ def get_assemblies_for_submission(wildcards, agg_type):
                 assembly_type_used.append(f"{sample},not-accepted")
         return assembly_type_used
 
+    return inner
+
+
+def get_output_dir(wildcards, output):
+    return os.path.dirname(output[0])
+
+
+def expand_samples_by_func(paths, func, **kwargs):
+    def inner(wildcards):
+        return expand(
+            paths,
+            sample=get_samples_for_date(wildcards.date),
+            **kwargs,
+        )
+
+    return inner
+
+
+def expand_samples_for_date(paths, **kwargs):
+    return expand_samples_by_func(paths, get_samples_for_date, **kwargs)
+
+
+def expand_samples_for_date_amplicon(paths, **kwargs):
+    return expand_samples_by_func(paths, get_samples_for_date_amplicon, **kwargs)
+
+
+def get_vep_args(wildcards, input):
+    return (
+        "--vcf_info_field ANN --hgvsg --hgvs --synonyms {synonyms} "
+        "--custom {input.problematic},,vcf,exact,0,"
+    ).format(input=input, synonyms=get_resource("synonyms.txt"))
+
+
+def expand_samples_by_func(paths, func, **kwargs):
+    def inner(wildcards):
+        return expand(
+            paths,
+            sample=get_samples_for_date(wildcards.date),
+            **kwargs,
+        )
+
+    return inner
+
+
+def get_samples_for_assembler_comparison(paths):
+    return zip_expand(
+        paths,
+        get_dates(),
+        get_samples(),
+        config["assemblers_for_comparison"],
+    )
+
+
+def get_megahit_preset(wildcards):
+    if wildcards.preset == "std":
+        return ""
+    else:
+        return f"--preset {wildcards.preset}"
+
 
 wildcard_constraints:
     sample="[^/.]+",
@@ -728,9 +791,9 @@ wildcard_constraints:
 
 
 def get_read_calls(wildcard):
-    with checkpoints.select_random_lineages.get(
-        date=BENCHMARK_DATE_WILDCARD
-    ).output[0].open() as f:
+    with checkpoints.select_random_lineages.get(date=BENCHMARK_DATE_WILDCARD).output[
+        0
+    ].open() as f:
         lineages = f.read().splitlines()
 
     return expand(

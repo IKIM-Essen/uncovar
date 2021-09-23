@@ -1,10 +1,10 @@
-# Snakemake workflow: SARS-Cov-2 strain and variant calling
+# UnCoVar: Snakemake workflow for SARS-Cov-2 strain and variant calling
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.bitbucket.io)
 [![GitHub actions status](https://github.com/koesterlab/snakemake-workflow-sars-cov2/workflows/Tests/badge.svg?branch=master)](https://github.com/koesterlab/snakemake-workflow-sars-cov2/actions?query=branch%3Amaster+workflow%3ATests)
 [![Docker Repository on Quay](https://quay.io/repository/uncovar/uncovar/status "Docker Repository on Quay")](https://quay.io/repository/uncovar/uncovar)
 
-This workflow calls the SARS-Cov-2 strain and variants for given NGS samples.
+![UnCoVar2](https://user-images.githubusercontent.com/77535027/133610563-d190e25c-504e-4953-92dd-f84a5b4a1191.png)
 
 ## Authors
 
@@ -46,7 +46,7 @@ Install Snakemake using [conda](https://conda.io/projects/conda/en/latest/user-g
 
     conda create -c bioconda -c conda-forge -n snakemake snakemake
 
-For installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
+For Snakemake installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
 ### Step 4: Execute workflow
 

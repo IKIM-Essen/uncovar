@@ -52,6 +52,7 @@ def extract_coverage_and_mask(
     ) as sequence_handle, open(coverage_path, "w") as coverage:
 
         # get sequence(s) in fasta file
+        # TODO replace FASTA parsing with pysam code
         sequence_dict = {}
         for line in sequence_handle:
             line = line.strip()
@@ -159,11 +160,13 @@ def extract_coverage_and_mask(
 
     # join list of characters to sequence
     sequence = "".join(sequence)
+    # TODO replace this mess with more clearer code
     header = list(sequence_dict.keys())[0].split(".")[0] + "\n"
 
     # write masked fasta file
     with open(masked_sequence_path, "w") as w:
-        w.write(header), w.write(sequence)
+        print(header, file=w)
+        print(sequence, file=w)
 
 
 if __name__ == "__main__":
@@ -172,6 +175,6 @@ if __name__ == "__main__":
         snakemake.input.sequence,
         snakemake.output.masked_sequence,
         snakemake.output.coverage,
-        snakemake.params.get("min_coverage", ""),
-        snakemake.params.get("min_allele", ""),
+        snakemake.params.min_coverage,
+        snakemake.params.min_allele,
     )
