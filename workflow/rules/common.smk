@@ -718,7 +718,7 @@ def expand_samples_by_func(paths, func, **kwargs):
     return inner
 
 
-def expand_samples_for_date_assembler(wildcards, paths):
+def get_samples_for_assembler_comparison(wildcards, paths):
     return zip_expand(
         paths,
         get_dates(wildcards),
