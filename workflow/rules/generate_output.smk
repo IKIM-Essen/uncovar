@@ -7,8 +7,8 @@ rule masking:
         masked_sequence="results/{date}/contigs/masked/{sample}.fasta",
         coverage="results/{date}/tables/coverage/{sample}.txt",
     params:
-        min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
-        min_allele=config["RKI-quality-criteria"]["min-allele"],
+        min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
+        min_allele=config["quality-criteria"]["min-allele"],
     log:
         "logs/{date}/masking/{sample}.logs",
     conda:
@@ -28,7 +28,7 @@ rule plot_coverage_main_sequence:
             subcategory="2. Read Coverage of Reference Genome",
         ),
     params:
-        min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
+        min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
     log:
         "logs/{date}/plot-coverage-main-seq.log",
     conda:
@@ -48,7 +48,7 @@ rule plot_coverage_final_sequence:
             subcategory="3. Read Coverage of Reconstructed Genome",
         ),
     params:
-        min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
+        min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
     log:
         "logs/{date}/plot-coverage-final-seq.log",
     conda:
@@ -64,8 +64,8 @@ checkpoint rki_filter:
     output:
         "results/{date}/rki-filter/{assembly_type}.txt",
     params:
-        min_identity=config["RKI-quality-criteria"]["min-identity"],
-        max_n=config["RKI-quality-criteria"]["max-n"],
+        min_identity=config["quality-criteria"]["min-identity"],
+        max_n=config["quality-criteria"]["max-n"],
     log:
         "logs/{date}/rki-filter/{assembly_type}.log",
     conda:

@@ -14,10 +14,10 @@ MIXTURE_PART_INDICATOR = "_MIX_"
 MIXTURE_PERCENTAGE_INDICATOR = "_PERC_"
 BENCHMARK_DATE_WILDCARD = "benchmarking"
 
-# configfile: "config/config.yaml"
-# validate(config, "../schemas/config.schema.yaml")
+configfile: "config/config.yaml"
+validate(config, "../schemas/config.schema.yaml")
 
-# validate(pep.sample_table, "../schemas/samples.schema.yaml")
+validate(pep.sample_table, "../schemas/samples.schema.yaml")
 
 
 def get_samples():
@@ -343,7 +343,7 @@ def get_reads_after_qc(wildcards, read="both"):
 
 
 def get_min_coverage(wildcards):
-    conf = config["RKI-quality-criteria"]
+    conf = config["quality-criteria"]
     if is_amplicon_data(wildcards.sample):
         return conf["min-depth-with-PCR-duplicates"]
     else:
