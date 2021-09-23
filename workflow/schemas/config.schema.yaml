@@ -68,7 +68,7 @@ properties:
           description: minimum length of final sequence in bp
   adapters:
       properties: 
-        illumina-shoutgun: 
+        illumina-shotgun: 
           type: string
           description: adapters used for shotgun sequencing
         illumina-amplicon: 
