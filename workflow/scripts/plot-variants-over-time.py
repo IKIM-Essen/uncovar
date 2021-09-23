@@ -100,4 +100,5 @@ def plot_variants_over_time(sm_output, sm_output_table):
 
     area_plot.save(sm_output)
 
+
 plot_variants_over_time(snakemake.output[0], snakemake.output[1])
