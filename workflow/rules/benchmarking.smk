@@ -198,7 +198,7 @@ rule plot_strain_call_error:
         report(
             "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
             category="Figure 4: Strain Call Error",
-            caption="../report/strain-call-error.rst",
+            caption="../report/publication-strain-call-error.rst",
         ),
         "results/benchmarking/plots/{caller}-strain-call-error-false-predictions.svg",
         "results/benchmarking/plots/{caller}-strain-call-error-content-false-predictions.svg",
@@ -317,9 +317,17 @@ rule plot_assemblies:
             "results/{zip1}/assembly/{zip2}/{{exp}}/quast/transposed_report.tsv",
         ),
     output:
-        "results/benchmarking/plots/assembler-comparison.svg",
+        report(
+            "results/benchmarking/plots/assembler-comparison.svg",
+            category="Figure 2: Assembler Comparison",
+            caption="../report/publication-assembler-comparison.rst",
+        ),
         "results/benchmarking/plots/assembler-comparison.csv",
-        "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
+        report(
+            "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
+            category="Supplementary Figure 2: Genome Fraction",
+            caption="../report/publication-genome-fraction.rst",
+        )
     log:
         "logs/benchmarking/all_assemblies_plot.log",
     params:
@@ -357,7 +365,7 @@ rule plot_dependency_of_pangolin_call:
         report(
             "results/benchmarking/plots/{caller}-call-dependency.svg",
             category="Figure 3: Lineage Call Dependency",
-            caption="../report/lineage-call-dependency.rst",
+            caption="../report/publication-lineage-call-dependency.rst",
         ),
     log:
         "logs/plot_dependency_of_{caller}_call.log",
@@ -395,3 +403,5 @@ rule get_publication_plots:
             ],
             caller=["kallisto", "pangolin"],
         ),
+        "results/benchmarking/plots/assembler-comparison.svg",
+        "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
