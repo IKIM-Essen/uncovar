@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.2.4](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.3...v0.2.4) (2021-09-23)
+
+
+### Bug Fixes
+
+* add log in to quay registry ([#271](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/271)) ([16080de](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/16080de6a68c551698be9be6dbabd441f55befb0))
+
 ### [0.2.3](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.2...v0.2.3) (2021-09-23)
 
 
