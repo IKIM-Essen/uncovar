@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.2.5](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.4...v0.2.5) (2021-09-23)
+
+
+### Bug Fixes
+
+* sha tag name ([#273](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/273)) ([b6d1265](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/b6d126582c630d64341ac18f18c982a584022f7e))
+
 ### [0.2.4](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.3...v0.2.4) (2021-09-23)
 
 
