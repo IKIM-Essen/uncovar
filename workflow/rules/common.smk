@@ -2,6 +2,7 @@ from pathlib import Path
 import pandas as pd
 import re
 import random
+from snakemake.utils import validate
 
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
@@ -13,19 +14,24 @@ MIXTURE_PART_INDICATOR = "_MIX_"
 MIXTURE_PERCENTAGE_INDICATOR = "_PERC_"
 BENCHMARK_DATE_WILDCARD = "benchmarking"
 
+# configfile: "config/config.yaml"
+# validate(config, "../schemas/config.schema.yaml")
+
+# validate(pep.sample_table, "../schemas/samples.schema.yaml")
+
 
 def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
 
 def get_dates():
-    return list(pep.sample_table["run_id"].values)
+    return list(pep.sample_table["date"].values)
 
 
 def get_samples_for_date(date, filtered=False):
     # select samples with given date
     df = pep.sample_table
-    df = df[df["run_id"] == date]
+    df = df[df["date"] == date]
 
     samples_of_run = list(df["sample_name"].values)
 
@@ -56,18 +62,18 @@ def get_samples_for_date(date, filtered=False):
 
 
 def get_all_run_dates():
-    sorted_list = list(pep.sample_table["run_id"].unique())
+    sorted_list = list(pep.sample_table["date"].unique())
     sorted_list.sort()
     return sorted_list
 
 
 def get_latest_run_date():
-    return pep.sample_table["run_id"].max()
+    return pep.sample_table["date"].max()
 
 
 def get_samples_before_date(wildcards):
     return list(
-        pep.sample_table[pep.sample_table["run_id"] <= wildcards.date][
+        pep.sample_table[pep.sample_table["date"] <= wildcards.date][
             "sample_name"
         ].values
     )
@@ -75,7 +81,7 @@ def get_samples_before_date(wildcards):
 
 def get_dates_before_date(wildcards):
     return list(
-        pep.sample_table[pep.sample_table["run_id"] <= wildcards.date]["run_id"].values
+        pep.sample_table[pep.sample_table["date"] <= wildcards.date]["date"].values
     )
 
 

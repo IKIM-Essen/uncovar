@@ -150,13 +150,13 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
         new_files_df = new_files_df.unstack(1)
         new_files_df.sort_index(inplace=True)
         new_files_df.columns = ["fq1", "fq2"]
-        new_files_df["run_id"] = today
+        new_files_df["date"] = today
         new_files_df["is_amplicon_data"] = 1
 
         new_sample_sheet = (
             pd.read_csv(SAMPLE_SHEET, index_col="sample_name")
             .append(new_files_df)
-            .sort_values(by=["run_id", "sample_name"])
+            .sort_values(by=["date", "sample_name"])
         )
         new_sample_sheet.index = new_sample_sheet.index.astype("str")
 
