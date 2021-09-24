@@ -172,15 +172,26 @@ def get_non_cov2_accessions():
     return accessions
 
 
+def load_strain_genomes(f):
+    strain_genomes = pd.read_csv(f, squeeze=True).to_list()
+    strain_genomes.append("resources/genomes/main.fasta")
+    return expand("{strains}", strains=strain_genomes)
+
+
 def get_strain_genomes(wildcards):
     # Case 1: take custom genomes from gisaid
     if not config["strain-calling"]["use-genbank"]:
-        with checkpoints.extract_strain_genomes_from_gisaid.get(
+        if config["strain-calling"]["use-gisaid"]:
+            # use genomes extracted from gisaid provision
+            with checkpoints.extract_strain_genomes_from_gisaid.get(
+                date=wildcards.date
+            ).output[0].open() as f:
+                return load_strain_genomes(f)
+        # use genomes from genbank
+        with checkpoints.get_lineages_for_non_gisaid_based_calling.get(
             date=wildcards.date
         ).output[0].open() as f:
-            strain_genomes = pd.read_csv(f, squeeze=True).to_list()
-            strain_genomes.append("resources/genomes/main.fasta")
-            return expand("{strains}", strains=strain_genomes)
+            return load_strain_genomes(f)
 
     # Case 2: for benchmarking (no strain-calling/genomes in config file)
     # take genomes from genbank
@@ -731,6 +742,13 @@ def get_megahit_preset(wildcards):
         return ""
     else:
         return f"--preset {wildcards.preset}"
+
+def get_lineage_by_accession(wildcards):
+    return list(config["strain-calling"]["lineage-references"].keys())[
+            list(config["strain-calling"]["lineage-references"].values()).index(
+                wildcards.accession
+            )
+        ]
 
 
 wildcard_constraints:

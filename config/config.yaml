@@ -66,12 +66,19 @@ variant-calling:
 strain-calling:
   # minimum reported strain fraction after quantification
   min-fraction: 0.02
-  # flag for using genomes from genbank.Only for benchmarking purposes.
-  use-genbank: False
   # paths to store genomes that are extracted from the full GISAID data
   extracted-strain-genomes: resources/genomes
-  # flag for using kallisto (for quantifying abundances of transcripts)
-  use-kallisto: True
+  # flag for using all lineage reference from GISAIDS Epicov database. API key must be exported as env var GISAID_API_TOKEN.
+  use-gisaid: True
+  # GenBank accession for downloading lineage-references
+  # only used, if use-gisaid flag is set to False
+  lineage-references:
+    B.1.1.7: MZ773928
+    B.1.351: MZ433432
+    P.1: MZ477759
+    B.1.617.2: OK091006
+  # flag for using genomes from genbank. Only for benchmarking purposes.
+  use-genbank: False
 
 
 rki-output:

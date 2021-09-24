@@ -129,3 +129,37 @@ rule get_gisaid_provision:
         "(curl -L -u $GISAID_API_TOKEN https://www.epicov.org/epi3/3p/resseq02/export/provision.json.xz |"
         " xz -d -T0 > {output})"
         " > {log} 2>&1"
+
+
+rule change_name_of_lineage_references:
+    input:
+        "resources/genomes/{accession}.fasta",
+    output:
+        "resources/genomes-renamed/{accession}.fasta",
+    # get corresponding lineage of accession
+    params:
+        lineage=get_lineage_by_accession,
+    log:
+        "logs/change_name_of_lineage_references/{accession}.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "sed -E 's/>(\S+)\\b/>{params.lineage}/;t' {input} > {output}"
+
+
+checkpoint get_lineages_for_non_gisaid_based_calling:
+    input:
+        expand(
+            "resources/genomes-renamed/{accession}.fasta",
+            accession=config["strain-calling"]["lineage-references"].values(),
+        ),
+    output:
+        "results/{date}/tables/predefinded-strain-genomes.txt",
+    params:
+        lineage_references=config["strain-calling"]["lineage-references"],
+    log:
+        "logs/{date}/get_lineages_for_non_gisaid_based_calling.log",
+    conda:
+        "../envs/pandas.yaml"
+    script:
+        "../scripts/get-strains-from-genbank.py"
