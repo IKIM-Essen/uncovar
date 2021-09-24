@@ -743,12 +743,13 @@ def get_megahit_preset(wildcards):
     else:
         return f"--preset {wildcards.preset}"
 
+
 def get_lineage_by_accession(wildcards):
     return list(config["strain-calling"]["lineage-references"].keys())[
-            list(config["strain-calling"]["lineage-references"].values()).index(
-                wildcards.accession
-            )
-        ]
+        list(config["strain-calling"]["lineage-references"].values()).index(
+            wildcards.accession
+        )
+    ]
 
 
 wildcard_constraints:
