@@ -66,8 +66,8 @@ variant-calling:
 strain-calling:
   # minimum reported strain fraction after quantification
   min-fraction: 0.02
-  # flag for using gisaid or genbank 
-  use-gisaid: True
+  # flag for using genomes from genbank.Only for benchmarking purposes.
+  use-genbank: False
   # paths to store genomes that are extracted from the full GISAID data
   extracted-strain-genomes: resources/genomes
   # flag for using kallisto (for quantifying abundances of transcripts)

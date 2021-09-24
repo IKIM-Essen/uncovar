@@ -174,8 +174,7 @@ def get_non_cov2_accessions():
 
 def get_strain_genomes(wildcards):
     # Case 1: take custom genomes from gisaid
-    custom_genomes = config["strain-calling"]["use-gisaid"]
-    if custom_genomes:
+    if not config["strain-calling"]["use-genbank"]:
         with checkpoints.extract_strain_genomes_from_gisaid.get(
             date=wildcards.date
         ).output[0].open() as f:
