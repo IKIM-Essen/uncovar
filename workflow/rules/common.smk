@@ -156,11 +156,11 @@ def get_merge_calls_input(suffix):
 def get_strain_accessions(wildcards):
     with checkpoints.get_strain_accessions.get().output[0].open() as f:
         # Get genomes for benchmarking from config
-        accessions = config.get("benchmark-genomes", [])
+        accessions = config["testing"].get("benchmark-genomes", [])
         if not accessions:
             accessions = pd.read_csv(f, squeeze=True)
         try:
-            accessions = accessions[: config["limit-strain-genomes"]]
+            accessions = accessions[: config["testing"]["limit-strain-genomes"]]
         except KeyError:
             # take all strain genomes
             pass
@@ -180,7 +180,7 @@ def load_strain_genomes(f):
 
 def get_strain_genomes(wildcards):
     # Case 1: take custom genomes from gisaid
-    if not config["strain-calling"]["use-genbank"]:
+    if not config["testing"].get("use-genbank", False):
         if config["strain-calling"]["use-gisaid"]:
             # use genomes extracted from gisaid provision
             with checkpoints.extract_strain_genomes_from_gisaid.get(

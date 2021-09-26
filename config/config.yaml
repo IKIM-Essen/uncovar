@@ -77,8 +77,7 @@ strain-calling:
     B.1.351: MZ433432
     P.1: MZ477759
     B.1.617.2: OK091006
-  # flag for using genomes from genbank. Only for benchmarking purposes.
-  use-genbank: True
+    
 
 
 rki-output:

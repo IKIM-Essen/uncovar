@@ -221,7 +221,7 @@ rule snakemake_reports:
     params:
         for_testing=(
             "--snakefile ../workflow/Snakefile"
-            if config.get("benchmark-genomes", [])
+            if config["testing"].get("benchmark-genomes", [])
             else ""
         ),
     conda:
