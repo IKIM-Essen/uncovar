@@ -10,7 +10,7 @@ testing:
     - MT470120
     - MT451810
       # flag for using genomes from genbank. Only for benchmarking purposes.
-  use-genbank: False
+  use-genbank: True
 
 
 
