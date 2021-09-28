@@ -66,3 +66,42 @@ Non-local execution can be done via Snakemake's extensive cluster and cloud supp
 After successful execution, you can create a self-contained interactive HTML report with all results via:
 
     snakemake --report report.zip
+
+## Tools, Frameworks and Packages used in UnCoVar
+
+This project wouldn't be possible without several open source libraries:
+
+| Tool           | Link                                   |
+|----------------|----------------------------------------|
+| ABySS          | doi.org/10.1101/gr.214346.116          |
+| Altair         | doi.org/10.21105/joss.01057            |
+| BAMClipper     | doi.org/10.1038/s41598-017-01703-6     |
+| BCFtools       | doi.org/10.1093/gigascience/giab008    |
+| BEDTools       | doi.org/10.1093/bioinformatics/btq033  |
+| Biopython      | doi.org/10.1093/bioinformatics/btp163  |
+| delly          | doi.org/10.1093/bioinformatics/bts378  |
+| entrez-direct  | www.ncbi.nlm.nih.gov/books/NBK179288   |
+| fgbio          | github.com/fulcrum-genomics/fgbio      |
+| intervaltree   | github.com/chaimleib/intervaltree      |
+| Jupyter        | jupyter.org                            |
+| Kraken2        | doi.org/10.1186/s13059-019-1891-0      |
+| Krona          | doi.org/10.1186/1471-2105-12-385       |
+| mason          | publications.imp.fu-berlin.de/962      |
+| MEGAHIT        | doi.org/10.1093/bioinformatics/btv033  |
+| Minimap2       | doi.org/10.1093/bioinformatics/bty191  |
+| pandas         | pandas.pydata.org                      |
+| PySAM          | doi.org/10.11578/dc.20190903.1         |
+| QUAST          | doi.org/10.1093/bioinformatics/btt086  |
+| RaGOO          | doi.org/10.1186/s13059-019-1829-6      |
+| ruamel.yaml    | sourceforge.net/projects/ruamel-yaml   |
+| Rust-Bio-Tools | github.com/rust-bio/rust-bio-tools     |
+| SAMtools       | doi.org/10.1093/bioinformatics/btp352  |
+| Snakemake      | doi.org/10.12688/f1000research.29032.1 |
+| sourmash       | doi.org/10.21105/joss.00027            |
+| SPAdes         | doi.org/10.1089/cmb.2012.0021          |
+| SVN            | doi.org/10.1142/s0219720005001028      |
+| Tabix          | doi.org/10.1093/bioinformatics/btq671  |
+| Trinity        | doi.org/10.1038/nprot.2013.084         |
+| Varlociraptor  | doi.org/10.1186/s13059-020-01993-6     |
+| Vega-Lite      | doi.org/10.1109/TVCG.2016.2599030      |
+| Velvet         | doi.org/10.1101/gr.074492.107          |
