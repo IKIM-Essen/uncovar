@@ -7,20 +7,20 @@ import os
 
 import pandas as pd
 
-# define location of sample sheet and workflow config
-SAMPLE_SHEET = "config/pep/samples.csv"
+# define location of sample sheet and workflow configx
+SAMPLE_SHEET = snakemake.input[0]  # "config/pep/samples.csv"
 CONFIG_YAML = "config/config.yaml"
 
 
 def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
     """
-    This function 
+    This function
         - copies files from the incoming data directory to the snakemake data directory and
         - moves files from the incoming data directory to the archive directory and
         - updates the sample sheet with the files copied to the snakemake data directory.
 
     The paths of these directory must be defined in the config yaml of the workflow as follows:
-    
+
         data-handling:
             # path of incoming data
             incoming: [YOUR PATH]]
@@ -66,7 +66,7 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
         print("Checking directories")
 
     # check if directory exist
-    for given_path in [IN_PATH, ARCHIVE_PATH, SAMPLE_SHEET, DATA_PATH]:
+    for given_path in [IN_PATH, ARCHIVE_PATH, DATA_PATH]:
         if not path.exists(given_path):
             raise Exception("Data directory (%s) not found" % given_path)
 
@@ -74,10 +74,12 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
     # get files that are in incoming and do not contain 'ndetermined' and '.fastq.gz' in their name and are not under a specific filesize
     incoming_files = []
     for f in listdir(IN_PATH):
-        if path.isfile(path.join(IN_PATH, f))\
-        and "ndetermined" not in f\
-        and ".fastq.gz" in f\
-        and os.stat(IN_PATH + f).st_size > 100:
+        if (
+            path.isfile(path.join(IN_PATH, f))
+            and "ndetermined" not in f
+            and ".fastq.gz" in f
+            and os.stat(IN_PATH + f).st_size > 100
+        ):
             incoming_files.append(f)
         else:
             print(f, "not used")
@@ -85,7 +87,7 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
     # add date subfolder in data path
     DATA_PATH += today
     if not path.isdir(DATA_PATH):
-            mkdir(DATA_PATH)
+        mkdir(DATA_PATH)
 
     # get files that are in outgoing directory
     data_files = [f for f in listdir(DATA_PATH) if path.isfile(path.join(DATA_PATH, f))]
@@ -116,21 +118,20 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
 
         if verbose:
             print("Updating sample sheet")
-
         # create dataframe
         new_files_df = pd.DataFrame(files_to_copy, columns=["file"])
-        
+
         # get only files, that contain .fastq.gz
         new_files_df = new_files_df[new_files_df["file"].str.contains(".fastq.gz")]
         new_files_df = new_files_df[~new_files_df["file"].str.contains("Undetermined")]
-        
+
         # get id of sample, thus split at first '_'
         new_files_df["sample_name"] = new_files_df["file"].apply(
             lambda x: (x.split("_", 1)[0])
         )
 
         # add path of file
-        new_files_df["path"] = DATA_PATH + '/' + new_files_df["file"]
+        new_files_df["path"] = DATA_PATH + "/" + new_files_df["file"]
 
         # identify R1 or R2
         new_files_df["read"] = new_files_df["file"].apply(
@@ -157,14 +158,23 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
             .append(new_files_df)
             .sort_values(by=["run_id", "sample_name"])
         )
+        new_sample_sheet.index = new_sample_sheet.index.astype("str")
+
+        # remove last line of sample.csv
+        new_sample_sheet.drop("NAME", inplace=True, errors="ignore")
+
         # check for duplicates
-        new_sample_sheet.index = new_sample_sheet.index.where(~new_sample_sheet.index.duplicated(), new_sample_sheet.index + '_2')
+        # TODO: Generalize for more than two samples
+        new_sample_sheet.index = new_sample_sheet.index.where(
+            ~new_sample_sheet.index.duplicated(),
+            new_sample_sheet.index.astype("str") + "_2",
+        )
         # save to csv
         if verbose:
             print("\t{} samples added".format(len(new_files_df)))
 
         if not dry_run:
-            new_sample_sheet.to_csv("config/pep/samples.csv")
+            new_sample_sheet.to_csv(snakemake.input[0])
 
         ##################################
         ## copying and moving the files ##
@@ -192,6 +202,7 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
     ]
     if not all_incoming_files:
         print("No files to move")
+
     else:
         if verbose:
             print("Moving files to " + ARCHIVE_PATH + today)
@@ -229,8 +240,4 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
                 new_sample_sheet.to_csv(ARCHIVE_PATH + today + "/samples.csv")
 
 
-if __name__ == "__main__":
-    try:
-        update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML)
-    except Exception as exc:
-        print(exc)
+update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML)

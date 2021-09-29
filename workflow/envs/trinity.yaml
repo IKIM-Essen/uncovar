@@ -2,6 +2,4 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
-  - pangolin =3.1.11
-  - snakemake <= 6.8.0
-  
+  - trinity =2.12.0 

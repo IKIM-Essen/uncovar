@@ -1,4 +1,9 @@
+# TODO check whether this is still in use
+
+import sys
+
 sys.stderr = open(snakemake.log[0], "w")
+
 MIXTURE_PREFIX = snakemake.params.get("prefix", "")
 MIXTURE_PART_INDICATOR = snakemake.params.get("separator", "")
 MIXTURE_PERCENTAGE_INDICATOR = snakemake.params.get("percentage", "")

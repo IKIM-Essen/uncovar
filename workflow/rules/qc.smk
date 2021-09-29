@@ -6,49 +6,27 @@ rule fastqc:
         zip="results/{date}/qc/fastqc/{sample}_fastqc.zip",
     log:
         "logs/{date}/fastqc/{sample}.log",
-    threads: 1
     wrapper:
         "0.69.0/bio/fastqc"
 
 
 rule multiqc:
     input:
-        lambda wildcards: expand(
-            "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
-            sample=get_samples_for_date(wildcards.date),
+        expand_samples_for_date(
+            [
+                "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
+                "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+                "results/{{date}}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
+                "results/{{date}}/trimmed/{sample}.fastp.json",
+                "results/{{date}}/quast/unpolished/{sample}/report.tsv",
+                "results/{{date}}/quast/polished/{sample}/report.tsv",
+                "results/{{date}}/qc/samtools_flagstat/{sample}.bam.flagstat",
+                "results/{{date}}/qc/dedup/ref~main/{sample}.metrics.txt",
+            ]
         ),
-        lambda wildcards: expand(
-            "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/trimmed/{sample}.fastp.json",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/quast/unpolished/{sample}/report.tsv",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/quast/polished/{sample}/report.tsv",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/qc/samtools_flagstat/{sample}.bam.flagstat",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/qc/dedup/ref~main/{sample}.metrics.txt",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "logs/{{date}}/kallisto_quant/{sample}.log",
-            sample=get_samples_for_date(wildcards.date),
-        ) if config["strain-calling"]["use-kallisto"] else "",
+        expand_samples_for_date("logs/{{date}}/kallisto_quant/{sample}.log")
+        if config["strain-calling"]["use-kallisto"]
+        else [],
     output:
         "results/{date}/qc/multiqc.html",
     params:
@@ -62,21 +40,13 @@ rule multiqc:
 
 rule multiqc_lab:
     input:
-        lambda wildcards: expand(
-            "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/trimmed/{sample}.fastp.json",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/quast/unpolished/{sample}/report.tsv",
-            sample=get_samples_for_date(wildcards.date),
+        expand_samples_for_date(
+            [
+                "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
+                "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+                "results/{{date}}/trimmed/{sample}.fastp.json",
+                "results/{{date}}/quast/unpolished/{sample}/report.tsv",
+            ]
         ),
     output:
         report(
@@ -118,17 +88,16 @@ rule samtools_depth:
     params:
         ref=config["adapters"]["amplicon-reference"],
     shell:
-        "samtools depth -aH -o {output} {input} && "
-        "sed -i 's/{params.ref}.3/{wildcards.sample}/' {output}"
+        "(samtools depth -aH -o {output} {input} && "
+        " sed -i 's/{params.ref}.3/{wildcards.sample}/' {output})"
+        " 2> {log}"
 
 
 # analysis of species diversity present BEFORE removing human contamination
 rule species_diversity_before:
     input:
         db="resources/minikraken-8GB",
-        reads=expand(
-            "results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]
-        ),
+        reads=expand("results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
     output:
         classified_reads=temp(
             expand(
@@ -142,9 +111,7 @@ rule species_diversity_before:
                 read=[1, 2],
             )
         ),
-        kraken_output=temp(
-            "results/{date}/species-diversity/{sample}/{sample}.kraken"
-        ),
+        kraken_output=temp("results/{date}/species-diversity/{sample}/{sample}.kraken"),
         report="results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
     log:
         "logs/{date}/kraken/{sample}.log",
@@ -224,10 +191,9 @@ rule order_nonhuman_reads:
         "../envs/samtools.yaml"
     threads: 8
     shell:
-        """
-        samtools sort  -@ {threads} -n {input} -o {output.bam_sorted} > {log} 2>&1
-        samtools fastq -@ {threads} {output.bam_sorted} -1 {output.fq1} -2 {output.fq2} >> {log} 2>&1
-        """
+        "(samtools sort  -@ {threads} -n {input} -o {output.bam_sorted}; "
+        " samtools fastq -@ {threads} {output.bam_sorted} -1 {output.fq1} -2 {output.fq2})"
+        " > {log} 2>&1"
 
 
 # analysis of species diversity present AFTER removing human contamination
@@ -244,9 +210,9 @@ rule species_diversity_after:
         report="results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
     log:
         "logs/{date}/kraken/{sample}_nonhuman.log",
-    threads: 8
     conda:
         "../envs/kraken.yaml"
+    threads: 8
     shell:
         "(kraken2 --db {input.db} --threads {threads} --report {output.report} --gzip-compressed "
         "--paired {input.reads} > {output.kraken_output}) 2> {log}"
@@ -265,6 +231,3 @@ rule create_krona_chart_after:
         "../envs/kraken.yaml"
     shell:
         "ktImportTaxonomy -m 3 -t 5 -tax {input.taxonomy_database} -o {output} {input} 2> {log}"
-
-
-# TODO Alexander and Thomas: add rules to detect contamination and perform QC

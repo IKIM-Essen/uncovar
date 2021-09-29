@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Formatting
-        uses: github/super-linter@v4.1.0
+        uses: github/super-linter@v4.7.3
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
@@ -58,7 +58,7 @@ jobs:
       - Linting
     strategy:
       matrix:
-        rule: [all, all -npr, benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2]
+        rule: [all, all -npr, benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2, compare_assemblers]
     steps:
       - uses: actions/checkout@v2
 
@@ -144,7 +144,7 @@ jobs:
       #       ${{ runner.os }}-sars-cov-benchmark-dependencies-
 
       - name: Download test data
-        if: steps.test-data.outputs.cache-hit != true && startsWith(matrix.rule, 'all')
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') || matrix.rule == 'compare_assemblers')
         run: |
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz

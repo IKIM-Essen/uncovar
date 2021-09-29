@@ -16,7 +16,7 @@ report: "report/workflow.rst"
 container: "docker://condaforge/mambaforge"
 
 
-containerized: "quay.io/uncovar/uncovar#0.1.1"
+containerized: "quay.io/uncovar/uncovar#0.2.5"
 
 
 if config["strain-calling"]["use-kallisto"]:
@@ -41,6 +41,7 @@ include: "rules/variant_filtration.smk"
 include: "rules/variant_report.smk"
 include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
+include: "rules/preprocessing.smk"
 
 
 rule save_latest_run:
@@ -88,7 +89,9 @@ checkpoint all:
             "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
             date=get_all_run_dates(),
             mode=["major", "any"],
-        ) if config["strain-calling"]["use-kallisto"] else "",
+        )
+        if config["strain-calling"]["use-kallisto"]
+        else "",
         expand(
             "results/{date}/contigs/polished/{sample}.fasta",
             zip,
@@ -105,9 +108,9 @@ checkpoint all:
             "results/{zip1}/plots/strain-calls/{zip2}.strains.{{exp}}.svg",
             zip_wildcard_1=get_dates(),
             zip_wildcard_2=get_samples(),
-            expand_wildcard=["kallisto", "pangolin"]
+            expand_wildcard=["kallisto"]
             if config["strain-calling"]["use-kallisto"]
-            else ["pangolin"],
+            else [""],
         ),
         zip_expand(
             "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.bcf",
@@ -138,6 +141,11 @@ checkpoint all:
         ),
 
 
+rule compare_assemblers:
+    input:
+        "results/benchmarking/plots/assembler-comparison.svg",
+
+
 rule benchmark_strain_calling:
     input:
         "results/benchmarking/strain-calling.csv",
@@ -163,6 +171,6 @@ rule benchmark_mixtures:
             caller=["kallisto", "pangolin"],
         ),
         "results/benchmarking/plots/pangolin-call-dependency.svg",
-        "results/benchmarking/tables/pangolin_statistics.csv" if config["mixtures"][
-            "no_strains"
-        ] == 1 else [],
+        "results/benchmarking/tables/pangolin_statistics.csv"
+        if config["mixtures"]["no_strains"] == 1
+        else [],

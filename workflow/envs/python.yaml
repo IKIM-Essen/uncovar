@@ -12,3 +12,4 @@ dependencies:
   - pysam =0.16.0
   - bcftools =1.10
   - intervaltree =3.0.2
+  - ruamel.yaml =0.17.16
