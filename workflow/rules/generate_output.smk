@@ -1,3 +1,8 @@
+'# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.'
+'# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)'
+'# This file may not be copied, modified, or distributed'
+'# except according to those terms.
+'
 rule masking:
     input:
         bamfile="results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
