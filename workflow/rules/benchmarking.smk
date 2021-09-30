@@ -3,6 +3,7 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
+
 rule simulate_strain_reads:
     input:
         get_genome_fasta,

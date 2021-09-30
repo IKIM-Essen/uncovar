@@ -3,6 +3,7 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
+
 rule count_assembly_reads:
     input:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),

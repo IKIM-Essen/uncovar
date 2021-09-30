@@ -3,6 +3,7 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
+
 rule freebayes:
     input:
         ref=get_reference(),

@@ -3,6 +3,7 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
+
 checkpoint get_strain_accessions:
     output:
         "resources/strain-accessions.txt",

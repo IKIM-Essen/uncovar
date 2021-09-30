@@ -3,6 +3,7 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
+
 checkpoint extract_strain_genomes_from_gisaid:
     input:
         "resources/gisaid/provision.json",
