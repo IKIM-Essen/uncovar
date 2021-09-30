@@ -3,3 +3,8 @@ channels:
   - conda-forge
 dependencies:
   - pangolin =3.1.11
+<<<<<<< HEAD
+=======
+  - snakemake <= 6.8.0
+  
+>>>>>>> parent of 409cf14... Update pangolin to 3.1.14
