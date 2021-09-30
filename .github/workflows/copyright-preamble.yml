@@ -20,7 +20,7 @@ jobs:
             # This file may not be copied, modified, or distributed
             # except according to those terms.\n
           FileType: '.py, .smk, Snakefile'
-          Path: 'workflow/'
+          Path: 'workflow/rules/, workflow/scripts/'
           IgnorePath: ''
 
       # Creates pull request with all changes in file
