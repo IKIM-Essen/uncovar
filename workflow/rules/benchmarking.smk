@@ -1,3 +1,9 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+
 rule simulate_strain_reads:
     input:
         get_genome_fasta,
@@ -197,7 +203,11 @@ rule plot_strain_call_error:
     input:
         "results/benchmarking/tables/{caller}-strain-call-error.csv",
     output:
-        "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
+        report(
+            "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
+            category="Figure 4: Strain Call Error",
+            caption="../report/publication-strain-call-error.rst",
+        ),
         "results/benchmarking/plots/{caller}-strain-call-error-false-predictions.svg",
         "results/benchmarking/plots/{caller}-strain-call-error-content-false-predictions.svg",
     log:
@@ -315,9 +325,17 @@ rule plot_assemblies:
             "results/{zip1}/assembly/{zip2}/{{exp}}/quast/transposed_report.tsv",
         ),
     output:
-        "results/benchmarking/plots/assembler-comparison.svg",
+        report(
+            "results/benchmarking/plots/assembler-comparison.svg",
+            category="Figure 2: Assembler Comparison",
+            caption="../report/publication-assembler-comparison.rst",
+        ),
         "results/benchmarking/plots/assembler-comparison.csv",
-        "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
+        report(
+            "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
+            category="Supplementary Figure 2: Genome Fraction",
+            caption="../report/publication-genome-fraction.rst",
+        ),
     log:
         "logs/benchmarking/all_assemblies_plot.log",
     params:
@@ -352,7 +370,11 @@ rule plot_dependency_of_pangolin_call:
     input:
         get_mixture_results,
     output:
-        "results/benchmarking/plots/{caller}-call-dependency.svg",
+        report(
+            "results/benchmarking/plots/{caller}-call-dependency.svg",
+            category="Figure 3: Lineage Call Dependency",
+            caption="../report/publication-lineage-call-dependency.rst",
+        ),
     log:
         "logs/plot_dependency_of_{caller}_call.log",
     params:
@@ -461,3 +483,16 @@ rule plot_read_call:
         "../envs/python.yaml"
     notebook:
         "../notebooks/plot-read-call.py.ipynb"
+
+
+rule get_publication_plots:
+    input:
+        expand(
+            [
+                "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
+                "results/benchmarking/plots/{caller}-call-dependency.svg",
+            ],
+            caller=["kallisto", "pangolin"],
+        ),
+        "results/benchmarking/plots/assembler-comparison.svg",
+        "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
