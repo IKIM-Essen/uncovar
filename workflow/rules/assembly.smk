@@ -64,9 +64,22 @@ rule assembly_spades:
         " > {log} 2>&1"
 
 
+rule check_contigs:
+    input:
+        get_contigs,
+    output:
+        "results/{date}/contigs/checked/{sample}.fasta",
+    log:
+        "logs/{date}/check_contigs/{sample}.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/check_contigs.py"
+
+
 rule order_contigs:
     input:
-        contigs=get_contigs,
+        contigs="results/{date}/contigs/checked/{sample}.fasta",
         reference="resources/genomes/main.fasta",
     output:
         temp("results/{date}/contigs/ordered-unfiltered/{sample}.fasta"),
