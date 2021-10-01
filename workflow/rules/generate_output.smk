@@ -95,8 +95,8 @@ rule rki_report:
             category="6. RKI Submission",
             caption="../report/rki-submission-csv.rst",
         ),
-    params:
-        min_length=config["rki-output"]["minimum-length"],
+    conda:
+        "../envs/pysam.yaml",
     log:
         "logs/{date}/rki-output/{date}.log",
     script:
