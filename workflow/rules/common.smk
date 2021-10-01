@@ -213,8 +213,6 @@ def get_strain_genomes(wildcards):
 
     # Case 2: for benchmarking (no strain-calling/genomes in config file)
     # take genomes from genbank
-    print("~~~")
-    print("unsing genbank")
     accessions = get_strain_accessions(wildcards)
     return expand("resources/genomes/{accession}.fasta", accession=accessions)
 
