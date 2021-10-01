@@ -1,3 +1,8 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
 import sys
 
 sys.stderr = open(snakemake.log[0], "w")
@@ -29,7 +34,6 @@ def aggregate_assembly_comparisons(
     pd.DataFrame(data).to_csv(output, sep="\t", index=False)
 
 
-if __name__ == "__main__":
-    aggregate_assembly_comparisons(
-        snakemake.input, snakemake.params.samples, snakemake.output[0]
-    )
+aggregate_assembly_comparisons(
+    snakemake.input, snakemake.params.samples, snakemake.output[0]
+)

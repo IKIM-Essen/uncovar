@@ -1,3 +1,10 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+import sys
+
 sys.stderr = open(snakemake.log[0], "w")
 
 import pandas as pd
@@ -28,11 +35,10 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
         pangolin_calls["lineage_count"] < 10, "lineage"
     ] = "other (< 10 occ.)"
 
-    source = pangolin_calls.copy()
-    source.rename(columns={"lineage": "Lineage", "date": "Date"}, inplace=True)
+    pangolin_calls.rename(columns={"lineage": "Lineage", "date": "Date"}, inplace=True)
 
     area_plot = (
-        alt.Chart(source)
+        alt.Chart(pangolin_calls)
         .mark_bar(opacity=0.8)
         .encode(
             x=alt.X("Date:O"),
@@ -54,8 +60,6 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
     area_plot.save(sm_output)
 
 
-if __name__ == "__main__":
-    dates = snakemake.params.get("dates", "")
-    plot_lineages_over_time(
-        snakemake.input, snakemake.output[0], dates, snakemake.output[1]
-    )
+plot_lineages_over_time(
+    snakemake.input, snakemake.output[0], snakemake.params.dates, snakemake.output[1]
+)

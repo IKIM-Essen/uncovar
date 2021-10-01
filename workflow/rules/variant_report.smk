@@ -1,3 +1,9 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+
 rule vcf_report:
     input:
         ref="resources/genomes/main.fasta",
@@ -55,10 +61,7 @@ rule ucsc_vcf:
 
 rule aggregate_ucsc_vcfs:
     input:
-        lambda wildcards: expand(
-            "results/{{date}}/ucsc-vcfs/{sample}.{{filter}}.vcf",
-            sample=get_samples_for_date(wildcards.date),
-        ),
+        expand_samples_for_date("results/{{date}}/ucsc-vcfs/{sample}.{{filter}}.vcf"),
     output:
         report(
             "results/{date}/ucsc-vcfs/all.{date}.{filter}.vcf",

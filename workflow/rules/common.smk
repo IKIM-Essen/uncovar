@@ -1,3 +1,8 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
 from pathlib import Path
 import pandas as pd
 import re
@@ -12,6 +17,10 @@ MIXTURE_PREFIX = "mixture-sample-"
 MIXTURE_PART_INDICATOR = "_MIX_"
 MIXTURE_PERCENTAGE_INDICATOR = "_PERC_"
 BENCHMARK_DATE_WILDCARD = "benchmarking"
+READ_TEST_PREFIX = "read-sample-"
+READ_NUMBER_INDICATOR = "_READ_NUMBER_"
+READ_LENGTH_INDICATOR = "_READ_LENGTH_"
+READ_STATE_INDICATOR = "_STATE_"
 
 
 def get_samples():
@@ -88,6 +97,7 @@ def get_fastqs(wildcards):
             accession=accession,
             read=[1, 2],
         )
+    # non-sars-cov2-genome test
     if wildcards.sample.startswith(NON_COV2_TEST_PREFIX):
         # this is for testing non-sars-cov2-genomes
         accession = wildcards.sample[len(NON_COV2_TEST_PREFIX) :]
@@ -96,11 +106,19 @@ def get_fastqs(wildcards):
             accession=accession,
             read=[1, 2],
         )
+    # mixture
     if wildcards.sample.startswith(MIXTURE_PREFIX):
         mixture = wildcards.sample[len(MIXTURE_PREFIX) :]
         return expand(
             "resources/mixtures/{mixtures}/reads.{read}.fastq.gz",
             mixtures=mixture,
+            read=[1, 2],
+        )
+    # read benchmark
+    if wildcards.sample.startswith(READ_TEST_PREFIX):
+        return expand(
+            "resources/benchmarking/{accession}/reads.{read}.fastq.gz",
+            accession=wildcards.sample,
             read=[1, 2],
         )
     # default case, look up FASTQs in the sample sheet
@@ -119,6 +137,7 @@ def get_report_input(pattern):
 
 
 def get_report_bcfs(wildcards, input):
+    """Return paths to BCF files for reporting."""
     return expand(
         "{sample}={bcf}", zip, sample=get_report_samples(wildcards), bcf=input.bcfs
     )
@@ -155,11 +174,11 @@ def get_merge_calls_input(suffix):
 def get_strain_accessions(wildcards):
     with checkpoints.get_strain_accessions.get().output[0].open() as f:
         # Get genomes for benchmarking from config
-        accessions = config.get("benchmark-genomes", [])
+        accessions = config.get("testing", {}).get("benchmark-genomes", [])
         if not accessions:
             accessions = pd.read_csv(f, squeeze=True)
         try:
-            accessions = accessions[: config["limit-strain-genomes"]]
+            accessions = accessions[: config["testing"]["limit-strain-genomes"]]
         except KeyError:
             # take all strain genomes
             pass
@@ -171,16 +190,26 @@ def get_non_cov2_accessions():
     return accessions
 
 
+def load_strain_genomes(f):
+    strain_genomes = pd.read_csv(f, squeeze=True).to_list()
+    strain_genomes.append("resources/genomes/main.fasta")
+    return expand("{strains}", strains=strain_genomes)
+
+
 def get_strain_genomes(wildcards):
     # Case 1: take custom genomes from gisaid
-    custom_genomes = config["strain-calling"]["use-gisaid"]
-    if custom_genomes:
-        with checkpoints.extract_strain_genomes_from_gisaid.get(
+    if not config.get("testing", {}).get("use-genbank", False):
+        if config["strain-calling"]["use-gisaid"]:
+            # use genomes extracted from gisaid provision
+            with checkpoints.extract_strain_genomes_from_gisaid.get(
+                date=wildcards.date
+            ).output[0].open() as f:
+                return load_strain_genomes(f)
+        # use genomes from genbank
+        with checkpoints.get_lineages_for_non_gisaid_based_calling.get(
             date=wildcards.date
         ).output[0].open() as f:
-            strain_genomes = pd.read_csv(f, squeeze=True).to_list()
-            strain_genomes.append("resources/genomes/main.fasta")
-            return expand("{strains}", strains=strain_genomes)
+            return load_strain_genomes(f)
 
     # Case 2: for benchmarking (no strain-calling/genomes in config file)
     # take genomes from genbank
@@ -276,6 +305,10 @@ def get_reference(suffix=""):
     return inner
 
 
+def get_bwa_index_prefix(index_paths):
+    return os.path.splitext(index_paths[0])[0]
+
+
 def get_reads(wildcards):
     # alignment against the human reference genome is done with trimmed reads,
     # since this alignment is used to generate the ordered, non human reads
@@ -339,41 +372,38 @@ def get_min_coverage(wildcards):
         return conf["min-depth-without-PCR-duplicates"]
 
 
-def get_contigs(wildcards):
-    if is_amplicon_data(wildcards.sample):
-        pattern = (
-            "results/{date}/assembly/metaspades/{sample}/{sample}.contigs.fasta",
-        )
+def return_assembler(sample):
+    if is_amplicon_data(sample):
+        return config["assemblers_used"]["amplicon"]
     else:
-        pattern = ("results/{date}/assembly/megahit/{sample}/{sample}.contigs.fasta",)
+        return config["assemblers_used"]["shotgun"]
+
+
+def get_contigs(wildcards):
+    pattern = (
+        "results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
+            assembler=return_assembler(wildcards.sample), **wildcards
+        ),
+    )
     return pattern
 
 
 def get_expanded_contigs(wildcards):
     sample = get_samples_for_date(wildcards.date)
-    sample_list = []
-    for s in sample:
-        if is_amplicon_data(s):
-            sample_list.append(
-                "results/{{date}}/assembly/metaspades/{sample}/{sample}.contigs.fasta".format(
-                    sample=s
-                )
-            ),
-        else:
-            sample_list.append(
-                "results/{{date}}/assembly/megahit/{sample}/{sample}.contigs.fasta".format(
-                    sample=s
-                )
-            ),
-    return sample_list
+    return [
+        "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
+            sample=s, assembler=return_assembler(s)
+        )
+        for s in sample
+    ]
 
 
 def get_read_counts(wildcards):
-    if is_amplicon_data(wildcards.sample):
-        pattern = ("results/{date}/assembly/metaspades/{sample}.log",)
-    else:
-        pattern = ("results/{date}/assembly/megahit/{sample}.log",)
-    return pattern
+    return (
+        "results/{date}/assembly/{assembler}/{sample}.log".format(
+            assembler=return_assembler(wildcards.sample), **wildcards
+        ),
+    )
 
 
 def get_bwa_index(wildcards):
@@ -409,7 +439,7 @@ def get_vembrane_expression(wildcards):
 def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
     """
     Zip by two wildcards and the expand the zip over another wildcard.
-    expand_string must contain {zip1}, {zip2} and {exp}.
+    expand_string must contain {zip1}, {zip2} and {{exp}}.
     """
 
     return sum(
@@ -509,6 +539,17 @@ def get_genome_fasta(wildcards):
             acc, _ = wildcards.accession.split(MIXTURE_PERCENTAGE_INDICATOR)
             acc = acc.replace("-", ".").replace(MIXTURE_PART_INDICATOR, "")
             return "resources/genomes/{accession}.fasta".format(accession=acc)
+    # read test sample
+    if (
+        READ_NUMBER_INDICATOR in wildcards.accession
+        and READ_LENGTH_INDICATOR in wildcards.accession
+    ):
+        with checkpoints.extract_strain_genomes_from_gisaid.get(
+            date=BENCHMARK_DATE_WILDCARD
+        ).output[0].open() as f:
+            acc, _ = wildcards.accession.split(READ_NUMBER_INDICATOR)
+            acc = acc.replace(READ_TEST_PREFIX, "").replace("-", ".")
+            return "resources/genomes/{accession}.fasta".format(accession=acc)
     # normal genome, download via entrez
     else:
         return "resources/genomes/{accession}.fasta".format(
@@ -521,8 +562,20 @@ def no_reads(wildcards):
     if MIXTURE_PART_INDICATOR in wildcards.accession:
         _, fraction = wildcards.accession.split(MIXTURE_PERCENTAGE_INDICATOR)
         return round(int(fraction) * max_reads / 100)
+    if READ_NUMBER_INDICATOR in wildcards.accession:
+        _, no_reads = wildcards.accession.split(READ_NUMBER_INDICATOR)
+        no_reads, _ = no_reads.split(READ_LENGTH_INDICATOR)
+        return no_reads
     else:
         return max_reads
+
+
+def length_read(wildcards):
+    if READ_LENGTH_INDICATOR in wildcards.accession:
+        _, length_state = wildcards.accession.split(READ_LENGTH_INDICATOR)
+        length, _ = length_state.split(READ_STATE_INDICATOR)
+        return length
+    return 100
 
 
 def get_strain(path_to_pangolin_call):
@@ -535,6 +588,7 @@ def is_amplicon_data(sample):
         sample.startswith(BENCHMARK_PREFIX)
         or sample.startswith(NON_COV2_TEST_PREFIX)
         or sample.startswith(MIXTURE_PREFIX)
+        or sample.startswith(READ_TEST_PREFIX)
     ):
         # benchmark data, not amplicon based
         return False
@@ -546,13 +600,15 @@ def is_amplicon_data(sample):
 
 
 def get_samples_for_date_amplicon(date):
-    samples = get_samples_for_date(date)
-    amplicon_samples = []
+    return [s for s in get_samples_for_date(date) if is_amplicon_data(s)]
 
-    for sample in samples:
-        if is_amplicon_data(sample):
-            amplicon_samples.append(sample)
-    return amplicon_samples
+
+def get_list_of_amplicon_states(wildcards):
+    return [True if is_amplicon_data(s) else False for s in get_samples()]
+
+
+def get_list_of_amplicon_states_assembler(samples):
+    return [return_assembler(s) for s in samples]
 
 
 def get_varlociraptor_bias_flags(wildcards):
@@ -608,6 +664,18 @@ def get_final_assemblies_identity(wildcards):
 
 
 def get_assemblies_for_submission(wildcards, agg_type):
+    if "sample" in wildcards:
+        if wildcards.sample.startswith(READ_TEST_PREFIX):
+            _, state = wildcards.sample.split(READ_STATE_INDICATOR)
+            if state == "contig":
+                return "results/{date}/tables/largest_contig/{sample}.fasta"
+            elif state == "scaffold":
+                return "results/{date}/contigs/ordered/{sample}.fasta"
+            elif state == "polished_scaffold":
+                return "results/{date}/contigs/polished/{sample}.fasta"
+            elif state == "pseudo":
+                return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
+
     if wildcards.date != BENCHMARK_DATE_WILDCARD:
         with checkpoints.rki_filter.get(
             date=wildcards.date, assembly_type="masked-assembly"
@@ -667,6 +735,73 @@ def get_assemblies_for_submission(wildcards, agg_type):
                 assembly_type_used.append(f"{sample},not-accepted")
         return assembly_type_used
 
+    return inner
+
+
+def get_output_dir(wildcards, output):
+    return os.path.dirname(output[0])
+
+
+def expand_samples_by_func(paths, func, **kwargs):
+    def inner(wildcards):
+        return expand(
+            paths,
+            sample=get_samples_for_date(wildcards.date),
+            **kwargs,
+        )
+
+    return inner
+
+
+def expand_samples_for_date(paths, **kwargs):
+    return expand_samples_by_func(paths, get_samples_for_date, **kwargs)
+
+
+def expand_samples_for_date_amplicon(paths, **kwargs):
+    return expand_samples_by_func(paths, get_samples_for_date_amplicon, **kwargs)
+
+
+def get_vep_args(wildcards, input):
+    return (
+        "--vcf_info_field ANN --hgvsg --hgvs --synonyms {synonyms} "
+        "--custom {input.problematic},,vcf,exact,0,"
+    ).format(input=input, synonyms=get_resource("synonyms.txt"))
+
+
+def expand_samples_by_func(paths, func, **kwargs):
+    def inner(wildcards):
+        return expand(
+            paths,
+            sample=get_samples_for_date(wildcards.date),
+            **kwargs,
+        )
+
+    return inner
+
+
+def get_samples_for_assembler_comparison(paths):
+    return zip_expand(
+        paths,
+        get_dates(),
+        get_samples(),
+        config["assemblers_for_comparison"],
+    )
+
+
+def get_megahit_preset(wildcards):
+    if wildcards.preset == "std":
+        return ""
+    else:
+        return f"--preset {wildcards.preset}"
+
+
+def get_lineage_by_accession(wildcards):
+    return list(config["strain-calling"]["lineage-references"].keys())[
+        list(config["strain-calling"]["lineage-references"].values()).index(
+            wildcards.accession
+        )
+    ]
+
 
 wildcard_constraints:
     sample="[^/.]+",
@@ -676,3 +811,17 @@ wildcard_constraints:
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
     ),
     varrange="structural|small",
+
+
+def get_read_calls(wildcard):
+    with checkpoints.select_random_lineages.get(date=BENCHMARK_DATE_WILDCARD).output[
+        0
+    ].open() as f:
+        lineages = f.read().splitlines()
+
+    return expand(
+        "results/benchmarking/tables/collected_lineage_calls_on_{lineage}_{number}_{length}.tsv",
+        lineage=lineages,
+        number=config["read_lineage_call"]["number_of_reads"],
+        length=config["read_lineage_call"]["length_of_reads"],
+    )

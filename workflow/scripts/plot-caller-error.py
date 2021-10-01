@@ -1,23 +1,22 @@
-try:
-    sys.stderr = open(snakemake.log[0], "w")
-except NameError:
-    pass
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+import sys
+
+sys.stderr = open(snakemake.log[0], "w")
 
 import pandas as pd
 import altair as alt
 
 
-def mask(string):
-    if string == "other":
-        return "other"
-    elif string == "unmapped":
-        return "unmapped"
-    elif string == "B.1.1.7":
-        return "B.1.1.7"
-    elif string == "B.1.351":
-        return "B.1.351"
-    else:
-        return "some strain"
+def mask(strain):
+    return (
+        strain
+        if strain in ["other", "unmapped", "B.1.1.7", "B.1.351"]
+        else "some strain"
+    )
 
 
 def plot_error_heatmap(sm_input, sm_output, type="heatmap"):
@@ -170,6 +169,7 @@ def plot_worst_predictons_content(sm_input, sm_output):
 
             plots.append(plot)
         except:
+            # TODO make exception handling more fine-grained
             pass
 
     alt.vconcat(*plots).save(sm_output)

@@ -1,4 +1,14 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+# TODO check whether this is still in use
+
+import sys
+
 sys.stderr = open(snakemake.log[0], "w")
+
 MIXTURE_PREFIX = snakemake.params.get("prefix", "")
 MIXTURE_PART_INDICATOR = snakemake.params.get("separator", "")
 MIXTURE_PERCENTAGE_INDICATOR = snakemake.params.get("percentage", "")

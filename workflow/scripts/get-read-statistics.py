@@ -1,3 +1,8 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
 import sys
 
 sys.stderr = open(snakemake.log[0], "w")
@@ -9,14 +14,12 @@ def get_read_statistics(sm_input, sm_output):
     all_read_counts = []
     for input in sm_input:
         with open(input) as in_file:
-            all_read_counts.append(in_file.read().splitlines()[0])
-    all_read_counts = pd.Series(all_read_counts)
-    all_read_counts = all_read_counts.astype(int)
+            all_read_counts.append(next(in_file).rstrip())
+    all_read_counts = pd.Series(all_read_counts, dtype=int)
 
     with open(sm_output, "w") as f:
         print("Length of all reads:\n", file=f)
         print(all_read_counts.describe().apply(lambda x: format(x, "f")), file=f)
 
 
-if __name__ == "__main__":
-    get_read_statistics(snakemake.input, snakemake.output[0])
+get_read_statistics(snakemake.input, snakemake.output[0])

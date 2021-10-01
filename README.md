@@ -1,10 +1,10 @@
-# Snakemake workflow: SARS-Cov-2 strain and variant calling
+# UnCoVar: Snakemake workflow for SARS-Cov-2 strain and variant calling
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.bitbucket.io)
 [![GitHub actions status](https://github.com/koesterlab/snakemake-workflow-sars-cov2/workflows/Tests/badge.svg?branch=master)](https://github.com/koesterlab/snakemake-workflow-sars-cov2/actions?query=branch%3Amaster+workflow%3ATests)
 [![Docker Repository on Quay](https://quay.io/repository/uncovar/uncovar/status "Docker Repository on Quay")](https://quay.io/repository/uncovar/uncovar)
 
-This workflow calls the SARS-Cov-2 strain and variants for given NGS samples.
+![UnCoVar2](https://user-images.githubusercontent.com/77535027/133610563-d190e25c-504e-4953-92dd-f84a5b4a1191.png)
 
 ## Authors
 
@@ -46,7 +46,7 @@ Install Snakemake using [conda](https://conda.io/projects/conda/en/latest/user-g
 
     conda create -c bioconda -c conda-forge -n snakemake snakemake
 
-For installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
+For Snakemake installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
 ### Step 4: Execute workflow
 
@@ -66,3 +66,51 @@ Non-local execution can be done via Snakemake's extensive cluster and cloud supp
 After successful execution, you can create a self-contained interactive HTML report with all results via:
 
     snakemake --report report.zip
+
+## Tools, Frameworks and Packages used in UnCoVar
+
+This project wouldn't be possible without several open source libraries:
+
+| Tool           | Link                                          |
+|----------------|-----------------------------------------------|
+| ABySS          | doi.10.1101/gr.214346.116                     |
+| Altair         | doi.org/10.21105/joss.01057                   |
+| BAMClipper     | doi.org/10.1038/s41598-017-01703-6            |
+| BCFtools       | doi.org/10.1093/gigascience/giab008           |
+| BEDTools       | doi.org/10.1093/bioinformatics/btq033         |
+| Biopython      | doi.org/10.1093/bioinformatics/btp163         |
+| bwa            | doi.org/10.1093/bioinformatics/btp324         |
+| delly          | doi.org/10.1093/bioinformatics/bts378         |
+| ensembl-vep    | doi.org/10.1186/s13059-016-0974-4             |
+| entrez-direct  | www.ncbi.nlm.nih.gov/books/NBK179288          |
+| fastp          | doi.org/10.1093/bioinformatics/bty560         |
+| FastQC         | bioinformatics.babraham.ac.uk/projects/fastqc |
+| fgbio          | github.com/fulcrum-genomics/fgbio             |
+| FreeBayes      | arxiv.org/abs/1207.3907                       |
+| intervaltree   | /github.com/chaimleib/intervaltree            |
+| Jupyter        | jupyter.org                                   |
+| kallisto       | doi.org/10.1038/nbt.3519                      |
+| Kraken2        | doi.org/10.1186/s13059-019-1891-0             |
+| Krona          | doi.org/10.1186/1471-2105-12-385              |
+| mason          | http://publications.imp.fu-berlin.de/962      |
+| MEGAHIT        | doi.org/10.1093/bioinformatics/btv033         |
+| Minimap2       | doi.org/10.1093/bioinformatics/bty191         |
+| MultiQC        | doi.org10.1093/bioinformatics/btw354          |
+| pandas         | pandas.pydata.org                             |
+| Picard         | broadinstitute.github.io/picard               |
+| PySAM          | doi.org/10.11578/dc.20190903.1                |
+| QUAST          | doi.org/10.1093/bioinformatics/btt086         |
+| RaGOO          | doi.org/10.1186/s13059-019-1829-6             |
+| ruamel.yaml    | sourceforge.net/projects/ruamel-yaml          |
+| Rust-Bio-Tools | github.com/rust-bio/rust-bio-tools            |
+| SAMtools       | doi.org/10.1093/bioinformatics/btp352         |
+| Snakemake      | doi.org/10.12688/f1000research.29032.1        |
+| sourmash       | doi.org/10.21105/joss.00027                   |
+| SPAdes         | doi.org/10.1089/cmb.2012.0021                 |
+| SVN            | doi.org/10.1142/s0219720005001028             |
+| Tabix          | doi.org/10.1093/bioinformatics/btq671         |
+| Trinity        | doi.org/10.1038/nprot.2013.084                |
+| Varlociraptor  | doi.org/10.1186/s13059-020-01993-6            |
+| Vega-Lite      | doi.org/10.1109/TVCG.2016.2599030             |
+| Velvet         | doi.org/10.1101/gr.074492.107                 |
+| vembrane       | github.com/vembrane/vembrane                  |

@@ -1,11 +1,17 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
 import sys
+
+sys.stderr = open(snakemake.log[0], "w")
+
 import json
 import re
 
 import pandas as pd
 import pysam
-
-sys.stderr = open(snakemake.log[0], "w")
 
 KRAKEN_FILTER_KRITERIA = "D"
 

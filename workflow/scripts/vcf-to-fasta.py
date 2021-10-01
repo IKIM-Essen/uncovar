@@ -1,3 +1,8 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
 import re
 import pysam
 import numpy as np
@@ -153,5 +158,5 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
 
 
 with open(snakemake.output[0], "w") as outfasta:
-    print(f">{snakemake.params.sample}", file=outfasta)
+    print(f">{snakemake.wildcards.sample}", file=outfasta)
     print(seq, file=outfasta)
