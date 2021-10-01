@@ -39,8 +39,6 @@ quality-criteria:
   min-depth-without-PCR-duplicates: 10
   # minimum informative allele frequency
   min-allele: 0.9
-  # minimum length of final sequence in bp
-  minimum-length: 20000
 
 adapters:
   # Illumina TruSeq adapters

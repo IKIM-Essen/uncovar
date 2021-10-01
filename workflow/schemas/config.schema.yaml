@@ -63,9 +63,6 @@ properties:
         min-allele: 
           type: number
           description: minimum informative allele frequency
-        minimum-length: 
-          type: integer
-          description: minimum length of final sequence in bp
   adapters:
       properties: 
         illumina-shotgun: 
