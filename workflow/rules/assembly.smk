@@ -1,3 +1,9 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+
 rule count_assembly_reads:
     input:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
@@ -58,9 +64,22 @@ rule assembly_spades:
         " > {log} 2>&1"
 
 
+rule check_contigs:
+    input:
+        get_contigs,
+    output:
+        "results/{date}/contigs/checked/{sample}.fasta",
+    log:
+        "logs/{date}/check_contigs/{sample}.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/check_contigs.py"
+
+
 rule order_contigs:
     input:
-        contigs=get_contigs,
+        contigs="results/{date}/contigs/checked/{sample}.fasta",
         reference="resources/genomes/main.fasta",
     output:
         temp("results/{date}/contigs/ordered-unfiltered/{sample}.fasta"),

@@ -58,7 +58,7 @@ jobs:
       - Linting
     strategy:
       matrix:
-        rule: [all, all -npr, benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2, compare_assemblers]
+        rule: [all, all -npr, benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2, compare_assemblers, benchmark_reads]
     steps:
       - uses: actions/checkout@v2
 

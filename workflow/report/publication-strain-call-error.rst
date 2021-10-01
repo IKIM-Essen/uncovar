@@ -1,0 +1,1 @@
+Estimation of lineage shares in sample vs actual share of lineage in a sample repeated in 500 samples. The horizontal axis shows the fraction of reads within the sample allocated to a lineage, whereas the vertical axis displays the corresponding lineage. The number next to the bars represents the absolute number of reads.
