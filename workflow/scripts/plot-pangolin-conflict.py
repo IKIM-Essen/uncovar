@@ -1,9 +1,17 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+import sys
+
 sys.stderr = open(snakemake.log[0], "w")
-MIXTURE_PART_INDICATOR = snakemake.params.get("separator", "")
-MIXTURE_PERCENTAGE_INDICATOR = snakemake.params.get("percentage", "")
 
 import pandas as pd
 import altair as alt
+
+MIXTURE_PART_INDICATOR = snakemake.params.separator
+MIXTURE_PERCENTAGE_INDICATOR = snakemake.params.percentage
 
 
 ######################################################
@@ -22,7 +30,7 @@ def plot_pangolin_conflict(sm_input, sm_output):
         )
         true_lineage = true_lineage.replace("-", ".")
         percent = percent.replace(".strains.pangolin.csv", "")
-        
+
         # create df for one call
         pangolin_output = pd.read_csv(input)
         pangolin_output["true_lineage"] = true_lineage
@@ -69,5 +77,4 @@ def plot_pangolin_conflict(sm_input, sm_output):
     wrongly_assigned.to_csv(sm_output[1])
 
 
-if __name__ == "__main__":
-    plot_pangolin_conflict(snakemake.input, snakemake.output)
+plot_pangolin_conflict(snakemake.input, snakemake.output)

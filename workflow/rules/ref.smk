@@ -1,3 +1,9 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+
 checkpoint get_strain_accessions:
     output:
         "resources/strain-accessions.txt",
@@ -79,11 +85,11 @@ rule get_taxonomie_db_for_krona:
 rule get_human_genome:
     output:
         "resources/genomes/human-genome.fna.gz",
-    log:
-        "logs/get-human-genome.log",
     params:
         outdir=lambda w, output: os.path.dirname(output[0]),
         human_genome=config["human-genome-download-path"],
+    log:
+        "logs/get-human-genome.log",
     conda:
         "../envs/unix.yaml"
     shell:
@@ -95,8 +101,13 @@ rule update_pangoLEARN:
         directory("results/{date}/pangolin/pangoLEARN"),
     log:
         "logs/{date}/pangolin/update.log",
+    conda:
+        "../envs/unix.yaml"
     shell:
-        "(mkdir -p {output} && wget -qO- https://github.com/cov-lineages/pangoLEARN/archive/master.tar.gz | tar xvz --strip-components=1 -C {output})> {log} 2>&1"
+        "(mkdir -p {output} &&"
+        " curl -L https://github.com/cov-lineages/pangoLEARN/archive/master.tar.gz |"
+        " tar xvz --strip-components=1 -C {output})"
+        " > {log} 2>&1"
 
 
 rule update_lineages:
@@ -104,8 +115,13 @@ rule update_lineages:
         directory("results/{date}/pangolin/lineages"),
     log:
         "logs/{date}/pangolin/update.log",
+    conda:
+        "../envs/unix.yaml"
     shell:
-        "(mkdir -p {output} && wget -qO- https://github.com/cov-lineages/lineages/archive/master.tar.gz | tar xvz --strip-components=1 -C {output})> {log} 2>&1"
+        "(mkdir -p {output} &&"
+        " curl -L https://github.com/cov-lineages/lineages/archive/master.tar.gz | "
+        " tar xvz --strip-components=1 -C {output})"
+        " > {log} 2>&1"
 
 
 rule get_gisaid_provision:
@@ -113,5 +129,43 @@ rule get_gisaid_provision:
         temp("resources/gisaid/provision.json"),
     log:
         "logs/get_gisaid_provision.log",
+    conda:
+        "../envs/unix.yaml"
     shell:
-        "(curl -u $GISAID_API_TOKEN https://www.epicov.org/epi3/3p/resseq02/export/provision.json.xz | xz -d -T0 > {output})> {log} 2>&1"
+        "(curl -L -u $GISAID_API_TOKEN https://www.epicov.org/epi3/3p/resseq02/export/provision.json.xz |"
+        " xz -d -T0 > {output})"
+        " > {log} 2>&1"
+
+
+rule change_name_of_lineage_references:
+    input:
+        "resources/genomes/{accession}.fasta",
+    output:
+        "resources/genomes-renamed/{accession}.fasta",
+    # get corresponding lineage of accession
+    params:
+        lineage=get_lineage_by_accession,
+    log:
+        "logs/change_name_of_lineage_references/{accession}.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "sed -E 's/>(\S+)\\b/>{params.lineage}/;t' {input} > {output}"
+
+
+checkpoint get_lineages_for_non_gisaid_based_calling:
+    input:
+        expand(
+            "resources/genomes-renamed/{accession}.fasta",
+            accession=config["strain-calling"]["lineage-references"].values(),
+        ),
+    output:
+        "results/{date}/tables/predefinded-strain-genomes.txt",
+    params:
+        lineage_references=config["strain-calling"]["lineage-references"],
+    log:
+        "logs/{date}/get_lineages_for_non_gisaid_based_calling.log",
+    conda:
+        "../envs/pandas.yaml"
+    script:
+        "../scripts/get-strains-from-genbank.py"

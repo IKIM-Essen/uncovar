@@ -1,3 +1,9 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+
 rule vcf_to_fasta:
     input:
         bcf="results/{date}/calls/ref~main/{sample}.bcf",
@@ -10,7 +16,6 @@ rule vcf_to_fasta:
     params:
         min_prob_apply=config["assembly"]["min-variant-prob"],
         min_coverage=get_min_coverage,
-        sample=lambda wildcards: wildcards.sample,
     log:
         "logs/{date}/vcf-to-fasta/{sample}.log",
     conda:
@@ -35,10 +40,7 @@ rule compare_assemblies:
 
 rule aggregate_assembly_comparisons:
     input:
-        lambda wildcards: expand(
-            "results/{{date}}/aligned/assemblies/{sample}.bam",
-            sample=get_samples_for_date(wildcards.date),
-        ),
+        expand_samples_for_date("results/{{date}}/aligned/assemblies/{sample}.bam"),
     output:
         "results/{date}/tables/assembly_comparison.tsv",
     params:

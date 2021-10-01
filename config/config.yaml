@@ -66,12 +66,18 @@ variant-calling:
 strain-calling:
   # minimum reported strain fraction after quantification
   min-fraction: 0.02
-  # flag for using gisaid or genbank 
-  use-gisaid: True
   # paths to store genomes that are extracted from the full GISAID data
   extracted-strain-genomes: resources/genomes
-  # flag for using kallisto (for quantifying abundances of transcripts)
-  use-kallisto: True
+  # flag for using all lineage reference from GISAIDS Epicov database. API key must be exported as env var GISAID_API_TOKEN.
+  use-gisaid: True
+  # GenBank accession for downloading lineage-references
+  # only used, if use-gisaid flag is set to False
+  lineage-references:
+    B.1.1.7: MZ773928
+    B.1.351: MZ433432
+    P.1: MZ477759
+    B.1.617.2: OK091006
+    
 
 
 rki-output:
@@ -117,6 +123,34 @@ mixtures:
     - "_MIX_B-1-1-7_PERC_50_MIX_B-1-351_PERC_50"
     - "_MIX_B-1-1-7_PERC_90_MIX_B-1-351_PERC_10"
 
+read_lineage_call:
+  number_of_samples: 100
+  number_of_reads:
+    - 100
+    - 200
+    - 300
+    - 400
+    - 500
+    - 600
+    - 700
+    - 800
+    - 900
+    - 1000
+    - 3000
+    - 5000
+    - 7000
+    - 10000
+    - 30000
+    - 60000
+    - 120000
+    - 500000
+    - 1000000
+  length_of_reads:
+    - 100
+    - 150
+    - 250
+
+
 # variants of concern (protein name -> variants)
 voc:
   S:
@@ -124,3 +158,20 @@ voc:
     - E484K
     - K417N
     - H69_V70del
+
+# assemblers used for assembly comparison
+assemblers_for_comparison:
+  - megahit-std
+  - megahit-meta-large
+  - megahit-meta-sensitive
+  - trinity
+  - velvet
+  - metaspades
+  - coronaspades
+  - spades
+  - rnaviralspades
+
+# assemblers used for sequencing method 
+assemblers_used:
+  shotgun: "megahit-std"
+  amplicon: "metaspades"

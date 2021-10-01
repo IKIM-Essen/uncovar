@@ -1,13 +1,17 @@
 pepfile: config/pep/config.yaml
 
 # for testing, uncomment to limit to n strain genomes
-limit-strain-genomes: 5
-benchmark-genomes:
-  - MT971460
-  - MT810976
-  - MW184368
-  - MT470120
-  - MT451810
+testing:
+  limit-strain-genomes: 5
+  benchmark-genomes:
+    - MT971460
+    - MT810976
+    - MW184368
+    - MT470120
+    - MT451810
+      # flag for using genomes from genbank. Only for benchmarking purposes.
+  use-genbank: True
+
 
 
 # genome to use as reference. Must be a NCBI accession
@@ -74,13 +78,17 @@ assembly:
 strain-calling:
   # minimum reported strain fraction after quantification
   min-fraction: 0.02
-  # flag for using gisaid or genbank 
-  use-gisaid: False
   # paths to store genomes that are extracted from the full GISAID data
   extracted-strain-genomes: resources/genomes
-  # flag for using kallisto (for quantifying abundances of transcripts)
-  use-kallisto: True
-
+  # flag for using all lineage reference from GISAIDS Epicov database. API key must be exported as env var GISAID_API_TOKEN.
+  use-gisaid: True
+  # GenBank accession for downloading lineage-references
+  # only used, if use-gisaid flag is set to False
+  lineage-references:
+    B.1.1.7: MZ773928
+    B.1.351: MZ433432
+    P.1: MZ477759
+    B.1.617.2: OK091006
 
 adapters:
   #  Illumina TruSeq adapters
@@ -129,3 +137,30 @@ voc:
     - E484K
     - K417N
     - H69_V70del
+
+read_lineage_call:
+  number_of_samples: 1
+  number_of_reads:
+    - 100
+    - 1500
+  length_of_reads:
+    - 100
+    - 250
+  
+# assemblers used for assembly comparison
+assemblers_for_comparison:
+  - megahit-std
+  - megahit-meta-large
+  - megahit-meta-sensitive
+  - trinity
+  - velvet
+  - metaspades
+  - coronaspades
+  - spades
+  - rnaviralspades
+
+# assemblers used for sequencing method 
+assemblers_used:
+  shotgun: "megahit-std"
+  amplicon: "metaspades"
+

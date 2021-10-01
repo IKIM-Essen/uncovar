@@ -1,3 +1,8 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
 import re
 import pysam
 import numpy as np
@@ -60,10 +65,9 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
 
         last_pos = rec_pos - 1
 
-
         dp_sample = record.samples[0]["DP"][0]
         if dp_sample is None:
-            dp_sample= 0
+            dp_sample = 0
 
         # ignore low coverage records (subsequent iteration will add an N for that locus then)
         is_low_coverage = dp_sample < snakemake.params.min_coverage
@@ -154,5 +158,5 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
 
 
 with open(snakemake.output[0], "w") as outfasta:
-    print(f">{snakemake.params.sample}", file=outfasta)
+    print(f">{snakemake.wildcards.sample}", file=outfasta)
     print(seq, file=outfasta)
