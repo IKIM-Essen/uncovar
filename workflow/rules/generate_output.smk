@@ -96,7 +96,7 @@ rule rki_report:
             caption="../report/rki-submission-csv.rst",
         ),
     conda:
-        "../envs/pysam.yaml",
+        "../envs/pysam.yaml"
     log:
         "logs/{date}/rki-output/{date}.log",
     script:
