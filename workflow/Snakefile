@@ -1,3 +1,8 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
 from snakemake.utils import min_version
 
 
@@ -19,7 +24,7 @@ container: "docker://condaforge/mambaforge"
 containerized: "quay.io/uncovar/uncovar#0.2.5"
 
 
-if config["strain-calling"]["use-kallisto"]:
+if config["strain-calling"]["use-gisaid"]:
 
     envvars:
         "GISAID_API_TOKEN",
@@ -89,9 +94,7 @@ checkpoint all:
             "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
             date=get_all_run_dates(),
             mode=["major", "any"],
-        )
-        if config["strain-calling"]["use-kallisto"]
-        else "",
+        ),
         expand(
             "results/{date}/contigs/polished/{sample}.fasta",
             zip,
@@ -108,9 +111,7 @@ checkpoint all:
             "results/{zip1}/plots/strain-calls/{zip2}.strains.{{exp}}.svg",
             zip_wildcard_1=get_dates(),
             zip_wildcard_2=get_samples(),
-            expand_wildcard=["kallisto"]
-            if config["strain-calling"]["use-kallisto"]
-            else [""],
+            expand_wildcard=["kallisto"],
         ),
         zip_expand(
             "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.bcf",
@@ -174,3 +175,8 @@ rule benchmark_mixtures:
         "results/benchmarking/tables/pangolin_statistics.csv"
         if config["mixtures"]["no_strains"] == 1
         else [],
+
+
+rule benchmark_reads:
+    input:
+        "results/benchmarking/plots/aggregated_read_calls.svg",
