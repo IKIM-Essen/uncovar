@@ -204,16 +204,12 @@ rule snakemake_reports:
         lambda wildcards: expand(
             "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
             sample=get_samples_for_date(wildcards.date),
-        )
-        if config["strain-calling"]["use-kallisto"]
-        else [],
+        ),
         "results/{date}/qc_data",
         expand(
             "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
             mode=["major"],
-        )
-        if config["strain-calling"]["use-kallisto"]
-        else [],
+        ),
         "results/{date}/plots/all.strains.pangolin.svg",
         lambda wildcards: expand(
             "results/{{date}}/vcf-report/{target}.{filter}",
@@ -235,7 +231,7 @@ rule snakemake_reports:
     params:
         for_testing=(
             "--snakefile ../workflow/Snakefile"
-            if config.get("benchmark-genomes", [])
+            if config.get("testing", {}).get("benchmark-genomes", [])
             else ""
         ),
     conda:

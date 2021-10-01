@@ -30,9 +30,7 @@ rule multiqc:
                 "results/{{date}}/qc/dedup/ref~main/{sample}.metrics.txt",
             ]
         ),
-        expand_samples_for_date("logs/{{date}}/kallisto_quant/{sample}.log")
-        if config["strain-calling"]["use-kallisto"]
-        else [],
+        expand_samples_for_date("logs/{{date}}/kallisto_quant/{sample}.log"),
     output:
         "results/{date}/qc/multiqc.html",
     params:
