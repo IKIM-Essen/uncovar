@@ -73,7 +73,7 @@ rule mark_duplicates:
     params:
         "",
     wrapper:
-        "0.69.0/bio/picard/markduplicates"
+        "0.78.0/bio/picard/markduplicates"
 
 
 rule samtools_calmd:
