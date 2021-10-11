@@ -87,6 +87,9 @@ def get_dates_before_date(wildcards):
         pep.sample_table[pep.sample_table["run_id"] <= wildcards.date]["run_id"].values
     )
 
+def get_technology(wildcards):
+    return pep.sample_table.loc[wildcards.sample]["technology"]
+
 
 def get_fastqs(wildcards):
     if wildcards.sample.startswith(BENCHMARK_PREFIX):
@@ -121,7 +124,10 @@ def get_fastqs(wildcards):
             accession=wildcards.sample,
             read=[1, 2],
         )
+
     # default case, look up FASTQs in the sample sheet
+    if get_technology(wildcards) == "ont":
+        return pep.sample_table.loc[wildcards.sample][["fq1"]]
     return pep.sample_table.loc[wildcards.sample][["fq1", "fq2"]]
 
 

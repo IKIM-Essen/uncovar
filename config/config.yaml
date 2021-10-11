@@ -48,6 +48,10 @@ RKI-quality-criteria:
 assembly:
   # minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
   min-variant-prob: 0.95
+  # Medaka models are named to indicate i) the pore type, ii) the sequencing device (MinION or PromethION), iii) the basecaller variant, and iv) the basecaller version
+  # with the format: {pore}_{device}_{caller variant}_{caller version}
+  # See https://github.com/nanoporetech/medaka#models for more information.
+  medaka_model: r941_min_fast_g303
 
 
 variant-calling:
