@@ -7,6 +7,7 @@ from pathlib import Path
 import pandas as pd
 import re
 import random
+from snakemake.utils import validate
 
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
@@ -23,18 +24,26 @@ READ_LENGTH_INDICATOR = "_READ_LENGTH_"
 READ_STATE_INDICATOR = "_STATE_"
 
 
+configfile: "config/config.yaml"
+
+
+validate(config, "../schemas/config.schema.yaml")
+
+validate(pep.sample_table, "../schemas/samples.schema.yaml")
+
+
 def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
 
 def get_dates():
-    return list(pep.sample_table["run_id"].values)
+    return list(pep.sample_table["date"].values)
 
 
 def get_samples_for_date(date, filtered=False):
     # select samples with given date
     df = pep.sample_table
-    df = df[df["run_id"] == date]
+    df = df[df["date"] == date]
 
     samples_of_run = list(df["sample_name"].values)
 
@@ -65,13 +74,13 @@ def get_samples_for_date(date, filtered=False):
 
 
 def get_all_run_dates():
-    sorted_list = list(pep.sample_table["run_id"].unique())
+    sorted_list = list(pep.sample_table["date"].unique())
     sorted_list.sort()
     return sorted_list
 
 
 def get_latest_run_date():
-    return pep.sample_table["run_id"].max()
+    return pep.sample_table["date"].max()
 
 
 def get_samples_before_date(wildcards):
@@ -82,7 +91,7 @@ def get_samples_before_date(wildcards):
         ].values
     )
     return list(
-        pep.sample_table[pep.sample_table["run_id"] <= wildcards.date][
+        pep.sample_table[pep.sample_table["date"] <= wildcards.date][
             "sample_name"
         ].values
     )
@@ -94,7 +103,7 @@ def get_dates_before_date(wildcards):
         pep.sample_table[pep.sample_table["run_id"] <= wildcards.date]["run_id"].values
     )
     return list(
-        pep.sample_table[pep.sample_table["run_id"] <= wildcards.date]["run_id"].values
+        pep.sample_table[pep.sample_table["date"] <= wildcards.date]["date"].values
     )
 
 
@@ -375,7 +384,7 @@ def get_reads_after_qc(wildcards, read="both"):
 
 
 def get_min_coverage(wildcards):
-    conf = config["RKI-quality-criteria"]
+    conf = config["quality-criteria"]
     if is_amplicon_data(wildcards.sample):
         return conf["min-depth-with-PCR-duplicates"]
     else:
@@ -384,9 +393,9 @@ def get_min_coverage(wildcards):
 
 def return_assembler(sample):
     if is_amplicon_data(sample):
-        return config["assemblers_used"]["amplicon"]
+        return config["assembly"]["amplicon"]
     else:
-        return config["assemblers_used"]["shotgun"]
+        return config["assembly"]["shotgun"]
 
 
 def get_contigs(wildcards):
@@ -651,8 +660,8 @@ def get_depth_input(wildcards):
 
 def get_adapters(wildcards):
     if is_amplicon_data(wildcards.sample):
-        return config["adapters"]["illumina-nimagen"]
-    return config["adapters"]["illumina-revelo"]
+        return config["adapters"]["illumina-amplicon"]
+    return config["adapters"]["illumina-shotgun"]
 
 
 def get_final_assemblies(wildcards):
