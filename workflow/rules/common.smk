@@ -87,6 +87,7 @@ def get_dates_before_date(wildcards):
         pep.sample_table[pep.sample_table["run_id"] <= wildcards.date]["run_id"].values
     )
 
+
 def get_technology(wildcards):
     return pep.sample_table.loc[wildcards.sample]["technology"]
 
@@ -349,7 +350,11 @@ def get_reads(wildcards):
 def get_reads_after_qc(wildcards, read="both"):
 
     if is_amplicon_data(wildcards.sample) and get_technology(wildcards) == "ont":
-        pattern = ["results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz".format(**wildcards)]
+        pattern = [
+            "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz".format(
+                **wildcards
+            )
+        ]
     elif is_amplicon_data(wildcards.sample) and get_technology(wildcards) == "illumina":
         pattern = expand(
             "results/{date}/clipped-reads/{sample}.{read}.fastq.gz",
@@ -357,7 +362,10 @@ def get_reads_after_qc(wildcards, read="both"):
             read=[1, 2],
             sample=wildcards.sample,
         )
-    elif not is_amplicon_data(wildcards.sample) and get_technology(wildcards) == "illumina":
+    elif (
+        not is_amplicon_data(wildcards.sample)
+        and get_technology(wildcards) == "illumina"
+    ):
         pattern = expand(
             "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
@@ -365,7 +373,9 @@ def get_reads_after_qc(wildcards, read="both"):
             sample=wildcards.sample,
         )
     else:
-        raise NotImplementedError("UnCoVer currently does not support non amplicon based ONT data")
+        raise NotImplementedError(
+            "UnCoVer currently does not support non amplicon based ONT data"
+        )
 
     if read == "1":
         return pattern[0]
@@ -393,10 +403,11 @@ def return_assembler(sample):
 def get_contigs(wildcards):
     if get_technology(wildcards) == "ont":
         return "results/{date}/assembly/{sample}/canu/{sample}.contigs.fasta"
-    
+
     return "results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
-            assembler=return_assembler(wildcards.sample), **wildcards
-        )
+        assembler=return_assembler(wildcards.sample), **wildcards
+    )
+
 
 def get_expanded_contigs(wildcards):
     sample = get_samples_for_date(wildcards.date)

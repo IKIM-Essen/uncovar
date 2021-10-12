@@ -26,9 +26,9 @@
 
 rule porechop_adapter_barcode_trimming:
     input:
-        get_fastqs
+        get_fastqs,
     output:
-        "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"
+        "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq",
     conda:
         "../envs/porechop.yaml"
     log:
@@ -40,25 +40,25 @@ rule porechop_adapter_barcode_trimming:
 
 rule customize_primer_porechop:
     input:
-        "resources/ARTIC_v3_adapters.py"
+        "resources/ARTIC_v3_adapters.py",
     output:
-        "results/tables/replacement_notice.txt"
+        "results/tables/replacement_notice.txt",
     conda:
         "../envs/primechop.yaml"
     log:
         "logs/customize_primer_porechop.log",
     shell:
         "(cp {input} $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py && "
-        "echo \"replaced adpaters in adapter.py file in $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py with ARTICv3 primers\" > {output}) "
+        'echo "replaced adpaters in adapter.py file in $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py with ARTICv3 primers" > {output}) '
         "2> {log}"
 
 
 rule porechop_primer_trimming:
     input:
         fastq_in="results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq",
-        repl_flag="results/tables/replacement_notice.txt"
+        repl_flag="results/tables/replacement_notice.txt",
     output:
-        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"
+        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
     conda:
         "../envs/primechop.yaml"
     log:
@@ -70,14 +70,14 @@ rule porechop_primer_trimming:
 
 rule nanofilt:
     input:
-        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"
+        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
     output:
-        "results/{date}/trimmed/nanofilt/{sample}.fastq"
+        "results/{date}/trimmed/nanofilt/{sample}.fastq",
     log:
-        "logs/{date}/nanofilt/{sample}.log"
+        "logs/{date}/nanofilt/{sample}.log",
     params:
         min_length=config["RKI-quality-criteria"]["ont"]["min-length-reads"],
-        min_PHRED=config["RKI-quality-criteria"]["ont"]["min-PHRED"]
+        min_PHRED=config["RKI-quality-criteria"]["ont"]["min-PHRED"],
     conda:
         "../envs/nanofilt.yaml"
     shell:
@@ -86,13 +86,13 @@ rule nanofilt:
 
 rule canu_correct:
     input:
-        "results/{date}/trimmed/nanofilt/{sample}.fastq"
+        "results/{date}/trimmed/nanofilt/{sample}.fastq",
     output:
-        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz"
+        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
     log:
-        "logs/{date}/canu/assemble/{sample}.log"
+        "logs/{date}/canu/assemble/{sample}.log",
     params:
-        outdir=get_output_dir
+        outdir=get_output_dir,
     conda:
         "../envs/canu.yaml"
     threads: 6
@@ -106,13 +106,13 @@ rule canu_correct:
 
 rule assembly_canu:
     input:
-        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz"
+        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
     output:
-        "results/{date}/assembly/{sample}/canu/{sample}.contigs.fasta"
+        "results/{date}/assembly/{sample}/canu/{sample}.contigs.fasta",
     params:
-        outdir=get_output_dir
+        outdir=get_output_dir,
     log:
-        "logs/{date}/canu/assemble/{sample}.log"
+        "logs/{date}/canu/assemble/{sample}.log",
     conda:
         "../envs/canu.yaml"
     threads: 6
@@ -128,17 +128,18 @@ rule medaka:
         fastq="results/{date}/trimmed/nanofilt/{sample}.fastq",
         reference="resources/genomes/main.fasta",
     output:
-        "results/{date}/polished/medaka/{sample}/consensus.fasta"
+        "results/{date}/polished/medaka/{sample}/consensus.fasta",
     log:
-        "logs/{date}/medaka/{sample}.log"
+        "logs/{date}/medaka/{sample}.log",
     params:
         outdir=get_output_dir,
-        model = config["assembly"]["medaka_model"]
+        model=config["assembly"]["medaka_model"],
     conda:
         "../envs/medaka.yaml"
     threads: 4
     shell:
         "medaka_consensus -i {input.fastq} -o {params.outdir} -d {input.reference} -t {threads} -m {params.model} 2> {log}"
+
 
 # Questions & Notes:
 # Adjusted Nanoflit -> rmv max length and added min lenght
