@@ -93,25 +93,6 @@ rule nanofilt:
 #         "seqtk seq -A {input} > {output} 2> {log}"
 
 
-# polish reference
-rule medaka:
-    input:
-        fastq="results/{date}/trimmed/nanofilt/{sample}.fastq",
-        reference="resources/genomes/main.fasta",
-    output:
-        "results/{date}/polished/medaka/{sample}/consensus.fasta"
-    log:
-        "logs/{date}/medaka/{sample}.log"
-    params:
-        outdir=get_output_dir,
-        model = config["assembly"]["medaka_model"]
-    conda:
-        "../envs/medaka.yaml"
-    threads: 4
-    shell:
-        "medaka_consensus -i {input.fastq} -o {params.outdir} -d {input.reference} -t {threads} -m {params.model} 2> {log}"
-
-
 rule canu_correct:
     input:
         "results/{date}/trimmed/nanofilt/{sample}.fastq"
@@ -149,6 +130,24 @@ rule assembly_canu:
         "utgOverlapper=minimap obtOverlapper=minimap minOverlapLength=20 minReadLength=300 corMMapMerSize=10) "
         "2> {log}"
 
+
+# polish reference
+rule medaka:
+    input:
+        fastq="results/{date}/trimmed/nanofilt/{sample}.fastq",
+        reference="resources/genomes/main.fasta",
+    output:
+        "results/{date}/polished/medaka/{sample}/consensus.fasta"
+    log:
+        "logs/{date}/medaka/{sample}.log"
+    params:
+        outdir=get_output_dir,
+        model = config["assembly"]["medaka_model"]
+    conda:
+        "../envs/medaka.yaml"
+    threads: 4
+    shell:
+        "medaka_consensus -i {input.fastq} -o {params.outdir} -d {input.reference} -t {threads} -m {params.model} 2> {log}"
 
 # Questions & Notes:
 # Adjusted Nanoflit -> rmv max length and added min lenght
