@@ -1,2 +1,4 @@
 sample_name,fq1,fq2,date,is_amplicon_data,technology
 a,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2021-01-01,0,illumina
+b,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2021-01-01,1,illumina
+c,data/ont_reads.fastq.gz,,2021-02-01,1,ont

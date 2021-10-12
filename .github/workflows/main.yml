@@ -149,6 +149,7 @@ jobs:
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
+          curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR124/072/SRR12447372/SRR12447372_1.fastq.gz > .tests/data/ont_reads.fastq.gz
       
       - name: Use smaller reference files for testing
         if: steps.test-resources.outputs.cache-hit != true
