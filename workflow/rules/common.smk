@@ -605,8 +605,9 @@ def get_strain(path_to_pangolin_call):
     pangolin_results = pd.read_csv(path_to_pangolin_call)
     return pangolin_results.loc[0]["lineage"]
 
+
 def is_benchmark_data(sample):
-     if (
+    if (
         sample.startswith(BENCHMARK_PREFIX)
         or sample.startswith(NON_COV2_TEST_PREFIX)
         or sample.startswith(MIXTURE_PREFIX)
@@ -614,6 +615,7 @@ def is_benchmark_data(sample):
     ):
         return True
     return False
+
 
 def is_amplicon_data(sample):
     if is_benchmark_data(sample):
