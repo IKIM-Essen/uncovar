@@ -89,6 +89,8 @@ def get_dates_before_date(wildcards):
 
 
 def get_technology(wildcards):
+    if is_benchmark_data(wildcards.sample):
+        return "illumina"
     return pep.sample_table.loc[wildcards.sample]["technology"]
 
 
@@ -603,14 +605,18 @@ def get_strain(path_to_pangolin_call):
     pangolin_results = pd.read_csv(path_to_pangolin_call)
     return pangolin_results.loc[0]["lineage"]
 
-
-def is_amplicon_data(sample):
-    if (
+def is_benchmark_data(sample):
+     if (
         sample.startswith(BENCHMARK_PREFIX)
         or sample.startswith(NON_COV2_TEST_PREFIX)
         or sample.startswith(MIXTURE_PREFIX)
         or sample.startswith(READ_TEST_PREFIX)
     ):
+        return True
+    return False
+
+def is_amplicon_data(sample):
+    if is_benchmark_data(sample):
         # benchmark data, not amplicon based
         return False
     sample = pep.sample_table.loc[sample]
