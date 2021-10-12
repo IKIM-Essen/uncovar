@@ -13,4 +13,4 @@ dependencies:
   - bcftools =1.10
   - intervaltree =3.0.2
   - ruamel.yaml =0.17.16
-  - jsonschema=3.20
+  - jsonschema=3.2.0
