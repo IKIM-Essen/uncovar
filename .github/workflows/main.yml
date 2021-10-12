@@ -58,7 +58,7 @@ jobs:
       - Linting
     strategy:
       matrix:
-        rule: [all, all -npr, benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2, compare_assemblers]
+        rule: [all, all -npr, benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2, compare_assemblers, benchmark_reads]
     steps:
       - uses: actions/checkout@v2
 
@@ -161,7 +161,7 @@ jobs:
       - name: Simulate GISAID download
         run: |
           mkdir -p .tests/results/benchmarking/tables
-          echo -e "resources/genomes/B.1.1.7.fasta\nresources/genomes/B.1.351.fasta\n" > .tests/results/benchmarking/tables/strain-genomes.txt
+          echo -e "resources/genomes/B.1.1.7.fasta\nresources/genomes/B.1.351.fasta" > .tests/results/benchmarking/tables/strain-genomes.txt
           mkdir -p .tests/resources/genomes
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314997.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.1.7.fasta
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314998.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.351.fasta

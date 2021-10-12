@@ -1,3 +1,9 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+
 rule fastqc:
     input:
         get_fastqs,
@@ -24,9 +30,7 @@ rule multiqc:
                 "results/{{date}}/qc/dedup/ref~main/{sample}.metrics.txt",
             ]
         ),
-        expand_samples_for_date("logs/{{date}}/kallisto_quant/{sample}.log")
-        if config["strain-calling"]["use-kallisto"]
-        else [],
+        expand_samples_for_date("logs/{{date}}/kallisto_quant/{sample}.log"),
     output:
         "results/{date}/qc/multiqc.html",
     params:

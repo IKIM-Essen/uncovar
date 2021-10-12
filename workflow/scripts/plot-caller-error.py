@@ -1,3 +1,8 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
 import sys
 
 sys.stderr = open(snakemake.log[0], "w")
@@ -60,22 +65,6 @@ def plot_error_heatmap(sm_input, sm_output, type="heatmap"):
             .mark_circle()
             .encode(alt.X("true_fraction"), alt.Y("est_fraction"))
         )
-
-        polynomial_fit = [
-            base.transform_regression(
-                "true_fraction",
-                "est_fraction",
-                method="poly",
-                order=order,
-                as_=["true_fraction", str(order)],
-            )
-            .mark_line(color="black")
-            .transform_fold([str(order)], as_=["Poly. Degree", "est_fraction"])
-            .encode(alt.Color("Poly. Degree:N"))
-            for order in degree_list
-        ]
-
-        # plot = alt.layer(plot, *polynomial_fit)
 
     else:
         plot = (

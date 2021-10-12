@@ -1,3 +1,9 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+
 rule simulate_strain_reads:
     input:
         get_genome_fasta,
@@ -6,12 +12,14 @@ rule simulate_strain_reads:
         right=temp("resources/benchmarking/{accession}/reads.2.fastq.gz"),
     params:
         no_reads=lambda wildcards: no_reads(wildcards),
+        length_reads=lambda wildcards: length_read(wildcards),
     log:
         "logs/mason/benchmarking/{accession}.log",
     conda:
         "../envs/mason.yaml"
+    threads: 4
     shell:  # median reads in data: 584903
-        "mason_simulator -ir {input} -n {params.no_reads} -o {output.left} -or {output.right} 2> {log}"
+        "mason_simulator -ir {input} -n {params.no_reads} --illumina-read-length {params.length_reads} --num-threads {threads} -o {output.left} -or {output.right} --fragment-mean-size 400 2> {log}"
 
 
 rule mix_strain_reads:
@@ -195,7 +203,11 @@ rule plot_strain_call_error:
     input:
         "results/benchmarking/tables/{caller}-strain-call-error.csv",
     output:
-        "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
+        report(
+            "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
+            category="Figure 4: Strain Call Error",
+            caption="../report/publication-strain-call-error.rst",
+        ),
         "results/benchmarking/plots/{caller}-strain-call-error-false-predictions.svg",
         "results/benchmarking/plots/{caller}-strain-call-error-content-false-predictions.svg",
     log:
@@ -313,9 +325,17 @@ rule plot_assemblies:
             "results/{zip1}/assembly/{zip2}/{{exp}}/quast/transposed_report.tsv",
         ),
     output:
-        "results/benchmarking/plots/assembler-comparison.svg",
+        report(
+            "results/benchmarking/plots/assembler-comparison.svg",
+            category="Figure 2: Assembler Comparison",
+            caption="../report/publication-assembler-comparison.rst",
+        ),
         "results/benchmarking/plots/assembler-comparison.csv",
-        "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
+        report(
+            "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
+            category="Supplementary Figure 2: Genome Fraction",
+            caption="../report/publication-genome-fraction.rst",
+        ),
     log:
         "logs/benchmarking/all_assemblies_plot.log",
     params:
@@ -350,7 +370,11 @@ rule plot_dependency_of_pangolin_call:
     input:
         get_mixture_results,
     output:
-        "results/benchmarking/plots/{caller}-call-dependency.svg",
+        report(
+            "results/benchmarking/plots/{caller}-call-dependency.svg",
+            category="Figure 3: Lineage Call Dependency",
+            caption="../report/publication-lineage-call-dependency.rst",
+        ),
     log:
         "logs/plot_dependency_of_{caller}_call.log",
     params:
@@ -376,3 +400,99 @@ rule plot_pangolin_conflict:
         "../envs/python.yaml"
     script:
         "../scripts/plot-pangolin-conflict.py"
+
+
+rule collect_lineage_calls_of_various_stages:
+    input:
+        kallisto=expand(
+            "results/benchmarking/tables/strain-calls/{prefix}{{lineage}}{number_indi}{{number}}{length_indi}{{length}}{state_indi}reads.strains.kallisto.tsv",
+            prefix=READ_TEST_PREFIX,
+            number_indi=READ_NUMBER_INDICATOR,
+            length_indi=READ_LENGTH_INDICATOR,
+            state_indi=READ_STATE_INDICATOR,
+        ),
+        pangolin=expand(
+            "results/benchmarking/tables/strain-calls/{prefix}{{lineage}}{number_indi}{{number}}{length_indi}{{length}}{state_indi}{state}.strains.pangolin.csv",
+            prefix=READ_TEST_PREFIX,
+            number_indi=READ_NUMBER_INDICATOR,
+            length_indi=READ_LENGTH_INDICATOR,
+            state_indi=READ_STATE_INDICATOR,
+            state=["contig", "scaffold", "polished_scaffold", "pseudo"],
+        ),
+    output:
+        "results/benchmarking/tables/collected_lineage_calls_on_{lineage}_{number}_{length}.tsv",
+    params:
+        states=["contig", "scaffold", "polished_scaffold", "pseudo"],
+    log:
+        "logs/collect_lineage_calls/{lineage}_{number}_{length}.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/collect_lineage_calls.py"
+
+
+rule get_largest_contig:
+    input:
+        "results/{date}/assembly/megahit/{sample}/{sample}.contigs.fasta",
+    output:
+        "results/{date}/tables/largest_contig/{sample}.fasta",
+    log:
+        "logs/{date}/get_largest_contig/{sample}.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/get_largest_contig.py"
+
+
+checkpoint select_random_lineages:
+    input:
+        "results/{date}/tables/strain-genomes.txt",
+    output:
+        "results/{date}/tables/selected-strain-genomes-reads.txt",
+    params:
+        number_of_samples=config["read_lineage_call"]["number_of_samples"],
+    log:
+        "logs/{date}/select_random_lineages.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/select_random_lineages.py"
+
+
+rule aggregate_read_calls:
+    input:
+        get_read_calls,
+    output:
+        "results/benchmarking/tables/aggregated_read_calls.tsv",
+    log:
+        "logs/aggregate_read_calls.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/aggregate_read_calls.py"
+
+
+rule plot_read_call:
+    input:
+        "results/benchmarking/tables/aggregated_read_calls.tsv",
+    output:
+        "results/benchmarking/plots/aggregated_read_calls.svg",
+    log:
+        "logs/plot_read_call.log",
+    conda:
+        "../envs/python.yaml"
+    notebook:
+        "../notebooks/plot-read-call.py.ipynb"
+
+
+rule get_publication_plots:
+    input:
+        expand(
+            [
+                "results/benchmarking/plots/{caller}-strain-call-error-heatmap.svg",
+                "results/benchmarking/plots/{caller}-call-dependency.svg",
+            ],
+            caller=["kallisto", "pangolin"],
+        ),
+        "results/benchmarking/plots/assembler-comparison.svg",
+        "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",

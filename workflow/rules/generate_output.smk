@@ -1,3 +1,9 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+
 rule masking:
     input:
         bamfile="results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
@@ -76,7 +82,9 @@ checkpoint rki_filter:
 
 rule rki_report:
     input:
-        contigs=get_assemblies_for_submission("accepted samples"),
+        contigs=lambda wildcards: get_assemblies_for_submission(
+            wildcards, "accepted samples"
+        ),
     output:
         fasta=report(
             "results/rki/{date}_uk-essen_rki.fasta",
@@ -88,8 +96,8 @@ rule rki_report:
             category="6. RKI Submission",
             caption="../report/rki-submission-csv.rst",
         ),
-    params:
-        min_length=config["rki-output"]["minimum-length"],
+    conda:
+        "../envs/pysam.yaml"
     log:
         "logs/{date}/rki-output/{date}.log",
     script:
@@ -123,7 +131,9 @@ rule virologist_report:
     output:
         qc_data="results/{date}/virologist/qc_report.csv",
     params:
-        assembly_used=get_assemblies_for_submission("all samples"),
+        assembly_used=lambda wildcards: get_assemblies_for_submission(
+            wildcards, "all samples"
+        ),
         voc=config.get("voc"),
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
     log:
@@ -194,16 +204,12 @@ rule snakemake_reports:
         lambda wildcards: expand(
             "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
             sample=get_samples_for_date(wildcards.date),
-        )
-        if config["strain-calling"]["use-kallisto"]
-        else [],
+        ),
         "results/{date}/qc_data",
         expand(
             "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
             mode=["major"],
-        )
-        if config["strain-calling"]["use-kallisto"]
-        else [],
+        ),
         "results/{date}/plots/all.strains.pangolin.svg",
         lambda wildcards: expand(
             "results/{{date}}/vcf-report/{target}.{filter}",
@@ -225,7 +231,7 @@ rule snakemake_reports:
     params:
         for_testing=(
             "--snakefile ../workflow/Snakefile"
-            if config.get("benchmark-genomes", [])
+            if config.get("testing", {}).get("benchmark-genomes", [])
             else ""
         ),
     conda:
