@@ -316,6 +316,7 @@ def get_bwa_index_prefix(index_paths):
 
 
 def get_reads(wildcards):
+    # TODO: Add ONT here
     # alignment against the human reference genome is done with trimmed reads,
     # since this alignment is used to generate the ordered, non human reads
     if (
@@ -347,20 +348,24 @@ def get_reads(wildcards):
 
 def get_reads_after_qc(wildcards, read="both"):
 
-    if is_amplicon_data(wildcards.sample):
+    if is_amplicon_data(wildcards.sample) and get_technology(wildcards) == "ont":
+        pattern = ["results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz".format(**wildcards)]
+    elif is_amplicon_data(wildcards.sample) and get_technology(wildcards) == "illumina":
         pattern = expand(
             "results/{date}/clipped-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
         )
-    else:
+    elif not is_amplicon_data(wildcards.sample) and get_technology(wildcards) == "illumina":
         pattern = expand(
             "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
         )
+    else:
+        raise NotImplementedError("UnCoVer currently does not support non amplicon based ONT data")
 
     if read == "1":
         return pattern[0]
@@ -386,13 +391,12 @@ def return_assembler(sample):
 
 
 def get_contigs(wildcards):
-    pattern = (
-        "results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
+    if get_technology(wildcards) == "ont":
+        return "results/{date}/assembly/{sample}/canu/{sample}.contigs.fasta"
+    
+    return "results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
             assembler=return_assembler(wildcards.sample), **wildcards
-        ),
-    )
-    return pattern
-
+        )
 
 def get_expanded_contigs(wildcards):
     sample = get_samples_for_date(wildcards.date)
@@ -646,6 +650,7 @@ def get_depth_input(wildcards):
 
 
 def get_adapters(wildcards):
+    # TODO: Adjust for ONT
     if is_amplicon_data(wildcards.sample):
         return config["adapters"]["illumina-nimagen"]
     return config["adapters"]["illumina-revelo"]
