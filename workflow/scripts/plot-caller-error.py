@@ -66,22 +66,6 @@ def plot_error_heatmap(sm_input, sm_output, type="heatmap"):
             .encode(alt.X("true_fraction"), alt.Y("est_fraction"))
         )
 
-        polynomial_fit = [
-            base.transform_regression(
-                "true_fraction",
-                "est_fraction",
-                method="poly",
-                order=order,
-                as_=["true_fraction", str(order)],
-            )
-            .mark_line(color="black")
-            .transform_fold([str(order)], as_=["Poly. Degree", "est_fraction"])
-            .encode(alt.Color("Poly. Degree:N"))
-            for order in degree_list
-        ]
-
-        # plot = alt.layer(plot, *polynomial_fit)
-
     else:
         plot = (
             alt.Chart(results_df)
