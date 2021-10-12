@@ -76,8 +76,8 @@ rule nanofilt:
     log:
         "logs/{date}/nanofilt/{sample}.log",
     params:
-        min_length=config["RKI-quality-criteria"]["ont"]["min-length-reads"],
-        min_PHRED=config["RKI-quality-criteria"]["ont"]["min-PHRED"],
+        min_length=config["quality-criteria"]["ont"]["min-length-reads"],
+        min_PHRED=config["quality-criteria"]["ont"]["min-PHRED"],
     conda:
         "../envs/nanofilt.yaml"
     shell:
