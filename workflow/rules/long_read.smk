@@ -38,35 +38,39 @@ rule porechop_adapter_barcode_trimming:
         "porechop -i {input} -o {output} --threads {threads} -v 4 > {log} 2>&1"
 
 
-# rule customize_primer_porechop:
-#     output:
-#         "workflow/report/replacement_notice.txt"
-#     conda:
-#         "envs/primechop.yaml"
-#     shell:
-#         #rm $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py
-#         """
-#         cp ./resources/ARTIC_v3_adapters.py $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py
-#         echo "replaced adpaters in adapter.py file with ARTICv3 primers" > {output}
-#         """
+rule customize_primer_porechop:
+    input:
+        "resources/ARTIC_v3_adapters.py"
+    output:
+        "results/tables/replacement_notice.txt"
+    conda:
+        "../envs/primechop.yaml"
+    log:
+        "logs/customize_primer_porechop.log",
+    shell:
+        "(cp {input} $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py && "
+        "echo \"replaced adpaters in adapter.py file in $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py with ARTICv3 primers\" > {output}) "
+        "2> {log}"
 
 
-# rule porechop_primer_trimming:
-#     input:
-#         fastq_in="results/{sample}_abtrim/{sample}.fastq",
-#         repl_flag="workflow/report/replacement_notice.txt"
-#     output:
-#         "results/{sample}_primertrim/{sample}.fastq"
-#     conda:
-#         "envs/primechop.yaml"
-#     threads: 2
-#     shell:
-#         "porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 --threads {threads} -v 0"
+rule porechop_primer_trimming:
+    input:
+        fastq_in="results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq",
+        repl_flag="results/tables/replacement_notice.txt"
+    output:
+        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"
+    conda:
+        "../envs/primechop.yaml"
+    log:
+        "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
+    threads: 2
+    shell:
+        "porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 --threads {threads} -v 4 > {log} 2>&1"
 
 
 rule nanofilt:
     input:
-        "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"
+        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"
     output:
         "results/{date}/trimmed/nanofilt/{sample}.fastq"
     log:
@@ -78,19 +82,6 @@ rule nanofilt:
         "../envs/nanofilt.yaml"
     shell:
         "NanoFilt --length {params.min_length} --quality {params.min_PHRED} {input} > {output} 2> {log}"
-
-
-# rule seqtk_convert2fasta:
-#     input:
-#         "results/{date}/trimmed/nanofilt/{sample}.fastq"
-#     output:
-#         "results/{date}/trimmed/nanofilt_fasta/{sample}.fasta"
-#     log:
-#         "logs/{date}/nanofilt/{sample}.log"
-#     conda:
-#         "../envs/seqtk.yaml"
-#     shell:
-#         "seqtk seq -A {input} > {output} 2> {log}"
 
 
 rule canu_correct:
