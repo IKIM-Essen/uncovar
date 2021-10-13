@@ -102,20 +102,26 @@ def get_technology(wildcards):
         return "illumina"
     return pep.sample_table.loc[wildcards.sample]["technology"]
 
+
 def is_ont(wildcards):
     return get_technology(wildcards) == "ont"
+
 
 def is_illumina(wildcards):
     return get_technology(wildcards) == "illumina"
 
+
 def get_technology_by_sample(sample):
     return pep.sample_table.loc[sample]["technology"]
+
 
 def is_sample_illumina(sample):
     return get_technology_by_sample(sample) == "illumina"
 
+
 def is_sample_ont(sample):
     return get_technology_by_sample(sample) == "ont"
+
 
 def get_fastqs(wildcards):
     if wildcards.sample.startswith(BENCHMARK_PREFIX):
@@ -388,10 +394,7 @@ def get_reads_after_qc(wildcards, read="both"):
             read=[1, 2],
             sample=wildcards.sample,
         )
-    elif (
-        not is_amplicon_data(wildcards.sample)
-        and is_illumina(wildcards)
-    ):
+    elif not is_amplicon_data(wildcards.sample) and is_illumina(wildcards):
         pattern = expand(
             "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
@@ -434,21 +437,29 @@ def get_contigs(wildcards, opt_sample=None):
             return "results/{date}/assembly/{sample}/canu/{sample}.contigs.fasta"
 
         elif is_illumina(wildcards):
-            return "results/{{date}}/assembly/{{sample}}/{assembler}/{{sample}}.contigs.fasta".format(assembler=return_assembler(sample))
-    
+            return "results/{{date}}/assembly/{{sample}}/{assembler}/{{sample}}.contigs.fasta".format(
+                assembler=return_assembler(sample)
+            )
+
         raise NotImplementedError("No assembler found.")
 
     # wildcards is only sample name
     if is_sample_ont(opt_sample):
-        return "results/{{date}}/assembly/{sample}/canu/{sample}.contigs.fasta".format(sample=opt_sample)
+        return "results/{{date}}/assembly/{sample}/canu/{sample}.contigs.fasta".format(
+            sample=opt_sample
+        )
 
     elif is_sample_illumina(opt_sample):
-        return "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(assembler=return_assembler(opt_sample), sample=opt_sample)
-
+        return "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
+            assembler=return_assembler(opt_sample), sample=opt_sample
+        )
 
 
 def get_expanded_contigs(wildcards):
-    return [get_contigs(wildcards, sample) for sample in get_samples_for_date(wildcards.date)]
+    return [
+        get_contigs(wildcards, sample)
+        for sample in get_samples_for_date(wildcards.date)
+    ]
 
 
 def get_read_counts(wildcards):
