@@ -102,6 +102,20 @@ def get_technology(wildcards):
         return "illumina"
     return pep.sample_table.loc[wildcards.sample]["technology"]
 
+def is_ont(wildcards):
+    return get_technology(wildcards) == "ont"
+
+def is_illumina(wildcards):
+    return get_technology(wildcards) == "illumina"
+
+def get_technology_by_sample(sample):
+    return pep.sample_table.loc[sample]["technology"]
+
+def is_sample_illumina(sample):
+    return get_technology_by_sample(sample) == "illumina"
+
+def is_sample_ont(sample):
+    return get_technology_by_sample(sample) == "ont"
 
 def get_fastqs(wildcards):
     if wildcards.sample.startswith(BENCHMARK_PREFIX):
@@ -138,9 +152,10 @@ def get_fastqs(wildcards):
         )
 
     # default case, look up FASTQs in the sample sheet
-    if get_technology(wildcards) == "ont":
+    if is_ont(wildcards):
         return pep.sample_table.loc[wildcards.sample][["fq1"]]
-    return pep.sample_table.loc[wildcards.sample][["fq1", "fq2"]]
+    elif is_illumina(wildcards):
+        return pep.sample_table.loc[wildcards.sample][["fq1", "fq2"]]
 
 
 def get_resource(name):
@@ -360,13 +375,13 @@ def get_reads(wildcards):
 
 def get_reads_after_qc(wildcards, read="both"):
 
-    if is_amplicon_data(wildcards.sample) and get_technology(wildcards) == "ont":
+    if is_amplicon_data(wildcards.sample) and is_ont(wildcards):
         pattern = [
             "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz".format(
                 **wildcards
             )
         ]
-    elif is_amplicon_data(wildcards.sample) and get_technology(wildcards) == "illumina":
+    elif is_amplicon_data(wildcards.sample) and is_illumina(wildcards):
         pattern = expand(
             "results/{date}/clipped-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
@@ -375,7 +390,7 @@ def get_reads_after_qc(wildcards, read="both"):
         )
     elif (
         not is_amplicon_data(wildcards.sample)
-        and get_technology(wildcards) == "illumina"
+        and is_illumina(wildcards)
     ):
         pattern = expand(
             "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
@@ -405,29 +420,35 @@ def get_min_coverage(wildcards):
 
 
 def return_assembler(sample):
-    if is_amplicon_data(sample):
+    if is_amplicon_data(sample) and is_sample_illumina(sample):
         return config["assembly"]["amplicon"]
-    else:
+    elif not is_amplicon_data(sample) and is_sample_illumina(sample):
         return config["assembly"]["shotgun"]
+    else:
+        raise NotImplementedError(f"No assembler option fount for sample {sample}")
 
 
-def get_contigs(wildcards):
-    if get_technology(wildcards) == "ont":
-        return "results/{date}/assembly/{sample}/canu/{sample}.contigs.fasta"
+def get_contigs(wildcards, opt_sample=None):
+    if "sample" in wildcards.keys():
+        if is_ont(wildcards):
+            return "results/{date}/assembly/{sample}/canu/{sample}.contigs.fasta"
 
-    return "results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
-        assembler=return_assembler(wildcards.sample), **wildcards
-    )
+        elif is_illumina(wildcards):
+            return "results/{{date}}/assembly/{{sample}}/{assembler}/{{sample}}.contigs.fasta".format(assembler=return_assembler(sample))
+    
+        raise NotImplementedError("No assembler found.")
+
+    # wildcards is only sample name
+    if is_sample_ont(opt_sample):
+        return "results/{{date}}/assembly/{sample}/canu/{sample}.contigs.fasta".format(sample=opt_sample)
+
+    elif is_sample_illumina(opt_sample):
+        return "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(assembler=return_assembler(opt_sample), sample=opt_sample)
+
 
 
 def get_expanded_contigs(wildcards):
-    sample = get_samples_for_date(wildcards.date)
-    return [
-        "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
-            sample=s, assembler=return_assembler(s)
-        )
-        for s in sample
-    ]
+    return [get_contigs(wildcards, sample) for sample in get_samples_for_date(wildcards.date)]
 
 
 def get_read_counts(wildcards):
