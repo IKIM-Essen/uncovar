@@ -101,26 +101,27 @@ rule canu_correct:
         "(canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir}"
         " genomeSize=30k corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap"
         " minOverlapLength=10 minReadLength={params.min_length} corMMapMerSize=10 corOutCoverage=50000"
-        " corMinCoverage=0 maxInputCoverage=20000)"
+        " corMinCoverage=0 maxInputCoverage=20000) "
         " 2> {log}"
 
 
 rule spades_assemble_se:
     input:
-       "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz"
+        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
     output:
-        "results/{date}/assembly/{sample}/spades_se/{sample}.contigs.fasta"
+        "results/{date}/assembly/{sample}/spades_se/{sample}.contigs.fasta",
     log:
         "logs/{date}/spades/se/{sample}.log",
     conda:
         "../envs/spades.yaml"
     params:
-        outdir=get_output_dir
+        outdir=get_output_dir,
     threads: 8
     shell:
         "(spades.py --corona -s {input} -o {params.outdir} -t {threads} && "
         " mv {params.outdir}/scaffolds.fasta {output})"
         " > {log} 2>&1"
+
 
 # polish reference
 rule medaka:
