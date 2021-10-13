@@ -97,22 +97,31 @@ def get_dates_before_date(wildcards):
     )
 
 
-def get_technology(wildcards):
-    if is_benchmark_data(wildcards.sample):
-        return "illumina"
-    return pep.sample_table.loc[wildcards.sample]["technology"]
+def get_technology(wildcards, sample=None):
+    benchmark_technology = "illumina"
+    if sample is None:
+        if is_benchmark_data(wildcards.sample):
+            return benchmark_technology
+        return pep.sample_table.loc[wildcards.sample]["technology"]
 
-
-def is_ont(wildcards):
-    return get_technology(wildcards) == "ont"
-
-
-def is_illumina(wildcards):
-    return get_technology(wildcards) == "illumina"
-
-
-def get_technology_by_sample(sample):
+    if is_benchmark_data(sample):
+        return benchmark_technology
     return pep.sample_table.loc[sample]["technology"]
+
+
+def is_ont(wildcards, sample=None):
+    ont = "ont"
+    if sample is None:
+        return get_technology(wildcards) == ont
+    return get_technology(None, sample) == ont
+
+
+def is_illumina(wildcards, sample=None):
+    illumina = "illumina"
+    if sample is None:
+        return get_technology(wildcards) == illumina
+
+    return get_technology(None, sample) == illumina
 
 
 def is_sample_illumina(sample):
@@ -423,9 +432,9 @@ def get_min_coverage(wildcards):
 
 
 def return_assembler(sample):
-    if is_amplicon_data(sample) and is_sample_illumina(sample):
+    if is_amplicon_data(sample) and is_illumina(None, sample):
         return config["assembly"]["amplicon"]
-    elif not is_amplicon_data(sample) and is_sample_illumina(sample):
+    elif not is_amplicon_data(sample) and is_illumina(None, sample):
         return config["assembly"]["shotgun"]
     else:
         raise NotImplementedError(f"No assembler option fount for sample {sample}")
@@ -445,12 +454,12 @@ def get_contigs(wildcards, opt_sample=None):
         raise NotImplementedError("No assembler found.")
 
     # wildcards is only sample name
-    if is_sample_ont(opt_sample):
+    if is_ont(None, opt_sample):
         return "results/{{date}}/assembly/{sample}/canu/{sample}.contigs.fasta".format(
             sample=opt_sample
         )
 
-    elif is_sample_illumina(opt_sample):
+    elif is_illumina(None, opt_sample):
         return "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
             assembler=return_assembler(opt_sample), sample=opt_sample
         )
