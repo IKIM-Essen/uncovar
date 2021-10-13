@@ -432,13 +432,14 @@ def return_assembler(sample):
 
 
 def get_contigs(wildcards, opt_sample=None):
+
     if "sample" in wildcards.keys():
         if is_ont(wildcards):
             return "results/{date}/assembly/{sample}/canu/{sample}.contigs.fasta"
 
         elif is_illumina(wildcards):
             return "results/{{date}}/assembly/{{sample}}/{assembler}/{{sample}}.contigs.fasta".format(
-                assembler=return_assembler(sample)
+                assembler=return_assembler(wildcards.sample)
             )
 
         raise NotImplementedError("No assembler found.")
