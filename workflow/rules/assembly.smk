@@ -41,7 +41,7 @@ rule assembly_megahit:
         " > {log} 2>&1"
 
 
-rule assembly_spades:
+rule assembly_spades_pe:
     input:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
@@ -54,7 +54,7 @@ rule assembly_spades:
     params:
         outdir=get_output_dir,
     log:
-        "logs/{date}/{spadesflavor}/{sample}.log",
+        "logs/{date}/{spadesflavor}/pe/{sample}.log",
     conda:
         "../envs/spades.yaml"
     threads: 8

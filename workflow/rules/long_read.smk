@@ -93,34 +93,34 @@ rule canu_correct:
         "logs/{date}/canu/assemble/{sample}.log",
     params:
         outdir=get_output_dir,
+        min_length=config["quality-criteria"]["ont"]["min-length-reads"],
     conda:
         "../envs/canu.yaml"
     threads: 6
     shell:
-        "(canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} "
-        "genomeSize=30k corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap "
-        "minOverlapLength=10 minReadLength=200 corMMapMerSize=10 corOutCoverage=50000 "
-        "corMinCoverage=0 maxInputCoverage=20000) "
-        "2> {log}"
+        "(canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir}"
+        " genomeSize=30k corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap"
+        " minOverlapLength=10 minReadLength={params.min_length} corMMapMerSize=10 corOutCoverage=50000"
+        " corMinCoverage=0 maxInputCoverage=20000)"
+        " 2> {log}"
 
 
-rule assembly_canu:
+rule spades_assemble_se:
     input:
-        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+       "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz"
     output:
-        "results/{date}/assembly/{sample}/canu/{sample}.contigs.fasta",
-    params:
-        outdir=get_output_dir,
+        "results/{date}/assembly/{sample}/spades_se/{sample}.contigs.fasta"
     log:
-        "logs/{date}/canu/assemble/{sample}.log",
+        "logs/{date}/spades/se/{sample}.log",
     conda:
-        "../envs/canu.yaml"
-    threads: 6
+        "../envs/spades.yaml"
+    params:
+        outdir=get_output_dir
+    threads: 8
     shell:
-        "(canu -assemble -nanopore -corrected {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k corOverlapper=minimap "
-        "utgOverlapper=minimap obtOverlapper=minimap minOverlapLength=20 minReadLength=300 corMMapMerSize=10) "
-        "2> {log}"
-
+        "(spades.py --corona -s {input} -o {params.outdir} -t {threads} && "
+        " mv {params.outdir}/scaffolds.fasta {output})"
+        " > {log} 2>&1"
 
 # polish reference
 rule medaka:

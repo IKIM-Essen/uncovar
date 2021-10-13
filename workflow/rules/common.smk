@@ -444,7 +444,7 @@ def get_contigs(wildcards, opt_sample=None):
 
     if "sample" in wildcards.keys():
         if is_ont(wildcards):
-            return "results/{date}/assembly/{sample}/canu/{sample}.contigs.fasta"
+            return "results/{date}/assembly/{sample}/spades_se/{sample}.contigs.fasta"
 
         elif is_illumina(wildcards):
             return "results/{{date}}/assembly/{{sample}}/{assembler}/{{sample}}.contigs.fasta".format(
@@ -455,7 +455,7 @@ def get_contigs(wildcards, opt_sample=None):
 
     # wildcards is only sample name
     if is_ont(None, opt_sample):
-        return "results/{{date}}/assembly/{sample}/canu/{sample}.contigs.fasta".format(
+        return "results/{{date}}/assembly/{sample}/spades_se/{sample}.contigs.fasta".format(
             sample=opt_sample
         )
 
