@@ -884,6 +884,15 @@ def get_lineage_by_accession(wildcards):
     ]
 
 
+def get_artic_primer(wildcards):
+    # TODO: add more _adapters.py (not preferred) or
+    # add a script to generate them from a link to a bed file.
+    # The bed file can be found in the artic repo
+    return "resources/ARTIC_v{}_adapters.py".format(
+        config["adapters"]["artic-primer-version"]
+    )
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),

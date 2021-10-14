@@ -59,6 +59,10 @@ adapters:
   illumina-amplicon: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
   amplicon-primers: "resources/primer.bedpe"
   amplicon-reference: "MN908947"
+  # ARTIC primer version to clip (ont). See 
+  # https://github.com/artic-network/artic-ncov2019/tree/master/primer_schemes/nCoV-2019/V4
+  # for more information
+  artic-primer-version: 3
 
 variant-calling:
   # false discovery rate to control for

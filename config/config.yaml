@@ -46,10 +46,14 @@ adapters:
   illumina-shoutgun: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
   # adapters used for amplicon sequencing
   illumina-amplicon: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
-  # path to amplicon primers in bedpe format for hard-clipping
+  # path to amplicon primers in bedpe format for hard-clipping on paired end files (illumina)
   amplicon-primers: "resources/primer.bedpe"
   # GenBank accession of reference sequence of the amplicon primers
   amplicon-reference: "MN908947"
+  # ARTIC primer version to clip (ont). See 
+  # https://github.com/artic-network/artic-ncov2019/tree/master/primer_schemes/nCoV-2019/V4
+  # for more information
+  artic-primer-version: 3
 
 assembly:
   # minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
@@ -81,7 +85,7 @@ strain-calling:
   # paths to store genomes that are extracted from the full GISAID data
   extracted-strain-genomes: resources/genomes
   # flag for using all lineage reference from GISAIDS Epicov database. API key must be exported as env var GISAID_API_TOKEN.
-  use-gisaid: True
+  use-gisaid: False
   # GenBank accession for downloading lineage-references
   # only used, if use-gisaid flag is set to False
   lineage-references:

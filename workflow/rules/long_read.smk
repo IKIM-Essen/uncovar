@@ -40,7 +40,7 @@ rule porechop_adapter_barcode_trimming:
 
 rule customize_primer_porechop:
     input:
-        "resources/ARTIC_v3_adapters.py",
+        get_artic_primer,
     output:
         "results/tables/replacement_notice.txt",
     conda:
