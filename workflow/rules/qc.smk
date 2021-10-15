@@ -21,9 +21,7 @@ rule multiqc:
         expand_samples_for_date(
             [
                 "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
-                "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
                 "results/{{date}}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
-                "results/{{date}}/trimmed/{sample}.fastp.json",
                 "results/{{date}}/quast/unpolished/{sample}/report.tsv",
                 "results/{{date}}/quast/polished/{sample}/report.tsv",
                 "results/{{date}}/qc/samtools_flagstat/{sample}.bam.flagstat",
@@ -31,6 +29,8 @@ rule multiqc:
             ]
         ),
         expand_samples_for_date("logs/{{date}}/kallisto_quant/{sample}.log"),
+        get_fastp_results,
+        get_kraken_output,
     output:
         "results/{date}/qc/multiqc.html",
     params:
@@ -47,11 +47,11 @@ rule multiqc_lab:
         expand_samples_for_date(
             [
                 "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
-                "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
-                "results/{{date}}/trimmed/{sample}.fastp.json",
                 "results/{{date}}/quast/unpolished/{sample}/report.tsv",
             ]
         ),
+        get_fastp_results,
+        get_kraken_output,
     output:
         report(
             "results/{date}/qc/laboratory/multiqc.html",
@@ -98,49 +98,61 @@ rule samtools_depth:
 
 
 # analysis of species diversity present BEFORE removing human contamination
-rule species_diversity_before:
+rule species_diversity_before_pe:
     input:
         db="resources/minikraken-8GB",
-        reads=expand("results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
+        reads=get_trimmed_reads,
     output:
         classified_reads=temp(
             expand(
-                "results/{{date}}/species-diversity/{{sample}}/{{sample}}_{read}.classified.fasta",
+                "results/{{date}}/species-diversity/pe/{{sample}}/{{sample}}_{read}.classified.fasta",
                 read=[1, 2],
             )
         ),
         unclassified_reads=temp(
             expand(
-                "results/{{date}}/species-diversity/{{sample}}/{{sample}}_{read}.unclassified.fasta",
+                "results/{{date}}/species-diversity/pe/{{sample}}/{{sample}}_{read}.unclassified.fasta",
                 read=[1, 2],
             )
         ),
-        kraken_output=temp("results/{date}/species-diversity/{sample}/{sample}.kraken"),
-        report="results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+        kraken_output=temp(
+            "results/{date}/species-diversity/pe/{sample}/{sample}.kraken"
+        ),
+        report="results/{date}/species-diversity/pe/{sample}/{sample}.uncleaned.kreport2",
     log:
         "logs/{date}/kraken/{sample}.log",
     params:
-        classified=lambda w, output: "#".join(
-            output.classified_reads[0].rsplit("_1", 1)
-        ),
-        unclassified=lambda w, output: "#".join(
-            output.unclassified_reads[0].rsplit("_1", 1)
-        ),
+        classified=lambda w, output: " --unclassified-out "
+        + "#".join(output.classified_reads[0].rsplit("_1", 1))
+        if is_illumina(w)
+        else "",
+        unclassified=lambda w, output: "--classified-out "
+        + "#".join(output.unclassified_reads[0].rsplit("_1", 1))
+        if is_illumina(w)
+        else "",
+        paired=lambda wildcards: "--paired " if is_illumina(wildcards) else "",
     threads: 8
     conda:
         "../envs/kraken.yaml"
     shell:
-        "(kraken2 --db {input.db} --threads {threads} --unclassified-out {params.unclassified} "
-        "--classified-out {params.classified} --report {output.report} --gzip-compressed "
-        "--paired {input.reads} > {output.kraken_output}) 2> {log}"
+        "(kraken2 --db {input.db} --threads {threads} {params.unclassified} "
+        " {params.classified} --report {output.report} --gzip-compressed"
+        " {params.paired} {input.reads} > {output.kraken_output})"
+        "2> {log}"
+
+
+use rule species_diversity_before_pe as species_diversity_before_se with:
+    output:
+        kraken_output=temp(
+            "results/{date}/species-diversity/se/{sample}/{sample}.kraken"
+        ),
+        report="results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2",
 
 
 # plot Korna charts BEFORE removing human contamination
 rule create_krona_chart:
     input:
-        kraken_output=(
-            "results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2"
-        ),
+        kraken_output=get_kraken_output,
         taxonomy_database="resources/krona/",
     output:
         "results/{date}/species-diversity/{sample}/{sample}.html",

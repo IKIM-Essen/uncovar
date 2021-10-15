@@ -120,7 +120,6 @@ def is_illumina(wildcards, sample=None):
     illumina = "illumina"
     if sample is None:
         return get_technology(wildcards) == illumina
-
     return get_technology(None, sample) == illumina
 
 
@@ -358,7 +357,6 @@ def get_bwa_index_prefix(index_paths):
 
 
 def get_reads(wildcards):
-    # TODO: Add ONT here
     # alignment against the human reference genome is done with trimmed reads,
     # since this alignment is used to generate the ordered, non human reads
     if (
@@ -366,12 +364,17 @@ def get_reads(wildcards):
         or wildcards.reference == "main+human"
         or wildcards.reference.startswith("polished-")
     ):
-        return expand(
-            "results/{date}/trimmed/{sample}.{read}.fastq.gz",
-            date=wildcards.date,
-            read=[1, 2],
-            sample=wildcards.sample,
-        )
+        if is_illumina(wildcards):
+            return expand(
+                "results/{date}/trimmed/{sample}.{read}.fastq.gz",
+                read=[1, 2],
+                **wildcards,
+            )
+        elif is_ont(wildcards):
+            return expand(
+                "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+                **wildcards,
+            )
 
     # theses reads are used to generate the bam file for the BAMclipper
     elif wildcards.reference == config["adapters"]["amplicon-reference"]:
@@ -396,6 +399,10 @@ def get_reads_after_qc(wildcards, read="both"):
                 **wildcards
             )
         ]
+    elif not is_amplicon_data(wildcards.sample) and is_ont(wildcards):
+        raise NotImplementedError(
+            "UnCoVer currently does not support non amplicon based ONT data"
+        )
     elif is_amplicon_data(wildcards.sample) and is_illumina(wildcards):
         pattern = expand(
             "results/{date}/clipped-reads/{sample}.{read}.fastq.gz",
@@ -409,10 +416,6 @@ def get_reads_after_qc(wildcards, read="both"):
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
-        )
-    else:
-        raise NotImplementedError(
-            "UnCoVer currently does not support non amplicon based ONT data"
         )
 
     if read == "1":
@@ -436,8 +439,14 @@ def return_assembler(sample):
         return config["assembly"]["amplicon"]
     elif not is_amplicon_data(sample) and is_illumina(None, sample):
         return config["assembly"]["shotgun"]
-    else:
-        raise NotImplementedError(f"No assembler option fount for sample {sample}")
+    if is_amplicon_data(sample) and is_ont(None, sample):
+        raise NotImplementedError(
+            f"No amplicon ONT assembler option found for sample {sample}"
+        )
+    elif not is_amplicon_data(sample) and is_ont(None, sample):
+        raise NotImplementedError(
+            f"No non-amplicon ONT assembler option found for sample {sample}"
+        )
 
 
 def get_contigs(wildcards, opt_sample=None):
@@ -451,8 +460,6 @@ def get_contigs(wildcards, opt_sample=None):
                 assembler=return_assembler(wildcards.sample)
             )
 
-        raise NotImplementedError("No assembler found.")
-
     # wildcards is only sample name
     if is_ont(None, opt_sample):
         return "results/{{date}}/assembly/{sample}/spades_se/{sample}.contigs.fasta".format(
@@ -463,6 +470,8 @@ def get_contigs(wildcards, opt_sample=None):
         return "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
             assembler=return_assembler(opt_sample), sample=opt_sample
         )
+
+    raise NotImplementedError("No assembler found.")
 
 
 def get_expanded_contigs(wildcards):
@@ -679,8 +688,12 @@ def is_amplicon_data(sample):
         return False
 
 
-def get_samples_for_date_amplicon(date):
-    return [s for s in get_samples_for_date(date) if is_amplicon_data(s)]
+def get_samples_for_date_for_illumina_amplicon(date):
+    return [
+        s
+        for s in get_samples_for_date(date)
+        if (is_amplicon_data(s) and is_illumina(None, s))
+    ]
 
 
 def get_list_of_amplicon_states(wildcards):
@@ -709,21 +722,32 @@ def get_recal_input(wildcards):
 
 
 def get_depth_input(wildcards):
-    if is_amplicon_data(wildcards.sample):
-        # use clipped reads
+    # use clipped reads
+    if is_illumina(wildcards) and is_amplicon_data(wildcards.sample):
         return "results/{date}/clipped-reads/{sample}.primerclipped.bam"
+
+    elif is_ont(wildcards) and is_amplicon_data(wildcards.sample):
+        return "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"
+
     # use trimmed reads
-    amplicon_reference = config["adapters"]["amplicon-reference"]
     return "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam".format(
-        ref=amplicon_reference
+        ref=config["adapters"]["amplicon-reference"]
     )
 
 
 def get_adapters(wildcards):
-    # TODO: Adjust for ONT
-    if is_amplicon_data(wildcards.sample):
+    if is_illumina(wildcard) and is_amplicon_data(wildcards.sample):
         return config["adapters"]["illumina-amplicon"]
-    return config["adapters"]["illumina-shotgun"]
+    elif is_illumina(wildcard) and not is_amplicon_data(wildcards.sample):
+        return config["adapters"]["illumina-shotgun"]
+    elif is_ont(wildcards) and is_amplicon_data(wildcards.sample):
+        raise NotImplementedError(
+            "No adapters implemented for amplicon data generated with ONT technology"
+        )
+    elif is_ont(wildcards) and not is_amplicon_data(wildcards.sample):
+        raise NotImplementedError(
+            "No adapters implemented for shotgun data generated with ONT technology"
+        )
 
 
 def get_final_assemblies(wildcards):
@@ -827,7 +851,7 @@ def expand_samples_by_func(paths, func, **kwargs):
     def inner(wildcards):
         return expand(
             paths,
-            sample=get_samples_for_date(wildcards.date),
+            sample=func,
             **kwargs,
         )
 
@@ -839,7 +863,21 @@ def expand_samples_for_date(paths, **kwargs):
 
 
 def expand_samples_for_date_amplicon(paths, **kwargs):
-    return expand_samples_by_func(paths, get_samples_for_date_amplicon, **kwargs)
+    return expand_samples_by_func(
+        paths, get_samples_for_date_for_illumina_amplicon, **kwargs
+    )
+
+
+def get_fastp_results(wildcards, **kwargs):
+    # fastp is only used on illumina data
+    return expand(
+        "results/{{date}}/trimmed/{sample}.fastp.json",
+        sample=[
+            sample
+            for sample in get_samples_for_date(wildcards.date)
+            if is_illumina(None, sample)
+        ],
+    )
 
 
 def get_vep_args(wildcards, input):
@@ -893,14 +931,31 @@ def get_artic_primer(wildcards):
     )
 
 
-wildcard_constraints:
-    sample="[^/.]+",
-    vartype="|".join(VARTYPES),
-    clonality="subclonal|clonal",
-    filter="|".join(
-        list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
-    ),
-    varrange="structural|small",
+def get_trimmed_reads(wildcards):
+    if is_illumina(wildcards):
+        return expand(
+            "results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]
+        )
+    elif is_ont(wildcards):
+        return "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"
+
+
+def get_kraken_output(wildcards):
+    samples = get_samples_for_date(wildcards)
+
+    illumina_pattern = (
+        "results/{date}/species-diversity/pe/{sample}/{sample}.uncleaned.kreport2"
+    )
+    ont_pattern = (
+        "results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2"
+    )
+
+    return [
+        illumina_pattern.format(sample=sample, **wildcards)
+        if is_illumina(None, sample)
+        else ont_pattern.format(sample=sample, **wildcards)
+        for sample in samples
+    ]
 
 
 def get_read_calls(wildcard):
@@ -915,3 +970,13 @@ def get_read_calls(wildcard):
         number=config["read_lineage_call"]["number_of_reads"],
         length=config["read_lineage_call"]["length_of_reads"],
     )
+
+
+wildcard_constraints:
+    sample="[^/.]+",
+    vartype="|".join(VARTYPES),
+    clonality="subclonal|clonal",
+    filter="|".join(
+        list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
+    ),
+    varrange="structural|small",

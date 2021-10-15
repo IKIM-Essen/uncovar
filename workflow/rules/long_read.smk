@@ -35,7 +35,7 @@ rule porechop_adapter_barcode_trimming:
         "logs/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.log",
     threads: 2
     shell:
-        "porechop -i {input} -o {output} --threads {threads} -v 4 > {log} 2>&1"
+        "porechop -i {input} -o {output} --threads {threads} -v 1 > {log} 2>&1"
 
 
 rule customize_primer_porechop:
@@ -84,6 +84,7 @@ rule nanofilt:
         "NanoFilt --length {params.min_length} --quality {params.min_PHRED} {input} > {output} 2> {log}"
 
 
+# correction removes PHRED score
 rule canu_correct:
     input:
         "results/{date}/trimmed/nanofilt/{sample}.fastq",

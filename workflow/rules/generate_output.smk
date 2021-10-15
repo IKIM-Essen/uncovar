@@ -106,9 +106,7 @@ rule rki_report:
 
 rule virologist_report:
     input:
-        reads_unfiltered=expand_samples_for_date(
-            "results/{{date}}/trimmed/{sample}.fastp.json",
-        ),
+        reads_unfiltered=get_fastp_results,
         reads_used_for_assembly=expand_samples_for_date(
             "results/{{date}}/tables/read_pair_counts/{sample}.txt",
         ),
@@ -119,9 +117,7 @@ rule virologist_report:
         pseudo_contigs=expand_samples_for_date(
             "results/{{date}}/contigs/pseudoassembled/{sample}.fasta",
         ),
-        kraken=expand_samples_for_date(
-            "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
-        ),
+        kraken=get_kraken_output,
         pangolin=expand_samples_for_date(
             "results/{{date}}/tables/strain-calls/{sample}.strains.pangolin.csv",
         ),
@@ -224,7 +220,7 @@ rule snakemake_reports:
             filter=config["variant-calling"]["filters"],
         ),
         lambda wildcards: "results/{date}/plots/primer-clipping-intervals.svg"
-        if len(get_samples_for_date_amplicon(wildcards.date)) > 0
+        if len(get_samples_for_date_for_illumina_amplicon(wildcards.date)) > 0
         else [],
     output:
         "results/reports/{date}.zip",
