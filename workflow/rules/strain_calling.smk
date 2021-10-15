@@ -13,10 +13,6 @@ checkpoint extract_strain_genomes_from_gisaid:
         save_strains_to=config["strain-calling"]["extracted-strain-genomes"],
     log:
         "logs/{date}/extract-strain-genomes.log",
-    params:
-        save_strains_to=lambda wildcards: config["strain-calling"][
-            "extracted-strain-genomes"
-        ],
     conda:
         "../envs/pandas.yaml"
     script:
@@ -50,14 +46,31 @@ rule kallisto_index:
         "0.70.0/bio/kallisto/index"
 
 
+rule kallisto_metrics:
+    input:
+        get_reads_after_qc,
+    output:
+        avg_read_length="results/{date}/tables/avg_read_length/{sample}.txt",
+        standard_deviation="results/{date}/tables/standard_deviation/{sample}.txt"
+    log:
+        "resuls/{date}/kallisto/metrics/{sample}.log"
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "awk 'BEGIN {{ t=0.0;sq=0.0; n=0; }} ;NR%4==2 {{ n++;L=length($0);t+=L;sq+=L*L; }}END{{ m=t/n;printf(\"%f\\n\",m) ; }}' {input} > {output.avg_read_length} && "
+        "awk 'BEGIN {{ t=0.0;sq=0.0; n=0; }} ;NR%4==2 {{ n++;L=length($0);t+=L;sq+=L*L; }}END{{ m=t/n;printf(\"%f\\n\",sq/n-m*m) ; }}' {input} > {output.standard_deviation}"
+
+
 rule kallisto_quant:
     input:
         fastq=get_reads_after_qc,
         index="results/{date}/kallisto/strain-genomes.idx",
-    output:
+        fragment_length=lambda wildcards: "results/{date}/tables/avg_read_length/{sample}.txt" if is_ont(wildcards) else "",
+        standard_deviation=lambda wildcards: "results/{date}/tables/standard_deviation/{sample}.txt" if is_ont(wildcards) else "",
+    output: 
         directory("results/{date}/quant/{sample}"),
     params:
-        extra="",
+        extra= lambda w, input: f"--single --fragment-length {get_first_line(input.fragment_length)} --sd {get_first_line(input.standard_deviation)}" if is_ont else "",
     log:
         "logs/{date}/kallisto_quant/{sample}.log",
     wrapper:

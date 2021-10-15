@@ -22,11 +22,18 @@ def is_sars_cov2(record, mate=False):
 with pysam.AlignmentFile(snakemake.input[0], "rb") as inbam:
     with pysam.AlignmentFile(snakemake.output[0], "wb", template=inbam) as outbam:
         for record in inbam:
-            assert record.is_paired
-            if (
-                (record.is_unmapped and record.mate_is_unmapped)
-                or (is_sars_cov2(record) and record.mate_is_unmapped)
-                or (is_sars_cov2(record, mate=True) and record.is_unmapped)
-                or (is_sars_cov2(record) and is_sars_cov2(record, mate=True))
-            ):
-                outbam.write(record)
+            if record.is_paired:
+                if (
+                    (record.is_unmapped and record.mate_is_unmapped)
+                    or (is_sars_cov2(record) and record.mate_is_unmapped)
+                    or (is_sars_cov2(record, mate=True) and record.is_unmapped)
+                    or (is_sars_cov2(record) and is_sars_cov2(record, mate=True))
+                ):
+                    outbam.write(record)
+            else:
+                if (
+                    record.is_unmapped
+                    or is_sars_cov2(record)
+                ):
+                    outbam.write(record)
+                

@@ -727,7 +727,10 @@ def get_depth_input(wildcards):
         return "results/{date}/clipped-reads/{sample}.primerclipped.bam"
 
     elif is_ont(wildcards) and is_amplicon_data(wildcards.sample):
-        return "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"
+        return expand(
+            "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam",
+            ref=config["adapters"]["amplicon-reference"],
+        )
 
     # use trimmed reads
     return "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam".format(
@@ -970,6 +973,10 @@ def get_read_calls(wildcard):
         number=config["read_lineage_call"]["number_of_reads"],
         length=config["read_lineage_call"]["length_of_reads"],
     )
+
+def get_first_line(path):
+    with open(path) as f:
+        return f.readline().strip()
 
 
 wildcard_constraints:
