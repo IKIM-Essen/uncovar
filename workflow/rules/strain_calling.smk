@@ -64,7 +64,7 @@ rule kallisto_quant:
         "0.70.0/bio/kallisto/quant"
 
 
-rule call_strains_kallisto:
+rule kallisto_call_strains:
     input:
         quant="results/{date}/quant/{sample}",
         fq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
@@ -80,7 +80,7 @@ rule call_strains_kallisto:
         "../notebooks/call-strains.py.ipynb"
 
 
-rule plot_strains_kallisto:
+rule kallisto_plot_strains:
     input:
         "results/{date}/tables/strain-calls/{sample}.strains.kallisto.tsv",
     output:
@@ -100,7 +100,7 @@ rule plot_strains_kallisto:
         "../notebooks/plot-strains-kallisto.py.ipynb"
 
 
-rule plot_all_strains_kallisto:
+rule kallisto_plot_all_strains:
     input:
         lambda wildcards: expand(
             "results/{{date}}/tables/strain-calls/{sample}.strains.kallisto.tsv",
@@ -121,7 +121,7 @@ rule plot_all_strains_kallisto:
         "../notebooks/plot-all-strains-kallisto.py.ipynb"
 
 
-rule pangolin:
+rule pangolin_call_strains:
     input:
         contigs=lambda wildcards: get_assemblies_for_submission(
             wildcards, "single sample"
@@ -141,7 +141,7 @@ rule pangolin:
         "pangolin {input.contigs} --data {params.pango_data_path} --outfile {output} > {log} 2>&1"
 
 
-rule plot_all_strains_pangolin:
+rule pangolin_plot_all_strains:
     input:
         lambda wildcards: expand(
             "results/{{date}}/tables/strain-calls/{sample}.strains.pangolin.csv",
