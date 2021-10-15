@@ -974,6 +974,7 @@ def get_read_calls(wildcard):
         length=config["read_lineage_call"]["length_of_reads"],
     )
 
+
 def get_first_line(path):
     with open(path) as f:
         return f.readline().strip()

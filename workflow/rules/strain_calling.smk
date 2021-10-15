@@ -51,9 +51,9 @@ rule kallisto_metrics:
         get_reads_after_qc,
     output:
         avg_read_length="results/{date}/tables/avg_read_length/{sample}.txt",
-        standard_deviation="results/{date}/tables/standard_deviation/{sample}.txt"
+        standard_deviation="results/{date}/tables/standard_deviation/{sample}.txt",
     log:
-        "resuls/{date}/kallisto/metrics/{sample}.log"
+        "resuls/{date}/kallisto/metrics/{sample}.log",
     conda:
         "../envs/unix.yaml"
     shell:
@@ -65,12 +65,18 @@ rule kallisto_quant:
     input:
         fastq=get_reads_after_qc,
         index="results/{date}/kallisto/strain-genomes.idx",
-        fragment_length=lambda wildcards: "results/{date}/tables/avg_read_length/{sample}.txt" if is_ont(wildcards) else "",
-        standard_deviation=lambda wildcards: "results/{date}/tables/standard_deviation/{sample}.txt" if is_ont(wildcards) else "",
-    output: 
+        fragment_length=lambda wildcards: "results/{date}/tables/avg_read_length/{sample}.txt"
+        if is_ont(wildcards)
+        else "",
+        standard_deviation=lambda wildcards: "results/{date}/tables/standard_deviation/{sample}.txt"
+        if is_ont(wildcards)
+        else "",
+    output:
         directory("results/{date}/quant/{sample}"),
     params:
-        extra= lambda w, input: f"--single --fragment-length {get_first_line(input.fragment_length)} --sd {get_first_line(input.standard_deviation)}" if is_ont else "",
+        extra=lambda w, input: f"--single --fragment-length {get_first_line(input.fragment_length)} --sd {get_first_line(input.standard_deviation)}"
+        if is_ont
+        else "",
     log:
         "logs/{date}/kallisto_quant/{sample}.log",
     wrapper:
