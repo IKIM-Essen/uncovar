@@ -6,6 +6,8 @@ import altair as alt
 import pandas as pd
 import pysam
 
+OrfName = snakemake.wildcards.ORFNAME
+
 AA_ALPHABET_TRANSLATION = {
     "Gly": "G",
     "Ala": "A",
@@ -39,10 +41,12 @@ def get_calls():
             for record in infile:
                 vaf = record.samples[0]["AF"][0]
                 for ann in record.info["ANN"]:
+                    #print(ann)
                     ann = ann.split("|")
                     hgvsp = ann[11]
                     enssast_id = ann[6]
                     feature = ann[3]
+                    orf = ann[3]
                     if hgvsp:
                         # TODO think about regex instead of splitting
                         enssast_id, alteration = hgvsp.split(":", 1)
@@ -57,13 +61,17 @@ def get_calls():
                                 "vaf": vaf,
                                 "date": date,
                                 "sample": sample,
+                                "orf": orf,
                             }
                         )
+    # filtern
     return pd.DataFrame(variants)
 
 
 def plot_variants_over_time(sm_output, sm_output_table):
     calls = get_calls()
+
+    print(calls)
 
     # write out as table
     calls.to_csv(sm_output_table)
@@ -78,8 +86,9 @@ def plot_variants_over_time(sm_output, sm_output_table):
 
     calls.rename(columns={"alteration": "Alteration", "date": "Date"}, inplace=True)
 
+    #if calls["orf"] == OrfName:
     area_plot = (
-        alt.Chart(calls)
+        alt.Chart(calls[(calls == OrfName)])
         .mark_bar(opacity=0.8)
         .encode(
             x=alt.X("Date:O"),

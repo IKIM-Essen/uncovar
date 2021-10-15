@@ -198,17 +198,17 @@ rule plot_variants_over_time:
         ),
     output:
         report(
-            "results/{date}/plots/variants-over-time.svg",
-            caption="../report/variants-over-time.rst",
+            "results/{date}/plots/variants-{ORFNAME}-over-time.svg",
+            caption="../report/{ORFNAME}-over-time.rst",
             category="1. Overview",
-            subcategory="3. Variant Development",
+            subcategory="3. Variant Development {ORFNAME}",
         ),
-        "results/{date}/tables/variants-over-time.csv",
+        "results/{date}/tables/variants-{ORFNAME}-over-time.csv",
     params:
         dates=get_dates_before_date,
         samples=get_samples_before_date,
     log:
-        "logs/{date}/plot_variants_over_time.log",
+        "logs/{date}/{ORFNAME}-over-time.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -218,7 +218,7 @@ rule plot_variants_over_time:
 rule snakemake_reports:
     input:
         "results/{date}/plots/lineages-over-time.svg",
-        "results/{date}/plots/variants-over-time.svg",
+        expand("results/{{date}}/plots/variants-{ORFNAME}-over-time.svg", ORFNAME=config["orf_names"]),
         "results/{date}/plots/coverage-reference-genome.svg",
         "results/{date}/plots/coverage-assembled-genome.svg",
         lambda wildcards: expand(

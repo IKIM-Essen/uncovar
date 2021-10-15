@@ -141,3 +141,15 @@ assemblers_for_comparison:
 assemblers_used:
   shotgun: "megahit-std"
   amplicon: "metaspades"
+
+# orf names for variant calling orf plots
+orf_names:
+  - ORF1ab
+  - ORF1b
+  - S
+  - ORF3a
+  - M
+  - ORF7a
+  - ORF7b
+  - ORF8
+  - N 
