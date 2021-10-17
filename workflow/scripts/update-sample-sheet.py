@@ -14,10 +14,9 @@ import pandas as pd
 
 # define location of sample sheet and workflow configx
 SAMPLE_SHEET = snakemake.input[0]  # "config/pep/samples.csv"
-CONFIG_YAML = "config/config.yaml"
 
 
-def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
+def update_sample_sheet(SAMPLE_SHEET, verbose=True, dry_run=False):
     """
     This function
         - copies files from the incoming data directory to the snakemake data directory and
@@ -52,12 +51,7 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
 
     today = date.today().strftime("%Y-%m-%d")
 
-    # load path from config
-    with open(CONFIG_YAML, "r") as stream:
-        try:
-            config = yaml.safe_load(stream)
-        except yaml.YAMLError as exc:
-            print(exc)
+    config = snakemake.config
 
     DATA_PATH = str(config["data-handling"]["data"])
     IN_PATH = str(config["data-handling"]["incoming"])
@@ -245,4 +239,4 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
                 new_sample_sheet.to_csv(ARCHIVE_PATH + today + "/samples.csv")
 
 
-update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML)
+update_sample_sheet(SAMPLE_SHEET)
