@@ -31,9 +31,5 @@ with pysam.AlignmentFile(snakemake.input[0], "rb") as inbam:
                 ):
                     outbam.write(record)
             else:
-                if (
-                    record.is_unmapped
-                    or is_sars_cov2(record)
-                ):
+                if record.is_unmapped or is_sars_cov2(record):
                     outbam.write(record)
-                
