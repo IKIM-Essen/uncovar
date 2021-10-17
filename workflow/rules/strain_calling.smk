@@ -74,9 +74,7 @@ rule kallisto_quant:
     output:
         directory("results/{date}/quant/{sample}"),
     params:
-        extra=lambda w, input: f"--single --fragment-length {get_first_line(input.fragment_length)} --sd {get_first_line(input.standard_deviation)}"
-        if is_ont
-        else "",
+        extra=lambda w, input: get_kallisto_quant_extra(w, input),
     log:
         "logs/{date}/kallisto_quant/{sample}.log",
     wrapper:
