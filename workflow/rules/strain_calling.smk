@@ -53,7 +53,7 @@ rule kallisto_metrics:
         avg_read_length="results/{date}/tables/avg_read_length/{sample}.txt",
         standard_deviation="results/{date}/tables/standard_deviation/{sample}.txt",
     log:
-        "resuls/{date}/kallisto/metrics/{sample}.log",
+        "logs/{date}/kallisto/metrics/{sample}.log",
     conda:
         "../envs/unix.yaml"
     shell:
