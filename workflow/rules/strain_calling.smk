@@ -63,14 +63,7 @@ rule kallisto_metrics:
 
 rule kallisto_quant:
     input:
-        fastq=get_reads_after_qc,
-        index="results/{date}/kallisto/strain-genomes.idx",
-        fragment_length=lambda wildcards: "results/{date}/tables/avg_read_length/{sample}.txt"
-        if is_ont(wildcards)
-        else "",
-        standard_deviation=lambda wildcards: "results/{date}/tables/standard_deviation/{sample}.txt"
-        if is_ont(wildcards)
-        else "",
+        unpack(get_kallisto_quant_input)
     output:
         directory("results/{date}/quant/{sample}"),
     params:
