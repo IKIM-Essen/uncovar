@@ -944,7 +944,7 @@ def get_trimmed_reads(wildcards):
 
 
 def get_kraken_output(wildcards):
-    samples = get_samples_for_date(wildcards)
+    samples = get_samples_for_date(wildcards.date)
 
     illumina_pattern = (
         "results/{date}/species-diversity/pe/{sample}/{sample}.uncleaned.kreport2"
