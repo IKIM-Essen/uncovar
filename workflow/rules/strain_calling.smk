@@ -63,7 +63,7 @@ rule kallisto_metrics:
 
 rule kallisto_quant:
     input:
-        unpack(get_kallisto_quant_input)
+        unpack(get_kallisto_quant_input),
     output:
         directory("results/{date}/quant/{sample}"),
     params:

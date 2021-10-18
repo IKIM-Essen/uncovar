@@ -993,20 +993,23 @@ def get_path_if_ont(paths):
         if is_ont(wildcards):
             return paths
         return [""]
+
     return inner
+
 
 def get_kallisto_quant_input(wildcards):
     if is_ont(wildcards):
         return {
-            "fastq":get_reads_after_qc(wildcards),
-            "index":"results/{date}/kallisto/strain-genomes.idx",
-            "fragment_length" : "results/{date}/tables/avg_read_length/{sample}.txt",
-            "standard_deviation" : "results/{date}/tables/standard_deviation/{sample}.txt"
+            "fastq": get_reads_after_qc(wildcards),
+            "index": "results/{date}/kallisto/strain-genomes.idx",
+            "fragment_length": "results/{date}/tables/avg_read_length/{sample}.txt",
+            "standard_deviation": "results/{date}/tables/standard_deviation/{sample}.txt",
         }
     return {
-        "fastq":get_reads_after_qc(wildcards),
-        "index":"results/{date}/kallisto/strain-genomes.idx",
+        "fastq": get_reads_after_qc(wildcards),
+        "index": "results/{date}/kallisto/strain-genomes.idx",
     }
+
 
 wildcard_constraints:
     sample="[^/.]+",
