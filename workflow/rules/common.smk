@@ -909,13 +909,15 @@ def get_samples_for_assembler_comparison(paths):
         config["assemblers_for_comparison"],
     )
 
+
 def get_illumina_samples():
     samples = pep.sample_table
-    return samples.loc[samples["technology"]==ILLUMINA]["sample_name"].values
+    return samples.loc[samples["technology"] == ILLUMINA]["sample_name"].values
+
 
 def get_illimina_dates():
     samples = pep.sample_table
-    return samples.loc[samples["technology"]==ILLUMINA]["date"].values
+    return samples.loc[samples["technology"] == ILLUMINA]["date"].values
 
 
 def get_megahit_preset(wildcards):
