@@ -12,6 +12,9 @@ from snakemake.utils import validate
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
 
+ILLUMINA = "illumina"
+ONT = "ont"
+
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
 MIXTURE_PREFIX = "mixture-sample-"
@@ -98,7 +101,7 @@ def get_dates_before_date(wildcards):
 
 
 def get_technology(wildcards, sample=None):
-    benchmark_technology = "illumina"
+    benchmark_technology = ILLUMINA
     if sample is None:
         if is_benchmark_data(wildcards.sample):
             return benchmark_technology
@@ -110,25 +113,23 @@ def get_technology(wildcards, sample=None):
 
 
 def is_ont(wildcards, sample=None):
-    ont = "ont"
     if sample is None:
-        return get_technology(wildcards) == ont
-    return get_technology(None, sample) == ont
+        return get_technology(wildcards) == ONT
+    return get_technology(None, sample) == ONT
 
 
 def is_illumina(wildcards, sample=None):
-    illumina = "illumina"
     if sample is None:
-        return get_technology(wildcards) == illumina
-    return get_technology(None, sample) == illumina
+        return get_technology(wildcards) == ILLUMINA
+    return get_technology(None, sample) == ILLUMINA
 
 
 def is_sample_illumina(sample):
-    return get_technology_by_sample(sample) == "illumina"
+    return get_technology_by_sample(sample) == ILLUMINA
 
 
 def is_sample_ont(sample):
-    return get_technology_by_sample(sample) == "ont"
+    return get_technology_by_sample(sample) == ONT
 
 
 def get_fastqs(wildcards):
@@ -392,7 +393,6 @@ def get_reads(wildcards):
 
 
 def get_reads_after_qc(wildcards, read="both"):
-
     if is_amplicon_data(wildcards.sample) and is_ont(wildcards):
         pattern = [
             "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz".format(
@@ -904,10 +904,18 @@ def expand_samples_by_func(paths, func, **kwargs):
 def get_samples_for_assembler_comparison(paths):
     return zip_expand(
         paths,
-        get_dates(),
-        get_samples(),
+        get_illimina_dates(),
+        get_illumina_samples(),
         config["assemblers_for_comparison"],
     )
+
+def get_illumina_samples():
+    samples = pep.sample_table
+    return samples.loc[samples["technology"]==ILLUMINA]["sample_name"].values
+
+def get_illimina_dates():
+    samples = pep.sample_table
+    return samples.loc[samples["technology"]==ILLUMINA]["date"].values
 
 
 def get_megahit_preset(wildcards):
