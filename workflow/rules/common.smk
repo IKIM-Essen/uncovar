@@ -105,11 +105,10 @@ def get_technology(wildcards, sample=None):
 
     if sample is None:
         sample = wildcards.sample
-        
+
     if is_benchmark_data(sample):
         return benchmark_technology
     return pep.sample_table.loc[sample]["technology"]
-
 
 
 def is_ont(wildcards, sample=None):
