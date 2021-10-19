@@ -991,7 +991,7 @@ def get_first_line(path):
 
 def get_kallisto_quant_extra(wildcards, input):
     print(input)
-    is_ont(wildcards):
+    if is_ont(wildcards):
         print(get_first_line(input.fragment_length))
         print(get_first_line(input.standard_deviation))
     return (
