@@ -58,7 +58,7 @@ rule kallisto_metrics:
         "../envs/unix.yaml"
     shell:
         "awk 'BEGIN {{ t=0.0;sq=0.0; n=0; }} ;NR%4==2 {{ n++;L=length($0);t+=L;sq+=L*L; }}END{{ m=t/n;printf(\"%f\\n\",m) ; }}' {input} && "
-        "awk 'BEGIN {{ t=0.0;sq=0.0; n=0; }} ;NR%4==2 {{ n++;L=length($0);t+=L;sq+=L*L; }}END{{ m=t/n;printf(\"%f\\n\",sq/n-m*m) ; }}' {input} &&"
+        "awk 'BEGIN {{ t=0.0;sq=0.0; n=0; }} ;NR%4==2 {{ n++;L=length($0);t+=L;sq+=L*L; }}END{{ m=t/n;printf(\"%f\\n\",sq/n-m*m) ; }}' {input} && "
         "awk 'BEGIN {{ t=0.0;sq=0.0; n=0; }} ;NR%4==2 {{ n++;L=length($0);t+=L;sq+=L*L; }}END{{ m=t/n;printf(\"%f\\n\",m) ; }}' {input} > {output.avg_read_length} && "
         "awk 'BEGIN {{ t=0.0;sq=0.0; n=0; }} ;NR%4==2 {{ n++;L=length($0);t+=L;sq+=L*L; }}END{{ m=t/n;printf(\"%f\\n\",sq/n-m*m) ; }}' {input} > {output.standard_deviation}"
 
