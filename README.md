@@ -5,11 +5,11 @@
 [![GitHub actions status](https://github.com/koesterlab/snakemake-workflow-sars-cov2/workflows/Tests/badge.svg?branch=master)](https://github.com/koesterlab/snakemake-workflow-sars-cov2/actions?query=branch%3Amaster+workflow%3ATests)
 [![Docker Repository on Quay](https://quay.io/repository/uncovar/uncovar/status "Docker Repository on Quay")](https://quay.io/repository/uncovar/uncovar)
 
-A reproducible and scalable workflow for transparent and robust SARS-CoV-2 variant calling and lineage assignment.
+A reproducible and scalable workflow for transparent and robust SARS-CoV-2 variant calling and lineage assignment with comprehensive reporting.
 
 ## Usage
 
-The usage of this workflow is described in the [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog/?usage=TBD).
+This workflow is written with snakemake and its usage is described in the [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog/?usage=TBD).
 
 If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this repository and its DOI (see above).
 
