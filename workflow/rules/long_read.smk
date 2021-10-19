@@ -102,7 +102,7 @@ rule canu_correct:
         "(canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir}"
         " genomeSize=30k corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap"
         " minOverlapLength=10 minReadLength={params.min_length} corMMapMerSize=10 corOutCoverage=50000"
-        " corMinCoverage=0 maxInputCoverage=20000) "
+        " corMinCoverage=0 maxInputCoverage=20000 maxThreads={threads}) "
         " 2> {log}"
 
 
