@@ -102,14 +102,14 @@ def get_dates_before_date(wildcards):
 
 def get_technology(wildcards, sample=None):
     benchmark_technology = ILLUMINA
-    if sample is None:
-        if is_benchmark_data(wildcards.sample):
-            return benchmark_technology
-        return pep.sample_table.loc[wildcards.sample]["technology"]
 
+    if sample is None:
+        sample = wildcards.sample
+        
     if is_benchmark_data(sample):
         return benchmark_technology
     return pep.sample_table.loc[sample]["technology"]
+
 
 
 def is_ont(wildcards, sample=None):
