@@ -739,9 +739,9 @@ def get_depth_input(wildcards):
 
 
 def get_adapters(wildcards):
-    if is_illumina(wildcard) and is_amplicon_data(wildcards.sample):
+    if is_illumina(wildcards) and is_amplicon_data(wildcards.sample):
         return config["adapters"]["illumina-amplicon"]
-    elif is_illumina(wildcard) and not is_amplicon_data(wildcards.sample):
+    elif is_illumina(wildcards) and not is_amplicon_data(wildcards.sample):
         return config["adapters"]["illumina-shotgun"]
     elif is_ont(wildcards) and is_amplicon_data(wildcards.sample):
         raise NotImplementedError(
@@ -971,7 +971,7 @@ def get_kraken_output(wildcards):
     ]
 
 
-def get_read_calls(wildcard):
+def get_read_calls(wildcards):
     with checkpoints.select_random_lineages.get(date=BENCHMARK_DATE_WILDCARD).output[
         0
     ].open() as f:
