@@ -43,7 +43,7 @@ quality-criteria:
 adapters:
   # Illumina TruSeq adapters
   # adapters used for shotgun sequencing
-  illumina-shoutgun: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+  illumina-shotgun: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
   # adapters used for amplicon sequencing
   illumina-amplicon: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
   # path to amplicon primers in bedpe format for hard-clipping
