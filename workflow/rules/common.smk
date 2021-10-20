@@ -995,11 +995,9 @@ def get_kallisto_quant_extra(wildcards, input):
         print(get_first_line(input.fragment_length))
         print(get_first_line(input.standard_deviation))
 
-    if config.get("testing", {}).get("benchmark-genomes", []):
-        return (
-            f"--single --fragment-length 250 --sd 47301" if is_ont(wildcards) else "",
-        )
-
+    if is_for_testing():
+        return get_if_testing("--single --fragment-length 250 --sd 47301") 
+        
     return (
         f"--single --fragment-length {get_first_line(input.fragment_length)} --sd {get_first_line(input.standard_deviation)}"
         if is_ont(wildcards)
@@ -1029,6 +1027,11 @@ def get_kallisto_quant_input(wildcards):
         "index": "results/{date}/kallisto/strain-genomes.idx",
     }
 
+def is_for_testing():
+    return bool(config.get("testing", {}))
+
+def get_if_testing(string):
+    return string if is_for_testing() else ""
 
 wildcard_constraints:
     sample="[^/.]+",

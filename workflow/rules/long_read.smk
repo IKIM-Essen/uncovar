@@ -95,6 +95,7 @@ rule canu_correct:
     params:
         outdir=get_output_dir,
         min_length=config["quality-criteria"]["ont"]["min-length-reads"],
+        for_testing=get_if_testing("corThreads={threads} redThreads={threads} redMemory=6 oeaMemory=6")
     conda:
         "../envs/canu.yaml"
     threads: 6
@@ -102,7 +103,7 @@ rule canu_correct:
         "(canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir}"
         " genomeSize=30k corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap"
         " minOverlapLength=10 minReadLength={params.min_length} corMMapMerSize=10 corOutCoverage=50000"
-        " corMinCoverage=0 maxInputCoverage=20000 corThreads={threads} redThreads={threads} redMemory=6 oeaMemory=6) "
+        " corMinCoverage=0 maxInputCoverage=20000 maxThreads={threads} {params.for_testing}) "
         " 2> {log}"
 
 

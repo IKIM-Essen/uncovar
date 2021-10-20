@@ -225,11 +225,7 @@ rule snakemake_reports:
     output:
         "results/reports/{date}.zip",
     params:
-        for_testing=(
-            "--snakefile ../workflow/Snakefile"
-            if config.get("testing", {}).get("benchmark-genomes", [])
-            else ""
-        ),
+        for_testing=get_if_testing("--snakefile ../workflow/Snakefile"),
     conda:
         "../envs/snakemake.yaml"
     log:
