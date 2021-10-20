@@ -903,7 +903,7 @@ def expand_samples_by_func(paths, func, **kwargs):
 def get_samples_for_assembler_comparison(paths):
     return zip_expand(
         paths,
-        get_illimina_dates(),
+        get_illumina_samples_dates(),
         get_illumina_samples(),
         config["assemblers_for_comparison"],
     )
@@ -914,7 +914,7 @@ def get_illumina_samples():
     return samples.loc[samples["technology"] == ILLUMINA]["sample_name"].values
 
 
-def get_illimina_dates():
+def get_illumina_samples_dates():
     samples = pep.sample_table
     return samples.loc[samples["technology"] == ILLUMINA]["date"].values
 
