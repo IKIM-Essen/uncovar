@@ -143,6 +143,9 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
             lambda x: "R1" if "R1" in x else "R2"
         )
 
+        #filter for include-rki-flag
+        
+
         # set multiindex
         new_files_df.set_index(
             [new_files_df["sample_name"], new_files_df["read"]], inplace=True

@@ -812,6 +812,14 @@ def get_lineage_by_accession(wildcards):
     ]
 
 
+# Function to get the include flag and the date from the sample sheet
+def get_high_quality_include_flag(date):
+    df = pep.sample_table
+    df = df[["sample_name", df["run_id"] == date, "include_in_high_genome_summary"]]
+    print(df)
+    return df
+    
+
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),
