@@ -64,8 +64,9 @@ def get_calls():
                                 "orf": orf,
                             }
                         )
-    # filtern
-    return pd.DataFrame(variants)
+    variants_df = pd.DataFrame(variants)
+    variants_orf_final = variants_df[variants_df["orf"] == OrfName]
+    return variants_orf_final
 
 
 def plot_variants_over_time(sm_output, sm_output_table):
@@ -88,7 +89,7 @@ def plot_variants_over_time(sm_output, sm_output_table):
 
     #if calls["orf"] == OrfName:
     area_plot = (
-        alt.Chart(calls[(calls == OrfName)])
+        alt.Chart(calls)
         .mark_bar(opacity=0.8)
         .encode(
             x=alt.X("Date:O"),

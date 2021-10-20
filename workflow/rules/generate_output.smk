@@ -199,7 +199,7 @@ rule plot_variants_over_time:
     output:
         report(
             "results/{date}/plots/variants-{ORFNAME}-over-time.svg",
-            caption="../report/{ORFNAME}-over-time.rst",
+            caption="../report/variants-over-time.rst",
             category="1. Overview",
             subcategory="3. Variant Development {ORFNAME}",
         ),
