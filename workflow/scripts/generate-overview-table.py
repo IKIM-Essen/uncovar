@@ -215,7 +215,7 @@ int_cols = [
     "Final Contig (bp)",
     "Pseudo Contig (bp)",
 ]
-data[int_cols] = data[int_cols].applymap(lambda x: "{0:,}".format(int(x)))
 
+data[int_cols] = data[int_cols].fillna("0").applymap(lambda x: "{0:,}".format(int(x)))
 
 data.to_csv(snakemake.output[0], float_format="%.1f")
