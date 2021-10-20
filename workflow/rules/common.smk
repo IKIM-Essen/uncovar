@@ -994,6 +994,14 @@ def get_kallisto_quant_extra(wildcards, input):
     if is_ont(wildcards):
         print(get_first_line(input.fragment_length))
         print(get_first_line(input.standard_deviation))
+
+    if config.get("testing", {}).get("benchmark-genomes", []):
+        return(
+        f"--single --fragment-length 250 --sd 47301"
+        if is_ont(wildcards)
+        else "",
+    )
+
     return (
         f"--single --fragment-length {get_first_line(input.fragment_length)} --sd {get_first_line(input.standard_deviation)}"
         if is_ont(wildcards)
