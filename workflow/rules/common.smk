@@ -1036,6 +1036,16 @@ def get_if_testing(string):
     return string if is_for_testing() else ""
 
 
+def get_nanoQC_input(wildcards):
+    if wildcards.stage == "intial":
+        return get_fastqs(wildcards)
+    elif wildcards.stage == "trimmed":
+        return "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"
+    elif wildcards.stage == "clipped":
+        return "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"
+    elif wildcards.stage == "filtered":
+        return "results/{date}/trimmed/nanofilt/{sample}.fastq"
+
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),

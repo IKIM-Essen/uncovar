@@ -1,27 +1,16 @@
-# rule nanoQC_pre_trim:
-#     input:
-#         "input_data/{sample}.fastq"
-#     output:
-#         directory("results/{sample}/qc/initial")
-#     log:
-#         "logs/{sample}/{sample}_initialQC.log"
-#     conda:
-#         "envs/nanoqc.yaml"
-#     shell:
-#         "nanoQC {input} -o {output}"
-
-
-# rule nanoQC_post_trim:
-#     input:
-#         "results/{sample}/trim-filt/{sample}_tf.fastq"
-#     output:
-#         directory("results/{sample}/qc/post_trimfilt_qc")
-#     log:
-#         "logs/{sample}/{sample}_post_trimfilt_qc.log"
-#     conda:
-#         "envs/nanoqc.yaml"
-#     shell:
-#         "nanoQC {input} -o {output}"
+rule nanoQC:
+    input:
+        get_nanoQC_input
+    output:
+        "results/{date}/qc/nanoQC/{sample}/{stage}/nanoQC.html",
+    log:
+        "logs/{date}/nanoQC/{sample}_{stage}.log"
+    params:
+        outdir=get_output_dir,
+    conda:
+        "../envs/nanoqc.yaml"
+    shell:
+        "nanoQC {input} -o {params.outdir} > {log} 2>&1"
 
 
 rule porechop_adapter_barcode_trimming:
@@ -145,9 +134,3 @@ rule medaka:
     shell:
         "medaka_consensus -i {input.fastq} -o {params.outdir} -d {input.reference} -t {threads} -m {params.model} 2> {log}"
 
-
-# Questions & Notes:
-# Adjusted Nanoflit -> rmv max length and added min lenght
-# Added canu correct before assembly
-# Need an better way to provide amplicon primers for clipping
-# We only want primer clipped de novo assembly
