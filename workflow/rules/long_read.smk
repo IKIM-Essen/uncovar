@@ -54,7 +54,7 @@ rule porechop_primer_trimming:
         "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
     threads: 2
     shell:
-        "porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 --threads {threads} -v 4 > {log} 2>&1"
+        "porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 --threads {threads} -v 1 > {log} 2>&1"
 
 
 rule nanofilt:
@@ -70,7 +70,7 @@ rule nanofilt:
     conda:
         "../envs/nanofilt.yaml"
     shell:
-        "NanoFilt --length {params.min_length} --quality {params.min_PHRED} {input} > {output} 2> {log}"
+        "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 500 {input} > {output} 2> {log}"
 
 
 # correction removes PHRED score
@@ -112,7 +112,7 @@ rule spades_assemble_se:
     threads: 8
     shell:
         "(spades.py --corona -s {input} -o {params.outdir} -t {threads} && "
-        " mv {params.outdir}/scaffolds.fasta {output})"
+        " mv {params.outdir}/raw_contigs.fasta {output})"
         " > {log} 2>&1"
 
 
