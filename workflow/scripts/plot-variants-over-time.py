@@ -41,7 +41,7 @@ def get_calls():
             for record in infile:
                 vaf = record.samples[0]["AF"][0]
                 for ann in record.info["ANN"]:
-                    #print(ann)
+                    # print(ann)
                     ann = ann.split("|")
                     hgvsp = ann[11]
                     enssast_id = ann[6]
@@ -87,7 +87,6 @@ def plot_variants_over_time(sm_output, sm_output_table):
 
     calls.rename(columns={"alteration": "Alteration", "date": "Date"}, inplace=True)
 
-    #if calls["orf"] == OrfName:
     area_plot = (
         alt.Chart(calls)
         .mark_bar(opacity=0.8)
