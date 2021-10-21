@@ -1046,6 +1046,7 @@ def get_nanoQC_input(wildcards):
     elif wildcards.stage == "filtered":
         return "results/{date}/trimmed/nanofilt/{sample}.fastq"
 
+
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),

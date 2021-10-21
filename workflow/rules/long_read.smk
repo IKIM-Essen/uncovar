@@ -1,10 +1,10 @@
 rule nanoQC:
     input:
-        get_nanoQC_input
+        get_nanoQC_input,
     output:
         "results/{date}/qc/nanoQC/{sample}/{stage}/nanoQC.html",
     log:
-        "logs/{date}/nanoQC/{sample}_{stage}.log"
+        "logs/{date}/nanoQC/{sample}_{stage}.log",
     params:
         outdir=get_output_dir,
     conda:
@@ -133,4 +133,3 @@ rule medaka:
     threads: 4
     shell:
         "medaka_consensus -i {input.fastq} -o {params.outdir} -d {input.reference} -t {threads} -m {params.model} 2> {log}"
-
