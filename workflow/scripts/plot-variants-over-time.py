@@ -41,7 +41,6 @@ def get_calls():
             for record in infile:
                 vaf = record.samples[0]["AF"][0]
                 for ann in record.info["ANN"]:
-                    # print(ann)
                     ann = ann.split("|")
                     hgvsp = ann[11]
                     enssast_id = ann[6]
