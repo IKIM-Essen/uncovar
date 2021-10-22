@@ -7,6 +7,7 @@ from pathlib import Path
 import pandas as pd
 import re
 import random
+from datetime import date
 from snakemake.utils import validate
 
 
@@ -813,9 +814,10 @@ def get_lineage_by_accession(wildcards):
 
 
 # Function to get the include flag and the date from the sample sheet
-def get_high_quality_include_flag(date):
+def get_high_quality_include_flag():
     df = pep.sample_table
-    df = df[["sample_name", df["run_id"] == date, "include_in_high_genome_summary"]]
+    print(df)
+    df_part = df[["sample_name", df["date"] == date.today(), "include_in_high_genome_summary"], dtype=dtype]
     print(df)
     return df
     
