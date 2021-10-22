@@ -132,4 +132,4 @@ rule medaka:
         "../envs/medaka.yaml"
     threads: 4
     shell:
-        "medaka_consensus -i {input.fastq} -o {params.outdir} -d {input.reference} -t {threads} -m {params.model} 2> {log}"
+        "medaka_consensus -v -i {input.fastq} -o {params.outdir} -d {input.reference} -t {threads} -m {params.model} 2> {log}"
