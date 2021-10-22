@@ -71,20 +71,19 @@ def get_calls():
 def plot_variants_over_time(sm_output, sm_output_table):
     calls = get_calls()
 
-    print(calls)
-
     # write out as table
     calls.to_csv(sm_output_table)
 
-    # get occurrences
-    calls["total occurrence"] = calls.groupby("alteration", as_index=False)[
-        "alteration"
-    ].transform(lambda s: s.count())
+    if len(calls) > 0:
+        # get occurrences
+        calls["total occurrence"] = calls.groupby("alteration", as_index=False)[
+            "alteration"
+        ].transform(lambda s: s.count())
 
-    # mask low occurrences
-    calls.loc[calls["total occurrence"] < 10, "alteration"] = "other (< 10 occ.)"
+        # mask low occurrences
+        calls.loc[calls["total occurrence"] < 10, "alteration"] = "other (< 10 occ.)"
 
-    calls.rename(columns={"alteration": "Alteration", "date": "Date"}, inplace=True)
+        calls.rename(columns={"alteration": "Alteration", "date": "Date"}, inplace=True)
 
     area_plot = (
         alt.Chart(calls)
