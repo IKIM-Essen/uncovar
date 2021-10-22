@@ -1,2 +1,2 @@
-sample_name,fq1,fq2,run_id,is_amplicon_data
-NAME,PATH/TO/fq1,PATH/TO/fq2,ID,0
+sample_name,fq1,fq2,date,is_amplicon_data
+NAME,PATH/TO/fq1,PATH/TO/fq2,2021-01-01,0
