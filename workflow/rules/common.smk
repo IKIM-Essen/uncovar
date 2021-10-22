@@ -1,7 +1,13 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
 from pathlib import Path
 import pandas as pd
 import re
 import random
+from snakemake.utils import validate
 
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
@@ -12,6 +18,18 @@ MIXTURE_PREFIX = "mixture-sample-"
 MIXTURE_PART_INDICATOR = "_MIX_"
 MIXTURE_PERCENTAGE_INDICATOR = "_PERC_"
 BENCHMARK_DATE_WILDCARD = "benchmarking"
+READ_TEST_PREFIX = "read-sample-"
+READ_NUMBER_INDICATOR = "_READ_NUMBER_"
+READ_LENGTH_INDICATOR = "_READ_LENGTH_"
+READ_STATE_INDICATOR = "_STATE_"
+
+
+configfile: "config/config.yaml"
+
+
+validate(config, "../schemas/config.schema.yaml")
+
+validate(pep.sample_table, "../schemas/samples.schema.yaml")
 
 
 def get_samples():
@@ -19,13 +37,13 @@ def get_samples():
 
 
 def get_dates():
-    return list(pep.sample_table["run_id"].values)
+    return list(pep.sample_table["date"].values)
 
 
 def get_samples_for_date(date, filtered=False):
     # select samples with given date
     df = pep.sample_table
-    df = df[df["run_id"] == date]
+    df = df[df["date"] == date]
 
     samples_of_run = list(df["sample_name"].values)
 
@@ -56,18 +74,18 @@ def get_samples_for_date(date, filtered=False):
 
 
 def get_all_run_dates():
-    sorted_list = list(pep.sample_table["run_id"].unique())
+    sorted_list = list(pep.sample_table["date"].unique())
     sorted_list.sort()
     return sorted_list
 
 
 def get_latest_run_date():
-    return pep.sample_table["run_id"].max()
+    return pep.sample_table["date"].max()
 
 
 def get_samples_before_date(wildcards):
     return list(
-        pep.sample_table[pep.sample_table["run_id"] <= wildcards.date][
+        pep.sample_table[pep.sample_table["date"] <= wildcards.date][
             "sample_name"
         ].values
     )
@@ -75,7 +93,7 @@ def get_samples_before_date(wildcards):
 
 def get_dates_before_date(wildcards):
     return list(
-        pep.sample_table[pep.sample_table["run_id"] <= wildcards.date]["run_id"].values
+        pep.sample_table[pep.sample_table["date"] <= wildcards.date]["date"].values
     )
 
 
@@ -88,6 +106,7 @@ def get_fastqs(wildcards):
             accession=accession,
             read=[1, 2],
         )
+    # non-sars-cov2-genome test
     if wildcards.sample.startswith(NON_COV2_TEST_PREFIX):
         # this is for testing non-sars-cov2-genomes
         accession = wildcards.sample[len(NON_COV2_TEST_PREFIX) :]
@@ -96,11 +115,19 @@ def get_fastqs(wildcards):
             accession=accession,
             read=[1, 2],
         )
+    # mixture
     if wildcards.sample.startswith(MIXTURE_PREFIX):
         mixture = wildcards.sample[len(MIXTURE_PREFIX) :]
         return expand(
             "resources/mixtures/{mixtures}/reads.{read}.fastq.gz",
             mixtures=mixture,
+            read=[1, 2],
+        )
+    # read benchmark
+    if wildcards.sample.startswith(READ_TEST_PREFIX):
+        return expand(
+            "resources/benchmarking/{accession}/reads.{read}.fastq.gz",
+            accession=wildcards.sample,
             read=[1, 2],
         )
     # default case, look up FASTQs in the sample sheet
@@ -156,11 +183,11 @@ def get_merge_calls_input(suffix):
 def get_strain_accessions(wildcards):
     with checkpoints.get_strain_accessions.get().output[0].open() as f:
         # Get genomes for benchmarking from config
-        accessions = config.get("benchmark-genomes", [])
+        accessions = config.get("testing", {}).get("benchmark-genomes", [])
         if not accessions:
             accessions = pd.read_csv(f, squeeze=True)
         try:
-            accessions = accessions[: config["limit-strain-genomes"]]
+            accessions = accessions[: config["testing"]["limit-strain-genomes"]]
         except KeyError:
             # take all strain genomes
             pass
@@ -172,16 +199,26 @@ def get_non_cov2_accessions():
     return accessions
 
 
+def load_strain_genomes(f):
+    strain_genomes = pd.read_csv(f, squeeze=True).to_list()
+    strain_genomes.append("resources/genomes/main.fasta")
+    return expand("{strains}", strains=strain_genomes)
+
+
 def get_strain_genomes(wildcards):
     # Case 1: take custom genomes from gisaid
-    custom_genomes = config["strain-calling"]["use-gisaid"]
-    if custom_genomes:
-        with checkpoints.extract_strain_genomes_from_gisaid.get(
+    if not config.get("testing", {}).get("use-genbank", False):
+        if config["strain-calling"]["use-gisaid"]:
+            # use genomes extracted from gisaid provision
+            with checkpoints.extract_strain_genomes_from_gisaid.get(
+                date=wildcards.date
+            ).output[0].open() as f:
+                return load_strain_genomes(f)
+        # use genomes from genbank
+        with checkpoints.get_lineages_for_non_gisaid_based_calling.get(
             date=wildcards.date
         ).output[0].open() as f:
-            strain_genomes = pd.read_csv(f, squeeze=True).to_list()
-            strain_genomes.append("resources/genomes/main.fasta")
-            return expand("{strains}", strains=strain_genomes)
+            return load_strain_genomes(f)
 
     # Case 2: for benchmarking (no strain-calling/genomes in config file)
     # take genomes from genbank
@@ -337,7 +374,7 @@ def get_reads_after_qc(wildcards, read="both"):
 
 
 def get_min_coverage(wildcards):
-    conf = config["RKI-quality-criteria"]
+    conf = config["quality-criteria"]
     if is_amplicon_data(wildcards.sample):
         return conf["min-depth-with-PCR-duplicates"]
     else:
@@ -346,9 +383,9 @@ def get_min_coverage(wildcards):
 
 def return_assembler(sample):
     if is_amplicon_data(sample):
-        return config["assemblers_used"]["amplicon"]
+        return config["assembly"]["amplicon"]
     else:
-        return config["assemblers_used"]["shotgun"]
+        return config["assembly"]["shotgun"]
 
 
 def get_contigs(wildcards):
@@ -511,6 +548,17 @@ def get_genome_fasta(wildcards):
             acc, _ = wildcards.accession.split(MIXTURE_PERCENTAGE_INDICATOR)
             acc = acc.replace("-", ".").replace(MIXTURE_PART_INDICATOR, "")
             return "resources/genomes/{accession}.fasta".format(accession=acc)
+    # read test sample
+    if (
+        READ_NUMBER_INDICATOR in wildcards.accession
+        and READ_LENGTH_INDICATOR in wildcards.accession
+    ):
+        with checkpoints.extract_strain_genomes_from_gisaid.get(
+            date=BENCHMARK_DATE_WILDCARD
+        ).output[0].open() as f:
+            acc, _ = wildcards.accession.split(READ_NUMBER_INDICATOR)
+            acc = acc.replace(READ_TEST_PREFIX, "").replace("-", ".")
+            return "resources/genomes/{accession}.fasta".format(accession=acc)
     # normal genome, download via entrez
     else:
         return "resources/genomes/{accession}.fasta".format(
@@ -523,8 +571,20 @@ def no_reads(wildcards):
     if MIXTURE_PART_INDICATOR in wildcards.accession:
         _, fraction = wildcards.accession.split(MIXTURE_PERCENTAGE_INDICATOR)
         return round(int(fraction) * max_reads / 100)
+    if READ_NUMBER_INDICATOR in wildcards.accession:
+        _, no_reads = wildcards.accession.split(READ_NUMBER_INDICATOR)
+        no_reads, _ = no_reads.split(READ_LENGTH_INDICATOR)
+        return no_reads
     else:
         return max_reads
+
+
+def length_read(wildcards):
+    if READ_LENGTH_INDICATOR in wildcards.accession:
+        _, length_state = wildcards.accession.split(READ_LENGTH_INDICATOR)
+        length, _ = length_state.split(READ_STATE_INDICATOR)
+        return length
+    return 100
 
 
 def get_strain(path_to_pangolin_call):
@@ -537,6 +597,7 @@ def is_amplicon_data(sample):
         sample.startswith(BENCHMARK_PREFIX)
         or sample.startswith(NON_COV2_TEST_PREFIX)
         or sample.startswith(MIXTURE_PREFIX)
+        or sample.startswith(READ_TEST_PREFIX)
     ):
         # benchmark data, not amplicon based
         return False
@@ -589,8 +650,8 @@ def get_depth_input(wildcards):
 
 def get_adapters(wildcards):
     if is_amplicon_data(wildcards.sample):
-        return config["adapters"]["illumina-nimagen"]
-    return config["adapters"]["illumina-revelo"]
+        return config["adapters"]["illumina-amplicon"]
+    return config["adapters"]["illumina-shotgun"]
 
 
 def get_final_assemblies(wildcards):
@@ -611,68 +672,77 @@ def get_final_assemblies_identity(wildcards):
     return expand(pattern, sample=get_samples_for_date(wildcards.date))
 
 
-def get_assemblies_for_submission(agg_type):
-    def inner(wildcards):
-        if wildcards.date != BENCHMARK_DATE_WILDCARD:
-            with checkpoints.rki_filter.get(
-                date=wildcards.date, assembly_type="masked-assembly"
-            ).output[0].open() as f:
-
-                masked_samples = (
-                    pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
-                )
-
-            with checkpoints.rki_filter.get(
-                date=wildcards.date, assembly_type="pseudo-assembly"
-            ).output[0].open() as f:
-                pseudo_samples = (
-                    pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
-                )
-        # for testing of pangolin don't create pseudo-assembly
-        else:
-            masked_samples = [wildcards.sample]
-
-        pseudo_assembly_pattern = (
-            "results/{{date}}/contigs/pseudoassembled/{sample}.fasta"
-        )
-        normal_assembly_pattern = "results/{{date}}/contigs/masked/{sample}.fasta"
-
-        # get accepted samples for rki submission
-        if agg_type == "accepted samples":
-            accepted_assemblies = []
-
-            for sample in set(masked_samples + pseudo_samples):
-                if sample in masked_samples:
-                    accepted_assemblies.append(
-                        normal_assembly_pattern.format(sample=sample)
-                    )
-                else:
-                    accepted_assemblies.append(
-                        pseudo_assembly_pattern.format(sample=sample)
-                    )
-            return accepted_assemblies
-
-        # for the pangolin call
-        elif agg_type == "single sample":
-            if wildcards.sample in masked_samples:
+def get_assemblies_for_submission(wildcards, agg_type):
+    if "sample" in wildcards:
+        if wildcards.sample.startswith(READ_TEST_PREFIX):
+            _, state = wildcards.sample.split(READ_STATE_INDICATOR)
+            if state == "contig":
+                return "results/{date}/tables/largest_contig/{sample}.fasta"
+            elif state == "scaffold":
+                return "results/{date}/contigs/ordered/{sample}.fasta"
+            elif state == "polished_scaffold":
                 return "results/{date}/contigs/polished/{sample}.fasta"
-            elif wildcards.sample in pseudo_samples:
+            elif state == "pseudo":
                 return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
-            # for not accepted samples use the polished-contigs
-            else:
-                return "results/{date}/contigs/polished/{sample}.fasta"
 
-        # for the qc report
-        elif agg_type == "all samples":
-            assembly_type_used = []
-            for sample in get_samples_for_date(wildcards.date):
-                if sample in masked_samples:
-                    assembly_type_used.append(f"{sample},normal")
-                elif sample in pseudo_samples:
-                    assembly_type_used.append(f"{sample},pseudo")
-                else:
-                    assembly_type_used.append(f"{sample},not-accepted")
-            return assembly_type_used
+    if wildcards.date != BENCHMARK_DATE_WILDCARD:
+        with checkpoints.rki_filter.get(
+            date=wildcards.date, assembly_type="masked-assembly"
+        ).output[0].open() as f:
+
+            masked_samples = (
+                pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
+            )
+
+        with checkpoints.rki_filter.get(
+            date=wildcards.date, assembly_type="pseudo-assembly"
+        ).output[0].open() as f:
+            pseudo_samples = (
+                pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
+            )
+    # for testing of pangolin don't create pseudo-assembly
+    else:
+        masked_samples = [wildcards.sample]
+
+    pseudo_assembly_pattern = "results/{{date}}/contigs/pseudoassembled/{sample}.fasta"
+    normal_assembly_pattern = "results/{{date}}/contigs/masked/{sample}.fasta"
+
+    # get accepted samples for rki submission
+    if agg_type == "accepted samples":
+        accepted_assemblies = []
+
+        for sample in set(masked_samples + pseudo_samples):
+            if sample in masked_samples:
+                accepted_assemblies.append(
+                    normal_assembly_pattern.format(sample=sample)
+                )
+            else:
+                accepted_assemblies.append(
+                    pseudo_assembly_pattern.format(sample=sample)
+                )
+        return accepted_assemblies
+
+    # for the pangolin call
+    elif agg_type == "single sample":
+        if wildcards.sample in masked_samples:
+            return "results/{date}/contigs/polished/{sample}.fasta"
+        elif wildcards.sample in pseudo_samples:
+            return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
+        # for not accepted samples use the polished-contigs
+        else:
+            return "results/{date}/contigs/polished/{sample}.fasta"
+
+    # for the qc report
+    elif agg_type == "all samples":
+        assembly_type_used = []
+        for sample in get_samples_for_date(wildcards.date):
+            if sample in masked_samples:
+                assembly_type_used.append(f"{sample},normal")
+            elif sample in pseudo_samples:
+                assembly_type_used.append(f"{sample},pseudo")
+            else:
+                assembly_type_used.append(f"{sample},not-accepted")
+        return assembly_type_used
 
     return inner
 
@@ -734,6 +804,14 @@ def get_megahit_preset(wildcards):
         return f"--preset {wildcards.preset}"
 
 
+def get_lineage_by_accession(wildcards):
+    return list(config["strain-calling"]["lineage-references"].keys())[
+        list(config["strain-calling"]["lineage-references"].values()).index(
+            wildcards.accession
+        )
+    ]
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),
@@ -742,3 +820,17 @@ wildcard_constraints:
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
     ),
     varrange="structural|small",
+
+
+def get_read_calls(wildcard):
+    with checkpoints.select_random_lineages.get(date=BENCHMARK_DATE_WILDCARD).output[
+        0
+    ].open() as f:
+        lineages = f.read().splitlines()
+
+    return expand(
+        "results/benchmarking/tables/collected_lineage_calls_on_{lineage}_{number}_{length}.tsv",
+        lineage=lineages,
+        number=config["read_lineage_call"]["number_of_reads"],
+        length=config["read_lineage_call"]["length_of_reads"],
+    )

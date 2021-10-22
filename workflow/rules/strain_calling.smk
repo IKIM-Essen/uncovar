@@ -1,3 +1,9 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+
 checkpoint extract_strain_genomes_from_gisaid:
     input:
         "resources/gisaid/provision.json",
@@ -117,7 +123,9 @@ rule plot_all_strains_kallisto:
 
 rule pangolin:
     input:
-        contigs=get_assemblies_for_submission("single sample"),
+        contigs=lambda wildcards: get_assemblies_for_submission(
+            wildcards, "single sample"
+        ),
         pangoLEARN="results/{date}/pangolin/pangoLEARN",
         lineages="results/{date}/pangolin/lineages",
     output:

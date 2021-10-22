@@ -1,3 +1,9 @@
+# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed
+# except according to those terms.
+
+
 rule masking:
     input:
         bamfile="results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
@@ -7,8 +13,8 @@ rule masking:
         masked_sequence="results/{date}/contigs/masked/{sample}.fasta",
         coverage="results/{date}/tables/coverage/{sample}.txt",
     params:
-        min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
-        min_allele=config["RKI-quality-criteria"]["min-allele"],
+        min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
+        min_allele=config["quality-criteria"]["min-allele"],
     log:
         "logs/{date}/masking/{sample}.logs",
     conda:
@@ -28,7 +34,7 @@ rule plot_coverage_main_sequence:
             subcategory="2. Read Coverage of Reference Genome",
         ),
     params:
-        min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
+        min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
     log:
         "logs/{date}/plot-coverage-main-seq.log",
     conda:
@@ -48,7 +54,7 @@ rule plot_coverage_final_sequence:
             subcategory="3. Read Coverage of Reconstructed Genome",
         ),
     params:
-        min_coverage=config["RKI-quality-criteria"]["min-depth-with-PCR-duplicates"],
+        min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
     log:
         "logs/{date}/plot-coverage-final-seq.log",
     conda:
@@ -64,8 +70,8 @@ checkpoint rki_filter:
     output:
         "results/{date}/rki-filter/{assembly_type}.txt",
     params:
-        min_identity=config["RKI-quality-criteria"]["min-identity"],
-        max_n=config["RKI-quality-criteria"]["max-n"],
+        min_identity=config["quality-criteria"]["min-identity"],
+        max_n=config["quality-criteria"]["max-n"],
     log:
         "logs/{date}/rki-filter/{assembly_type}.log",
     conda:
@@ -76,7 +82,9 @@ checkpoint rki_filter:
 
 rule rki_report:
     input:
-        contigs=get_assemblies_for_submission("accepted samples"),
+        contigs=lambda wildcards: get_assemblies_for_submission(
+            wildcards, "accepted samples"
+        ),
     output:
         fasta=report(
             "results/rki/{date}_uk-essen_rki.fasta",
@@ -88,8 +96,8 @@ rule rki_report:
             category="6. RKI Submission",
             caption="../report/rki-submission-csv.rst",
         ),
-    params:
-        min_length=config["rki-output"]["minimum-length"],
+    conda:
+        "../envs/pysam.yaml"
     log:
         "logs/{date}/rki-output/{date}.log",
     script:
@@ -123,7 +131,9 @@ rule virologist_report:
     output:
         qc_data="results/{date}/virologist/qc_report.csv",
     params:
-        assembly_used=get_assemblies_for_submission("all samples"),
+        assembly_used=lambda wildcards: get_assemblies_for_submission(
+            wildcards, "all samples"
+        ),
         voc=config.get("voc"),
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
     log:
@@ -231,16 +241,12 @@ rule snakemake_reports:
         lambda wildcards: expand(
             "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
             sample=get_samples_for_date(wildcards.date),
-        )
-        if config["strain-calling"]["use-kallisto"]
-        else [],
+        ),
         "results/{date}/qc_data",
         expand(
             "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
             mode=["major"],
-        )
-        if config["strain-calling"]["use-kallisto"]
-        else [],
+        ),
         "results/{date}/plots/all.strains.pangolin.svg",
         lambda wildcards: expand(
             "results/{{date}}/vcf-report/{target}.{filter}",
@@ -262,7 +268,7 @@ rule snakemake_reports:
     params:
         for_testing=(
             "--snakefile ../workflow/Snakefile"
-            if config.get("benchmark-genomes", [])
+            if config.get("testing", {}).get("benchmark-genomes", [])
             else ""
         ),
     conda:
