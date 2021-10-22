@@ -229,18 +229,18 @@ rule snakemake_reports:
             sample=get_samples_for_date(wildcards.date),
         ),
         lambda wildcards: expand(
-        "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
-         sample= get_samples_for_date( wildcards. date),
+            "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
+            sample=get_samples_for_date(wildcards.date),
         )
-         if config["strain-calling"]["use-kallisto"]
-         else[],
+        if config["strain-calling"]["use-kallisto"]
+        else [],
         "results/{date}/qc_data",
         expand(
-        "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
-         mode=["major"],
+            "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
+            mode=["major"],
         )
-         if config["strain-calling"]["use-kallisto"]
-         else[],
+        if config["strain-calling"]["use-kallisto"]
+        else [],
         "results/{date}/plots/all.strains.pangolin.svg",
         lambda wildcards: expand(
             "results/{{date}}/vcf-report/{target}.{filter}",
@@ -254,9 +254,9 @@ rule snakemake_reports:
             "results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf",
             filter=config["variant-calling"]["filters"],
         ),
-        lambda wildcards:"results/{date}/plots/primer-clipping-intervals.svg"
-         if len( get_samples_for_date_amplicon( wildcards. date))>0
-         else[],
+        lambda wildcards: "results/{date}/plots/primer-clipping-intervals.svg"
+        if len(get_samples_for_date_amplicon(wildcards.date)) > 0
+        else [],
     output:
         "results/reports/{date}.zip",
     params:
