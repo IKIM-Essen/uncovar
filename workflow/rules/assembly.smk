@@ -64,6 +64,24 @@ rule assembly_spades_pe:
         " > {log} 2>&1"
 
 
+rule spades_assemble_se:
+    input:
+        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+    output:
+        "results/{date}/assembly/{sample}/spades_se/{sample}.contigs.fasta",
+    log:
+        "logs/{date}/spades/se/{sample}.log",
+    conda:
+        "../envs/spades.yaml"
+    params:
+        outdir=get_output_dir,
+    threads: 8
+    shell:
+        "(spades.py --corona -s {input} -o {params.outdir} -t {threads} && "
+        " mv {params.outdir}/raw_contigs.fasta {output})"
+        " > {log} 2>&1"
+
+
 rule check_contigs:
     input:
         get_contigs,
@@ -111,16 +129,17 @@ rule filter_chr0:
         "../scripts/ragoo-remove-chr0.py"
 
 
-rule polish_contigs:
+# polish illumina
+rule bcftools_consensus:
     input:
         fasta="results/{date}/contigs/ordered/{sample}.fasta",
         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf",
         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf.csi",
     output:
         report(
-            "results/{date}/contigs/polished/{sample}.fasta",
+            "results/{date}/polishing/bcftools/{sample}.fasta",
             category="4. Assembly",
-            caption="../report/assembly.rst",
+            caption="../report/assembly_illumina.rst",
         ),
     log:
         "logs/{date}/bcftools-consensus/{sample}.log",
@@ -128,6 +147,42 @@ rule polish_contigs:
         "../envs/bcftools.yaml"
     shell:
         "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"
+
+
+# polish ont
+rule medaka:
+    input:
+        fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        reference="results/{date}/contigs/ordered/{sample}.fasta",
+    output:
+        report(
+            "results/{date}/polishing/medaka/{sample}/consensus.fasta",
+            category="4. Assembly",
+            caption="../report/assembly_ont.rst",
+        )
+    log:
+        "logs/{date}/medaka/{sample}.log",
+    params:
+        outdir=get_output_dir,
+        model=config["assembly"]["medaka_model"],
+    conda:
+        "../envs/medaka.yaml"
+    threads: 4
+    shell:
+        "medaka_consensus -v -i {input.fasta} -o {params.outdir} -d {input.reference} -t {threads} > {log} 2>&1"
+
+
+rule aggregate_polished_sequences:
+    input:
+        get_polished_sequence
+    output:
+        "results/{date}/contigs/polished/{sample}.fasta",
+    log:
+        "logs/{date}/aggregate_polished_sequences/{sample}.log"
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "cp {input} {output} 2> {log}"
 
 
 rule align_contigs:

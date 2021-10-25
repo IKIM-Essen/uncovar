@@ -539,6 +539,7 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
 
 
 def get_quast_fastas(wildcards):
+    print(wildcards)
     if wildcards.stage == "unpolished":
         return get_contigs(wildcards)
     elif wildcards.stage == "polished":
@@ -1046,6 +1047,11 @@ def get_nanoQC_input(wildcards):
     elif wildcards.stage == "filtered":
         return "results/{date}/trimmed/nanofilt/{sample}.fastq"
 
+def get_polished_sequence(wildcards):
+    if is_illumina(wildcards):
+        return "results/{date}/polishing/bcftools/{sample}.fasta"
+    elif is_ont(wildcards):
+        return "results/{date}/polishing/medaka/{sample}/consensus.fasta"
 
 wildcard_constraints:
     sample="[^/.]+",

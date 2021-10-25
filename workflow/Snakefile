@@ -96,12 +96,12 @@ checkpoint all:
             date=get_all_run_dates(),
             mode=["major", "any"],
         ),
-        expand(
-            "results/{date}/contigs/polished/{sample}.fasta",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
-        ),
+        # expand(
+        #     "results/{date}/contigs/polished/bcftools/{sample}.fasta",
+        #     zip,
+        #     date=get_dates(),
+        #     sample=get_samples(),
+        # ),
         expand(
             "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
             zip,
