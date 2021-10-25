@@ -83,7 +83,7 @@ def plot_variants_over_time(sm_output, sm_output_table):
         # mask low occurrences
         calls.loc[calls["total occurrence"] < 10, "alteration"] = "other (< 10 occ.)"
 
-        calls.rename(columns={"alteration": "Alteration", "date": "Date"}, inplace=True)
+    calls.rename(columns={"alteration": "Alteration", "date": "Date"}, inplace=True)
 
     area_plot = (
         alt.Chart(calls)
