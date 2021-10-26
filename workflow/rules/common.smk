@@ -834,3 +834,28 @@ def get_read_calls(wildcard):
         number=config["read_lineage_call"]["number_of_reads"],
         length=config["read_lineage_call"]["length_of_reads"],
     )
+
+
+def get_aln_fastas(wildcards):
+    if wildcards.region == "genome":
+        return "results/{date}/contigs/polished/{sample}.fasta"
+    else:
+        return "sanger_files/all_files_filtered/{sample}_{region}.fasta"
+
+
+def get_sanger_files(wildcards, what="regions"):
+    MATCHES = glob_wildcards("sanger_files/all_files_filtered/{sample}_{region}.fasta")
+    sample_dict = {}
+    for sample, region in zip(MATCHES.sample, MATCHES.region):
+        if sample_dict.get(sample):
+            sample_dict[sample].append(region)
+        else:
+            sample_dict[sample] = [region]
+    if what == "regions":
+        return expand(
+            "results/{{date}}/sanger-var-calls/ref~main/annotated_{region}~{sample}.bcf",
+            sample=wildcards.sample,
+            region=sorted(sample_dict[wildcards.sample]),
+            )
+    elif what == "samples":
+        return list(sample_dict.keys())

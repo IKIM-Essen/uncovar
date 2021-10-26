@@ -47,6 +47,7 @@ include: "rules/variant_report.smk"
 include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
 include: "rules/preprocessing.smk"
+include: "rules/sanger_alignments.smk"
 
 
 rule save_latest_run:
@@ -145,6 +146,14 @@ checkpoint all:
 rule compare_assemblers:
     input:
         "results/benchmarking/plots/assembler-comparison.svg",
+
+
+rule sanger_alignments:
+    input:
+        lambda wildcards: expand(
+            "results/2021-10-19/sanger-vs-genome/{sample}.txt",
+            sample=get_sanger_files(wildcards, "samples"),
+            ),
 
 
 rule benchmark_strain_calling:
