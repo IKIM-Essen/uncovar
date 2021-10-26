@@ -539,7 +539,6 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
 
 
 def get_quast_fastas(wildcards):
-    print(wildcards)
     if wildcards.stage == "unpolished":
         return get_contigs(wildcards)
     elif wildcards.stage == "polished":
@@ -991,11 +990,6 @@ def get_first_line(path):
 
 
 def get_kallisto_quant_extra(wildcards, input):
-    print(input)
-    if is_ont(wildcards):
-        print(get_first_line(input.fragment_length))
-        print(get_first_line(input.standard_deviation))
-
     if is_for_testing():
         return get_if_testing("--single --fragment-length 250 --sd 47301")
 
