@@ -15,7 +15,7 @@ rule masking:
     params:
         min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
         min_allele=config["quality-criteria"]["min-allele"],
-        is_ont=is_ont
+        is_ont=is_ont,
     log:
         "logs/{date}/masking/{sample}.logs",
     conda:

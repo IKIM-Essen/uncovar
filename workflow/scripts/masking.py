@@ -7,10 +7,10 @@ from collections import Counter
 
 # source: https://www.bioinformatics.org/sms/iupac.html
 IUPAC = {
-    frozenset("A") : "A",
-    frozenset("C") : "C",
-    frozenset("G") : "G",
-    frozenset("T") : "T",
+    frozenset("A"): "A",
+    frozenset("C"): "C",
+    frozenset("G"): "G",
+    frozenset("T"): "T",
     frozenset("AG"): "R",
     frozenset("CT"): "Y",
     frozenset("GC"): "S",
@@ -30,13 +30,16 @@ IUPAC = {
 # 4. mask if requirereed
 # 5. save masked sequence
 
+
 def get_sequence():
     with pysam.FastxFile(snakemake.input.sequence) as fh:
         for entry in fh:
             return entry.sequence
 
+
 def split(word):
     return [char for char in word]
+
 
 def get_base_count(pileupcolumn):
     bases = []
@@ -46,19 +49,23 @@ def get_base_count(pileupcolumn):
         # TODO: check here for missing bases
         if not pileupread.is_del and not pileupread.is_refskip:
 
-            read_base = pileupread.alignment.query_sequence[
-                pileupread.query_position
-            ]
+            read_base = pileupread.alignment.query_sequence[pileupread.query_position]
 
             bases.append(read_base)
 
     return Counter(bases)
 
+
 def get_coverage(base_count):
     return sum(base_count.values())
 
-def get_and_write_coverages_and_base_counts(coverage_header: str = "#CHROM\tPOS\tCoverage"):
-    with pysam.AlignmentFile(snakemake.input.bamfile, "rb") as bamfile, open(snakemake.output.coverage, "w") as coverage_manager:
+
+def get_and_write_coverages_and_base_counts(
+    coverage_header: str = "#CHROM\tPOS\tCoverage",
+):
+    with pysam.AlignmentFile(snakemake.input.bamfile, "rb") as bamfile, open(
+        snakemake.output.coverage, "w"
+    ) as coverage_manager:
         print(coverage_header, file=coverage_manager)
         coverages = {}
         base_counts = {}
@@ -71,8 +78,8 @@ def get_and_write_coverages_and_base_counts(coverage_header: str = "#CHROM\tPOS\
                     base.reference_name,
                     base.reference_pos,
                     coverage,
-                    ),
-                file=coverage_manager
+                ),
+                file=coverage_manager,
             )
 
             coverages[base.reference_pos] = coverage
@@ -80,11 +87,14 @@ def get_and_write_coverages_and_base_counts(coverage_header: str = "#CHROM\tPOS\
 
         return coverages, base_counts
 
+
 def get_allel_freq(correct_base, base_counts):
-    return base_counts[correct_base]/sum(base_counts.values())
+    return base_counts[correct_base] / sum(base_counts.values())
+
 
 def get_UPAC_mask(base_counts):
     return IUPAC[frozenset("".join(base_counts.keys()))]
+
 
 def mask_sequence(sequence, coverages, base_counts):
     sequence = split(sequence)
@@ -121,7 +131,11 @@ def mask_sequence(sequence, coverages, base_counts):
             )
             continue
 
-        if not snakemake.params.is_ont and get_allel_freq(base, base_counts[position]) < snakemake.params.min_allele:
+        if (
+            not snakemake.params.is_ont
+            and get_allel_freq(base, base_counts[position])
+            < snakemake.params.min_allele
+        ):
             mask = get_UPAC_mask(base_counts[position])
 
             print(
@@ -138,16 +152,20 @@ def mask_sequence(sequence, coverages, base_counts):
             )
 
             sequence[position] = mask
-        
+
     return "".join(sequence)
 
+
 def write_sequence(sequence):
-    with pysam.FastxFile(snakemake.input.sequence) as infile, open(snakemake.output.masked_sequence, mode='w') as outfile:
+    with pysam.FastxFile(snakemake.input.sequence) as infile, open(
+        snakemake.output.masked_sequence, mode="w"
+    ) as outfile:
         print(next(infile).name, file=outfile)
         print(sequence, file=outfile)
 
+
 sequence = get_sequence()
-assert isinstance(sequence, str), 'More than more sequence in fasta file.'
+assert isinstance(sequence, str), "More than more sequence in fasta file."
 coverages, base_counts = get_and_write_coverages_and_base_counts()
 masked_sequence = mask_sequence(sequence, coverages, base_counts)
 write_sequence(masked_sequence)

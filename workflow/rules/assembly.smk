@@ -159,7 +159,7 @@ rule medaka:
             "results/{date}/polishing/medaka/{sample}/consensus.fasta",
             category="4. Assembly",
             caption="../report/assembly_ont.rst",
-        )
+        ),
     log:
         "logs/{date}/medaka/{sample}.log",
     params:
@@ -174,11 +174,11 @@ rule medaka:
 
 rule aggregate_polished_sequences:
     input:
-        get_polished_sequence
+        get_polished_sequence,
     output:
         "results/{date}/contigs/polished/{sample}.fasta",
     log:
-        "logs/{date}/aggregate_polished_sequences/{sample}.log"
+        "logs/{date}/aggregate_polished_sequences/{sample}.log",
     conda:
         "../envs/unix.yaml"
     shell:
