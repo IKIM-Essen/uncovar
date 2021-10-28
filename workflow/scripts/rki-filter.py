@@ -10,6 +10,7 @@ max_n = snakemake.params.get("max_n", 0.05)
 import pandas as pd
 from os import path
 from typing import List
+import pysam
 
 
 def get_identity(quast_report_paths: List[str]) -> dict:
@@ -46,6 +47,11 @@ def get_identity(quast_report_paths: List[str]) -> dict:
     return identity_dict
 
 
+def get_sequence(path:str):
+    with pysam.FastxFile(path) as fh:
+        for entry in fh:
+            return entry.name, entry.sequence
+
 def get_n_share(contig_paths: List[str]) -> dict:
     """Extracts share of Ns in given contigs.
 
@@ -60,13 +66,10 @@ def get_n_share(contig_paths: List[str]) -> dict:
     seq_dict = {}
 
     for contig_path in contig_paths:
-        with open(contig_path, "r") as handle:
-            for line in handle.read().splitlines():
-                if line.startswith(">"):
-                    key = line.replace(">", "").split(" ")[0].split(".")[0]
-                    seq_dict[key] = ""
-                else:
-                    seq_dict[key] += line
+        print(contig_path)
+        name, sequence = get_sequence(contig_path)
+        assert isinstance(sequence, str), "More than more sequence in fasta file."
+        seq_dict[name] = sequence
 
     for key, value in seq_dict.items():
         n_share_dict[key] = value.count("N") / len(value)
