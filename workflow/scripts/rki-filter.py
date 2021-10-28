@@ -47,10 +47,11 @@ def get_identity(quast_report_paths: List[str]) -> dict:
     return identity_dict
 
 
-def get_sequence(path:str):
+def get_sequence(path: str):
     with pysam.FastxFile(path) as fh:
         for entry in fh:
             return entry.name, entry.sequence
+
 
 def get_n_share(contig_paths: List[str]) -> dict:
     """Extracts share of Ns in given contigs.
