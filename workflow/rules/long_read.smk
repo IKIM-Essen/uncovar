@@ -23,7 +23,7 @@ rule count_fastq_reads:
     conda:
         "../envs/unix.yaml"
     shell:
-        'cat {input} | grep "^@" | wc -l > {output} 2> {log}'
+        'echo $(( $(cat data/BC01.fastq | wc -l ) / 4)) > {output} 2> {log}'
 
 
 rule porechop_adapter_barcode_trimming:
