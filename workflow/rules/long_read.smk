@@ -1,6 +1,6 @@
 rule nanoQC:
     input:
-        get_nanoQC_input,
+        get_reads_by_stage,
     output:
         "results/{date}/qc/nanoQC/{sample}/{stage}/nanoQC.html",
     log:
@@ -12,6 +12,18 @@ rule nanoQC:
     shell:
         "nanoQC {input} -o {params.outdir} > {log} 2>&1"
 
+
+rule count_fastq_reads:
+    input:
+        get_reads_by_stage,
+    output:
+        "results/{date}/tables/fastq-read-counts/{stage}~{sample}.txt",
+    log:
+        "logs/{date}/count_reads/{stage}~{sample}.log"
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "cat {input} | grep \"^@\" | wc -l > {output} 2> {log}" 
 
 rule porechop_adapter_barcode_trimming:
     input:

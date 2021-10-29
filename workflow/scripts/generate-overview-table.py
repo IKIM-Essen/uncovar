@@ -5,7 +5,7 @@
 
 import sys
 
-sys.stderr = open(snakemake.log[0], "w")
+# sys.stderr = open(snakemake.log[0], "w")
 
 import json
 
@@ -21,21 +21,27 @@ def iter_with_samples(inputfiles):
 
 data = pd.DataFrame(index=snakemake.params.samples)
 
-# add numbers of raw and Trimmed Reads
-for sample, file in iter_with_samples(snakemake.input.reads_unfiltered):
-    with open(file) as infile:
-        number_reads = json.load(infile)
-    data.loc[sample, "Raw Reads (#)"] = number_reads["summary"]["before_filtering"][
-        "total_reads"
-    ]
-    data.loc[sample, "Trimmed Reads (#)"] = number_reads["summary"]["after_filtering"][
-        "total_reads"
-    ]
+# add numbers of raw reads
+for sample, file in iter_with_samples(snakemake.input.reads_raw):
+    if "fastq-read-counts" in file:
+        with open(file) as infile:
+            number_reads = infile.read().strip()
+    else:
+        with open(file) as infile:
+            number_reads = json.load(infile)["summary"]["before_filtering"]["total_reads"]
+    data.loc[sample, "Raw Reads (#)"] = number_reads
 
-if len(snakemake.input.reads_unfiltered) == 0:
-    for sample in snakemake.params.samples:
-        data.loc[sample, "Raw Reads (#)"] = 0
-        data.loc[sample, "Trimmed Reads (#)"] = 0
+# add numbers of trimmed reads
+for sample, file in iter_with_samples(snakemake.input.reads_trimmed):
+    if "fastq-read-counts" in file:
+        with open(file) as infile:
+            number_reads = infile.read().strip()
+    else:
+        with open(file) as infile:
+            number_reads = json.load(infile)["summary"]["after_filtering"]["total_reads"]
+    data.loc[sample, "Trimmed Reads (#)"] = number_reads
+
+
 
 # add numbers of reads used for assembly
 for sample, file in iter_with_samples(snakemake.input.reads_used_for_assembly):

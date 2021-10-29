@@ -107,7 +107,8 @@ rule rki_report:
 
 rule virologist_report:
     input:
-        reads_unfiltered=get_fastp_results,
+        reads_raw=get_raw_reads_counts,
+        reads_trimmed=get_trimmed_reads_counts,
         reads_used_for_assembly=expand_samples_for_date(
             "results/{{date}}/tables/read_pair_counts/{sample}.txt",
         ),
