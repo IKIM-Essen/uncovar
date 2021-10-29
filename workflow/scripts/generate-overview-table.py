@@ -8,7 +8,6 @@ import sys
 sys.stderr = open(snakemake.log[0], "w")
 
 import json
-import re
 
 import pandas as pd
 import pysam
@@ -20,23 +19,23 @@ def iter_with_samples(inputfiles):
     return zip(snakemake.params.samples, inputfiles)
 
 
-data = pd.DataFrame()
+data = pd.DataFrame(index=snakemake.params.samples)
 
 # add numbers of raw and Trimmed Reads
 for sample, file in iter_with_samples(snakemake.input.reads_unfiltered):
     with open(file) as infile:
         number_reads = json.load(infile)
-    data = data.append(
-        {
-            "Raw Reads (#)": number_reads["summary"]["before_filtering"]["total_reads"],
-            "Trimmed Reads (#)": number_reads["summary"]["after_filtering"][
-                "total_reads"
-            ],
-            "Sample": sample,
-        },
-        ignore_index=True,
-    )
-data.set_index("Sample", inplace=True)
+    data.loc[sample, "Raw Reads (#)"] = number_reads["summary"]["before_filtering"][
+        "total_reads"
+    ]
+    data.loc[sample, "Trimmed Reads (#)"] = number_reads["summary"]["after_filtering"][
+        "total_reads"
+    ]
+
+if len(snakemake.input.reads_unfiltered) == 0:
+    for sample in snakemake.params.samples:
+        data.loc[sample, "Raw Reads (#)"] = 0
+        data.loc[sample, "Trimmed Reads (#)"] = 0
 
 # add numbers of reads used for assembly
 for sample, file in iter_with_samples(snakemake.input.reads_used_for_assembly):
@@ -217,5 +216,5 @@ int_cols = [
 ]
 
 data[int_cols] = data[int_cols].fillna("0").applymap(lambda x: "{0:,}".format(int(x)))
-
+data.sort_index(inplace=True)
 data.to_csv(snakemake.output[0], float_format="%.1f")
