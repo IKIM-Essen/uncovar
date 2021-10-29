@@ -19,11 +19,12 @@ rule count_fastq_reads:
     output:
         "results/{date}/tables/fastq-read-counts/{stage}~{sample}.txt",
     log:
-        "logs/{date}/count_reads/{stage}~{sample}.log"
+        "logs/{date}/count_reads/{stage}~{sample}.log",
     conda:
         "../envs/unix.yaml"
     shell:
-        "cat {input} | grep \"^@\" | wc -l > {output} 2> {log}" 
+        'cat {input} | grep "^@" | wc -l > {output} 2> {log}'
+
 
 rule porechop_adapter_barcode_trimming:
     input:

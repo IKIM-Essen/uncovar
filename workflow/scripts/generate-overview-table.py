@@ -5,7 +5,7 @@
 
 import sys
 
-# sys.stderr = open(snakemake.log[0], "w")
+sys.stderr = open(snakemake.log[0], "w")
 
 import json
 
@@ -28,7 +28,9 @@ for sample, file in iter_with_samples(snakemake.input.reads_raw):
             number_reads = infile.read().strip()
     else:
         with open(file) as infile:
-            number_reads = json.load(infile)["summary"]["before_filtering"]["total_reads"]
+            number_reads = json.load(infile)["summary"]["before_filtering"][
+                "total_reads"
+            ]
     data.loc[sample, "Raw Reads (#)"] = number_reads
 
 # add numbers of trimmed reads
@@ -38,9 +40,10 @@ for sample, file in iter_with_samples(snakemake.input.reads_trimmed):
             number_reads = infile.read().strip()
     else:
         with open(file) as infile:
-            number_reads = json.load(infile)["summary"]["after_filtering"]["total_reads"]
+            number_reads = json.load(infile)["summary"]["after_filtering"][
+                "total_reads"
+            ]
     data.loc[sample, "Trimmed Reads (#)"] = number_reads
-
 
 
 # add numbers of reads used for assembly

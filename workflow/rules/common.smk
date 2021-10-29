@@ -889,10 +889,25 @@ def expand_samples_for_date_amplicon(paths, **kwargs):
 
 
 def get_raw_reads_counts(wildcards):
-    return ["results/{{date}}/trimmed/{sample}.fastp.json".format(sample=sample) if is_illumina(None, sample) else "results/{{date}}/tables/fastq-read-counts/raw~{sample}.txt".format(sample=sample) for sample in get_samples_for_date(wildcards.date) ]
+    return [
+        "results/{{date}}/trimmed/{sample}.fastp.json".format(sample=sample)
+        if is_illumina(None, sample)
+        else "results/{{date}}/tables/fastq-read-counts/raw~{sample}.txt".format(
+            sample=sample
+        )
+        for sample in get_samples_for_date(wildcards.date)
+    ]
+
 
 def get_trimmed_reads_counts(wildcards):
-    return ["results/{{date}}/trimmed/{sample}.fastp.json".format(sample=sample) if is_illumina(None, sample) else "results/{{date}}/tables/fastq-read-counts/trimmed~{sample}.txt".format(sample=sample) for sample in get_samples_for_date(wildcards.date) ]
+    return [
+        "results/{{date}}/trimmed/{sample}.fastp.json".format(sample=sample)
+        if is_illumina(None, sample)
+        else "results/{{date}}/tables/fastq-read-counts/trimmed~{sample}.txt".format(
+            sample=sample
+        )
+        for sample in get_samples_for_date(wildcards.date)
+    ]
 
 
 def get_fastp_results(wildcards, **kwargs):
@@ -1065,6 +1080,7 @@ def get_reads_by_stage(wildcards):
         return "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"
     elif wildcards.stage == "filtered":
         return "results/{date}/trimmed/nanofilt/{sample}.fastq"
+
 
 def get_polished_sequence(wildcards):
     if is_illumina(wildcards):
