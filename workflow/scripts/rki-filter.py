@@ -67,7 +67,6 @@ def get_n_share(contig_paths: List[str]) -> dict:
     seq_dict = {}
 
     for contig_path in contig_paths:
-        print(contig_path)
         name, sequence = get_sequence(contig_path)
         assert isinstance(sequence, str), "More than more sequence in fasta file."
         seq_dict[name] = sequence

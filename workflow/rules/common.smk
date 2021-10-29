@@ -795,9 +795,13 @@ def get_assemblies_for_submission(wildcards, agg_type):
         with checkpoints.rki_filter.get(
             date=wildcards.date, assembly_type="pseudo-assembly"
         ).output[0].open() as f:
-            pseudo_samples = (
-                pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
-            )
+            try:
+                pseudo_samples = (
+                    pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
+                )
+            except pd.errors.EmptyDataError:
+                pseudo_samples = pd.DataFrame()
+
     # for testing of pangolin don't create pseudo-assembly
     else:
         masked_samples = [wildcards.sample]
@@ -809,7 +813,21 @@ def get_assemblies_for_submission(wildcards, agg_type):
     if agg_type == "accepted samples":
         accepted_assemblies = []
 
-        for sample in set(masked_samples + pseudo_samples):
+        number_masked_samples = len(set(masked_samples))
+        number_pseudo_samples = len(set(pseudo_samples))
+
+        if number_masked_samples != 0 and number_pseudo_samples != 0:
+            unqiue_samples = set(masked_samples + pseudo_samples)
+        elif number_masked_samples != 0 and number_pseudo_samples == 0:
+            unqiue_samples = set(masked_samples)
+        elif number_masked_samples == 0 and number_pseudo_samples != 0:
+            unqiue_samples = set(pseudo_samples)
+        else:
+            raise NotImplementedError(
+                "No masked sequences or pseudoassemblies are passing the masking filter."
+            )
+
+        for sample in unqiue_samples:
             if sample in masked_samples:
                 accepted_assemblies.append(
                     normal_assembly_pattern.format(sample=sample)
