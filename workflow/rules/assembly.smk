@@ -60,7 +60,7 @@ rule assembly_spades_pe:
     threads: 8
     shell:
         "({wildcards.spadesflavor}.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
-        " mv {params.outdir}/contigs.fasta {output.contigs})"
+        " mv {params.outdir}/raw_contigs.fasta {output.contigs})"
         " > {log} 2>&1"
 
 
