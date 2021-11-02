@@ -75,7 +75,9 @@ rule compare_sanger:
         sanger=get_sanger_files,
         genome="results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf"
     output:
-        "results/{date}/sanger-vs-genome/{sample}.txt"
+        "results/{date}/sanger-vs-genome/{sample}.txt",
+        "results/{date}/vars/sanger_{sample}.csv",
+        "results/{date}/vars/ngs_{sample}.csv",
     log:
         "logs/{date}/sanger-vs-genome/{sample}.log"
     params:
@@ -84,14 +86,40 @@ rule compare_sanger:
         "../scripts/sanger-comp.py"
 
 
-# rule aggregrate_sanger_comp:
-#     input:
-#         expand(
-#             "results/2021-10-19/sanger-vs-genome/{region}~{sample}.txt",
-#             zip,
-#             sample=MATCHES.sample,
-#             region=MATCHES.region,
-#             ),
-#     output:
-#         "results/2021-10-19/sanger-vs-genome/{sample}.txt",
+rule aggregate_sanger:
+    input:
+        sanger=lambda wildcards: expand(
+            "results/{date}/vars/sanger_{sample}.csv",
+            sample=get_sanger_files(wildcards, "samples"),
+            date=get_latest_run_date(),
+            ),
+        ngs=lambda wildcards: expand(
+            "results/{date}/vars/ngs_{sample}.csv",
+            sample=get_sanger_files(wildcards, "samples"),
+            date=get_latest_run_date(),
+            ),
+    output:
+        sanger="results/{date}/vars/sanger_all.csv",
+        ngs="results/{date}/vars/ngs_all.csv",
+    log:
+        "logs/{date}/sanger-vs-genome/all.log"
+    params:
+        voc=config.get("voc"),
+    shell:
+        "cat {input.sanger} > {output.sanger} && "
+        "cat {input.ngs} > {output.ngs}"
+
+
+rule count_sanger:
+    input:
+        lambda wildcards: expand(
+            "results/{{date}}/sanger-vs-genome/{sample}.txt",
+            sample=get_samples_for_date(wildcards.date),
+        )
+    output:
+        "results/{date}/percent_sanger/sanger_all.txt"
+    log:
+        "logs/{date}/percent_sanger/all.log"
+    script:
+        "../scripts/sanger-vars.py"
     

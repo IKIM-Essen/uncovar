@@ -41,31 +41,37 @@ def df_from_vcf(vcf_file, variants = pd.DataFrame(columns=["Position", "Variant"
                     hgvsp = f"{feature}:{alteration}"
                     # if alteration in snakemake.params.voc.get(feature, {}):
                     variants = variants.append(
-                            {
-                                "Position": str(record.pos),
-                                "Variant": hgvsp,
-                            },
-                            ignore_index=True,
-                        )
+                        {
+                            "Position": str(record.pos),
+                            "Variant": hgvsp,
+                        },
+                        ignore_index=True,
+                    )
     # variants = variants.set_index("Variant")                
     return variants
 
 sanger_variants = pd.DataFrame(columns=["Position", "Variant"])
 for file in snakemake.input.sanger:
     sanger_variants = df_from_vcf(file, sanger_variants)
-print(sanger_variants)
-sanger_index_list = sanger_variants.index.tolist()
+with open(snakemake.output[1], "w") as sanger_out:
+    for index, var in sanger_variants.iterrows():
+        print(snakemake.wildcards.sample + "," + var[0] + "," + var[1], file=sanger_out)
+sanger_index_list = sanger_variants.set_index("Variant").index.tolist()
 NGS_variants = df_from_vcf(snakemake.input.genome)
-NGS_index_list = NGS_variants.index.tolist()
+NGS_index_list = NGS_variants.set_index("Variant").index.tolist()
+with open(snakemake.output[2], "w") as ngs_out:
+    for index, var in NGS_variants.iterrows():
+        print(snakemake.wildcards.sample + "," + var[0] + "," + var[1], file=ngs_out)
 print(NGS_variants)
 column = []
-for var in sanger_index_list:
-    if var in NGS_index_list:
-        column.append("both")
-    else:
-        column.append("sanger_only")
-        print("SANGER_ONLY")
 
-sanger_variants["compare"] = column
-sanger_variants = sanger_variants.set_index("Position")
-sanger_variants.to_csv(snakemake.output[0], mode="a")
+sanger_in_ngs = 0
+for var in sanger_index_list:
+    print(var)
+    print(NGS_index_list)
+    if var in NGS_index_list:
+        sanger_in_ngs += 1
+
+with open(snakemake.output[0], "w") as outfile:
+    print(str(sanger_in_ngs) + "," + str(len(sanger_index_list)))
+    print(str(sanger_in_ngs) + "," + str(len(sanger_index_list)), file=outfile)
