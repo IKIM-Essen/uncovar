@@ -78,7 +78,7 @@ rule spades_assemble_se:
     threads: 8
     shell:
         "(spades.py --corona -s {input} -o {params.outdir} -t {threads} && "
-        " mv {params.outdir}/raw_contigs.fasta {output})"
+        "if [ {params.outdir}/raw_contigs.fasta ]; then mv {params.outdir}/raw_contigs.fasta {output}; else mv {params.outdir}/contigs.fasta {output}; fi )"
         " > {log} 2>&1"
 
 
