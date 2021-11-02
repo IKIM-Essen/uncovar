@@ -60,7 +60,7 @@ rule assembly_spades_pe:
     threads: 8
     shell:
         "({wildcards.spadesflavor}.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
-        " mv {params.outdir}/*ontigs.fasta {output.contigs})"
+        " if [ -f {params.outdir}/raw_contigs.fasta ]; then mv {params.outdir}/raw_contigs.fasta {output.contigs}; else mv {params.outdir}/contigs.fasta {output.contigs}; fi )"
         " > {log} 2>&1"
 
 
@@ -78,7 +78,7 @@ rule spades_assemble_se:
     threads: 8
     shell:
         "(spades.py --corona -s {input} -o {params.outdir} -t {threads} && "
-        " mv {params.outdir}/raw_contigs.fasta {output} )"
+        " mv {params.outdir}/raw_contigs.fasta {output})"
         " > {log} 2>&1"
 
 
