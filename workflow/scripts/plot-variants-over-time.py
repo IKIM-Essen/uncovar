@@ -6,8 +6,6 @@ import altair as alt
 import pandas as pd
 import pysam
 
-OrfName = snakemake.wildcards.ORFNAME
-
 AA_ALPHABET_TRANSLATION = {
     "Gly": "G",
     "Ala": "A",
@@ -64,8 +62,8 @@ def get_calls():
                             }
                         )
     variants_df = pd.DataFrame(variants)
-    variants_orf_final = variants_df[variants_df["orf"] == OrfName]
-    return variants_orf_final
+    variants_df = variants_df[variants_df["orf"] == snakemake.wildcards.ORFNAME]
+    return variants_df
 
 
 def plot_variants_over_time(sm_output, sm_output_table):
