@@ -111,7 +111,7 @@ rule plot_all_strains_kallisto:
             "results/{date}/plots/all.{mode,(major|any)}-strain.strains.kallisto.svg",
             caption="../report/all-strain-calls-kallisto.rst",
             category="1. Overview",
-            subcategory="3. Strain Calls",
+            subcategory="2. Strain Calls",
         ),
     log:
         "logs/{date}/plot-strains/all.{mode}.log",
@@ -152,7 +152,7 @@ rule plot_all_strains_pangolin:
             "results/{date}/plots/all.strains.pangolin.svg",
             caption="../report/all-strain-calls-pangolin.rst",
             category="1. Overview",
-            subcategory="3. Strain Calls",
+            subcategory="2. Strain Calls",
         ),
     log:
         "logs/{date}/plot-strains-pangolin/all.log",
