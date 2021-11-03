@@ -9,8 +9,6 @@ rule update_sample:
         "config/pep/samples.csv",
     log:
         "logs/sample_update/preprocessing/sample_csv_update.txt",
-    params:
-        include_df = get_high_quality_include_flag()
     conda:
         "../envs/python.yaml"
     script:

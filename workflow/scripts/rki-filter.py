@@ -75,7 +75,7 @@ def get_n_share(contig_paths: List[str]) -> dict:
     return n_share_dict
 
 
-def get_include_rki(samples_df):
+def get_include_rki(samples_file):
     """ Extracts the information, whether the sample should be added to the rki files
     or not out of the samples.csv file.
 
@@ -83,13 +83,17 @@ def get_include_rki(samples_df):
         samples_path: Path to the samples.csv file
     
     """
-    include_dict = {}
+    samples_df = pd.read_csv(samples_file)
+    names_df = pd.concat(
+        [samples_df["sample_name"], 
+        samples_df["include_in_high_genome_summary"]], 
+        axis = 1,
+        keys = ["sample_name", "include_in_high_genome_summary"])
+    print("Name: ", names_df)
 
-    for name in samples_df["sample_name"]:
-        key = name
-        include_seq = samples_df.loc[:, "include_in_high_genome_summary"]
-        print(include_seq)
-        include_dict[key] = include_seq
+    include_dict = names_df.set_index("sample_name").T.to_dict("records")[0]
+    #include_dict = names_df.to_dict("index")
+    print("include:", include_dict)
 
     return include_dict
 
@@ -118,7 +122,7 @@ def filter_and_save(
 
     # filter this accordingly to the given params
     filtered_df = agg_df[
-        (agg_df["identity"] > min_identity) & (agg_df["n_share"] < max_n)
+        (agg_df["identity"] > min_identity) & (agg_df["n_share"] < max_n) & (agg_df["include"] == include_rki)
     ]
 
     # print filtered to stderr for logging

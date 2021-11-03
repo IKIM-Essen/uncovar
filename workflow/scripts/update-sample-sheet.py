@@ -113,6 +113,23 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
             print("\tIn total: {}".format(i))
 
     files_to_copy = [f for f in incoming_files if f not in data_files]
+    ##Iterate here to get the different lines and their content?
+    # Need a dataframe with names, else every sequence is counted double 
+    sample_list = []
+    include_data_list = []
+    for f in files_to_copy:
+        name_sample = f.split("_")[0]
+        if name_sample not in sample_list:
+            sample_list.append(name_sample)
+            if "no-rki" in name_sample.casefold():
+                include_data = 0
+            else:
+                include_data = 1
+            include_data_list.append(include_data)
+    include_in_data_df = pd.DataFrame(
+        {"include_in_high_genome_summary" : include_data_list}, index =sample_list
+        )
+    print(include_in_data_df)
     ##################################
     ######### update the csv #########
     ##################################
@@ -144,7 +161,13 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
         )
 
         #filter for include-rki-flag
-        
+        #inlcude_flag = 1 
+        #if new_files_df[new_files_df["file"].str.contains("No-RKI")]:
+        #    include_flag = 0 
+        #if new_files_df["file"].apply(lambda x: (x.split("_", 1)[0])).contain("No-RKI"):
+        #    new_files_df["include_in_high_genome_summary"] = 0
+        #else:
+        #    new_files_df["include_in_high_genome_summary"] = 1
 
         # set multiindex
         new_files_df.set_index(
@@ -160,6 +183,8 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
         new_files_df.columns = ["fq1", "fq2"]
         new_files_df["date"] = today
         new_files_df["is_amplicon_data"] = 1
+        new_files_df["include_in_high_genome_summary"] = include_in_data_df["include_in_high_genome_summary"]
+        print(new_files_df)
 
         new_sample_sheet = (
             pd.read_csv(SAMPLE_SHEET, index_col="sample_name")
