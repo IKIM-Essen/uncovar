@@ -856,6 +856,13 @@ def get_sanger_files(wildcards, what="regions"):
             "results/{{date}}/sanger-var-calls/ref~main/annotated_{region}~{sample}.bcf",
             sample=wildcards.sample,
             region=sorted(sample_dict[wildcards.sample]),
-            )
+        )
     elif what == "samples":
         return list(sample_dict.keys())
+
+
+def get_bcf_for_annotation(wildcards):
+    if wildcard.normed_prefix == "normed_":
+        return ("results/{date}/calls/ref~main/normed_{sample}.bcf",)
+    else:
+        return ("results/{date}/calls/ref~main/{sample}.bcf",)

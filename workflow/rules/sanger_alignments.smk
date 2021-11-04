@@ -37,9 +37,7 @@ rule freebayes_sanger:
     params:
         # genotyping is performed by varlociraptor, hence we deactivate it in freebayes by 
         # always setting --pooled-continuous
-        extra=(
-            "--min-alternate-count 1"
-        ),
+        extra=("--min-alternate-count 1"),
     log:
         "logs/{date}/sanger-aligned/freebayes/ref~main/{region}~{sample}.log",
     wrapper:
@@ -73,13 +71,13 @@ rule annotate_variants_sanger:
 rule compare_sanger:
     input:
         sanger=get_sanger_files,
-        genome="results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf"
+        genome="results/{date}/annotated-calls/ref~main/normed_{sample}.bcf",
     output:
         "results/{date}/sanger-vs-genome/{sample}.txt",
         "results/{date}/vars/sanger_{sample}.csv",
         "results/{date}/vars/ngs_{sample}.csv",
     log:
-        "logs/{date}/sanger-vs-genome/{sample}.log"
+        "logs/{date}/sanger-vs-genome/{sample}.log",
     params:
         voc=config.get("voc"),
     script:
@@ -92,17 +90,17 @@ rule aggregate_sanger:
             "results/{date}/vars/sanger_{sample}.csv",
             sample=get_sanger_files(wildcards, "samples"),
             date=get_latest_run_date(),
-            ),
+        ),
         ngs=lambda wildcards: expand(
             "results/{date}/vars/ngs_{sample}.csv",
             sample=get_sanger_files(wildcards, "samples"),
             date=get_latest_run_date(),
-            ),
+        ),
     output:
         sanger="results/{date}/vars/sanger_all.csv",
         ngs="results/{date}/vars/ngs_all.csv",
     log:
-        "logs/{date}/sanger-vs-genome/all.log"
+        "logs/{date}/sanger-vs-genome/all.log",
     params:
         voc=config.get("voc"),
     shell:
@@ -115,11 +113,25 @@ rule count_sanger:
         lambda wildcards: expand(
             "results/{{date}}/sanger-vs-genome/{sample}.txt",
             sample=get_samples_for_date(wildcards.date),
-        )
+        ),
     output:
-        "results/{date}/percent_sanger/sanger_all.txt"
+        "results/{date}/percent_sanger/sanger_all.txt",
     log:
-        "logs/{date}/percent_sanger/all.log"
+        "logs/{date}/percent_sanger/all.log",
     script:
         "../scripts/sanger-vars.py"
-    
+
+
+rule plot_ngs_coverage_for_sanger:
+    input:
+        coverage=expand_samples_for_date(
+            "results/{{date}}/qc/samtools_depth/{sample}.txt"
+        ),
+        variants=expand_samples_for_date("results/{{date}}/vars/ngs_{sample}.csv"),
+    output:
+        table="results/{date}/plot-ngs-coverage/all.csv",
+        # plot="results/{date}/plot-ngs-coverage/all.svg",
+    log:
+        "logs/{date}/plot-ngs-coverage/all.log",
+    script:
+        "../scripts/plot-ngs-coverage.py"

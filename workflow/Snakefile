@@ -150,33 +150,36 @@ rule compare_assemblers:
 
 rule sanger_alignments:
     input:
+        # lambda wildcards: expand(
+        #     "results/{date}/sanger-vs-genome/{sample}.txt",
+        #     sample=get_sanger_files(wildcards, "samples"),
+        #     date=get_latest_run_date(),
+        #     ),
+        # lambda wildcards: expand(
+        #     "results/{date}/vars/sanger_all.csv",
+        #     date=get_latest_run_date(),
+        #     ),
+        # lambda wildcards: expand(
+        #    "results/{date}/vars/ngs_all.csv",
+        #     date=get_latest_run_date(),
+        #     ),
+        # lambda wildcards: expand(
+        #    "results/{date}/percent_sanger/sanger_all.txt",
+        #     date=get_latest_run_date(),
+        #     ),
         lambda wildcards: expand(
-            "results/{date}/sanger-vs-genome/{sample}.txt",
-            sample=get_sanger_files(wildcards, "samples"),
+            "results/{date}/plot-ngs-coverage/all.csv",
             date=get_latest_run_date(),
-            ),
-        lambda wildcards: expand(
-            "results/{date}/vars/sanger_all.csv",
-            date=get_latest_run_date(),
-            ),
-        lambda wildcards: expand(
-           "results/{date}/vars/ngs_all.csv",
-            date=get_latest_run_date(),
-            ),
-        lambda wildcards: expand(
-           "results/{date}/percent_sanger/sanger_all.txt",
-            date=get_latest_run_date(),
-            ),
-        
-        
+        ),
+
+
 rule var_calls:
     input:
         lambda wildcards: expand(
             "results/{date}/candidate-calls/ref~main/{sample}.small.bcf",
             date=get_latest_run_date(),
             sample=get_samples(),
-            ),
-        
+        ),
 
 
 rule benchmark_strain_calling:
