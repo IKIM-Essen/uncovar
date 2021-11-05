@@ -72,7 +72,7 @@ checkpoint rki_filter:
     params:
         min_identity=config["quality-criteria"]["min-identity"],
         max_n=config["quality-criteria"]["max-n"],
-        samples_file="config/pep/samples.csv"
+        samples_file="config/pep/samples.csv",
     log:
         "logs/{date}/rki-filter/{assembly_type}.log",
     conda:

@@ -76,19 +76,19 @@ def get_n_share(contig_paths: List[str]) -> dict:
 
 
 def get_include_rki(samples_file):
-    """ Extracts the information, whether the sample should be added to the rki files
+    """Extracts the information, whether the sample should be added to the rki files
     or not out of the samples.csv file.
 
     Args:
         samples_file: Path to the samples.csv file
-    
+
     """
     samples_df = pd.read_csv(samples_file)
     names_df = pd.concat(
-        [samples_df["sample_name"], 
-        samples_df["include_in_high_genome_summary"]], 
-        axis = 1,
-        keys = ["sample_name", "include_in_high_genome_summary"])
+        [samples_df["sample_name"], samples_df["include_in_high_genome_summary"]],
+        axis=1,
+        keys=["sample_name", "include_in_high_genome_summary"],
+    )
 
     include_dict = names_df.set_index("sample_name").T.to_dict("records")[0]
 
@@ -96,7 +96,13 @@ def get_include_rki(samples_file):
 
 
 def filter_and_save(
-    identity: dict, n_share: dict, include: dict, min_identity: float, max_n: float, include_rki: int, save_path: str
+    identity: dict,
+    n_share: dict,
+    include: dict,
+    min_identity: float,
+    max_n: float,
+    include_rki: int,
+    save_path: str,
 ):
     """Filters and saves sample names
 
@@ -111,7 +117,9 @@ def filter_and_save(
     """
 
     # aggregate all result into one df
-    agg_df = pd.DataFrame({"identity": identity, "n_share": n_share, "include": include})
+    agg_df = pd.DataFrame(
+        {"identity": identity, "n_share": n_share, "include": include}
+    )
 
     # print agg_df to stderr for logging
     print("Aggregated data of all samples", file=sys.stderr)
@@ -119,7 +127,9 @@ def filter_and_save(
 
     # filter this accordingly to the given params
     filtered_df = agg_df[
-        (agg_df["identity"] > min_identity) & (agg_df["n_share"] < max_n) & (agg_df["include"] == include_rki)
+        (agg_df["identity"] > min_identity)
+        & (agg_df["n_share"] < max_n)
+        & (agg_df["include"] == include_rki)
     ]
 
     # print filtered to stderr for logging
@@ -141,4 +151,12 @@ def filter_and_save(
 identity_dict = get_identity(snakemake.input.quast)
 n_share_dict = get_n_share(snakemake.input.contigs)
 include_dict = get_include_rki(snakemake.params.samples_file)
-filter_and_save(identity_dict, n_share_dict, include_dict, min_identity, max_n, include_rki, snakemake.output[0])
+filter_and_save(
+    identity_dict,
+    n_share_dict,
+    include_dict,
+    min_identity,
+    max_n,
+    include_rki,
+    snakemake.output[0],
+)

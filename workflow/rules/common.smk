@@ -7,7 +7,6 @@ from pathlib import Path
 import pandas as pd
 import re
 import random
-from datetime import date
 from snakemake.utils import validate
 
 
@@ -811,7 +810,7 @@ def get_lineage_by_accession(wildcards):
             wildcards.accession
         )
     ]
-    
+
 
 wildcard_constraints:
     sample="[^/.]+",
