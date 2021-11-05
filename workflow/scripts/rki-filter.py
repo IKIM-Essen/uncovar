@@ -80,7 +80,7 @@ def get_include_rki(samples_file):
     or not out of the samples.csv file.
 
     Args:
-        samples_path: Path to the samples.csv file
+        samples_file: Path to the samples.csv file
     
     """
     samples_df = pd.read_csv(samples_file)
@@ -89,11 +89,8 @@ def get_include_rki(samples_file):
         samples_df["include_in_high_genome_summary"]], 
         axis = 1,
         keys = ["sample_name", "include_in_high_genome_summary"])
-    print("Name: ", names_df)
 
     include_dict = names_df.set_index("sample_name").T.to_dict("records")[0]
-    #include_dict = names_df.to_dict("index")
-    print("include:", include_dict)
 
     return include_dict
 
