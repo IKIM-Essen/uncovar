@@ -9,7 +9,7 @@ A reproducible and scalable workflow for transparent and robust SARS-CoV-2 varia
 
 ## Usage
 
-This workflow is written with snakemake and its usage is described in the [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog/?usage=TBD).
+This workflow is written with snakemake and its usage is described in the [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog?usage=IKIM-Essen/uncovar).
 
 If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this repository and its DOI (see above).
 
