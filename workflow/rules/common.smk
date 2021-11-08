@@ -843,6 +843,13 @@ def get_aln_fastas(wildcards):
         return "sanger_files/all_files_filtered/{sample}_{region}.fasta"
 
 
+def get_target_fasta(wildcards):
+    if wildcards.reference == "main":
+        return "resources/genomes/main.fasta"
+    else:
+        return "results/{{date}}/contigs/polished/{sample}.fasta".format(sample=wildcards.sample)
+
+
 def get_sanger_files(wildcards, what="regions"):
     MATCHES = glob_wildcards("sanger_files/all_files_filtered/{sample}_{region}.fasta")
     sample_dict = {}
@@ -861,8 +868,8 @@ def get_sanger_files(wildcards, what="regions"):
         return list(sample_dict.keys())
 
 
-def get_bcf_for_annotation(wildcards):
-    if wildcard.normed_prefix == "normed_":
-        return ("results/{date}/calls/ref~main/normed_{sample}.bcf",)
+def get_bcf(wildcards):
+    if wildcards.reference == "main" and wildcards.region == "genome":
+        return "results/{date}/calls/ref~main/{sample}.bcf"
     else:
-        return ("results/{date}/calls/ref~main/{sample}.bcf",)
+        return "results/{date}/sanger-var-calls/ref~main/{region}~{sample}.bcf"

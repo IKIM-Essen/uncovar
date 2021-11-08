@@ -1,11 +1,11 @@
 rule align_sanger:
     input:
-        target="resources/genomes/main.fasta",
+        target=get_target_fasta,
         query=get_aln_fastas,
     output:
-        "results/{date}/sanger-aligned/ref~main/{region}~{sample}.sam",
+        "results/{date}/sanger-aligned/ref~{reference}/{region}~{sample}.bam",
     log:
-        "results/{date}/sanger-aligned/ref~main/{region}~{sample}.log",
+        "results/{date}/sanger-aligned/ref~{reference}/{region}~{sample}.log",
     conda:
         "../envs/minimap2.yaml"
     shell:
@@ -14,11 +14,11 @@ rule align_sanger:
 
 rule sort_sam:
     input:
-        "results/{date}/sanger-aligned/ref~main/{region}~{sample}.sam",
+        "results/{date}/sanger-aligned/ref~{reference}/{region}~{sample}.bam",
     output:
-        "results/{date}/sanger-aligned/ref~main/{region}~{sample}.bam",
+        "results/{date}/sanger-aligned/ref~{reference}/{region}~{sample}_sorted.bam",
     log:
-        "results/{date}/sam-to-bam/ref~main/{region}~{sample}.log",
+        "results/{date}/sam-to-bam/ref~{reference}/{region}~{sample}.log",
     conda:
         "../envs/samtools.yaml"
     shell:
@@ -30,10 +30,10 @@ rule freebayes_sanger:
         ref="resources/genomes/main.fasta",
         ref_idx="resources/genomes/main.fasta.fai",
         # you can have a list of samples here
-        samples="results/{date}/sanger-aligned/ref~main/{region}~{sample}.bam",
-        index="results/{date}/sanger-aligned/ref~main/{region}~{sample}.bam.bai",
+        samples="results/{date}/sanger-aligned/ref~main/{region}~{sample}_sorted.bam",
+        index="results/{date}/sanger-aligned/ref~main/{region}~{sample}_sorted.bam.bai",
     output:
-        "results/{date}/sanger-var-calls/ref~main/{region}~{sample}.vcf",
+        "results/{date}/sanger-var-calls/ref~main/{region}~{sample}.bcf",
     params:
         # genotyping is performed by varlociraptor, hence we deactivate it in freebayes by 
         # always setting --pooled-continuous
@@ -44,9 +44,22 @@ rule freebayes_sanger:
         "0.68.0/bio/freebayes"
 
 
+rule norm_bcfs:
+    input:
+        get_bcf,
+    output:
+        "results/{date}/sanger-var-calls/normed/ref~{reference}/{region}~{sample}.bcf",
+    log:
+        "logs/{date}/norm-bcfs/{reference}~{region}/{sample}.log",
+    params:
+        "-f /local/data/repos/snakemake-workflow-sars-cov2/resources/genomes/main.fasta -O b",
+    wrapper:
+        "0.79.0/bio/bcftools/norm"
+
+
 rule annotate_variants_sanger:
     input:
-        calls="results/{date}/sanger-var-calls/ref~main/{region}~{sample}.vcf",
+        calls="results/{date}/sanger-var-calls/normed/ref~{reference}/{region}~{sample}.bcf",
         fasta="resources/genomes/main.fasta",
         fai="resources/genomes/main.fasta.fai",
         gff="resources/annotation.gff.gz",
@@ -55,15 +68,15 @@ rule annotate_variants_sanger:
         problematic="resources/problematic-sites.vcf.gz",
         problematic_tbi="resources/problematic-sites.vcf.gz.tbi",
     output:
-        calls="results/{date}/sanger-var-calls/ref~main/annotated_{region}~{sample}.bcf",
-        stats="results/{date}/sanger-var-calls/ref~main/annotated_{region}~{sample}.html",
+        calls="results/{date}/sanger-var-calls/ref~{reference}/annotated_{region}~{sample}.bcf",
+        stats="results/{date}/sanger-var-calls/ref~{reference}/annotated_{region}~{sample}.html",
     params:
         # Pass a list of plugins to use, see https://www.ensembl.org/info/docs/tools/vep/script/vep_plugins.html
         # Plugin args can be added as well, e.g. via an entry "MyPlugin,1,FOO", see docs.
         plugins=[],
         extra=get_vep_args,
     log:
-        "logs/{date}/vep_sanger/{region}~{sample}.log",
+        "logs/{date}/vep_sanger/{reference}/{region}~{sample}.log",
     wrapper:
         "0.72.0/bio/vep/annotate"
 
@@ -71,7 +84,8 @@ rule annotate_variants_sanger:
 rule compare_sanger:
     input:
         sanger=get_sanger_files,
-        genome="results/{date}/annotated-calls/ref~main/normed_{sample}.bcf",
+        genome="results/{date}/sanger-var-calls/ref~main/annotated_genome~{sample}.bcf",
+        sanger_vs_genome="results/{date}/sanger-aligned/ref~{sample}/bsext~{sample}.bam"
     output:
         "results/{date}/sanger-vs-genome/{sample}.txt",
         "results/{date}/vars/sanger_{sample}.csv",
