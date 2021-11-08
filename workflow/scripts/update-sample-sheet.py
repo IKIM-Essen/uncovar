@@ -127,9 +127,8 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
                 include_data = str(1)
             include_data_list.append(include_data)
     include_in_data_df = pd.DataFrame(
-        {"include_in_high_genome_summary" : include_data_list},
-        index = sample_list
-        )
+        {"include_in_high_genome_summary": include_data_list}, index=sample_list
+    )
 
     ##################################
     ######### update the csv #########
@@ -175,7 +174,9 @@ def update_sample_sheet(SAMPLE_SHEET, CONFIG_YAML, verbose=True, dry_run=False):
         new_files_df.columns = ["fq1", "fq2"]
         new_files_df["date"] = today
         new_files_df["is_amplicon_data"] = 1
-        new_files_df["include_in_high_genome_summary"] = include_in_data_df["include_in_high_genome_summary"]
+        new_files_df["include_in_high_genome_summary"] = include_in_data_df[
+            "include_in_high_genome_summary"
+        ]
         print(new_files_df)
 
         new_sample_sheet = (
