@@ -1,3 +1,3 @@
-sample_name,fq1,fq2,date,is_amplicon_data
-a,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2021-01-01,0
-
+sample_name,fq1,fq2,date,is_amplicon_data,include_in_high_genome_summary
+a,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2021-01-01,0,1
+a1,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2021-01-01,0,0
