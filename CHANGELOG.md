@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.3.0](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.5...v0.3.0) (2021-11-05)
+
+
+### Features
+
+* add aggregation rule for publication plots ([#275](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/275)) ([a93bc18](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/a93bc18bae5976bcdb045d8daab6760e03e3a6ea))
+* add more voc mutations to config ([#314](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/314)) ([5098605](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/509860512f819887cfcb15786f127157382d5b29))
+* add plot of reads needed for sufficient lineage calling ([#263](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/263)) ([982f997](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/982f997b73fa110babde87cf9bea0406350fb0e7))
+* add plot of variants over time ([#279](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/279)) ([66ab121](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/66ab12115814597a569a9662cba51ac679b1a81d))
+* add schemes for sample sheet and config file ([#278](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/278)) ([09976b3](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/09976b3b901f224374cc9baa3df1a65eed89822c))
+* add standard reference lineages for kallisto based lineage calling ([#280](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/280)) ([6bb32f6](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/6bb32f6cda5cddf6cb598e566bbee9b2af26f190))
+* add todo action ([#277](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/277)) ([c1e44c5](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/c1e44c5ee2ad7c9bd2b9cbf5182616a36c50a38d))
+* add workflow catalog yml ([#199](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/199)) ([2013533](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/20135333faf2247f2a11e3201d362125de53e3b4))
+* comparison of assemblers ([#172](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/172)) ([8233829](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/8233829467b9cfaa45291225d05a8d6e34da044c))
+
+
+### Bug Fixes
+
+* add "snakemake" in the readme for the Snakemake Workflow Catalog requirements ([#309](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/309)) ([2e5212c](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/2e5212c08604cc4b61704fc07711d00f964078d1))
+* changed call config file in update-sample-sheet ([#307](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/307)) ([406aef7](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/406aef7ae411cc13ef9b1df3892922862104d01d))
+* shotgun typo in config.yaml  ([#308](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/308)) ([d30f02b](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/d30f02b756699647bfbdcce802a33442bf324a76))
+* specify snakemake version used in pangolin env ([#284](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/284)) ([79a12a8](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/79a12a8fbecb0a83f263779880f9384cecf57529))
+
 ### [0.2.5](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.4...v0.2.5) (2021-09-23)
 
 
