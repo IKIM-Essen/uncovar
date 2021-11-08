@@ -67,8 +67,8 @@ column = []
 
 sanger_in_ngs = 0
 for var in sanger_index_list:
-    print(var)
-    print(NGS_index_list)
+    # print(var)
+    # print(NGS_index_list)
     if var in NGS_index_list:
         sanger_in_ngs += 1
 
