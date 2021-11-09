@@ -101,7 +101,7 @@ rule samtools_depth:
 rule species_diversity_before_pe:
     input:
         db="resources/minikraken-8GB",
-        reads=get_trimmed_reads,
+        reads=expand("results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
     output:
         classified_reads=temp(
             expand(
@@ -115,38 +115,45 @@ rule species_diversity_before_pe:
                 read=[1, 2],
             )
         ),
-        kraken_output=temp(
-            "results/{date}/species-diversity/pe/{sample}/{sample}.kraken"
-        ),
+        kraken_output=temp("results/{date}/species-diversity/pe/{sample}/{sample}.kraken"),
         report="results/{date}/species-diversity/pe/{sample}/{sample}.uncleaned.kreport2",
     log:
-        "logs/{date}/kraken/{sample}.log",
+        "logs/{date}/kraken/pe/{sample}.log",
     params:
-        classified=lambda w, output: " --unclassified-out "
-        + "#".join(output.classified_reads[0].rsplit("_1", 1))
-        if is_illumina(w)
-        else "",
-        unclassified=lambda w, output: "--classified-out "
-        + "#".join(output.unclassified_reads[0].rsplit("_1", 1))
-        if is_illumina(w)
-        else "",
-        paired=lambda wildcards: "--paired " if is_illumina(wildcards) else "",
+        classified=lambda w, output: "#".join(
+            output.classified_reads[0].rsplit("_1", 1)
+        ),
+        unclassified=lambda w, output: "#".join(
+            output.unclassified_reads[0].rsplit("_1", 1)
+        ),
     threads: 8
     conda:
         "../envs/kraken.yaml"
     shell:
-        "(kraken2 --db {input.db} --threads {threads} {params.unclassified} "
-        " {params.classified} --report {output.report} --gzip-compressed"
-        " {params.paired} {input.reads} > {output.kraken_output})"
-        "2> {log}"
+        "(kraken2 --db {input.db} --threads {threads} --unclassified-out {params.unclassified} "
+        "--classified-out {params.classified} --report {output.report} --gzip-compressed "
+        "--paired {input.reads} > {output.kraken_output}) 2> {log}"
 
 
-use rule species_diversity_before_pe as species_diversity_before_se with:
+rule species_diversity_before_se:
+    input:
+        db="resources/minikraken-8GB",
+        reads=get_trimmed_reads,
     output:
         kraken_output=temp(
             "results/{date}/species-diversity/se/{sample}/{sample}.kraken"
         ),
         report="results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2",
+    log:
+        "logs/{date}/kraken/se/{sample}.log",
+    threads: 8
+    conda:
+        "../envs/kraken.yaml"
+    shell:
+        "(kraken2 --db {input.db} --threads {threads}"
+        " --report {output.report} --gzip-compressed"
+        " {input.reads} > {output.kraken_output})"
+        "2> {log}"
 
 
 # plot Korna charts BEFORE removing human contamination
