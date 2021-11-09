@@ -46,7 +46,7 @@ rule medaka_variant:
         ref=get_reference(),
         sample="results/{date}/recal/ref~{reference}/{sample}.bam",
     output:
-        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer.vcf")
+        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer.vcf"),
     params:
         outdir=get_output_dir,
     log:
@@ -58,6 +58,7 @@ rule medaka_variant:
         "(medaka_variant -i {input.sample} -f {input.ref} -o {params.outdir}/{wildcards.sample} -t {threads} &&"
         " mv $(cat {log}| grep '\- Final VCF written to' | sed s/'- Final VCF written to '//\ ) {output})"
         " > {log} 2>&1"
+
 
 rule vcf_2_bcf:
     input:
@@ -129,11 +130,11 @@ rule merge_varranges:
     input:
         calls=lambda wildcards: expand(
             "results/{{date}}/calls/ref~{{reference}}/{{sample}}.{varrange}.bcf",
-            varrange= get_varrange(wildcards),
+            varrange=get_varrange(wildcards),
         ),
-        idx= lambda wildcards: expand(
+        idx=lambda wildcards: expand(
             "results/{{date}}/calls/ref~{{reference}}/{{sample}}.{varrange}.bcf.csi",
-            varrange= get_varrange(wildcards),
+            varrange=get_varrange(wildcards),
         ),
     output:
         "results/{date}/calls/ref~{reference}/{sample}.bcf",

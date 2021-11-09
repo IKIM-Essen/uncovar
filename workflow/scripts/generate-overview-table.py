@@ -215,7 +215,9 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
     data.loc[sample, "Other Variants"] = fmt_variants(other_variants)
 
 
-data["Other Variants"][data["Other Variants"].str.len() > 32767] = "Too many variants to display"
+data["Other Variants"][
+    data["Other Variants"].str.len() > 32767
+] = "Too many variants to display"
 
 int_cols = [
     "Raw Reads (#)",
@@ -227,6 +229,6 @@ int_cols = [
 ]
 
 data[int_cols] = data[int_cols].fillna("0").applymap(lambda x: "{0:,}".format(int(x)))
-data.index.name = 'Sample'
+data.index.name = "Sample"
 data.sort_index(inplace=True)
 data.to_csv(snakemake.output[0], float_format="%.1f")
