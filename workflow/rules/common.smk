@@ -989,7 +989,7 @@ def get_trimmed_reads(wildcards):
             "results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]
         )
     elif is_ont(wildcards):
-        return "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"
+        return "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq.gz"
 
 
 def get_kraken_output(wildcards):
