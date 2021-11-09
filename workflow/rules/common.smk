@@ -755,7 +755,7 @@ def expand_samples_by_func(paths, func, **kwargs):
     def inner(wildcards):
         return expand(
             paths,
-            sample=get_samples_for_date(wildcards.date),
+            sample=func(wildcards.date),
             **kwargs,
         )
 
@@ -775,17 +775,6 @@ def get_vep_args(wildcards, input):
         "--vcf_info_field ANN --hgvsg --hgvs --synonyms {synonyms} "
         "--custom {input.problematic},,vcf,exact,0,"
     ).format(input=input, synonyms=get_resource("synonyms.txt"))
-
-
-def expand_samples_by_func(paths, func, **kwargs):
-    def inner(wildcards):
-        return expand(
-            paths,
-            sample=get_samples_for_date(wildcards.date),
-            **kwargs,
-        )
-
-    return inner
 
 
 def get_samples_for_assembler_comparison(paths):
