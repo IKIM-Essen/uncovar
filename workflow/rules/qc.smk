@@ -115,7 +115,9 @@ rule species_diversity_before_pe:
                 read=[1, 2],
             )
         ),
-        kraken_output=temp("results/{date}/species-diversity/pe/{sample}/{sample}.kraken"),
+        kraken_output=temp(
+            "results/{date}/species-diversity/pe/{sample}/{sample}.kraken"
+        ),
         report="results/{date}/species-diversity/pe/{sample}/{sample}.uncleaned.kreport2",
     log:
         "logs/{date}/kraken/pe/{sample}.log",
