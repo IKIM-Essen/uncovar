@@ -362,7 +362,6 @@ def get_reads(wildcards):
     if (
         wildcards.reference == "human"
         or wildcards.reference == "main+human"
-        or wildcards.reference.startswith("polished-")
     ):
         if is_illumina(wildcards):
             return expand(
@@ -375,7 +374,19 @@ def get_reads(wildcards):
                 "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
                 **wildcards,
             )
-
+    # used for masking
+    elif wildcards.reference.startswith("polished-"):
+        if is_illumina(wildcards):
+            return expand(
+                "results/{date}/trimmed/{sample}.{read}.fastq.gz",
+                read=[1, 2],
+                **wildcards,
+            )
+        elif is_ont(wildcards):
+            return expand(
+                "results/{date}/trimmed/nanofilt/{sample}.fastq",
+                **wildcards,
+            )
     # theses reads are used to generate the bam file for the BAMclipper
     elif wildcards.reference == config["adapters"]["amplicon-reference"]:
         return expand(
@@ -989,7 +1000,7 @@ def get_trimmed_reads(wildcards):
             "results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]
         )
     elif is_ont(wildcards):
-        return "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"
+        return "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq.gz"
 
 
 def get_kraken_output(wildcards):
