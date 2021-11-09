@@ -150,7 +150,7 @@ rule bcftools_consensus:
 
 
 # polish ont
-rule medaka:
+rule medaka_consensus:
     input:
         fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
         reference="results/{date}/contigs/ordered/{sample}.fasta",
@@ -161,7 +161,7 @@ rule medaka:
             caption="../report/assembly_ont.rst",
         ),
     log:
-        "logs/{date}/medaka/{sample}.log",
+        "logs/{date}/medaka/consensus/{sample}.log",
     params:
         outdir=get_output_dir,
         model=config["assembly"]["medaka_model"],

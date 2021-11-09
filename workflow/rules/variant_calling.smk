@@ -41,6 +41,37 @@ rule delly:
         "../scripts/delly.py"
 
 
+rule medaka_variant:
+    input:
+        ref=get_reference(),
+        sample="results/{date}/recal/ref~{reference}/{sample}.bam",
+    output:
+        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer.vcf")
+    params:
+        outdir=get_output_dir,
+    log:
+        "logs/{date}/medaka/variant/ref~{reference}/{sample}.log",
+    conda:
+        "../envs/medaka.yaml"
+    threads: 4
+    shell:
+        "(medaka_variant -i {input.sample} -f {input.ref} -o {params.outdir}/{wildcards.sample} -t {threads} &&"
+        " mv $(cat {log}| grep '\- Final VCF written to' | sed s/'- Final VCF written to '//\ ) {output})"
+        " > {log} 2>&1"
+
+rule vcf_2_bcf:
+    input:
+        "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer.vcf",
+    output:
+        "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer.bcf",
+    log:
+        "logs/{date}/vcf_2_bcf/ref~{reference}/{sample}.log",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        "bcftools view -O u -o {output} {input} 2> {log}"
+
+
 rule render_scenario:
     input:
         local(get_resource("scenario.yaml")),
@@ -96,13 +127,13 @@ rule varlociraptor_call:
 
 rule merge_varranges:
     input:
-        calls=expand(
+        calls=lambda wildcards: expand(
             "results/{{date}}/calls/ref~{{reference}}/{{sample}}.{varrange}.bcf",
-            varrange=["small", "structural"],
+            varrange= get_varrange(wildcards),
         ),
-        idx=expand(
+        idx= lambda wildcards: expand(
             "results/{{date}}/calls/ref~{{reference}}/{{sample}}.{varrange}.bcf.csi",
-            varrange=["small", "structural"],
+            varrange= get_varrange(wildcards),
         ),
     output:
         "results/{date}/calls/ref~{reference}/{sample}.bcf",

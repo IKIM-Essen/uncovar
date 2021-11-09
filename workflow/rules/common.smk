@@ -1089,6 +1089,13 @@ def get_polished_sequence(wildcards):
         return "results/{date}/polishing/medaka/{sample}/consensus.fasta"
 
 
+def get_varrange(wildcards):
+    if is_ont(wildcards):
+        return ["homopolymer"]
+    elif is_illumina(wildcards):
+        return ["small", "structural"]
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),
@@ -1096,4 +1103,4 @@ wildcard_constraints:
     filter="|".join(
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
     ),
-    varrange="structural|small",
+    varrange="structural|small|homopolymer",
