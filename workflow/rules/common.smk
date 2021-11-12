@@ -379,7 +379,7 @@ def get_reads(wildcards):
     # theses reads are used to generate the bam file for the BAMclipper
     elif wildcards.reference == config["adapters"]["amplicon-reference"]:
         return expand(
-            "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
+            "results/{date}/nonhuman-reads/pe/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
@@ -394,7 +394,7 @@ def get_reads(wildcards):
 def get_reads_after_qc(wildcards, read="both"):
     if is_amplicon_data(wildcards.sample) and is_ont(wildcards):
         pattern = [
-            "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz".format(
+            "results/{date}/nonhuman-reads/se/{sample}.fastq.gz".format(
                 **wildcards
             )
         ]
@@ -411,7 +411,7 @@ def get_reads_after_qc(wildcards, read="both"):
         )
     elif not is_amplicon_data(wildcards.sample) and is_illumina(wildcards):
         pattern = expand(
-            "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
+            "results/{date}/nonhuman-reads/pe/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,

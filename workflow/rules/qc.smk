@@ -203,15 +203,15 @@ rule extract_reads_of_interest:
         "../scripts/extract-reads-of-interest.py"
 
 
-rule order_nonhuman_reads:
+rule order_nonhuman_reads_pe:
     input:
         "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
     output:
-        fq1=temp("results/{date}/nonhuman-reads/{sample}.1.fastq.gz"),
-        fq2=temp("results/{date}/nonhuman-reads/{sample}.2.fastq.gz"),
+        fq1=temp("results/{date}/nonhuman-reads/pe/{sample}.1.fastq.gz"),
+        fq2=temp("results/{date}/nonhuman-reads/pe/{sample}.2.fastq.gz"),
         bam_sorted=temp("results/{date}/nonhuman-reads/{sample}.sorted.bam"),
     log:
-        "logs/{date}/order_nonhuman_reads/{sample}.log",
+        "logs/{date}/order_nonhuman_reads/pe/{sample}.log",
     conda:
         "../envs/samtools.yaml"
     threads: 8
@@ -221,12 +221,29 @@ rule order_nonhuman_reads:
         " > {log} 2>&1"
 
 
+rule order_nonhuman_reads_se:
+    input:
+        "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
+    output:
+        fq=temp("results/{date}/nonhuman-reads/se/{sample}.fastq.gz"),
+        bam_sorted=temp("results/{date}/nonhuman-reads/{sample}.sorted.bam"),
+    log:
+        "logs/{date}/order_nonhuman_reads/se/{sample}.log",
+    conda:
+        "../envs/samtools.yaml"
+    threads: 8
+    shell:
+        "(samtools sort  -@ {threads} -n {input} -o {output.bam_sorted}; "
+        " samtools fastq -@ {threads} -0 {output.fq} {output.bam_sorted})"
+        " > {log} 2>&1"
+
+
 # analysis of species diversity present AFTER removing human contamination
 rule species_diversity_after:
     input:
         db="resources/minikraken-8GB",
         reads=expand(
-            "results/{{date}}/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]
+            "results/{{date}}/nonhuman-reads/pe/{{sample}}.{read}.fastq.gz", read=[1, 2]
         ),
     output:
         kraken_output=temp(

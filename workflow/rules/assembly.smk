@@ -66,7 +66,7 @@ rule assembly_spades_pe:
 
 rule spades_assemble_se:
     input:
-        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        get_reads_after_qc,
     output:
         "results/{date}/assembly/{sample}/spades_se/{sample}.contigs.fasta",
     log:
