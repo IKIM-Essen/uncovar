@@ -55,7 +55,7 @@ def select_oldest_strains(df: pd.DataFrame):
         (df["covv_host"] == "Human")
         & (df["is_complete"] == True)
         & (df["covv_lineage"] != "None")
-        & (df["covv_lineage"] != '')
+        & (df["covv_lineage"] != "")
     )
     cols_of_interesst = ["covv_lineage", "n_content", "covv_subm_date"]
     df = df.copy()
