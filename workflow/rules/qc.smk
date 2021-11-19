@@ -65,17 +65,17 @@ rule multiqc_lab:
             subcategory="1. Quality Control",
         ),
     params:
-        input_dirs=lambda w, input: set(path.dirname(fp) for fp in snakemake.input),
-        output_dir=lambda w, output: path.dirname(snakemake.output[0]),
-        output_name=lambda w, output: path.basename(snakemake.output[0]),
+        input_dirs=lambda w, input: set(path.dirname(fp) for fp in input),
+        output_dir=lambda w, output: path.dirname(output[0]),
+        output_name=lambda w, output: path.basename(output[0]),
         params="--config config/multiqc_config_lab.yaml --title 'Results for data from {date}'",
     conda:
         "../envs/multiqc.yaml"
     log:
         "logs/{date}/multiqc.log",
     shell:
-        "multiqc {params.params} --force -o {params.output_dir} -n {params.output_name} "
-        " {params.input} 2> {log}"
+        "multiqc {params.params} --force -o {params.output_dir} "
+        "-n {params.output_name} {params.input_dirs} 2> {log}"
 
 
 rule samtools_flagstat:
