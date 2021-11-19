@@ -3,6 +3,7 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
+
 rule fastqc:
     input:
         get_fastqs,
@@ -43,6 +44,8 @@ rule multiqc:
 
 # TODO: Change back to MultiQC wrapper once v1.11 is released
 from os import path
+
+
 rule multiqc_lab:
     input:
         expand_samples_for_date(
@@ -62,10 +65,10 @@ rule multiqc_lab:
             subcategory="1. Quality Control",
         ),
     params:
-        input_dirs = lambda w, input: set(path.dirname(fp) for fp in snakemake.input),
-        output_dir = lambda w, output: path.dirname(snakemake.output[0]),
-        output_name = lambda w, output: path.basename(snakemake.output[0]),
-        params="--config config/multiqc_config_lab.yaml --title 'Results for data from {date}'"
+        input_dirs=lambda w, input: set(path.dirname(fp) for fp in snakemake.input),
+        output_dir=lambda w, output: path.dirname(snakemake.output[0]),
+        output_name=lambda w, output: path.basename(snakemake.output[0]),
+        params="--config config/multiqc_config_lab.yaml --title 'Results for data from {date}'",
     conda:
         "../envs/multiqc.yaml"
     log:
