@@ -21,61 +21,6 @@ def iter_with_samples(inputfiles):
 
 data = pd.DataFrame(index=snakemake.params.samples)
 
-# add numbers of raw reads
-for sample, file in iter_with_samples(snakemake.input.reads_raw):
-    if "fastq-read-counts" in file:
-        with open(file) as infile:
-            number_reads = infile.read().strip()
-    else:
-        with open(file) as infile:
-            number_reads = json.load(infile)["summary"]["before_filtering"][
-                "total_reads"
-            ]
-    data.loc[sample, "Raw Reads (#)"] = number_reads
-
-# add numbers of trimmed reads
-for sample, file in iter_with_samples(snakemake.input.reads_trimmed):
-    if "fastq-read-counts" in file:
-        with open(file) as infile:
-            number_reads = infile.read().strip()
-    else:
-        with open(file) as infile:
-            number_reads = json.load(infile)["summary"]["after_filtering"][
-                "total_reads"
-            ]
-    data.loc[sample, "Trimmed Reads (#)"] = number_reads
-
-
-# add numbers of reads used for assembly
-for sample, file in iter_with_samples(snakemake.input.reads_used_for_assembly):
-    with open(file) as infile:
-        data.loc[sample, "Used Reads (#)"] = int(infile.read()) * 2
-
-
-def register_contig_lengths(assemblies, name):
-    for sample, file in iter_with_samples(assemblies):
-        with pysam.FastxFile(file) as infile:
-            data.loc[sample, name] = max(len(contig.sequence) for contig in infile)
-
-
-# add lengths of Initial contigs
-register_contig_lengths(snakemake.input.initial_contigs, "Initial Contig (bp)")
-
-# add lengths of polished contigs
-register_contig_lengths(snakemake.input.polished_contigs, "Final Contig (bp)")
-
-# add lengths of pseudo assembly
-register_contig_lengths(snakemake.input.pseudo_contigs, "Pseudo Contig (bp)")
-
-# add type of assembly use:
-for ele in snakemake.params.assembly_used:
-    sample, used = ele.split(",")
-    if "pseudo" == used:
-        data.loc[sample, "RKI Submission"] = "Pseudo"
-    elif "normal" == used:
-        data.loc[sample, "RKI Submission"] = "Normal"
-    elif "not-accepted" == used:
-        data.loc[sample, "RKI Submission"] = "-"
 
 # add kraken estimates
 species_columns = pd.DataFrame()
@@ -119,6 +64,70 @@ for sample, file in iter_with_samples(snakemake.input.kraken):
     species_columns = species_columns.append(kraken_results, ignore_index=True)
 
 data = data.join(species_columns.set_index("sample"))
+
+# add numbers of raw reads
+for sample, file in iter_with_samples(snakemake.input.reads_raw):
+    if "fastq-read-counts" in file:
+        with open(file) as infile:
+            number_reads = infile.read().strip()
+    else:
+        with open(file) as infile:
+            number_reads = json.load(infile)["summary"]["before_filtering"][
+                "total_reads"
+            ]
+    data.loc[sample, "Raw Reads (#)"] = number_reads
+
+# add numbers of trimmed reads
+for sample, file in iter_with_samples(snakemake.input.reads_trimmed):
+    if "fastq-read-counts" in file:
+        with open(file) as infile:
+            number_reads = infile.read().strip()
+    else:
+        with open(file) as infile:
+            number_reads = json.load(infile)["summary"]["after_filtering"][
+                "total_reads"
+            ]
+    data.loc[sample, "Trimmed Reads (#)"] = number_reads
+
+# add numbers of reads used for assembly
+for sample, file in iter_with_samples(snakemake.input.reads_used_for_assembly):
+    with open(file) as infile:
+        data.loc[sample, "Filtered Reads (#)"] = int(infile.read()) * 2
+
+
+def register_contig_lengths(assemblies, name):
+    for sample, file in iter_with_samples(assemblies):
+        if file == "resources/genomes/main.fasta":
+            data.loc[sample, name] = 0
+        else:
+            with pysam.FastxFile(file) as infile:
+                data.loc[sample, name] = max(len(contig.sequence) for contig in infile)
+
+
+# add lengths of Initial contigs
+register_contig_lengths(snakemake.input.initial_contigs, "Largest Contig (bp)")
+
+# add lengths of polished contigs
+register_contig_lengths(snakemake.input.polished_contigs, "De Novo Sequence (bp)")
+
+# add lengths of pseudo assembly
+register_contig_lengths(snakemake.input.pseudo_contigs, "Pseudo Sequence (bp)")
+
+# add lengths of Consensus assembly
+register_contig_lengths(snakemake.input.consensus_contigs, "Consensus Sequence (bp)")
+
+
+# add type of assembly use:
+for ele in snakemake.params.assembly_used:
+    sample, used = ele.split(",")
+    if "pseudo" == used:
+        data.loc[sample, "Best Quality"] = "Pseudo"
+    elif "normal" == used:
+        data.loc[sample, "Best Quality"] = "De Novo"
+    elif "consensus" == used:
+        data.loc[sample, "Best Quality"] = "Consensus"
+    elif "not-accepted" == used:
+        data.loc[sample, "Best Quality"] = "Failed"
 
 # add pangolin results
 for sample, file in iter_with_samples(snakemake.input.pangolin):
@@ -222,13 +231,15 @@ data["Other Variants"][
 int_cols = [
     "Raw Reads (#)",
     "Trimmed Reads (#)",
-    "Used Reads (#)",
-    "Initial Contig (bp)",
-    "Final Contig (bp)",
-    "Pseudo Contig (bp)",
+    "Filtered Reads (#)",
+    "Largest Contig (bp)",
+    "De Novo Sequence (bp)",
+    "Pseudo Sequence (bp)",
+    "Consensus Sequence (bp)",
 ]
 
 data[int_cols] = data[int_cols].fillna("0").applymap(lambda x: "{0:,}".format(int(x)))
+data.loc[:, (data != 0).any(axis=0)]
 data.index.name = "Sample"
 data.sort_index(inplace=True)
 data.to_csv(snakemake.output[0], float_format="%.1f")

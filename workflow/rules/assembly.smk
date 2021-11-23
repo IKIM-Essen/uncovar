@@ -130,19 +130,20 @@ rule filter_chr0:
 
 
 # polish illumina
-rule bcftools_consensus:
+rule assembly_polishing_illumina:
     input:
         fasta="results/{date}/contigs/ordered/{sample}.fasta",
         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf",
         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf.csi",
     output:
         report(
-            "results/{date}/polishing/bcftools/{sample}.fasta",
+            "results/{date}/polishing/bcftools-illumina/{sample}.fasta",
             category="4. Assembly",
+            subcategory="1. De Novo Assembled Sequences",
             caption="../report/assembly_illumina.rst",
         ),
     log:
-        "logs/{date}/bcftools-consensus/{sample}.log",
+        "logs/{date}/bcftools-consensus-illumina/{sample}.log",
     conda:
         "../envs/bcftools.yaml"
     shell:
@@ -150,7 +151,7 @@ rule bcftools_consensus:
 
 
 # polish ont
-rule medaka_consensus:
+rule assembly_polishing_ont:
     input:
         fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
         reference="results/{date}/contigs/ordered/{sample}.fasta",
@@ -158,6 +159,7 @@ rule medaka_consensus:
         report(
             "results/{date}/polishing/medaka/{sample}/consensus.fasta",
             category="4. Assembly",
+            subcategory="1. De Novo Assembled Sequences",
             caption="../report/assembly_ont.rst",
         ),
     log:

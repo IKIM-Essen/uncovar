@@ -110,3 +110,63 @@ rule canu_correct:
         " minOverlapLength=10 minReadLength={params.min_length} corMMapMerSize=10 corOutCoverage=50000"
         " corMinCoverage=0 maxInputCoverage=20000 maxThreads={threads} {params.for_testing}) "
         " 2> {log}"
+
+
+# rule unzip_canu:
+#     input:
+#         "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+#     output:
+#         "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
+#     log:
+#         "logs/{date}/unzip_canu/{sample}.log",
+#     conda:
+#         "../envs/unix.yaml"
+#     shell:
+#         "gzip -d {input}"
+
+
+# rule medaka_consensus_reference:
+use rule assembly_polishing_ont as medaka_consensus_reference with:
+    input:
+        fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        reference="resources/genomes/main.fasta",
+    output:
+        "results/{date}/consensus/medaka/{sample}/consensus.fasta",
+
+
+rule rename_conensus:
+    input:
+        "results/{date}/consensus/medaka/{sample}/consensus.fasta",
+    output:
+        report(
+            "results/{date}/contigs/consensus/{sample}.fasta",
+            category="4. Assembly",
+            subcategory="3. Consensus Sequences",
+        ),
+    log:
+        "logs/{date}/rename-conensus-fasta/{sample}.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "(cp {input} {output} && "
+        ' sed -i "1s/.*/>{wildcards.sample}/" {output})'
+        " 2> {log}"
+
+
+# rule bcftools_consensus_ont:
+#     input:
+#         fasta="results/{date}/consensus/medaka/{sample}/consensus.fasta",
+#         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf",
+#         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf.csi",
+#     output:
+#         report(
+#             "results/{date}/consensus/{sample}.fasta",
+#             category="4. Assembly",
+#             caption="../report/assembly_ont.rst",
+#         ),
+#     log:
+#         "logs/{date}/bcftools-consensus-ont/{sample}.log",
+#     conda:
+#         "../envs/bcftools.yaml"
+#     shell:
+#         "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"

@@ -45,6 +45,7 @@ rule medaka_variant:
     input:
         ref=get_reference(),
         sample="results/{date}/recal/ref~{reference}/{sample}.bam",
+        bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
         temp("results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer.vcf"),
     params:

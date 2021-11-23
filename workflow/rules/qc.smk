@@ -21,7 +21,6 @@ rule multiqc:
         expand_samples_for_date(
             [
                 "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
-                "results/{{date}}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
                 "results/{{date}}/quast/unpolished/{sample}/report.tsv",
                 "results/{{date}}/quast/polished/{sample}/report.tsv",
                 "results/{{date}}/qc/samtools_flagstat/{sample}.bam.flagstat",
@@ -31,6 +30,7 @@ rule multiqc:
         expand_samples_for_date("logs/{{date}}/kallisto_quant/{sample}.log"),
         get_fastp_results,
         get_kraken_output,
+        get_kraken_output_after_filtering
     output:
         "results/{date}/qc/multiqc.html",
     params:
@@ -239,25 +239,41 @@ rule order_nonhuman_reads_se:
 
 
 # analysis of species diversity present AFTER removing human contamination
-rule species_diversity_after:
+rule species_diversity_after_pe:
     input:
         db="resources/minikraken-8GB",
-        reads=expand(
-            "results/{{date}}/nonhuman-reads/pe/{{sample}}.{read}.fastq.gz", read=[1, 2]
-        ),
+        reads=get_non_human_reads,
     output:
         kraken_output=temp(
-            "results/{date}/species-diversity-nonhuman/{sample}/{sample}.kraken"
+            "results/{date}/species-diversity-nonhuman/pe/{sample}/{sample}.kraken"
         ),
-        report="results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
+        report="results/{date}/species-diversity-nonhuman/pe/{sample}/{sample}.cleaned.kreport2",
     log:
-        "logs/{date}/kraken/{sample}_nonhuman.log",
+        "logs/{date}/kraken/{sample}_pe_nonhuman.log",
     conda:
         "../envs/kraken.yaml"
     threads: 8
     shell:
         "(kraken2 --db {input.db} --threads {threads} --report {output.report} --gzip-compressed "
         "--paired {input.reads} > {output.kraken_output}) 2> {log}"
+
+rule species_diversity_after_se:
+    input:
+        db="resources/minikraken-8GB",
+        reads=get_non_human_reads,
+    output:
+        kraken_output=temp(
+            "results/{date}/species-diversity-nonhuman/se/{sample}/{sample}.kraken"
+        ),
+        report="results/{date}/species-diversity-nonhuman/se/{sample}/{sample}.cleaned.kreport2",
+    log:
+        "logs/{date}/kraken/{sample}_se_nonhuman.log",
+    conda:
+        "../envs/kraken.yaml"
+    threads: 8
+    shell:
+        "(kraken2 --db {input.db} --threads {threads} --report {output.report} --gzip-compressed "
+        "{input.reads} > {output.kraken_output}) 2> {log}"
 
 
 # plotting Krona charts AFTER removing human contamination

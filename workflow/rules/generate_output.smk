@@ -6,18 +6,18 @@
 
 rule masking:
     input:
-        bamfile="results/{date}/mapped/ref~polished-{sample}/{sample}.bam",
-        bai="results/{date}/mapped/ref~polished-{sample}/{sample}.bam.bai",
-        sequence="results/{date}/contigs/polished/{sample}.fasta",
+        bamfile="results/{date}/mapped/ref~{reference}-{sample}/{sample}.bam",
+        bai="results/{date}/mapped/ref~{reference}-{sample}/{sample}.bam.bai",
+        sequence="results/{date}/contigs/{reference}/{sample}.fasta",
     output:
-        masked_sequence="results/{date}/contigs/masked/{sample}.fasta",
-        coverage="results/{date}/tables/coverage/{sample}.txt",
+        masked_sequence="results/{date}/contigs/masked/{reference}/{sample}.fasta",
+        coverage="results/{date}/tables/coverage/{reference}/{sample}.txt",
     params:
         min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
         min_allele=config["quality-criteria"]["min-allele"],
         is_ont=is_ont,
     log:
-        "logs/{date}/masking/{sample}.logs",
+        "logs/{date}/masking/{reference}/{sample}.logs",
     conda:
         "../envs/pysam.yaml"
     script:
@@ -44,9 +44,11 @@ rule plot_coverage_main_sequence:
         "../scripts/plot-all-coverage.py"
 
 
-rule plot_coverage_final_sequence:
+rule plot_coverage_polished_sequence:
     input:
-        expand_samples_for_date("results/{{date}}/tables/coverage/{sample}.txt"),
+        expand_samples_for_date(
+            "results/{{date}}/tables/coverage/polished/{sample}.txt"
+        ),
     output:
         report(
             "results/{date}/plots/coverage-assembled-genome.svg",
@@ -64,48 +66,49 @@ rule plot_coverage_final_sequence:
         "../scripts/plot-all-coverage.py"
 
 
-checkpoint rki_filter:
+checkpoint quality_filter:
     input:
         quast=get_final_assemblies_identity,
         contigs=get_final_assemblies,
     output:
-        "results/{date}/rki-filter/{assembly_type}.txt",
+        passed_filter="results/{date}/tables/quality-filter/{assembly_type}.txt",
+        filter_summary="results/{date}/tables/filter_summary/{assembly_type}.tsv"
     params:
         min_identity=config["quality-criteria"]["min-identity"],
         max_n=config["quality-criteria"]["max-n"],
     log:
-        "logs/{date}/rki-filter/{assembly_type}.log",
+        "logs/{date}/quality-filter/{assembly_type}.log",
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/rki-filter.py"
+        "../scripts/quality-filter.py"
 
 
-rule rki_report:
+rule high_quality_genomes_report:
     input:
         contigs=lambda wildcards: get_assemblies_for_submission(
             wildcards, "accepted samples"
         ),
     output:
         fasta=report(
-            "results/rki/{date}_uk-essen_rki.fasta",
-            category="6. RKI Submission",
+            "results/high_quality_genomes/{date}.fasta",
+            category="6. High Quality Genomes",
             caption="../report/rki-submission-fasta.rst",
         ),
         table=report(
-            "results/rki/{date}_uk-essen_rki.csv",
-            category="6. RKI Submission",
+            "results/high_quality_genomes/{date}.csv",
+            category="6. High Quality Genomes",
             caption="../report/rki-submission-csv.rst",
         ),
     conda:
         "../envs/pysam.yaml"
     log:
-        "logs/{date}/rki-output/{date}.log",
+        "logs/{date}/high_quality_outputlog",
     script:
-        "../scripts/generate-rki-output.py"
+        "../scripts/generate-high-quality-report.py"
 
 
-rule virologist_report:
+rule overview_table_csv:
     input:
         reads_raw=get_raw_reads_counts,
         reads_trimmed=get_trimmed_reads_counts,
@@ -114,10 +117,13 @@ rule virologist_report:
         ),
         initial_contigs=get_expanded_contigs,
         polished_contigs=expand_samples_for_date(
-            "results/{{date}}/contigs/polished/{sample}.fasta",
+            "results/{{date}}/contigs/masked/polished/{sample}.fasta",
         ),
-        pseudo_contigs=expand_samples_for_date(
+        pseudo_contigs=get_for_report_if_illumina_sample(
             "results/{{date}}/contigs/pseudoassembled/{sample}.fasta",
+        ),
+        consensus_contigs=get_for_report_if_ont_sample(
+            "results/{{date}}/contigs/masked/consensus/{sample}.fasta",
         ),
         kraken=get_kraken_output,
         pangolin=expand_samples_for_date(
@@ -127,7 +133,7 @@ rule virologist_report:
             "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
         ),
     output:
-        qc_data="results/{date}/virologist/qc_report.csv",
+        qc_data="results/{date}/tables/overview.csv",
     params:
         assembly_used=lambda wildcards: get_assemblies_for_submission(
             wildcards, "all samples"
@@ -142,12 +148,12 @@ rule virologist_report:
         "../scripts/generate-overview-table.py"
 
 
-rule qc_html_report:
+rule overview_table_html:
     input:
-        "results/{date}/virologist/qc_report.csv",
+        "results/{date}/tables/overview.csv",
     output:
         report(
-            directory("results/{date}/qc_data/"),
+            directory("results/{date}/overview/"),
             htmlindex="index.html",
             caption="../report/qc-report.rst",
             category="1. Overview",
@@ -162,6 +168,23 @@ rule qc_html_report:
         "../envs/rbt.yaml"
     shell:
         "rbt csv-report {input} --formatter {params.formatter} --pin-until {params.pin_until} {output} > {log} 2>&1"
+
+
+rule filter_overview:
+    input:
+        de_novo="results/{date}/tables/filter_summary/masked-assembly.tsv",
+        pseudo=get_for_report_if_illumina_sample("results/{date}/tables/filter_summary/pseudo-assembly.tsv"),
+        consensus=get_for_report_if_illumina_sample("results/{date}/tables/filter_summary/consensus-assembly.tsv"),
+    output:
+        "results/{date}/tables/filter-overview.csv",
+    params:
+        samples = lambda wildcards: get_samples_for_date(wildcards.date)
+    log:
+        "logs/{date}/filter-overview.log"
+    conda:
+        "../envs/pandas.yaml"
+    script:
+        "../scripts/generate-filter-overview.py"
 
 
 rule plot_lineages_over_time:
@@ -203,7 +226,7 @@ rule snakemake_reports:
             "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
             sample=get_samples_for_date(wildcards.date),
         ),
-        "results/{date}/qc_data",
+        "results/{date}/overview",
         expand(
             "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
             mode=["major"],
@@ -215,8 +238,8 @@ rule snakemake_reports:
             filter=config["variant-calling"]["filters"],
         ),
         "results/{date}/qc/laboratory/multiqc.html",
-        "results/rki/{date}_uk-essen_rki.csv",
-        "results/rki/{date}_uk-essen_rki.fasta",
+        "results/high_quality_genomes/{date}.csv",
+        "results/high_quality_genomes/{date}.fasta",
         expand(
             "results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf",
             filter=config["variant-calling"]["filters"],

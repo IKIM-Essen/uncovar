@@ -78,7 +78,7 @@ def get_n_share(contig_paths: List[str]) -> dict:
 
 
 def filter_and_save(
-    identity: dict, n_share: dict, min_identity: float, max_n: float, save_path: str
+    identity: dict, n_share: dict, min_identity: float, max_n: float, save_path: str, summary_path : str
 ):
     """Filters and saves sample names
 
@@ -88,6 +88,7 @@ def filter_and_save(
         min_identity (float): Min identity to virus reference genome of reconstructed genome
         max_n (float): Max share of N in the reconstructed genome
         save_path (str): Path to save the filtered sample to as .txt
+        summary_path (str): Path to identity and n share to as .tsv
     """
 
     # aggregate all result into one df
@@ -96,6 +97,7 @@ def filter_and_save(
     # print agg_df to stderr for logging
     print("Aggregated data of all samples", file=sys.stderr)
     print(agg_df, file=sys.stderr)
+    agg_df.to_csv(summary_path, sep="\t", index=False)
 
     # filter this accordingly to the given params
     filtered_df = agg_df[
@@ -120,4 +122,4 @@ def filter_and_save(
 
 identity_dict = get_identity(snakemake.input.quast)
 n_share_dict = get_n_share(snakemake.input.contigs)
-filter_and_save(identity_dict, n_share_dict, min_identity, max_n, snakemake.output[0])
+filter_and_save(identity_dict, n_share_dict, min_identity, max_n, snakemake.output.passed_filter, snakemake.output.filter_summary)

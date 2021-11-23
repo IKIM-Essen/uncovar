@@ -1,1 +1,1 @@
-The reconstruct genome sequences for submitting to the RKI.
+High Quality reconstructed genome sequences. E.g, suited for molecular surveillance.

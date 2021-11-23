@@ -12,7 +12,11 @@ rule vcf_to_fasta:
         fasta="resources/genomes/main.fasta",
         fai="resources/genomes/main.fasta.fai",
     output:
-        "results/{date}/contigs/pseudoassembled/{sample}.fasta",
+        report(
+            "results/{date}/contigs/pseudoassembled/{sample}.fasta",
+            category="4. Assembly",
+            subcategory="3. Pseudo Assembled Sequences",
+        ),
     params:
         min_prob_apply=config["assembly"]["min-variant-prob"],
         min_coverage=get_min_coverage,
