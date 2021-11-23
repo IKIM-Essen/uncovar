@@ -154,8 +154,8 @@ jobs:
       - name: Use smaller reference files for testing
         if: steps.test-resources.outputs.cache-hit != true
         run: |
-          mkdir -p .tests/resources/minikraken-8GB
-          curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
+          # mkdir -p .tests/resources/minikraken-8GB
+          # curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
           mkdir -p .tests/resources/genomes
           curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
 

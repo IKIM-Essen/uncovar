@@ -43,7 +43,7 @@ quality-criteria:
 adapters:
   # Illumina TruSeq adapters
   # adapters used for shotgun sequencing
-  illumina-shoutgun: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+  illumina-shotgun: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
   # adapters used for amplicon sequencing
   illumina-amplicon: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
   # path to amplicon primers in bedpe format for hard-clipping on paired end files (illumina)
@@ -93,15 +93,40 @@ strain-calling:
     B.1.351: MZ433432
     P.1: MZ477759
     B.1.617.2: OK091006
-    
 
 # variants of concern (protein name -> variants)
 voc:
   S:
-    - N501Y
-    - E484K
-    - K417N
+    - L18F
+    - T19R
+    - T20N
+    - P26S
     - H69_V70del
+    - D80A
+    - D138Y
+    - Y144del
+    - F157_R158del 
+    - R190S
+    - D215G
+    - R246I
+    - K417N
+    - K417T
+    - L452R 
+    - E484K
+    - T478K
+    - N501Y
+    - A570D
+    - D614G
+    - H655Y
+    - P681R
+    - P681H
+    - A701V
+    - T716I
+    - D950N
+    - S982A
+    - T1027I
+    - D1118H
+    - V1176F
 
 
 ############################################
@@ -164,16 +189,6 @@ read_lineage_call:
     - 150
     - 250
 
-
-# variants of concern (protein name -> variants)
-voc:
-  S:
-    - N501Y
-    - E484K
-    - K417N
-    - H69_V70del
-
-
 # assemblers used for assembly comparison
 assemblers_for_comparison:
   - megahit-std
@@ -185,3 +200,24 @@ assemblers_for_comparison:
   - coronaspades
   - spades
   - rnaviralspades
+
+# assemblers used for sequencing method 
+assemblers_used:
+  shotgun: "megahit-std"
+  amplicon: "metaspades"
+
+# orf names for variant calling orf plots
+orf_names:
+  - ORF1ab
+  - S
+  - ORF3a
+  - E
+  - M
+  - ORF6
+  - ORF7a
+  - ORF7b
+  - ORF8
+  - N 
+  - ORF10
+  - 3UTR
+
