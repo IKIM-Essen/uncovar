@@ -16,6 +16,9 @@ rule fastqc:
         "0.69.0/bio/fastqc"
 
 
+# TODO: Change multiqc rules back to MultiQC wrapper once v1.11 is released
+from os import path
+
 rule multiqc:
     input:
         expand_samples_for_date(
@@ -34,16 +37,17 @@ rule multiqc:
     output:
         "results/{date}/qc/multiqc.html",
     params:
-        "--config config/multiqc_config.yaml",
-        "--title 'Results for data from {date}'",  # Optional: extra parameters for multiqc.
+        input_dirs=lambda w, input: set(path.dirname(fp) for fp in input),
+        output_dir=lambda w, output: path.dirname(output[0]),
+        output_name=lambda w, output: path.basename(output[0]),
+        params="--config config/multiqc_config.yaml --title 'Results for data from {date}'",
     log:
         "logs/{date}/multiqc.log",
-    wrapper:
-        "0.69.0/bio/multiqc"
-
-
-# TODO: Change back to MultiQC wrapper once v1.11 is released
-from os import path
+    conda:
+        "../envs/multiqc.yaml"
+    shell:
+        "multiqc {params.params} --force -o {params.output_dir} "
+        "-n {params.output_name} {params.input_dirs} > {log} 2>&1"
 
 
 rule multiqc_lab:
@@ -75,7 +79,7 @@ rule multiqc_lab:
         "logs/{date}/multiqc.log",
     shell:
         "multiqc {params.params} --force -o {params.output_dir} "
-        "-n {params.output_name} {params.input_dirs} 2> {log}"
+        "-n {params.output_name} {params.input_dirs} > {log} 2>&1"
 
 
 rule samtools_flagstat:
