@@ -3,4 +3,3 @@ channels:
   - conda-forge
 dependencies:
   - snakemake =6.10
-  - peppy >= 0.31.2
