@@ -72,7 +72,7 @@ checkpoint quality_filter:
         contigs=get_final_assemblies,
     output:
         passed_filter="results/{date}/tables/quality-filter/{assembly_type}.txt",
-        filter_summary="results/{date}/tables/filter_summary/{assembly_type}.tsv"
+        filter_summary="results/{date}/tables/filter_summary/{assembly_type}.tsv",
     params:
         min_identity=config["quality-criteria"]["min-identity"],
         max_n=config["quality-criteria"]["max-n"],
@@ -173,14 +173,18 @@ rule overview_table_html:
 rule filter_overview:
     input:
         de_novo="results/{date}/tables/filter_summary/masked-assembly.tsv",
-        pseudo=get_if_any_sample_is_illumina("results/{date}/tables/filter_summary/pseudo-assembly.tsv"),
-        consensus=get_if_any_sample_is_ont("results/{date}/tables/filter_summary/consensus-assembly.tsv"),
+        pseudo=get_if_any_sample_is_illumina(
+            "results/{date}/tables/filter_summary/pseudo-assembly.tsv"
+        ),
+        consensus=get_if_any_sample_is_ont(
+            "results/{date}/tables/filter_summary/consensus-assembly.tsv"
+        ),
     output:
         "results/{date}/tables/filter-overview.csv",
     params:
-        samples = lambda wildcards: get_samples_for_date(wildcards.date)
+        samples=lambda wildcards: get_samples_for_date(wildcards.date),
     log:
-        "logs/{date}/filter-overview.log"
+        "logs/{date}/filter-overview.log",
     conda:
         "../envs/pandas.yaml"
     script:
@@ -206,6 +210,7 @@ rule filter_overview_html:
         "../envs/rbt.yaml"
     shell:
         "rbt csv-report {input} --pin-until {params.pin_until} {output} > {log} 2>&1"
+
 
 rule plot_lineages_over_time:
     input:

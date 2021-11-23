@@ -34,7 +34,7 @@ rule multiqc:
         expand_samples_for_date("logs/{{date}}/kallisto_quant/{sample}.log"),
         get_fastp_results,
         get_kraken_output,
-        get_kraken_output_after_filtering
+        get_kraken_output_after_filtering,
     output:
         "results/{date}/qc/multiqc.html",
     params:
@@ -270,6 +270,7 @@ rule species_diversity_after_pe:
     shell:
         "(kraken2 --db {input.db} --threads {threads} --report {output.report} --gzip-compressed "
         "--paired {input.reads} > {output.kraken_output}) 2> {log}"
+
 
 rule species_diversity_after_se:
     input:

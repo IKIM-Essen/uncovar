@@ -78,7 +78,12 @@ def get_n_share(contig_paths: List[str]) -> dict:
 
 
 def filter_and_save(
-    identity: dict, n_share: dict, min_identity: float, max_n: float, save_path: str, summary_path : str
+    identity: dict,
+    n_share: dict,
+    min_identity: float,
+    max_n: float,
+    save_path: str,
+    summary_path: str,
 ):
     """Filters and saves sample names
 
@@ -123,4 +128,11 @@ def filter_and_save(
 
 identity_dict = get_identity(snakemake.input.quast)
 n_share_dict = get_n_share(snakemake.input.contigs)
-filter_and_save(identity_dict, n_share_dict, min_identity, max_n, snakemake.output.passed_filter, snakemake.output.filter_summary)
+filter_and_save(
+    identity_dict,
+    n_share_dict,
+    min_identity,
+    max_n,
+    snakemake.output.passed_filter,
+    snakemake.output.filter_summary,
+)
