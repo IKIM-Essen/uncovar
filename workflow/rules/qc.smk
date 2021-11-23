@@ -19,6 +19,7 @@ rule fastqc:
 # TODO: Change multiqc rules back to MultiQC wrapper once v1.11 is released
 from os import path
 
+
 rule multiqc:
     input:
         expand_samples_for_date(
