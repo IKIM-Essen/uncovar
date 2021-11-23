@@ -1169,6 +1169,19 @@ def get_varrange(wildcards):
     elif is_illumina(wildcards):
         return ["small", "structural"]
 
+def get_if_any_sample_is_ont(path):
+    def inner(wildcards):
+        if any(is_ont(None, sample) for sample in get_samples_for_date(wildcards.date)):
+            return path
+        return "resources/genomes/main.fasta"
+    return inner
+
+def get_if_any_sample_is_illumina(path):
+    def inner(wildcards):
+        if any(is_illumina(None, sample) for sample in get_samples_for_date(wildcards.date)):
+            return path
+        return "resources/genomes/main.fasta"
+    return inner
 
 wildcard_constraints:
     sample="[^/.]+",

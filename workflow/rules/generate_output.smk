@@ -173,8 +173,8 @@ rule overview_table_html:
 rule filter_overview:
     input:
         de_novo="results/{date}/tables/filter_summary/masked-assembly.tsv",
-        pseudo=get_for_report_if_illumina_sample("results/{date}/tables/filter_summary/pseudo-assembly.tsv"),
-        consensus=get_for_report_if_illumina_sample("results/{date}/tables/filter_summary/consensus-assembly.tsv"),
+        pseudo=get_if_any_sample_is_illumina("results/{date}/tables/filter_summary/pseudo-assembly.tsv"),
+        consensus=get_if_any_sample_is_ont("results/{date}/tables/filter_summary/consensus-assembly.tsv"),
     output:
         "results/{date}/tables/filter-overview.csv",
     params:
@@ -186,6 +186,26 @@ rule filter_overview:
     script:
         "../scripts/generate-filter-overview.py"
 
+
+rule filter_overview_html:
+    input:
+        "results/{date}/tables/filter-overview.csv",
+    output:
+        report(
+            directory("results/{date}/filter-overview"),
+            htmlindex="index.html",
+            caption="../report/filter-overview.rst",
+            category="4. Overview",
+            subcategory="0. Quality Overview",
+        ),
+    params:
+        pin_until="Sample",
+    log:
+        "logs/{date}/filter_overview_html.log",
+    conda:
+        "../envs/rbt.yaml"
+    shell:
+        "rbt csv-report {input} --pin-until {params.pin_until} {output} > {log} 2>&1"
 
 rule plot_lineages_over_time:
     input:
@@ -200,7 +220,7 @@ rule plot_lineages_over_time:
             "results/{date}/plots/lineages-over-time.svg",
             caption="../report/lineages-over-time.rst",
             category="1. Overview",
-            subcategory="3. Lineages Development",
+            subcategory="2. Lineages Development",
         ),
         "results/{date}/tables/lineages-over-time.csv",
     params:
@@ -213,46 +233,9 @@ rule plot_lineages_over_time:
         "../scripts/plot-lineages-over-time.py"
 
 
-rule plot_variants_over_time:
-    input:
-        bcf=lambda wildcards: expand(
-            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
-            zip,
-            date=get_dates_before_date(wildcards),
-            sample=get_samples_before_date(wildcards),
-        ),
-        csi=lambda wildcards: expand(
-            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf.csi",
-            zip,
-            date=get_dates_before_date(wildcards),
-            sample=get_samples_before_date(wildcards),
-        ),
-    output:
-        report(
-            "results/{date}/plots/variants-{ORFNAME}-over-time.svg",
-            caption="../report/variants-over-time.rst",
-            category="1. Overview",
-            subcategory="5. Variant Development",
-        ),
-        "results/{date}/tables/variants-{ORFNAME}-over-time.csv",
-    params:
-        dates=get_dates_before_date,
-        samples=get_samples_before_date,
-    log:
-        "logs/{date}/{ORFNAME}-over-time.log",
-    conda:
-        "../envs/python.yaml"
-    script:
-        "../scripts/plot-variants-over-time.py"
-
-
 rule snakemake_reports:
     input:
         "results/{date}/plots/lineages-over-time.svg",
-        expand(
-            "results/{{date}}/plots/variants-{ORFNAME}-over-time.svg",
-            ORFNAME=config["orf_names"],
-        ),
         "results/{date}/plots/coverage-reference-genome.svg",
         "results/{date}/plots/coverage-assembled-genome.svg",
         lambda wildcards: expand(
@@ -264,6 +247,7 @@ rule snakemake_reports:
             sample=get_samples_for_date(wildcards.date),
         ),
         "results/{date}/overview",
+        "results/{date}/filter-overview",
         expand(
             "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
             mode=["major"],

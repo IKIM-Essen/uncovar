@@ -97,7 +97,8 @@ def filter_and_save(
     # print agg_df to stderr for logging
     print("Aggregated data of all samples", file=sys.stderr)
     print(agg_df, file=sys.stderr)
-    agg_df.to_csv(summary_path, sep="\t", index=False)
+    agg_df.index.name = "Sample"
+    agg_df.to_csv(summary_path, sep="\t")
 
     # filter this accordingly to the given params
     filtered_df = agg_df[
