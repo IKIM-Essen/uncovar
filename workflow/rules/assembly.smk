@@ -129,7 +129,7 @@ rule filter_chr0:
         "../scripts/ragoo-remove-chr0.py"
 
 
-# polish illumina
+# polish illumina de novo assembly
 rule assembly_polishing_illumina:
     input:
         fasta="results/{date}/contigs/ordered/{sample}.fasta",
@@ -150,7 +150,7 @@ rule assembly_polishing_illumina:
         "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"
 
 
-# polish ont
+# polish ont de novo assembly
 rule assembly_polishing_ont:
     input:
         fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",

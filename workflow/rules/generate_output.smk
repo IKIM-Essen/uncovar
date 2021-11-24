@@ -32,7 +32,7 @@ rule plot_coverage_main_sequence:
             "results/{date}/plots/coverage-reference-genome.svg",
             caption="../report/all-main-coverage.rst",
             category="3. Sequencing Details",
-            subcategory="2. Read Coverage of Reference Genome",
+            subcategory="2. Coverage of Reference Genome",
         ),
     params:
         min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
@@ -54,7 +54,7 @@ rule plot_coverage_polished_sequence:
             "results/{date}/plots/coverage-assembled-genome.svg",
             caption="../report/all-final-coverage.rst",
             category="3. Sequencing Details",
-            subcategory="3. Read Coverage of Reconstructed Genome",
+            subcategory="3. Coverage of Reconstructed Sequences",
         ),
     params:
         min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],

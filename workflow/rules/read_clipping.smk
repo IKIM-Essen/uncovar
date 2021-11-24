@@ -94,7 +94,7 @@ rule plot_primer_clipping:
             "results/{date}/plots/primer-clipping-intervals.svg",
             caption="../report/amplicon-primer-clipping.rst",
             category="3. Sequencing Details",
-            subcategory="4. Check for correct amplicon primer clipping",
+            subcategory="4. Correct Amplicon Primer Clipping",
         ),
     params:
         samples=lambda wildcards: get_samples_for_date(wildcards.date),

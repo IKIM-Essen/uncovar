@@ -1,1 +1,1 @@
-High Quality reconstructed genome sequences. E.g, suited for molecular surveillance.
+High quality reconstructed genome sequences. Suited for molecular surveillance.
