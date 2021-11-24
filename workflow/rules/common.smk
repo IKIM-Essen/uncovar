@@ -770,25 +770,29 @@ def get_adapters(wildcards):
 
 
 def get_final_assemblies(wildcards):
-    if wildcards.assembly_type == "masked-assembly":
-        pattern = "results/{{date}}/contigs/masked/polished/{sample}.fasta"
-    elif wildcards.assembly_type == "pseudo-assembly":
-        pattern = "results/{{date}}/contigs/pseudoassembled/{sample}.fasta"
-    elif wildcards.assembly_type == "consensus-assembly":
-        pattern = "results/{{date}}/contigs/masked/consensus/{sample}.fasta"
+    all_samples = get_samples_for_date(wildcards.date)
+    illumina_samples = [sample for sample in all_samples if is_illumina(None, sample) ]
+    ont_samples = [sample for sample in all_samples if is_ont(None, sample) ]
 
-    return expand(pattern, sample=get_samples_for_date(wildcards.date))
+    if wildcards.assembly_type == "masked-assembly":
+        return expand("results/{{date}}/contigs/masked/polished/{sample}.fasta", sample=all_samples)
+    elif wildcards.assembly_type == "pseudo-assembly":
+        return expand("results/{{date}}/contigs/pseudoassembled/{sample}.fasta", sample=illumina_samples)
+    elif wildcards.assembly_type == "consensus-assembly":
+        return expand("results/{{date}}/contigs/masked/consensus/{sample}.fasta", sample=ont_samples)
 
 
 def get_final_assemblies_identity(wildcards):
-    if wildcards.assembly_type == "masked-assembly":
-        pattern = "results/{{date}}/quast/masked/polished/{sample}/report.tsv"
-    elif wildcards.assembly_type == "pseudo-assembly":
-        pattern = "results/{{date}}/quast/pseudoassembly/{sample}/report.tsv"
-    elif wildcards.assembly_type == "consensus-assembly":
-        pattern = "results/{{date}}/quast/masked/consensus/{sample}/report.tsv"
+    all_samples = get_samples_for_date(wildcards.date)
+    illumina_samples = [sample for sample in all_samples if is_illumina(None, sample) ]
+    ont_samples = [sample for sample in all_samples if is_ont(None, sample) ]
 
-    return expand(pattern, sample=get_samples_for_date(wildcards.date))
+    if wildcards.assembly_type == "masked-assembly":
+        return expand("results/{{date}}/quast/masked/polished/{sample}/report.tsv", sample=all_samples)
+    elif wildcards.assembly_type == "pseudo-assembly":
+        return expand("results/{{date}}/quast/pseudoassembly/{sample}/report.tsv", sample=illumina_samples)
+    elif wildcards.assembly_type == "consensus-assembly":
+        return expand("results/{{date}}/quast/masked/consensus/{sample}/report.tsv", sample=ont_samples)
 
 
 def load_filtered_samples(wildcards, assembly_type):
