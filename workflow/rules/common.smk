@@ -836,7 +836,9 @@ def get_target_fasta(wildcards):
     if wildcards.reference == "main":
         return "resources/genomes/main.fasta"
     else:
-        return "results/{{date}}/contigs/polished/{sample}.fasta".format(sample=wildcards.sample)
+        return "results/{{date}}/contigs/polished/{sample}.fasta".format(
+            sample=wildcards.sample
+        )
 
 
 def get_sanger_files(wildcards, what="regions"):

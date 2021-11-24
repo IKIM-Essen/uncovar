@@ -8,4 +8,13 @@ for file in snakemake.input:
         overall_vars += int(of_vars_sang)
 
 with open(snakemake.output[0], "w") as outfile:
-    print("Of", overall_vars, "variants of concern mutations,", present_vars, "are present in both =", present_vars/overall_vars*100, "%", file=outfile)
+    print(
+        "Of",
+        overall_vars,
+        "variants of concern mutations,",
+        present_vars,
+        "are present in both =",
+        present_vars / overall_vars * 100,
+        "%",
+        file=outfile,
+    )

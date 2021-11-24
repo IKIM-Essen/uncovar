@@ -25,8 +25,9 @@ AA_ALPHABET_TRANSLATION = {
     "Thr": "T",
 }
 
-def df_from_vcf(vcf_file, variants = pd.DataFrame(columns=["Position", "Variant"])):
-    
+
+def df_from_vcf(vcf_file, variants=pd.DataFrame(columns=["Position", "Variant"])):
+
     with pysam.VariantFile(vcf_file, "r") as infile:
         for record in infile:
             for ann in record.info["ANN"]:
@@ -48,10 +49,13 @@ def df_from_vcf(vcf_file, variants = pd.DataFrame(columns=["Position", "Variant"
                         },
                         ignore_index=True,
                     )
-    # variants = variants.set_index("Variant")                
+    # variants = variants.set_index("Variant")
     return variants
 
-sanger_x_genome = pd.concat([pd.read_csv(x) for x in snakemake.input.sanger_vs_ngs_genome])
+
+sanger_x_genome = pd.concat(
+    [pd.read_csv(x) for x in snakemake.input.sanger_vs_ngs_genome]
+)
 
 print(sanger_x_genome)
 min_pos = sanger_x_genome["Aln Start(t)"].min()
@@ -88,12 +92,25 @@ with open(snakemake.output.sanger_vars, "w") as sanger_out:
     for index, var in sanger_variants.iterrows():
         print(index)
         print(coverage[int(var[0])])
-        print(snakemake.wildcards.sample + "," + var[0] + "," + var[1] + "," + str(column[index]) + "," + coverage[int(var[0])].split("\t")[-1], file=sanger_out)
+        print(
+            snakemake.wildcards.sample
+            + ","
+            + var[0]
+            + ","
+            + var[1]
+            + ","
+            + str(column[index])
+            + ","
+            + coverage[int(var[0])].split("\t")[-1],
+            file=sanger_out,
+        )
 
 with open(snakemake.output.ngs_vars, "w") as ngs_out:
     for index, var in NGS_variants.iterrows():
         if int(var[0]) in range(int(min_pos), int(max_pos)):
-            print(snakemake.wildcards.sample + "," + var[0] + "," + var[1], file=ngs_out)
+            print(
+                snakemake.wildcards.sample + "," + var[0] + "," + var[1], file=ngs_out
+            )
 print(NGS_variants)
 column = []
 

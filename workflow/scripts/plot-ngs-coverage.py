@@ -8,7 +8,7 @@ for vars, covs in zip(snakemake.input.variants, snakemake.input.coverage):
 
     print(var_df)
     print(cov_df)
-        
+
 
 with open(snakemake.output.table, "w") as outfile:
     print(" ", file=outfile)
