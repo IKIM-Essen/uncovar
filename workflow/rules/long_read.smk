@@ -125,7 +125,7 @@ use rule assembly_polishing_ont as medaka_consensus_reference with:
 # rule bcftools_consensus_ont:
 #     input:
 #         fasta="results/{date}/consensus/medaka/{sample}/{sample}.fasta",
-#         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf", # clonal vs. subclonal? 
+#         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf", # clonal vs. subclonal?
 #         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf.csi",
 #     output:
 #         "results/{date}/consensus/bcftools/{sample}.fasta",
@@ -155,4 +155,3 @@ rule rename_conensus:
         "(cp {input} {output} && "
         ' sed -i "1s/.*/>{wildcards.sample}/" {output})'
         " 2> {log}"
-

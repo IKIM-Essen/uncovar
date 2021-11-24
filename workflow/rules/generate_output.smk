@@ -101,7 +101,7 @@ rule high_quality_genomes_report:
             caption="../report/rki-submission-csv.rst",
         ),
     params:
-        true_if_is_illumina
+        true_if_is_illumina,
     conda:
         "../envs/pysam.yaml"
     log:

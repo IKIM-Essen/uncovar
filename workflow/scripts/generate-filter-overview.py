@@ -12,8 +12,12 @@ def register_quality_data(path_to_type_summary: FilePathOrBuffer, assembly_type:
     if path_to_type_summary != "resources/genomes/main.fasta":
         global summary
         quality_data = pd.read_csv(path_to_type_summary, sep="\t", index_col="Sample")
-        quality_data["filter"] = (quality_data["identity"] > snakemake.params.min_identity) & (quality_data["n_share"] < snakemake.params.max_n)
-        quality_data[["identity", "n_share"]] = quality_data[["identity", "n_share"]].applymap(lambda x: "{:,.2f}%".format(x * 100))
+        quality_data["filter"] = (
+            quality_data["identity"] > snakemake.params.min_identity
+        ) & (quality_data["n_share"] < snakemake.params.max_n)
+        quality_data[["identity", "n_share"]] = quality_data[
+            ["identity", "n_share"]
+        ].applymap(lambda x: "{:,.2f}%".format(x * 100))
         quality_data.rename(
             columns={
                 "identity": "{}: Identity".format(assembly_type),
