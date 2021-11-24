@@ -92,7 +92,7 @@ for sample, file in iter_with_samples(snakemake.input.reads_trimmed):
 # add numbers of reads used for assembly
 for sample, file in iter_with_samples(snakemake.input.reads_used_for_assembly):
     with open(file) as infile:
-        data.loc[sample, "Filtered Reads (#)"] = int(infile.read()) * 2
+        data.loc[sample, "Filtered Reads (#)"] = int(infile.read())
 
 
 def register_contig_lengths(assemblies, name):
@@ -152,7 +152,7 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
         #         varcount = f" ({varcount})"
         # pangolin_call = f"{lineage}{varcount}"
         pangolin_call = f"{lineage}"
-    data.loc[sample, "Pangolin Strain"] = pangolin_call
+    data.loc[sample, "Lineage"] = pangolin_call
 
 
 # add variant calls
@@ -239,7 +239,7 @@ int_cols = [
 ]
 
 data[int_cols] = data[int_cols].fillna("0").applymap(lambda x: "{0:,}".format(int(x)))
-data = data.loc[:, (data != 0).any(axis=0)]
+data = data.loc[:, (data != "0").any(axis=0)]
 data.index.name = "Sample"
 data.sort_index(inplace=True)
 data.to_csv(snakemake.output[0], float_format="%.1f")
