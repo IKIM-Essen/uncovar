@@ -121,6 +121,22 @@ use rule assembly_polishing_ont as medaka_consensus_reference with:
         "results/{date}/consensus/medaka/{sample}/{sample}.fasta",
 
 
+# # polish consensus
+# rule bcftools_consensus_ont:
+#     input:
+#         fasta="results/{date}/consensus/medaka/{sample}/{sample}.fasta",
+#         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf", # clonal vs. subclonal? 
+#         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf.csi",
+#     output:
+#         "results/{date}/consensus/bcftools/{sample}.fasta",
+#     log:
+#         "logs/{date}/bcftools-consensus-ont/{sample}.log",
+#     conda:
+#         "../envs/bcftools.yaml"
+#     shell:
+#         "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"
+
+
 rule rename_conensus:
     input:
         "results/{date}/consensus/medaka/{sample}/{sample}.fasta",
@@ -140,21 +156,3 @@ rule rename_conensus:
         ' sed -i "1s/.*/>{wildcards.sample}/" {output})'
         " 2> {log}"
 
-
-# rule bcftools_consensus_ont:
-#     input:
-#         fasta="results/{date}/consensus/medaka/{sample}/consensus.fasta",
-#         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf",
-#         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf.csi",
-#     output:
-#         report(
-#             "results/{date}/consensus/{sample}.fasta",
-#             category="4. Assembly",
-#             caption="../report/assembly_ont.rst",
-#         ),
-#     log:
-#         "logs/{date}/bcftools-consensus-ont/{sample}.log",
-#     conda:
-#         "../envs/bcftools.yaml"
-#     shell:
-#         "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"

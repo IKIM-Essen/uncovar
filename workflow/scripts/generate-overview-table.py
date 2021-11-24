@@ -75,7 +75,7 @@ for sample, file in iter_with_samples(snakemake.input.reads_raw):
             number_reads = json.load(infile)["summary"]["before_filtering"][
                 "total_reads"
             ]
-    data.loc[sample, "Raw Reads (#)"] = int(number_reads / 2)
+    data.loc[sample, "Raw Reads (#)"] = int(int(number_reads) / 2)
 
 # add numbers of trimmed reads
 for sample, file in iter_with_samples(snakemake.input.reads_trimmed):
@@ -87,7 +87,7 @@ for sample, file in iter_with_samples(snakemake.input.reads_trimmed):
             number_reads = json.load(infile)["summary"]["after_filtering"][
                 "total_reads"
             ]
-    data.loc[sample, "Trimmed Reads (#)"] = int(number_reads / 2)
+    data.loc[sample, "Trimmed Reads (#)"] = int(int(number_reads) / 2)
 
 # add numbers of reads used for assembly
 for sample, file in iter_with_samples(snakemake.input.reads_used_for_assembly):
