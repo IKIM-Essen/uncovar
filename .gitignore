@@ -29,3 +29,5 @@
 !preprocessing/update-sample-sheet.py
 !resources/
 !resources/custom-stylesheet.css
+!publication/
+!publication/sanger_alignments.smk

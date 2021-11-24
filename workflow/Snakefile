@@ -47,7 +47,7 @@ include: "rules/variant_report.smk"
 include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
 include: "rules/preprocessing.smk"
-include: "rules/sanger_alignments.smk"
+include: "../publication/sanger_alignments.smk"
 
 
 rule save_latest_run:
