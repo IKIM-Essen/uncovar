@@ -127,7 +127,7 @@ for ele in snakemake.params.assembly_used:
     elif "consensus" == used:
         data.loc[sample, "Best Quality"] = "Consensus"
     elif "not-accepted" == used:
-        data.loc[sample, "Best Quality"] = "Failed"
+        data.loc[sample, "Best Quality"] = "-"
 
 # add pangolin results
 for sample, file in iter_with_samples(snakemake.input.pangolin):
@@ -239,7 +239,7 @@ int_cols = [
 ]
 
 data[int_cols] = data[int_cols].fillna("0").applymap(lambda x: "{0:,}".format(int(x)))
-data.loc[:, (data != 0).any(axis=0)]
+data = data.loc[:, (data != 0).any(axis=0)]
 data.index.name = "Sample"
 data.sort_index(inplace=True)
 data.to_csv(snakemake.output[0], float_format="%.1f")

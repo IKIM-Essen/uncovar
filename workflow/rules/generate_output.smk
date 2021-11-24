@@ -100,6 +100,8 @@ rule high_quality_genomes_report:
             category="6. High Quality Genomes",
             caption="../report/rki-submission-csv.rst",
         ),
+    params:
+        true_if_is_illumina
     conda:
         "../envs/pysam.yaml"
     log:
@@ -183,6 +185,8 @@ rule filter_overview:
         "results/{date}/tables/filter-overview.csv",
     params:
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
+        min_identity=config["quality-criteria"]["min-identity"],
+        max_n=config["quality-criteria"]["max-n"],
     log:
         "logs/{date}/filter-overview.log",
     conda:

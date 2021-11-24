@@ -16,6 +16,7 @@ rule vcf_to_fasta:
             "results/{date}/contigs/pseudoassembled/{sample}.fasta",
             category="4. Assembly",
             subcategory="3. Pseudo Assembled Sequences",
+            caption="../report/assembly_pesudo.rst",
         ),
     params:
         min_prob_apply=config["assembly"]["min-variant-prob"],

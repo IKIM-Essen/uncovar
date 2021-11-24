@@ -1185,6 +1185,9 @@ def get_if_any_sample_is_illumina(path):
 
     return inner
 
+def true_if_is_illumina(wildcards):
+    return [{sample: is_illumina(None, sample)} for sample in get_samples_for_date(wildcards.date)]
+
 
 wildcard_constraints:
     sample="[^/.]+",
