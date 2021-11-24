@@ -155,22 +155,22 @@ rule sanger_alignments:
         #     sample=get_sanger_files(wildcards, "samples"),
         #     date=get_latest_run_date(),
         #     ),
-        # lambda wildcards: expand(
-        #     "results/{date}/vars/sanger_all.csv",
-        #     date=get_latest_run_date(),
-        #     ),
-        # lambda wildcards: expand(
-        #    "results/{date}/vars/ngs_all.csv",
-        #     date=get_latest_run_date(),
-        #     ),
+        lambda wildcards: expand(
+            "results/{date}/sanger-vs-genome/vars/sanger_all.csv",
+            date=get_latest_run_date(),
+            ),
+        lambda wildcards: expand(
+           "results/{date}/sanger-vs-genome/vars/ngs_all.csv",
+            date=get_latest_run_date(),
+            ),
         # lambda wildcards: expand(
         #    "results/{date}/percent_sanger/sanger_all.txt",
         #     date=get_latest_run_date(),
         #     ),
-        lambda wildcards: expand(
-            "results/{date}/plot-ngs-coverage/all.csv",
-            date=get_latest_run_date(),
-        ),
+        # lambda wildcards: expand(
+        #     "results/{date}/plot-ngs-coverage/all.csv",
+        #     date=get_latest_run_date(),
+        # ),
 
 
 rule var_calls:
