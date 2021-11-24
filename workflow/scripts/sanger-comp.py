@@ -1,3 +1,4 @@
+from re import M
 import pandas as pd
 import pysam
 
@@ -50,28 +51,53 @@ def df_from_vcf(vcf_file, variants = pd.DataFrame(columns=["Position", "Variant"
     # variants = variants.set_index("Variant")                
     return variants
 
+sanger_x_genome = pd.concat([pd.read_csv(x) for x in snakemake.input.sanger_vs_ngs_genome])
+
+print(sanger_x_genome)
+min_pos = sanger_x_genome["Aln Start(t)"].min()
+max_pos = sanger_x_genome["Aln End(t)"].max()
+print(min_pos, max_pos)
+sanger_x_genome.to_csv(snakemake.output.sanger_vs_genome)
+
 sanger_variants = pd.DataFrame(columns=["Position", "Variant"])
 for file in snakemake.input.sanger:
     sanger_variants = df_from_vcf(file, sanger_variants)
-with open(snakemake.output[1], "w") as sanger_out:
-    for index, var in sanger_variants.iterrows():
-        print(snakemake.wildcards.sample + "," + var[0] + "," + var[1], file=sanger_out)
-sanger_index_list = sanger_variants.set_index("Variant").index.tolist()
-NGS_variants = df_from_vcf(snakemake.input.genome)
-NGS_index_list = NGS_variants.set_index("Variant").index.tolist()
-with open(snakemake.output[2], "w") as ngs_out:
-    for index, var in NGS_variants.iterrows():
-        print(snakemake.wildcards.sample + "," + var[0] + "," + var[1], file=ngs_out)
-print(NGS_variants)
-column = []
 
+NGS_variants = df_from_vcf(snakemake.input.ngs_genome)
+
+with open(snakemake.input.coverage, "r") as coverage_file:
+    coverage = coverage_file.read().splitlines()
+
+NGS_index_list = NGS_variants.set_index("Variant").index.tolist()
+sanger_index_list = sanger_variants.set_index("Variant").index.tolist()
+
+column = []
 sanger_in_ngs = 0
 for var in sanger_index_list:
     # print(var)
     # print(NGS_index_list)
     if var in NGS_index_list:
         sanger_in_ngs += 1
+        column.append(True)
+    else:
+        column.append(False)
 
-with open(snakemake.output[0], "w") as outfile:
+sanger_variants["in_ngs"] = column
+
+with open(snakemake.output.sanger_vars, "w") as sanger_out:
+    for index, var in sanger_variants.iterrows():
+        print(index)
+        print(coverage[int(var[0])])
+        print(snakemake.wildcards.sample + "," + var[0] + "," + var[1] + "," + str(column[index]) + "," + coverage[int(var[0])].split("\t")[-1], file=sanger_out)
+
+with open(snakemake.output.ngs_vars, "w") as ngs_out:
+    for index, var in NGS_variants.iterrows():
+        if int(var[0]) in range(int(min_pos), int(max_pos)):
+            print(snakemake.wildcards.sample + "," + var[0] + "," + var[1], file=ngs_out)
+print(NGS_variants)
+column = []
+
+
+with open(snakemake.output.sanger_ngs_diff, "w") as outfile:
     print(str(sanger_in_ngs) + "," + str(len(sanger_index_list)))
     print(str(sanger_in_ngs) + "," + str(len(sanger_index_list)), file=outfile)
