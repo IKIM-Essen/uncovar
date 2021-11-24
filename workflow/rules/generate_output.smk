@@ -91,12 +91,12 @@ rule high_quality_genomes_report:
         ),
     output:
         fasta=report(
-            "results/high-quality-genomes//{date}.fasta",
+            "results/high-quality-genomes/{date}.fasta",
             category="6. High Quality Genomes",
             caption="../report/rki-submission-fasta.rst",
         ),
         table=report(
-            "results/high-quality-genomes//{date}.csv",
+            "results/high-quality-genomes/{date}.csv",
             category="6. High Quality Genomes",
             caption="../report/rki-submission-csv.rst",
         ),
@@ -264,8 +264,8 @@ rule snakemake_reports:
             filter=config["variant-calling"]["filters"],
         ),
         "results/{date}/qc/laboratory/multiqc.html",
-        "results/high-quality-genomes//{date}.csv",
-        "results/high-quality-genomes//{date}.fasta",
+        "results/high-quality-genomes/{date}.csv",
+        "results/high-quality-genomes/{date}.fasta",
         expand(
             "results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf",
             filter=config["variant-calling"]["filters"],

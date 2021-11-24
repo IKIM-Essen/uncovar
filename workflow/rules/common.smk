@@ -1156,7 +1156,7 @@ def get_polished_sequence(wildcards):
     if is_illumina(wildcards):
         return "results/{date}/polishing/bcftools-illumina/{sample}.fasta"
     elif is_ont(wildcards):
-        return "results/{date}/polishing/medaka/{sample}/consensus.fasta"
+        return "results/{date}/polishing/medaka/{sample}/{sample}.fasta"
 
 
 def get_varrange(wildcards):
