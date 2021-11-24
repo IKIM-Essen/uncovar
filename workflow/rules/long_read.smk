@@ -44,7 +44,7 @@ rule customize_primer_porechop:
     input:
         get_artic_primer,
     output:
-        "results/tables/replacement_notice.txt",
+        "results/.indicators/replacement_notice.txt",
     conda:
         "../envs/primechop.yaml"
     log:
@@ -58,7 +58,7 @@ rule customize_primer_porechop:
 rule porechop_primer_trimming:
     input:
         fastq_in="results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq",
-        repl_flag="results/tables/replacement_notice.txt",
+        repl_flag="results/.indicators/replacement_notice.txt",
     output:
         "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
     conda:
@@ -112,36 +112,24 @@ rule canu_correct:
         " 2> {log}"
 
 
-# rule unzip_canu:
-#     input:
-#         "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
-#     output:
-#         "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
-#     log:
-#         "logs/{date}/unzip_canu/{sample}.log",
-#     conda:
-#         "../envs/unix.yaml"
-#     shell:
-#         "gzip -d {input}"
-
-
 # rule medaka_consensus_reference:
 use rule assembly_polishing_ont as medaka_consensus_reference with:
     input:
         fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
         reference="resources/genomes/main.fasta",
     output:
-        "results/{date}/consensus/medaka/{sample}/consensus.fasta",
+        "results/{date}/consensus/medaka/{sample}/{sample}.fasta",
 
 
 rule rename_conensus:
     input:
-        "results/{date}/consensus/medaka/{sample}/consensus.fasta",
+        "results/{date}/consensus/medaka/{sample}/{sample}.fasta",
     output:
         report(
             "results/{date}/contigs/consensus/{sample}.fasta",
             category="4. Assembly",
             subcategory="3. Consensus Sequences",
+            caption="../report/assembly_consensus.rst",
         ),
     log:
         "logs/{date}/rename-conensus-fasta/{sample}.log",

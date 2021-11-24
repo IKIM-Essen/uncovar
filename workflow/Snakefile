@@ -53,7 +53,7 @@ include: "rules/long_read.smk"
 rule save_latest_run:
     input:
         expand(
-            "results/archive-indicator/{latest_run}.archived",
+            "results/.indicators/{latest_run}.archived",
             latest_run=get_latest_run_date(),
         ),
     output:
@@ -137,7 +137,7 @@ checkpoint all:
     output:
         touch(
             expand(
-                "results/archive-indicator/{latest_run}.archived",
+                "results/.indicators/{latest_run}.archived",
                 latest_run=get_latest_run_date(),
             )
         ),
