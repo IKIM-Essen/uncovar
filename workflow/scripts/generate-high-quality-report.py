@@ -15,7 +15,7 @@ sequence_names = []
 for file in snakemake.input.contigs:
     with pysam.FastxFile(file) as infile, open(snakemake.output.fasta, "a") as outfile:
         for entry in infile:
-            print(entry.name, file=outfile)
+            print(f">{entry.name}", file=outfile)
             print(entry.sequence, file=outfile)
             sequence_names.append(entry.name)
 

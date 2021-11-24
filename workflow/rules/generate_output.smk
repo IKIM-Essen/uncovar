@@ -91,19 +91,19 @@ rule high_quality_genomes_report:
         ),
     output:
         fasta=report(
-            "results/high_quality_genomes/{date}.fasta",
+            "results/high-quality-genomes//{date}.fasta",
             category="6. High Quality Genomes",
             caption="../report/rki-submission-fasta.rst",
         ),
         table=report(
-            "results/high_quality_genomes/{date}.csv",
+            "results/high-quality-genomes//{date}.csv",
             category="6. High Quality Genomes",
             caption="../report/rki-submission-csv.rst",
         ),
     conda:
         "../envs/pysam.yaml"
     log:
-        "logs/{date}/high_quality_outputlog",
+        "logs/{date}/high_quality_output.log",
     script:
         "../scripts/generate-high-quality-report.py"
 
@@ -199,7 +199,7 @@ rule filter_overview_html:
             directory("results/{date}/filter-overview"),
             htmlindex="index.html",
             caption="../report/filter-overview.rst",
-            category="4. Overview",
+            category="4. Assembly",
             subcategory="0. Quality Overview",
         ),
     params:
@@ -264,8 +264,8 @@ rule snakemake_reports:
             filter=config["variant-calling"]["filters"],
         ),
         "results/{date}/qc/laboratory/multiqc.html",
-        "results/high_quality_genomes/{date}.csv",
-        "results/high_quality_genomes/{date}.fasta",
+        "results/high-quality-genomes//{date}.csv",
+        "results/high-quality-genomes//{date}.fasta",
         expand(
             "results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf",
             filter=config["variant-calling"]["filters"],

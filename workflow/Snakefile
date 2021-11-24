@@ -86,7 +86,7 @@ checkpoint all:
         expand(
             "results/{date}/tables/assembly_comparison.tsv", date=get_all_run_dates()
         ),
-        expand("results/high_quality_genomes/{date}.fasta", date=get_all_run_dates()),
+        expand("results/high-quality-genomes/{date}.fasta", date=get_all_run_dates()),
         expand(
             "results/{date}/plots/all.strains.pangolin.svg",
             date=get_all_run_dates(),
