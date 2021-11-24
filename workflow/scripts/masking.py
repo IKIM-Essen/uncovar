@@ -24,12 +24,6 @@ IUPAC = {
     frozenset("ACTG"): "N",
 }
 
-# 1. get coverage per base
-# 2. write coverage per base
-# 3. calculate Allel frequency per base
-# 4. mask if requirereed
-# 5. save masked sequence
-
 
 def get_sequence():
     with pysam.FastxFile(snakemake.input.sequence) as fh:
@@ -46,7 +40,7 @@ def get_base_count(pileupcolumn):
 
     # pileupread: representation of a read aligned to a particular position in the reference sequence.
     for pileupread in pileupcolumn.pileups:
-        # TODO: check here for missing bases
+        # TODO: Check pileupread for missing bases
         if not pileupread.is_del and not pileupread.is_refskip:
 
             read_base = pileupread.alignment.query_sequence[pileupread.query_position]
@@ -104,7 +98,7 @@ def mask_sequence(sequence, coverages, base_counts):
     for position, base in enumerate(sequence):
 
         if position not in covered_postions:
-            # TODO: check why there are postions that are not covered by any reads and are not Ns
+            # TODO: Check why there are postions that are not covered by any reads and are not Ns
             # sequence[position] = "N"
 
             print(
@@ -136,7 +130,10 @@ def mask_sequence(sequence, coverages, base_counts):
             and get_allel_freq(base, base_counts[position])
             < snakemake.params.min_allele
         ):
-            mask = get_UPAC_mask(base_counts[position])
+            if "N" in base_counts[position].keys():
+                mask = "N"
+            else:
+                mask = get_UPAC_mask(base_counts[position])
 
             print(
                 "Coverage of base %s at pos. %s = %s with Allel frequency = %s. Bases in reads: %s. Masking with %s."
