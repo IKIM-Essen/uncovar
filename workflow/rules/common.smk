@@ -841,7 +841,7 @@ def get_target_fasta(wildcards):
         )
 
 
-def get_sanger_files(wildcards, what="regions"):
+def get_sanger_files(wildcards, what="regions", path=""):
     MATCHES = glob_wildcards("sanger_files/all_files_filtered/{sample}_{region}.fasta")
     sample_dict = {}
     for sample, region in zip(MATCHES.sample, MATCHES.region):
@@ -857,6 +857,12 @@ def get_sanger_files(wildcards, what="regions"):
         )
     elif what == "samples":
         return list(sample_dict.keys())
+    elif what == "expand-sample":
+        return expand(
+            path,
+            sample=wildcards.sample,
+            region=sorted(sample_dict[wildcards.sample]),
+        )
 
 
 def get_bcf(wildcards):
