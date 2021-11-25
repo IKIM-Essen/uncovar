@@ -24,7 +24,7 @@ rule align_biopython:
     params:
         regions=lambda wildcards: get_sanger_files(wildcards, "regions")
     script:
-        "../scripts/biopython-aligner.py"
+        "../workflow/scripts/biopython-aligner.py"
 
 
 rule sort_bam_sanger:
@@ -127,7 +127,7 @@ rule compare_sanger:
         voc=config.get("voc"),
         regions=lambda wildcards: get_sanger_files(wildcards, "regions")
     script:
-        "../scripts/sanger-comp.py"
+        "../workflow/scripts/sanger-comp.py"
 
 
 rule aggregate_sanger:
@@ -165,19 +165,18 @@ rule count_sanger:
     log:
         "logs/{date}/percent_sanger/all.log",
     script:
-        "../scripts/sanger-vars.py"
+        "../workflow/scripts/sanger-vars.py"
 
 
 rule plot_ngs_coverage_for_sanger:
     input:
-        coverage=expand_samples_for_date(
-            "results/{{date}}/qc/samtools_depth/{sample}.txt"
-        ),
-        variants=expand_samples_for_date("results/{{date}}/sanger-vs-genome/vars/ngs_{sample}.csv"),
+        variants=expand_samples_for_date("results/{{date}}/sanger-vs-genome/vars/sanger_{sample}.csv"),
     output:
         table="results/{date}/plot-ngs-coverage/all.csv",
-        # plot="results/{date}/plot-ngs-coverage/all.svg",
+        plot="results/{date}/plot-ngs-coverage/all.svg",
     log:
         "logs/{date}/plot-ngs-coverage/all.log",
+    conda:
+        "../workflow/envs/python.yaml"
     script:
-        "../scripts/plot-ngs-coverage.py"
+        "../workflow/scripts/plot-ngs-coverage.py"
