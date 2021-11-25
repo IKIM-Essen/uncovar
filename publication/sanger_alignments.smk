@@ -121,6 +121,7 @@ rule compare_sanger:
         sanger_vars="results/{date}/sanger-vs-genome/vars/sanger_{sample}.csv",
         ngs_vars="results/{date}/sanger-vs-genome/vars/ngs_{sample}.csv",
         sanger_vs_genome="results/{date}/sanger-vs-genome/{sample}.csv",
+        sanger_ngs_diff_readable="results/{date}/sanger-vs-genome/{sample}_readable.txt",
     log:
         "logs/{date}/sanger-vs-genome/{sample}.log",
     params:

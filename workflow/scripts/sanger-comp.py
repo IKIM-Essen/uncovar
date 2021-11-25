@@ -115,6 +115,7 @@ print(NGS_variants)
 column = []
 
 
-with open(snakemake.output.sanger_ngs_diff, "w") as outfile:
+with open(snakemake.output.sanger_ngs_diff, "w") as outfile, open(snakemake.output.sanger_ngs_diff_readable, "w") as outfile2:
     print(str(sanger_in_ngs) + "," + str(len(sanger_index_list)))
     print(str(sanger_in_ngs) + "," + str(len(sanger_index_list)), file=outfile)
+    print(snakemake.wildcards.sample + "," + str(sanger_in_ngs) + "/" + str(len(sanger_index_list)), file=outfile2)
