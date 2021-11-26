@@ -400,9 +400,7 @@ def get_contigs(wildcards):
 def get_expanded_contigs(wildcards):
     sample = get_samples_for_date(wildcards.date)
     return [
-        "results/{{date}}/contigs/checked/{sample}.fasta".format(
-            sample=s
-        )
+        "results/{{date}}/contigs/checked/{sample}.fasta".format(sample=s)
         for s in sample
     ]
 
