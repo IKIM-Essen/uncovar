@@ -12,9 +12,11 @@ from snakemake.utils import validate
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
 
+# clear text / content of flag "technology" in sample sheet
 ILLUMINA = "illumina"
 ONT = "ont"
 
+# for benchmarking rules
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
 MIXTURE_PREFIX = "mixture-sample-"
@@ -1183,7 +1185,7 @@ def get_polished_sequence(wildcards):
 
 def get_varrange(wildcards):
     if is_ont(wildcards):
-        return ["homopolymer"]
+        return ["homopolymer-medaka", "homopolymer-longshot"]
     elif is_illumina(wildcards):
         return ["small", "structural"]
 
@@ -1222,4 +1224,4 @@ wildcard_constraints:
     filter="|".join(
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
     ),
-    varrange="structural|small|homopolymer",
+    varrange="structural|small|homopolymer-medaka|homopolymer-longshot",

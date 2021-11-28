@@ -35,7 +35,7 @@ rule porechop_adapter_barcode_trimming:
         "../envs/porechop.yaml"
     log:
         "logs/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.log",
-    threads: 2
+    threads: 5
     shell:
         "porechop -i {input} -o {output} --threads {threads} -v 1 > {log} 2>&1"
 
@@ -65,7 +65,7 @@ rule porechop_primer_trimming:
         "../envs/primechop.yaml"
     log:
         "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
-    threads: 2
+    threads: 5
     shell:
         "porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 --threads {threads} -v 1 > {log} 2>&1"
 

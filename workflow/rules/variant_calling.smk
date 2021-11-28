@@ -47,7 +47,7 @@ rule medaka_variant:
         sample="results/{date}/recal/ref~{reference}/{sample}.bam",
         bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer.vcf"),
+        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer-medaka.vcf"),
     params:
         outdir=get_output_dir,
     log:
@@ -61,13 +61,32 @@ rule medaka_variant:
         " > {log} 2>&1"
 
 
+rule longshot:
+    input:
+        ref = get_reference(),
+        bam = "results/{date}/recal/ref~{reference}/{sample}.bam",
+        bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
+    output:
+        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer-longshot.vcf"),
+    params:
+        reference_name=config["virus-reference-genome"]
+    log:
+        "logs/{date}/longshot/ref~{reference}/{sample}.log",
+    conda:
+        "../envs/longshot.yaml"
+    shell:
+        "(longshot -P 0 -F -A --no_haps --region NC_045512.2 --bam {input.bam} --ref {input.ref} --out {output} &&"
+        " sed -i '2 i\##contig=<ID={params.reference_name}>' {output})"
+        " 2> {log}" 
+
+
 rule vcf_2_bcf:
     input:
-        "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer.vcf",
+        "results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.vcf",
     output:
-        "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer.bcf",
+        "results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.bcf",
     log:
-        "logs/{date}/vcf_2_bcf/ref~{reference}/{sample}.log",
+        "logs/{date}/vcf_2_bcf/ref~{reference}/{sample}.{varrange}.log",
     conda:
         "../envs/bcftools.yaml"
     shell:
