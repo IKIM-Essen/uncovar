@@ -1182,6 +1182,12 @@ def get_polished_sequence(wildcards):
     elif is_ont(wildcards):
         return "results/{date}/polishing/medaka/{sample}/{sample}.fasta"
 
+def get_fallback_sequence(wildcards):
+    if is_illumina(wildcards):
+        return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
+    elif is_ont(wildcards):
+        return "results/{date}/contigs/consensus/{sample}.fasta"
+
 
 def get_varrange(wildcards):
     if is_ont(wildcards):

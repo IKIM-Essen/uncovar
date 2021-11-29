@@ -159,7 +159,7 @@ rule overview_table_html:
             htmlindex="index.html",
             caption="../report/qc-report.rst",
             category="1. Overview",
-            subcategory="1. QC Report",
+            subcategory="1. Report",
         ),
     params:
         formatter=get_resource("report-table-formatter.js"),
@@ -244,39 +244,45 @@ rule plot_lineages_over_time:
 
 rule snakemake_reports:
     input:
+        # 1. Overview
+        "results/{date}/overview/",
         "results/{date}/plots/lineages-over-time.svg",
-        "results/{date}/plots/coverage-reference-genome.svg",
-        "results/{date}/plots/coverage-assembled-genome.svg",
-        lambda wildcards: expand(
-            "results/{{date}}/contigs/polished/{sample}.fasta",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        lambda wildcards: expand(
-            "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg",
-            sample=get_samples_for_date(wildcards.date),
-        ),
-        "results/{date}/overview",
-        "results/{date}/filter-overview",
-        expand(
-            "results/{{date}}/plots/all.{mode}-strain.strains.kallisto.svg",
-            mode=["major"],
-        ),
         "results/{date}/plots/all.strains.pangolin.svg",
+        "results/{date}/plots/all.major-strain.strains.kallisto.svg",
+         expand_samples_for_date(
+            [
+                "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg"
+            ]
+        ),
+        # 2. Variant Call Details
         lambda wildcards: expand(
             "results/{{date}}/vcf-report/{target}.{filter}",
             target=get_samples_for_date(wildcards.date) + ["all"],
             filter=config["variant-calling"]["filters"],
         ),
+        # 3. Sequencing Details
         "results/{date}/qc/laboratory/multiqc.html",
-        "results/high-quality-genomes/{date}.csv",
-        "results/high-quality-genomes/{date}.fasta",
+        "results/{date}/plots/coverage-reference-genome.svg",
+        "results/{date}/plots/coverage-assembled-genome.svg",
+        lambda wildcards: "results/{date}/plots/primer-clipping-intervals.svg"
+        if len(get_samples_for_date_for_illumina_amplicon(wildcards.date)) > 0
+        else [],
+        # 4. Assembly
+        "results/{date}/filter-overview",
+         expand_samples_for_date(
+            [
+               "results/{{date}}/contigs/polished/{sample}.fasta",
+              "results/{{date}}/contigs/fallback/{sample}.fasta"
+            ]
+        ),
+        # 5. Variant Call Files
         expand(
             "results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf",
             filter=config["variant-calling"]["filters"],
         ),
-        lambda wildcards: "results/{date}/plots/primer-clipping-intervals.svg"
-        if len(get_samples_for_date_for_illumina_amplicon(wildcards.date)) > 0
-        else [],
+        # 6. High Quality Genomes
+        "results/high-quality-genomes/{date}.fasta",
+        "results/high-quality-genomes/{date}.csv",
     output:
         "results/reports/{date}.zip",
     params:

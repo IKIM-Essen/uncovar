@@ -15,7 +15,7 @@ rule vcf_to_fasta:
         report(
             "results/{date}/contigs/pseudoassembled/{sample}.fasta",
             category="4. Assembly",
-            subcategory="3. Pseudo Assembled Sequences",
+            subcategory="2. Pseudo Assembled Sequences",
             caption="../report/assembly_pesudo.rst",
         ),
     params:

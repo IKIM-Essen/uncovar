@@ -176,13 +176,26 @@ rule assembly_polishing_ont:
         " > {log} 2>&1"
 
 
-rule aggregate_polished_sequences:
+rule aggregate_polished_de_novo_sequences:
     input:
         get_polished_sequence,
     output:
         "results/{date}/contigs/polished/{sample}.fasta",
     log:
-        "logs/{date}/aggregate_polished_sequences/{sample}.log",
+        "logs/{date}/aggregate_polished_de_novo_sequences/{sample}.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "cp {input} {output} 2> {log}"
+
+
+rule aggregate_fallback_sequences:
+    input:
+        get_fallback_sequence,
+    output:
+        "results/{date}/contigs/fallback/{sample}.fasta",
+    log:
+        "logs/{date}/aggregate_fallback_sequences/{sample}.log",
     conda:
         "../envs/unix.yaml"
     shell:
