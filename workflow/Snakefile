@@ -79,60 +79,23 @@ rule save_latest_run:
 checkpoint all:
     input:
         expand(
+            [
             "results/{date}/qc/multiqc.html",
-            date=get_all_run_dates(),
-        ),
-        expand("results/reports/{date}.zip", date=get_all_run_dates()),
-        expand(
-            "results/{date}/tables/assembly_comparison.tsv", date=get_all_run_dates()
-        ),
-        expand("results/high-quality-genomes/{date}.fasta", date=get_all_run_dates()),
-        expand(
-            "results/{date}/plots/all.strains.pangolin.svg",
-            date=get_all_run_dates(),
+            "results/reports/{date}.zip"
+            "results/{date}/tables/assembly_comparison.tsv",
+            ],
+            date=get_all_run_dates()
         ),
         expand(
             "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
             date=get_all_run_dates(),
             mode=["major", "any"],
         ),
-        # expand(
-        #     "results/{date}/contigs/polished/bcftools/{sample}.fasta",
-        #     zip,
-        #     date=get_dates(),
-        #     sample=get_samples(),
-        # ),
-        expand(
-            "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
-        ),
-        zip_expand(
-            "results/{zip1}/plots/strain-calls/{zip2}.strains.{{exp}}.svg",
-            zip_wildcard_1=get_dates(),
-            zip_wildcard_2=get_samples(),
-            expand_wildcard=["kallisto"],
-        ),
         zip_expand(
             "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.bcf",
             zip_wildcard_1=get_dates(),
             zip_wildcard_2=get_samples(),
             expand_wildcard=config["variant-calling"]["filters"],
-        ),
-        zip_expand(
-            "results/{zip1}/vcf-report/{zip2}.{{exp}}",
-            zip_wildcard_1=get_dates() + get_all_run_dates(),
-            zip_wildcard_2=get_samples() + ["all"] * len(get_all_run_dates()),
-            expand_wildcard=config["variant-calling"]["filters"],
-        ),
-        expand(
-            "results/{date}/tables/overview.csv",
-            date=get_all_run_dates(),
-        ),
-        expand(
-            "results/{date}/overview/",
-            date=get_all_run_dates(),
         ),
     output:
         touch(

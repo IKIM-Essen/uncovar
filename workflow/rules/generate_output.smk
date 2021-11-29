@@ -249,7 +249,7 @@ rule snakemake_reports:
         "results/{date}/plots/lineages-over-time.svg",
         "results/{date}/plots/all.strains.pangolin.svg",
         "results/{date}/plots/all.major-strain.strains.kallisto.svg",
-         expand_samples_for_date(
+        expand_samples_for_date(
             [
                 "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg"
             ]
