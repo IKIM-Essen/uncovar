@@ -10,7 +10,7 @@ assignees:
 
 <!-- Note the UnCoVar version for which you experience the bug.
 Please only report bugs of the **latest release of UnCoVar**.
-If possible please check whether the bug has been already fixed in the master branch. -->
+If possible, please check whether the bug has been already fixed in the master branch. -->
 
 * UnCoVar version: [ see version.txt ]
 * OS: [ Linux / Windows / macOS ]
@@ -23,7 +23,7 @@ If possible please check whether the bug has been already fixed in the master br
 ## Minimal Example
 
 <!-- Add a minimal example for reproducing the bug.
-This includes the executed command and a reference to the used sample.  -->
+That includes the executed command and a reference to the used sample.  -->
 
 ## Logs
 <!-- Any terminal output to help explain your problem. -->
