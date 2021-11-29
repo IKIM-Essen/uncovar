@@ -80,11 +80,11 @@ checkpoint all:
     input:
         expand(
             [
-            "results/{date}/qc/multiqc.html",
-            "results/reports/{date}.zip"
-            "results/{date}/tables/assembly_comparison.tsv",
+                "results/{date}/qc/multiqc.html",
+                "results/reports/{date}.zip"
+                "results/{date}/tables/assembly_comparison.tsv",
             ],
-            date=get_all_run_dates()
+            date=get_all_run_dates(),
         ),
         expand(
             "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",

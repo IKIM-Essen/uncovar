@@ -250,9 +250,7 @@ rule snakemake_reports:
         "results/{date}/plots/all.strains.pangolin.svg",
         "results/{date}/plots/all.major-strain.strains.kallisto.svg",
         expand_samples_for_date(
-            [
-                "results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg"
-            ]
+            ["results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg"]
         ),
         # 2. Variant Call Details
         lambda wildcards: expand(
@@ -269,15 +267,15 @@ rule snakemake_reports:
         else [],
         # 4. Assembly
         "results/{date}/filter-overview",
-         expand_samples_for_date(
+        expand_samples_for_date(
             [
-               "results/{{date}}/contigs/polished/{sample}.fasta",
-              "results/{{date}}/contigs/fallback/{sample}.fasta"
+                "results/{{date}}/contigs/polished/{sample}.fasta",
+                "results/{{date}}/contigs/fallback/{sample}.fasta",
             ]
         ),
         # 5. Variant Call Files
         expand(
-            "results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf",
+            ["results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf"],
             filter=config["variant-calling"]["filters"],
         ),
         # 6. High Quality Genomes
