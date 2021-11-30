@@ -73,13 +73,13 @@ rule longshot:
             "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer-longshot.vcf"
         ),
     params:
-        reference_name=config["virus-reference-genome"],
+        reference_name=lambda w: config["virus-reference-genome"] if w.reference =="main" else w.reference + ".1",
     log:
         "logs/{date}/longshot/ref~{reference}/{sample}.log",
     conda:
         "../envs/longshot.yaml"
     shell:
-        "(longshot -P 0 -F -A --no_haps --region NC_045512.2 --bam {input.bam} --ref {input.ref} --out {output} &&"
+        "(longshot -P 0 -F -A --no_haps --bam {input.bam} --ref {input.ref} --out {output} &&"
         " sed -i '2 i\##contig=<ID={params.reference_name}>' {output})"
         " 2> {log}"
 

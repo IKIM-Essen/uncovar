@@ -528,7 +528,10 @@ def get_filter_odds_input(wildcards):
         # If reference is not main, we are polishing an assembly.
         # Here, there is no need to structural variants or annotation based filtering.
         # Hence we directly take the output of varlociraptor call on the small variants.
-        return "results/{date}/calls/ref~{reference}/{sample}.small.bcf"
+        if is_illumina(wildcards):
+            return "results/{date}/calls/ref~{reference}/{sample}.small.bcf"#
+        if is_ont(wildcards):
+            return "results/{date}/calls/ref~{reference}/{sample}.bcf"
 
 
 def get_vembrane_expression(wildcards):
@@ -853,10 +856,6 @@ def get_assemblies_for_submission(wildcards, agg_type):
             if any(is_ont(None, sample) for sample in all_samples_for_date)
             else []
         )
-
-        print("masked_samples", masked_samples)
-        print("pseudo_samples", pseudo_samples)
-        print("consensus_samples", consensus_samples)
 
     # for testing of pangolin don't create pseudo-assembly
     else:
