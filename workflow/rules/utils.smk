@@ -62,4 +62,4 @@ rule gzip:
     conda:
         "../envs/unix.yaml"
     shell:
-        "gzip {input}"
+        "gzip --keep {input}"
