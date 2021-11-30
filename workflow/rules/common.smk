@@ -529,7 +529,7 @@ def get_filter_odds_input(wildcards):
         # Here, there is no need to structural variants or annotation based filtering.
         # Hence we directly take the output of varlociraptor call on the small variants.
         if is_illumina(wildcards):
-            return "results/{date}/calls/ref~{reference}/{sample}.small.bcf"#
+            return "results/{date}/calls/ref~{reference}/{sample}.small.bcf"  #
         if is_ont(wildcards):
             return "results/{date}/calls/ref~{reference}/{sample}.bcf"
 
