@@ -81,7 +81,7 @@ checkpoint all:
         expand(
             [
                 "results/{date}/qc/multiqc.html",
-                "results/reports/{date}.zip"
+        "results/reports/{date}.zip"
                 "results/{date}/tables/assembly_comparison.tsv",
             ],
             date=get_all_run_dates(),
