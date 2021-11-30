@@ -75,7 +75,7 @@ rule longshot:
     params:
         reference_name=lambda w: config["virus-reference-genome"]
         if w.reference == "main"
-        else w.reference + ".1",
+        else f"{w.reference}.1",
     log:
         "logs/{date}/longshot/ref~{reference}/{sample}.log",
     conda:
