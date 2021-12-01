@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.3.1](https://www.github.com/IKIM-Essen/uncovar/compare/v0.3.0...v0.3.1) (2021-11-29)
+
+
+### Bug Fixes
+
+* nested function usage and remove code duplication ([#323](https://www.github.com/IKIM-Essen/uncovar/issues/323)) ([91e3ce9](https://www.github.com/IKIM-Essen/uncovar/commit/91e3ce922132309d3d226a9efceb995ce99b4489))
+
 ## [0.3.0](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.5...v0.3.0) (2021-11-05)
 
 
