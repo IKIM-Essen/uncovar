@@ -168,10 +168,10 @@ def get_fastqs(wildcards):
         )
 
     # default case, look up FASTQs in the sample sheet
-    if is_ont(wildcards):
-        return pep.sample_table.loc[wildcards.sample][["fq1"]]
-    elif is_illumina(wildcards):
+    if is_illumina(wildcards):
         return pep.sample_table.loc[wildcards.sample][["fq1", "fq2"]]
+    elif is_ont(wildcards):
+        return pep.sample_table.loc[wildcards.sample][["fq1"]]
 
 
 def get_resource(name):
@@ -468,23 +468,21 @@ def return_assembler(sample):
 def get_contigs(wildcards, opt_sample=None):
 
     if "sample" in wildcards.keys():
-        if is_ont(wildcards):
-            return "results/{date}/assembly/{sample}/spades_se/{sample}.contigs.fasta"
-
-        elif is_illumina(wildcards):
+        if is_illumina(wildcards):
             return "results/{{date}}/assembly/{{sample}}/{assembler}/{{sample}}.contigs.fasta".format(
                 assembler=return_assembler(wildcards.sample)
             )
+        elif is_ont(wildcards):
+            return "results/{date}/assembly/{sample}/spades_se/{sample}.contigs.fasta"
 
     # wildcards is only sample name
-    if is_ont(None, opt_sample):
-        return "results/{{date}}/assembly/{sample}/spades_se/{sample}.contigs.fasta".format(
-            sample=opt_sample
-        )
-
-    elif is_illumina(None, opt_sample):
+    if is_illumina(None, opt_sample):
         return "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
             assembler=return_assembler(opt_sample), sample=opt_sample
+        )
+    elif is_ont(None, opt_sample):
+        return "results/{{date}}/assembly/{sample}/spades_se/{sample}.contigs.fasta".format(
+            sample=opt_sample
         )
 
     raise NotImplementedError("No assembler found.")
@@ -1190,10 +1188,10 @@ def get_fallback_sequence(wildcards):
 
 
 def get_varrange(wildcards):
-    if is_ont(wildcards):
-        return ["homopolymer-medaka", "homopolymer-longshot"]
-    elif is_illumina(wildcards):
+    if is_illumina(wildcards):
         return ["small", "structural"]
+    elif is_ont(wildcards):
+        return ["homopolymer-medaka", "homopolymer-longshot"]
 
 
 def get_if_any_sample_is_ont(path):
