@@ -558,7 +558,7 @@ def zip_expand(expand_string, zip_wildcard_1, zip_wildcard_2, expand_wildcard):
 
 def get_quast_fastas(wildcards):
     if wildcards.stage == "unpolished":
-        return get_contigs(wildcards)
+        return "results/{date}/contigs/checked/{sample}.fasta"
     elif wildcards.stage == "polished":
         return "results/{date}/contigs/polished/{sample}.fasta"
     elif wildcards.stage == "masked/polished":
@@ -854,6 +854,7 @@ def get_assemblies_for_submission(wildcards, agg_type):
             if any(is_ont(None, sample) for sample in all_samples_for_date)
             else []
         )
+
 
     # for testing of pangolin don't create pseudo-assembly
     else:

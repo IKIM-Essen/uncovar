@@ -117,7 +117,9 @@ rule overview_table_csv:
         reads_used_for_assembly=expand_samples_for_date(
             "results/{{date}}/tables/read_pair_counts/{sample}.txt",
         ),
-        initial_contigs=get_expanded_contigs,
+        initial_contigs=expand_samples_for_date(
+            "results/{{date}}/contigs/checked/{sample}.fasta",
+        ),
         polished_contigs=expand_samples_for_date(
             "results/{{date}}/contigs/masked/polished/{sample}.fasta",
         ),
