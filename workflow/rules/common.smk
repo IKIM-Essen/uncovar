@@ -855,7 +855,6 @@ def get_assemblies_for_submission(wildcards, agg_type):
             else []
         )
 
-
     # for testing of pangolin don't create pseudo-assembly
     else:
         masked_samples = [wildcards.sample]
