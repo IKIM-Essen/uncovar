@@ -162,7 +162,7 @@ def write_sequence(sequence):
 
 
 sequence = get_sequence()
-assert isinstance(sequence, str), "More than more sequence in fasta file."
+assert isinstance(sequence, str), "More than one sequence in .fasta file."
 coverages, base_counts = get_and_write_coverages_and_base_counts()
 masked_sequence = mask_sequence(sequence, coverages, base_counts)
 write_sequence(masked_sequence)
