@@ -114,11 +114,15 @@ def update_sample_sheet(SAMPLE_SHEET, verbose=True, dry_run=False):
         name_sample = f.split("_")[0]
         if name_sample not in sample_list:
             sample_list.append(name_sample)
-    include_in_data_df = pd.DataFrame(
-        index=sample_list
-    )
-    include_in_data_df.loc[include_in_data_df.index.str.contains("No-RKI",case = False), ["include_in_high_genome_summary"]] = "0"
-    include_in_data_df.loc[~include_in_data_df.index.str.contains("No-RKI",case = False), ["include_in_high_genome_summary"]] = "1"
+    include_in_data_df = pd.DataFrame(index=sample_list)
+    include_in_data_df.loc[
+        include_in_data_df.index.str.contains("No-RKI", case=False),
+        ["include_in_high_genome_summary"],
+    ] = "0"
+    include_in_data_df.loc[
+        ~include_in_data_df.index.str.contains("No-RKI", case=False),
+        ["include_in_high_genome_summary"],
+    ] = "1"
 
     ##################################
     ######### update the csv #########
