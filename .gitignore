@@ -8,7 +8,8 @@
 !config/config.yaml
 !config/multiqc_config.yaml
 !config/pep
-!config/pep/*
+!config/pep/config.yaml
+!config/pep/samples.csv
 !publication
 !publication/*
 !resources/
