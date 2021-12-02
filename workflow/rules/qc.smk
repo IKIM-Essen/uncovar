@@ -184,7 +184,7 @@ rule combine_references:
 rule extract_reads_of_interest:
     input:
         bam="results/{date}/mapped/ref~main+human/{sample}.bam",
-        index="results/{date}/mapped/ref~main+human/{sample}.bam.bai"
+        index="results/{date}/mapped/ref~main+human/{sample}.bam.bai",
     output:
         temp("results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam"),
     log:
