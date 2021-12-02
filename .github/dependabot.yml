@@ -11,5 +11,5 @@ updates:
     allow:
       - dependency-type: "all"
     commit-message:
-      prefix: "ci:"
+      prefix: "chore(deps)"
     open-pull-requests-limit: 50
