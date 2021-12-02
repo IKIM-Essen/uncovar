@@ -27,3 +27,5 @@
 !.snakemake-workflow-catalog.yml
 !LICENSE
 !README.md
+!CODE_OF_CONDUCT.md
+!CONTRIBUTING.md
