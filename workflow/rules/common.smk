@@ -125,14 +125,6 @@ def is_illumina(wildcards, sample=None):
     return get_technology(None, sample) == ILLUMINA
 
 
-def is_sample_illumina(sample):
-    return get_technology_by_sample(sample) == ILLUMINA
-
-
-def is_sample_ont(sample):
-    return get_technology_by_sample(sample) == ONT
-
-
 def get_fastqs(wildcards):
     if wildcards.sample.startswith(BENCHMARK_PREFIX):
         # this is a simulated benchmark sample, do not look up FASTQs in the sample sheet
