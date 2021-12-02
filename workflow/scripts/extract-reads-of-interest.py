@@ -19,7 +19,7 @@ def is_sars_cov2(record, mate=False):
         return record.reference_name.startswith(sars_cov2_id)
 
 
-with pysam.AlignmentFile(snakemake.input[0], "rb") as inbam:
+with pysam.AlignmentFile(snakemake.input.bam, "rb") as inbam:
     with pysam.AlignmentFile(snakemake.output[0], "wb", template=inbam) as outbam:
         for record in inbam:
             if record.is_paired:
