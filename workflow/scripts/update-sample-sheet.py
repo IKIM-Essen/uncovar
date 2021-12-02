@@ -110,19 +110,15 @@ def update_sample_sheet(SAMPLE_SHEET, verbose=True, dry_run=False):
 
     # get flag showing inclusion in rki-report
     sample_list = []
-    include_data_list = []
     for f in files_to_copy:
         name_sample = f.split("_")[0]
         if name_sample not in sample_list:
             sample_list.append(name_sample)
-            if "no-rki" in name_sample.casefold():
-                include_data = str(0)
-            else:
-                include_data = str(1)
-            include_data_list.append(include_data)
     include_in_data_df = pd.DataFrame(
-        {"include_in_high_genome_summary": include_data_list}, index=sample_list
+        index=sample_list
     )
+    include_in_data_df.loc[include_in_data_df.index.str.contains("No-RKI",case = False), ["include_in_high_genome_summary"]] = "0"
+    include_in_data_df.loc[~include_in_data_df.index.str.contains("No-RKI",case = False), ["include_in_high_genome_summary"]] = "1"
 
     ##################################
     ######### update the csv #########
