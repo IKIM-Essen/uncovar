@@ -73,7 +73,7 @@ checkpoint rki_filter:
         min_identity=config["quality-criteria"]["min-identity"],
         max_n=config["quality-criteria"]["max-n"],
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
-        includeflag = lambda wildcards: get_include_flag_for_date(wildcards.date)
+        includeflag=lambda wildcards: get_include_flag_for_date(wildcards.date),
     log:
         "logs/{date}/rki-filter/{assembly_type}.log",
     conda:

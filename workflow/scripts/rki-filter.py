@@ -85,7 +85,10 @@ def get_include_rki(sample, includeflag):
 
     """
 
-    names_df = pd.DataFrame(list(zip(sample, includeflag)), columns = ["sample_name", "include_in_high_genome_summary"])
+    names_df = pd.DataFrame(
+        list(zip(sample, includeflag)),
+        columns=["sample_name", "include_in_high_genome_summary"],
+    )
     include_dict = names_df.set_index("sample_name").T.to_dict("records")[0]
 
     return include_dict
