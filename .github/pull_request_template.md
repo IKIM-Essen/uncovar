@@ -10,7 +10,7 @@
 
 <!-- Mark with an `x` all the checkboxes that apply (like `[x]`) -->
 
-- [ ] I've formatted the PR title  in accordance with the [structure of the conventional commit messages](https://www.conventionalcommits.org/en/v1.0.0/).
+- [ ] I've formatted the PR title in accordance with the [structure of the conventional commit messages](https://www.conventionalcommits.org/en/v1.0.0/).
 - [ ] I've updated the code style using `snakefmt workflow/` and `black workflow/` if needed.
 - [ ] I've read the [`CODE_OF_CONDUCT.md`](https://github.com/IKIM-Essen/uncovar/blob/master/CODE_OF_CONDUCT.md) document.
 - [ ] I've read the [`CONTRIBUTING.md`](https://github.com/IKIM-Essen/uncovar/blob/master/CONTRIBUTING.md) guide.
