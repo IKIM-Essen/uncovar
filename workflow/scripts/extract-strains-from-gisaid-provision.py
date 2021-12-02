@@ -57,7 +57,7 @@ def select_oldest_strains(df: pd.DataFrame):
         & (df["covv_lineage"] != "None")
         & (df["covv_lineage"] != "")
         & ~(df["covv_lineage"].str.contains("\("))
-        & ~(df["covv_lineage"].str.contains("\)")
+        & ~(df["covv_lineage"].str.contains("\)"))
     )
     cols_of_interesst = ["covv_lineage", "n_content", "covv_subm_date"]
     df = df.copy()
