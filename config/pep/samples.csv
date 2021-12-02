@@ -1,2 +1,3 @@
-sample_name,fq1,fq2,date,is_amplicon_data
-NAME,PATH/TO/fq1,PATH/TO/fq2,2021-01-01,0
+sample_name,fq1,fq2,date,is_amplicon_data,technology
+NAME,PATH/TO/fq1,PATH/TO/fq2,ID,0,illumina
+NAME,PATH/TO/fq1,,ID,1,ont

@@ -12,6 +12,11 @@ from snakemake.utils import validate
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
 
+# clear text / content of flag "technology" in sample sheet
+ILLUMINA = "illumina"
+ONT = "ont"
+
+# for benchmarking rules
 BENCHMARK_PREFIX = "benchmark-sample-"
 NON_COV2_TEST_PREFIX = "non-cov2-"
 MIXTURE_PREFIX = "mixture-sample-"
@@ -49,7 +54,7 @@ def get_samples_for_date(date, filtered=False):
 
     # filter
     if filtered:
-        with checkpoints.rki_filter.get(date=date).output[0].open() as f:
+        with checkpoints.quality_filter.get(date=date).output.passed_filter.open() as f:
 
             passend_samples = []
             for line in f:
@@ -97,6 +102,29 @@ def get_dates_before_date(wildcards):
     )
 
 
+def get_technology(wildcards, sample=None):
+    benchmark_technology = ILLUMINA
+
+    if sample is None:
+        sample = wildcards.sample
+
+    if is_benchmark_data(sample):
+        return benchmark_technology
+    return pep.sample_table.loc[sample]["technology"]
+
+
+def is_ont(wildcards, sample=None):
+    if sample is None:
+        return get_technology(wildcards) == ONT
+    return get_technology(None, sample) == ONT
+
+
+def is_illumina(wildcards, sample=None):
+    if sample is None:
+        return get_technology(wildcards) == ILLUMINA
+    return get_technology(None, sample) == ILLUMINA
+
+
 def get_fastqs(wildcards):
     if wildcards.sample.startswith(BENCHMARK_PREFIX):
         # this is a simulated benchmark sample, do not look up FASTQs in the sample sheet
@@ -130,8 +158,12 @@ def get_fastqs(wildcards):
             accession=wildcards.sample,
             read=[1, 2],
         )
+
     # default case, look up FASTQs in the sample sheet
-    return pep.sample_table.loc[wildcards.sample][["fq1", "fq2"]]
+    if is_illumina(wildcards):
+        return pep.sample_table.loc[wildcards.sample][["fq1", "fq2"]]
+    elif is_ont(wildcards):
+        return pep.sample_table.loc[wildcards.sample][["fq1"]]
 
 
 def get_resource(name):
@@ -300,6 +332,11 @@ def get_reference(suffix=""):
             return "results/{date}/contigs/polished/{sample}.fasta".format(
                 sample=wildcards.reference.replace("polished-", ""), **wildcards
             )
+        elif wildcards.reference.startswith("consensus-"):
+            # return consensus contigs
+            return "results/{date}/contigs/consensus/{sample}.fasta".format(
+                sample=wildcards.reference.replace("consensus-", ""), **wildcards
+            )
         elif wildcards.reference == config["adapters"]["amplicon-reference"]:
             # return reference genome of amplicon primers
             return "resources/genomes/{reference}.fasta{suffix}".format(
@@ -325,22 +362,23 @@ def get_reads(wildcards):
         wildcards.reference == "human"
         or wildcards.reference == "main+human"
         or wildcards.reference.startswith("polished-")
+        or wildcards.reference.startswith("consensus-")
     ):
-        return expand(
-            "results/{date}/trimmed/{sample}.{read}.fastq.gz",
-            date=wildcards.date,
-            read=[1, 2],
-            sample=wildcards.sample,
-        )
+        if is_illumina(wildcards):
+            return expand(
+                "results/{date}/trimmed/{sample}.{read}.fastq.gz",
+                read=[1, 2],
+                **wildcards,
+            )
+        elif is_ont(wildcards):
+            return expand(
+                "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+                **wildcards,
+            )
 
-    # theses reads are used to generate the bam file for the BAMclipper
+    # theses reads are used to generate the bam file for the BAMclipper and the coverage plot of the main reference
     elif wildcards.reference == config["adapters"]["amplicon-reference"]:
-        return expand(
-            "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
-            date=wildcards.date,
-            read=[1, 2],
-            sample=wildcards.sample,
-        )
+        return get_non_human_reads(wildcards)
 
     # aligments to other references (e.g. the covid reference genome),
     # are done with reads, which have undergone the quality control process
@@ -348,18 +386,41 @@ def get_reads(wildcards):
         return get_reads_after_qc(wildcards)
 
 
-def get_reads_after_qc(wildcards, read="both"):
+def get_non_human_reads(wildcards):
+    if is_illumina(wildcards):
+        return expand(
+            "results/{date}/nonhuman-reads/pe/{sample}.{read}.fastq.gz",
+            date=wildcards.date,
+            read=[1, 2],
+            sample=wildcards.sample,
+        )
+    elif is_ont(wildcards):
+        return expand(
+            "results/{date}/nonhuman-reads/se/{sample}.fastq.gz",
+            date=wildcards.date,
+            sample=wildcards.sample,
+        )
 
-    if is_amplicon_data(wildcards.sample):
+
+def get_reads_after_qc(wildcards, read="both"):
+    if is_amplicon_data(wildcards.sample) and is_ont(wildcards):
+        pattern = [
+            "results/{date}/nonhuman-reads/se/{sample}.fastq.gz".format(**wildcards)
+        ]
+    elif not is_amplicon_data(wildcards.sample) and is_ont(wildcards):
+        raise NotImplementedError(
+            "UnCoVer currently does not support non amplicon based ONT data"
+        )
+    elif is_amplicon_data(wildcards.sample) and is_illumina(wildcards):
         pattern = expand(
             "results/{date}/clipped-reads/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
         )
-    else:
+    elif not is_amplicon_data(wildcards.sample) and is_illumina(wildcards):
         pattern = expand(
-            "results/{date}/nonhuman-reads/{sample}.{read}.fastq.gz",
+            "results/{date}/nonhuman-reads/pe/{sample}.{read}.fastq.gz",
             date=wildcards.date,
             read=[1, 2],
             sample=wildcards.sample,
@@ -382,19 +443,48 @@ def get_min_coverage(wildcards):
 
 
 def return_assembler(sample):
-    if is_amplicon_data(sample):
+    if is_amplicon_data(sample) and is_illumina(None, sample):
         return config["assembly"]["amplicon"]
-    else:
+    elif not is_amplicon_data(sample) and is_illumina(None, sample):
         return config["assembly"]["shotgun"]
+    if is_amplicon_data(sample) and is_ont(None, sample):
+        raise NotImplementedError(
+            f"No amplicon ONT assembler option found for sample {sample}"
+        )
+    elif not is_amplicon_data(sample) and is_ont(None, sample):
+        raise NotImplementedError(
+            f"No non-amplicon ONT assembler option found for sample {sample}"
+        )
 
 
-def get_contigs(wildcards):
-    pattern = (
-        "results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
-            assembler=return_assembler(wildcards.sample), **wildcards
-        ),
-    )
-    return pattern
+def get_contigs(wildcards, opt_sample=None):
+
+    if "sample" in wildcards.keys():
+        if is_illumina(wildcards):
+            return "results/{{date}}/assembly/{{sample}}/{assembler}/{{sample}}.contigs.fasta".format(
+                assembler=return_assembler(wildcards.sample)
+            )
+        elif is_ont(wildcards):
+            return "results/{date}/assembly/{sample}/spades_se/{sample}.contigs.fasta"
+
+    # wildcards is only sample name
+    if is_illumina(None, opt_sample):
+        return "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
+            assembler=return_assembler(opt_sample), sample=opt_sample
+        )
+    elif is_ont(None, opt_sample):
+        return "results/{{date}}/assembly/{sample}/spades_se/{sample}.contigs.fasta".format(
+            sample=opt_sample
+        )
+
+    raise NotImplementedError("No assembler found.")
+
+
+def get_expanded_contigs(wildcards):
+    return [
+        get_contigs(wildcards, sample)
+        for sample in get_samples_for_date(wildcards.date)
+    ]
 
 
 def get_read_counts(wildcards):
@@ -428,7 +518,10 @@ def get_filter_odds_input(wildcards):
         # If reference is not main, we are polishing an assembly.
         # Here, there is no need to structural variants or annotation based filtering.
         # Hence we directly take the output of varlociraptor call on the small variants.
-        return "results/{date}/calls/ref~{reference}/{sample}.small.bcf"
+        if is_illumina(wildcards):
+            return "results/{date}/calls/ref~{reference}/{sample}.small.bcf"
+        if is_ont(wildcards):
+            return "results/{date}/calls/ref~{reference}/{sample}.bcf"
 
 
 def get_vembrane_expression(wildcards):
@@ -460,10 +553,12 @@ def get_quast_fastas(wildcards):
         return "results/{date}/contigs/checked/{sample}.fasta"
     elif wildcards.stage == "polished":
         return "results/{date}/contigs/polished/{sample}.fasta"
-    elif wildcards.stage == "masked":
-        return "results/{date}/contigs/masked/{sample}.fasta"
+    elif wildcards.stage == "masked/polished":
+        return "results/{date}/contigs/masked/polished/{sample}.fasta"
     elif wildcards.stage == "pseudoassembly":
         return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
+    elif wildcards.stage == "masked/consensus":
+        return "results/{date}/contigs/masked/consensus/{sample}.fasta"
 
 
 def get_random_strain():
@@ -582,13 +677,19 @@ def get_strain(path_to_pangolin_call):
     return pangolin_results.loc[0]["lineage"]
 
 
-def is_amplicon_data(sample):
+def is_benchmark_data(sample):
     if (
         sample.startswith(BENCHMARK_PREFIX)
         or sample.startswith(NON_COV2_TEST_PREFIX)
         or sample.startswith(MIXTURE_PREFIX)
         or sample.startswith(READ_TEST_PREFIX)
     ):
+        return True
+    return False
+
+
+def is_amplicon_data(sample):
+    if is_benchmark_data(sample):
         # benchmark data, not amplicon based
         return False
     sample = pep.sample_table.loc[sample]
@@ -598,8 +699,12 @@ def is_amplicon_data(sample):
         return False
 
 
-def get_samples_for_date_amplicon(date):
-    return [s for s in get_samples_for_date(date) if is_amplicon_data(s)]
+def get_samples_for_date_for_illumina_amplicon(date):
+    return [
+        s
+        for s in get_samples_for_date(date)
+        if (is_amplicon_data(s) and is_illumina(None, s))
+    ]
 
 
 def get_list_of_amplicon_states(wildcards):
@@ -628,38 +733,89 @@ def get_recal_input(wildcards):
 
 
 def get_depth_input(wildcards):
-    if is_amplicon_data(wildcards.sample):
-        # use clipped reads
+    # use clipped reads
+    if is_illumina(wildcards) and is_amplicon_data(wildcards.sample):
         return "results/{date}/clipped-reads/{sample}.primerclipped.bam"
+
+    elif is_ont(wildcards) and is_amplicon_data(wildcards.sample):
+        return expand(
+            "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam",
+            ref=config["adapters"]["amplicon-reference"],
+        )
+
     # use trimmed reads
-    amplicon_reference = config["adapters"]["amplicon-reference"]
     return "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam".format(
-        ref=amplicon_reference
+        ref=config["adapters"]["amplicon-reference"]
     )
 
 
 def get_adapters(wildcards):
-    if is_amplicon_data(wildcards.sample):
+    if is_illumina(wildcards) and is_amplicon_data(wildcards.sample):
         return config["adapters"]["illumina-amplicon"]
-    return config["adapters"]["illumina-shotgun"]
+    elif is_illumina(wildcards) and not is_amplicon_data(wildcards.sample):
+        return config["adapters"]["illumina-shotgun"]
+    elif is_ont(wildcards) and is_amplicon_data(wildcards.sample):
+        raise NotImplementedError(
+            "No adapters implemented for amplicon data generated with ONT technology"
+        )
+    elif is_ont(wildcards) and not is_amplicon_data(wildcards.sample):
+        raise NotImplementedError(
+            "No adapters implemented for shotgun data generated with ONT technology"
+        )
 
 
 def get_final_assemblies(wildcards):
-    if wildcards.assembly_type == "masked-assembly":
-        pattern = "results/{{date}}/contigs/masked/{sample}.fasta"
-    elif wildcards.assembly_type == "pseudo-assembly":
-        pattern = "results/{{date}}/contigs/pseudoassembled/{sample}.fasta"
+    all_samples = get_samples_for_date(wildcards.date)
+    illumina_samples = [sample for sample in all_samples if is_illumina(None, sample)]
+    ont_samples = [sample for sample in all_samples if is_ont(None, sample)]
 
-    return expand(pattern, sample=get_samples_for_date(wildcards.date))
+    if wildcards.assembly_type == "masked-assembly":
+        return expand(
+            "results/{{date}}/contigs/masked/polished/{sample}.fasta",
+            sample=all_samples,
+        )
+    elif wildcards.assembly_type == "pseudo-assembly":
+        return expand(
+            "results/{{date}}/contigs/pseudoassembled/{sample}.fasta",
+            sample=illumina_samples,
+        )
+    elif wildcards.assembly_type == "consensus-assembly":
+        return expand(
+            "results/{{date}}/contigs/masked/consensus/{sample}.fasta",
+            sample=ont_samples,
+        )
 
 
 def get_final_assemblies_identity(wildcards):
-    if wildcards.assembly_type == "masked-assembly":
-        pattern = "results/{{date}}/quast/masked/{sample}/report.tsv"
-    elif wildcards.assembly_type == "pseudo-assembly":
-        pattern = "results/{{date}}/quast/pseudoassembly/{sample}/report.tsv"
+    all_samples = get_samples_for_date(wildcards.date)
+    illumina_samples = [sample for sample in all_samples if is_illumina(None, sample)]
+    ont_samples = [sample for sample in all_samples if is_ont(None, sample)]
 
-    return expand(pattern, sample=get_samples_for_date(wildcards.date))
+    if wildcards.assembly_type == "masked-assembly":
+        return expand(
+            "results/{{date}}/quast/masked/polished/{sample}/report.tsv",
+            sample=all_samples,
+        )
+    elif wildcards.assembly_type == "pseudo-assembly":
+        return expand(
+            "results/{{date}}/quast/pseudoassembly/{sample}/report.tsv",
+            sample=illumina_samples,
+        )
+    elif wildcards.assembly_type == "consensus-assembly":
+        return expand(
+            "results/{{date}}/quast/masked/consensus/{sample}/report.tsv",
+            sample=ont_samples,
+        )
+
+
+def load_filtered_samples(wildcards, assembly_type):
+    with checkpoints.quality_filter.get(
+        date=wildcards.date, assembly_type=assembly_type
+    ).output.passed_filter.open() as f:
+        try:
+            return pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
+        except pd.errors.EmptyDataError:
+            return []
 
 
 def get_assemblies_for_submission(wildcards, agg_type):
@@ -676,59 +832,84 @@ def get_assemblies_for_submission(wildcards, agg_type):
                 return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
 
     if wildcards.date != BENCHMARK_DATE_WILDCARD:
-        with checkpoints.rki_filter.get(
-            date=wildcards.date, assembly_type="masked-assembly"
-        ).output[0].open() as f:
-            masked_samples = (
-                pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
-            )
 
-        with checkpoints.rki_filter.get(
-            date=wildcards.date, assembly_type="pseudo-assembly"
-        ).output[0].open() as f:
-            pseudo_samples = (
-                pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
-            )
+        all_samples_for_date = get_samples_for_date(wildcards.date)
+
+        masked_samples = load_filtered_samples(wildcards, "masked-assembly")
+        pseudo_samples = (
+            load_filtered_samples(wildcards, "pseudo-assembly")
+            if any(is_illumina(None, sample) for sample in all_samples_for_date)
+            else []
+        )
+        consensus_samples = (
+            load_filtered_samples(wildcards, "consensus-assembly")
+            if any(is_ont(None, sample) for sample in all_samples_for_date)
+            else []
+        )
+
     # for testing of pangolin don't create pseudo-assembly
     else:
         masked_samples = [wildcards.sample]
 
+    normal_assembly_pattern = "results/{{date}}/contigs/masked/polished/{sample}.fasta"
     pseudo_assembly_pattern = "results/{{date}}/contigs/pseudoassembled/{sample}.fasta"
-    normal_assembly_pattern = "results/{{date}}/contigs/masked/{sample}.fasta"
+    consensus_assembly_pattern = (
+        "results/{{date}}/contigs/masked/consensus/{sample}.fasta"
+    )
 
     # get accepted samples for rki submission
     if agg_type == "accepted samples":
-        accepted_assemblies = []
+        selected_assemblies = []
+        unqiue_samples = set()
 
-        for sample in set(masked_samples + pseudo_samples):
+        if len(set(masked_samples)) > 0:
+            unqiue_samples.update(masked_samples)
+        if len(set(pseudo_samples)) > 0:
+            unqiue_samples.update(pseudo_samples)
+        if len(set(consensus_samples)) > 0:
+            unqiue_samples.update(consensus_samples)
+
+        if len(unqiue_samples) == 0:
+            raise NotImplementedError("No sequences are passing the quality filter.")
+
+        for sample in unqiue_samples:
             if sample in masked_samples:
-                accepted_assemblies.append(
+                selected_assemblies.append(
                     normal_assembly_pattern.format(sample=sample)
                 )
-            else:
-                accepted_assemblies.append(
+            elif sample in pseudo_samples:
+                selected_assemblies.append(
                     pseudo_assembly_pattern.format(sample=sample)
                 )
-        return accepted_assemblies
+            elif sample in consensus_samples:
+                selected_assemblies.append(
+                    consensus_assembly_pattern.format(sample=sample)
+                )
+
+        return selected_assemblies
 
     # for the pangolin call
     elif agg_type == "single sample":
         if wildcards.sample in masked_samples:
-            return "results/{date}/contigs/polished/{sample}.fasta"
+            return "results/{date}/contigs/masked/polished/{sample}.fasta"
         elif wildcards.sample in pseudo_samples:
             return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
-        # for not accepted samples use the polished-contigs
+        elif wildcards.sample in consensus_samples:
+            return "results/{date}/contigs/masked/consensus/{sample}.fasta"
+        # for not accepted samples call on the polished-contigs
         else:
             return "results/{date}/contigs/polished/{sample}.fasta"
 
     # for the qc report
     elif agg_type == "all samples":
         assembly_type_used = []
-        for sample in get_samples_for_date(wildcards.date):
+        for sample in all_samples_for_date:
             if sample in masked_samples:
                 assembly_type_used.append(f"{sample},normal")
             elif sample in pseudo_samples:
                 assembly_type_used.append(f"{sample},pseudo")
+            elif sample in consensus_samples:
+                assembly_type_used.append(f"{sample},consensus")
             else:
                 assembly_type_used.append(f"{sample},not-accepted")
         return assembly_type_used
@@ -756,7 +937,67 @@ def expand_samples_for_date(paths, **kwargs):
 
 
 def expand_samples_for_date_amplicon(paths, **kwargs):
-    return expand_samples_by_func(paths, get_samples_for_date_amplicon, **kwargs)
+    return expand_samples_by_func(
+        paths, get_samples_for_date_for_illumina_amplicon, **kwargs
+    )
+
+
+def get_for_report_if_illumina_sample(path):
+    def inner(wildcards):
+        return [
+            path.format(sample=sample)
+            if is_illumina(None, sample)
+            else "resources/genomes/main.fasta"
+            for sample in get_samples_for_date(wildcards.date)
+        ]
+
+    return inner
+
+
+def get_for_report_if_ont_sample(path):
+    def inner(wildcards):
+        return [
+            path.format(sample=sample)
+            if is_ont(None, sample)
+            else "resources/genomes/main.fasta"
+            for sample in get_samples_for_date(wildcards.date)
+        ]
+
+    return inner
+
+
+def get_raw_reads_counts(wildcards):
+    return [
+        "results/{{date}}/trimmed/{sample}.fastp.json".format(sample=sample)
+        if is_illumina(None, sample)
+        else "results/{{date}}/tables/fastq-read-counts/raw~{sample}.txt".format(
+            sample=sample
+        )
+        for sample in get_samples_for_date(wildcards.date)
+    ]
+
+
+def get_trimmed_reads_counts(wildcards):
+    return [
+        "results/{{date}}/trimmed/{sample}.fastp.json".format(sample=sample)
+        if is_illumina(None, sample)
+        else "results/{{date}}/tables/fastq-read-counts/trimmed~{sample}.txt".format(
+            sample=sample
+        )
+        for sample in get_samples_for_date(wildcards.date)
+    ]
+
+
+def get_fastp_results(wildcards, **kwargs):
+    # fastp is only used on illumina data
+    return expand(
+        "results/{{date}}/trimmed/{sample}.fastp.json",
+        sample=[
+            sample
+            for sample in get_samples_for_date(wildcards.date)
+            if is_illumina(None, sample)
+        ],
+    )
 
 
 def get_vep_args(wildcards, input):
@@ -769,10 +1010,20 @@ def get_vep_args(wildcards, input):
 def get_samples_for_assembler_comparison(paths):
     return zip_expand(
         paths,
-        get_dates(),
-        get_samples(),
+        get_illumina_samples_dates(),
+        get_illumina_samples(),
         config["assemblers_for_comparison"],
     )
+
+
+def get_illumina_samples():
+    samples = pep.sample_table
+    return samples.loc[samples["technology"] == ILLUMINA]["sample_name"].values
+
+
+def get_illumina_samples_dates():
+    samples = pep.sample_table
+    return samples.loc[samples["technology"] == ILLUMINA]["date"].values
 
 
 def get_megahit_preset(wildcards):
@@ -790,17 +1041,59 @@ def get_lineage_by_accession(wildcards):
     ]
 
 
-wildcard_constraints:
-    sample="[^/.]+",
-    vartype="|".join(VARTYPES),
-    clonality="subclonal|clonal",
-    filter="|".join(
-        list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
-    ),
-    varrange="structural|small",
+def get_artic_primer(wildcards):
+    # TODO: add more _adapters.py (not preferred) or
+    # add a script to generate them from a link to a bed file.
+    # The bed file can be found in the artic repo
+    return "resources/ARTIC_v{}_adapters.py".format(
+        config["adapters"]["artic-primer-version"]
+    )
 
 
-def get_read_calls(wildcard):
+def get_trimmed_reads(wildcards):
+    if is_illumina(wildcards):
+        return expand(
+            "results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]
+        )
+    elif is_ont(wildcards):
+        return (
+            "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq.gz"
+        )
+
+
+def get_kraken_output(wildcards):
+    samples = get_samples_for_date(wildcards.date)
+
+    illumina_pattern = (
+        "results/{date}/species-diversity/pe/{sample}/{sample}.uncleaned.kreport2"
+    )
+    ont_pattern = (
+        "results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2"
+    )
+
+    return [
+        illumina_pattern.format(sample=sample, **wildcards)
+        if is_illumina(None, sample)
+        else ont_pattern.format(sample=sample, **wildcards)
+        for sample in samples
+    ]
+
+
+def get_kraken_output_after_filtering(wildcards):
+    samples = get_samples_for_date(wildcards.date)
+
+    illumina_pattern = "results/{date}/species-diversity-nonhuman/pe/{sample}/{sample}.cleaned.kreport2"
+    ont_pattern = "results/{date}/species-diversity-nonhuman/se/{sample}/{sample}.cleaned.kreport2"
+
+    return [
+        illumina_pattern.format(sample=sample, **wildcards)
+        if is_illumina(None, sample)
+        else ont_pattern.format(sample=sample, **wildcards)
+        for sample in samples
+    ]
+
+
+def get_read_calls(wildcards):
     with checkpoints.select_random_lineages.get(date=BENCHMARK_DATE_WILDCARD).output[
         0
     ].open() as f:
@@ -812,3 +1105,119 @@ def get_read_calls(wildcard):
         number=config["read_lineage_call"]["number_of_reads"],
         length=config["read_lineage_call"]["length_of_reads"],
     )
+
+
+def get_first_line(path):
+    with open(path) as f:
+        return f.readline().strip()
+
+
+def get_kallisto_quant_extra(wildcards, input):
+    if is_for_testing():
+        return get_if_testing("--single --fragment-length 250 --sd 47301")
+
+    return (
+        f"--single --fragment-length {get_first_line(input.fragment_length)} --sd {get_first_line(input.standard_deviation)}"
+        if is_ont(wildcards)
+        else "",
+    )
+
+
+def get_path_if_ont(paths):
+    def inner(wildcards):
+        if is_ont(wildcards):
+            return paths
+        return [""]
+
+    return inner
+
+
+def get_kallisto_quant_input(wildcards):
+    if is_ont(wildcards):
+        return {
+            "fastq": get_reads_after_qc(wildcards),
+            "index": "results/{date}/kallisto/strain-genomes.idx",
+            "fragment_length": "results/{date}/tables/avg_read_length/{sample}.txt",
+            "standard_deviation": "results/{date}/tables/standard_deviation/{sample}.txt",
+        }
+    return {
+        "fastq": get_reads_after_qc(wildcards),
+        "index": "results/{date}/kallisto/strain-genomes.idx",
+    }
+
+
+def is_for_testing():
+    return bool(config.get("testing", {}))
+
+
+def get_if_testing(string):
+    return string if is_for_testing() else ""
+
+
+def get_reads_by_stage(wildcards):
+    if wildcards.stage == "raw":
+        return get_fastqs(wildcards)
+    elif wildcards.stage == "trimmed":
+        return "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"
+    elif wildcards.stage == "clipped":
+        return "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"
+    elif wildcards.stage == "filtered":
+        return "results/{date}/trimmed/nanofilt/{sample}.fastq"
+
+
+def get_polished_sequence(wildcards):
+    if is_illumina(wildcards):
+        return "results/{date}/polishing/bcftools-illumina/{sample}.fasta"
+    elif is_ont(wildcards):
+        return "results/{date}/polishing/medaka/{sample}/{sample}.fasta"
+
+
+def get_fallback_sequence(wildcards):
+    if is_illumina(wildcards):
+        return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
+    elif is_ont(wildcards):
+        return "results/{date}/contigs/consensus/{sample}.fasta"
+
+
+def get_varrange(wildcards):
+    if is_illumina(wildcards):
+        return ["small", "structural"]
+    elif is_ont(wildcards):
+        return ["homopolymer-medaka", "homopolymer-longshot"]
+
+
+def get_if_any_sample_is_ont(path):
+    def inner(wildcards):
+        if any(is_ont(None, sample) for sample in get_samples_for_date(wildcards.date)):
+            return path
+        return "resources/genomes/main.fasta"
+
+    return inner
+
+
+def get_if_any_sample_is_illumina(path):
+    def inner(wildcards):
+        if any(
+            is_illumina(None, sample) for sample in get_samples_for_date(wildcards.date)
+        ):
+            return path
+        return "resources/genomes/main.fasta"
+
+    return inner
+
+
+def true_if_is_illumina(wildcards):
+    return [
+        {sample: is_illumina(None, sample)}
+        for sample in get_samples_for_date(wildcards.date)
+    ]
+
+
+wildcard_constraints:
+    sample="[^/.]+",
+    vartype="|".join(VARTYPES),
+    clonality="subclonal|clonal",
+    filter="|".join(
+        list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
+    ),
+    varrange="structural|small|homopolymer-medaka|homopolymer-longshot",

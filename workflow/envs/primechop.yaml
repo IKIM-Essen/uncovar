@@ -2,5 +2,5 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
-  - spades =3.15.3
-  - python=3.8
+  - porechop = 0.2.4
+  - python = 3.6

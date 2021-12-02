@@ -1,3 +1,3 @@
-sample_name,fq1,fq2,date,is_amplicon_data
-a,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2021-01-01,0
-
+sample_name,fq1,fq2,date,is_amplicon_data,technology
+illumina_shotgun_sample,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2021-01-01,0,illumina
+ont_amplicon_sample,data/ont_reads.fastq.gz,,2021-01-01,1,ont

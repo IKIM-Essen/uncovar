@@ -12,18 +12,21 @@ properties:
     description: path to read 1 in FASTQ format
   fq2:
     type: string
-    description: path to read 2 in FASTQ format
+    description: path to read 2 in FASTQ format. Not required when technology is set to "ont".
   date:
     type: string
     description: sampling date of the sample
   is_amplicon_data:
     type: string
     description: indicates whether the data was generated with a shotgun (0) or amplicon (1) sequencing
+  technology:
+    type: string
+    description: indicates whether the data was generated with Illumina ("illumina") or Oxford Nanopore ("ont") technology
 
 # columns that the config/samples.csv file must have to pass schema validation
 required:
   - sample_name
   - fq1
-  - fq2
   - date
   - is_amplicon_data
+  - technology
