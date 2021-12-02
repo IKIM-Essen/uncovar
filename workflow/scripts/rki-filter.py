@@ -6,7 +6,7 @@
 sys.stderr = open(snakemake.log[0], "w")
 min_identity = snakemake.params.get("min_identity", 0.9)
 max_n = snakemake.params.get("max_n", 0.05)
-include_rki = 1
+include_rki = "1"
 
 import pandas as pd
 from os import path
@@ -75,21 +75,17 @@ def get_n_share(contig_paths: List[str]) -> dict:
     return n_share_dict
 
 
-def get_include_rki(samples_file):
+def get_include_rki(sample, includeflag):
     """Extracts the information, whether the sample should be added to the rki files
     or not out of the samples.csv file.
 
     Args:
-        samples_file: Path to the samples.csv file
+        sample: List of samples for one specific date
+        includeflag: List of includeflag entries for the samples of one specific date
 
     """
-    samples_df = pd.read_csv(samples_file)
-    names_df = pd.concat(
-        [samples_df["sample_name"], samples_df["include_in_high_genome_summary"]],
-        axis=1,
-        keys=["sample_name", "include_in_high_genome_summary"],
-    )
 
+    names_df = pd.DataFrame(list(zip(sample, includeflag)), columns = ["sample_name", "include_in_high_genome_summary"])
     include_dict = names_df.set_index("sample_name").T.to_dict("records")[0]
 
     return include_dict
@@ -150,7 +146,7 @@ def filter_and_save(
 
 identity_dict = get_identity(snakemake.input.quast)
 n_share_dict = get_n_share(snakemake.input.contigs)
-include_dict = get_include_rki(snakemake.params.samples_file)
+include_dict = get_include_rki(snakemake.params.samples, snakemake.params.includeflag)
 filter_and_save(
     identity_dict,
     n_share_dict,
