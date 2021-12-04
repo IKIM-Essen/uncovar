@@ -405,7 +405,6 @@ def get_non_human_reads(wildcards):
         return expand(
             "results/{date}/nonhuman-reads/pe/{sample}.{read}.fastq.gz",
             date=wildcards.date,
-            read=[1, 2],
             sample=wildcards.sample,
         )
     elif is_ont(wildcards):

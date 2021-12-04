@@ -206,7 +206,8 @@ rule combine_references:
 # filter out human contamination
 rule extract_reads_of_interest:
     input:
-        "results/{date}/mapped/ref~main+human/{sample}.bam",
+        bam="results/{date}/mapped/ref~main+human/{sample}.bam",
+        index="results/{date}/mapped/ref~main+human/{sample}.bam.bai",
     output:
         temp("results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam"),
     log:
