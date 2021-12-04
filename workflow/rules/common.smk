@@ -15,7 +15,7 @@ VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
 # clear text / content of flag "technology" in sample sheet
 ILLUMINA = "illumina"
 ONT = "ont"
-ION_TORRENT="ion"
+ION_TORRENT = "ion"
 
 # for benchmarking rules
 BENCHMARK_PREFIX = "benchmark-sample-"
@@ -409,13 +409,9 @@ def get_non_human_reads(wildcards):
             sample=wildcards.sample,
         )
     elif is_ont(wildcards):
-        return expand(
-            "results/{date}/nonhuman-reads/se/{sample}.fastq.gz", **wildcards
-        )
+        return expand("results/{date}/nonhuman-reads/se/{sample}.fastq.gz", **wildcards)
     if is_ion_torrent(wildcards):
-        return expand(
-            "results/{date}/nonhuman-reads/se/{sample}.fastq.gz", **wildcards
-        ) 
+        return expand("results/{date}/nonhuman-reads/se/{sample}.fastq.gz", **wildcards)
 
 
 def get_reads_after_qc(wildcards, read="both"):
@@ -435,14 +431,18 @@ def get_reads_after_qc(wildcards, read="both"):
             **wildcards,
         )
     elif is_amplicon_data(wildcards.sample) and is_ont(wildcards):
-        pattern = expand("results/{date}/nonhuman-reads/se/{sample}.fastq.gz", **wildcards)
+        pattern = expand(
+            "results/{date}/nonhuman-reads/se/{sample}.fastq.gz", **wildcards
+        )
 
     elif not is_amplicon_data(wildcards.sample) and is_ont(wildcards):
         raise NotImplementedError(
             "UnCoVer currently does not support non-amplicon based Oxford Nanopore data."
         )
     elif is_amplicon_data(wildcards.sample) and is_ion_torrent(wildcards):
-        pattern = expand("results/{date}/read-clipping/fastq/se/{sample}.fastq", **wildcards) 
+        pattern = expand(
+            "results/{date}/read-clipping/fastq/se/{sample}.fastq", **wildcards
+        )
     elif not is_amplicon_data(wildcards.sample) and is_ion_torrent(wildcards):
         raise NotImplementedError(
             "UnCoVer currently does not support non-amplicon based Ion Torrent data."
@@ -474,7 +474,7 @@ def return_assembler(sample):
     elif not is_amplicon_data(sample) and is_ont(None, sample):
         raise NotImplementedError(
             f"No amplicon assembler option found for sample {sample} (Oxford Nanopore)."
-        ) 
+        )
     elif is_amplicon_data(sample) and is_ion_torrent(None, sample):
         return "spades_se"
     elif not is_amplicon_data(sample) and is_ion_torrent(None, sample):
@@ -482,7 +482,11 @@ def return_assembler(sample):
             f"No non-amplicon assembler option found for sample {sample} (Ion Torrent)."
         )
 
-    raise NotImplementedError("No assembler found for technology \"{technology}\" (sample {sample}).".format(technology=get_technology(wildcards), sample=wildcards.sample))
+    raise NotImplementedError(
+        'No assembler found for technology "{technology}" (sample {sample}).'.format(
+            technology=get_technology(wildcards), sample=wildcards.sample
+        )
+    )
 
 
 def get_contigs(wildcards, opt_sample=None):
@@ -493,10 +497,11 @@ def get_contigs(wildcards, opt_sample=None):
         )
 
     # wildcards is only sample name
-    return "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
-        assembler=return_assembler(opt_sample), sample=opt_sample
+    return (
+        "results/{{date}}/assembly/{sample}/{assembler}/{sample}.contigs.fasta".format(
+            assembler=return_assembler(opt_sample), sample=opt_sample
+        )
     )
-
 
 
 def get_expanded_contigs(wildcards):
@@ -543,7 +548,6 @@ def get_filter_odds_input(wildcards):
             return "results/{date}/calls/ref~{reference}/{sample}.bcf"
         if is_ion_torrent(wildcards):
             return "results/{date}/calls/ref~{reference}/{sample}.structural.bcf"
-
 
 
 def get_vembrane_expression(wildcards):
@@ -989,33 +993,29 @@ def get_for_report_if_ont_sample(path):
     return inner
 
 
-def aggregate_patters_per_technology(wildcards, illumina_pattern=None, ont_pattern=None, ion_torrent_pattern=None):
+def aggregate_patters_per_technology(
+    wildcards, illumina_pattern=None, ont_pattern=None, ion_torrent_pattern=None
+):
 
     patterns = []
 
     samples = get_samples_for_date(wildcards.date)
     for sample in samples:
         if illumina_pattern is not None and is_illumina(None, sample):
-            patterns.append(
-                illumina_pattern.format(sample=sample)
-            )
+            patterns.append(illumina_pattern.format(sample=sample))
         elif ont_pattern is not None and is_ont(None, sample):
-            patterns.append(
-                ont_pattern.format(sample=sample)
-            )
+            patterns.append(ont_pattern.format(sample=sample))
         elif ion_torrent_pattern is not None and is_ion_torrent(None, sample):
-            patterns.append(
-                ion_torrent_pattern.format(sample=sample)
-            )
+            patterns.append(ion_torrent_pattern.format(sample=sample))
     return patterns
 
-    
+
 def get_raw_reads_counts(wildcards):
     return aggregate_patters_per_technology(
         wildcards,
         illumina_pattern="results/{{date}}/trimmed/fastp-pe/{sample}.fastp.json",
         ont_pattern="results/{{date}}/tables/fastq-read-counts/raw~{sample}.txt",
-        ion_torrent_pattern="results/{{date}}/trimmed/fastp-se/{sample}.fastp.json"
+        ion_torrent_pattern="results/{{date}}/trimmed/fastp-se/{sample}.fastp.json",
     )
 
 
@@ -1024,7 +1024,7 @@ def get_trimmed_reads_counts(wildcards):
         wildcards,
         illumina_pattern="results/{{date}}/trimmed/fastp-pe/{sample}.fastp.json",
         ont_pattern="results/{{date}}/tables/fastq-read-counts/trimmed~{sample}.txt",
-        ion_torrent_pattern="results/{{date}}/trimmed/fastp-se/{sample}.fastp.json"        
+        ion_torrent_pattern="results/{{date}}/trimmed/fastp-se/{sample}.fastp.json",
     )
 
 
@@ -1033,7 +1033,7 @@ def get_fastp_results(wildcards):
     return aggregate_patters_per_technology(
         wildcards,
         illumina_pattern="results/{{date}}/trimmed/fastp-pe/{sample}.fastp.json",
-        ion_torrent_pattern="results/{{date}}/trimmed/fastp-se/{sample}.fastp.json"     
+        ion_torrent_pattern="results/{{date}}/trimmed/fastp-se/{sample}.fastp.json",
     )
 
 
@@ -1222,13 +1222,12 @@ def get_fallback_sequence(wildcards):
         return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
 
 
-
 def get_varrange(wildcards):
     if is_illumina(wildcards):
         return ["small", "structural"]
     elif is_ont(wildcards):
         return ["homopolymer-medaka", "homopolymer-longshot"]
-    #TODO: Research single end variant calling
+    # TODO: Research single end variant calling
     elif is_ion_torrent(wildcards):
         return ["structural"]
 
@@ -1259,6 +1258,7 @@ def true_if_is_illumina(wildcards):
         for sample in get_samples_for_date(wildcards.date)
     ]
 
+
 def get_samtools_sort_input(wildcards):
     if wildcards.stage == "initial":
         return expand(
@@ -1266,8 +1266,10 @@ def get_samtools_sort_input(wildcards):
             ref=config["adapters"]["amplicon-reference"],
         )
     elif wildcards.stage == "hardclipped":
-        return "results/{date}/read-clipping/hardclipped/{read_type}/{sample}/{sample}.bam"
-    
+        return (
+            "results/{date}/read-clipping/hardclipped/{read_type}/{sample}/{sample}.bam"
+        )
+
     raise NotImplementedError(f"Sorting for {wildcards.stage} not supported.")
 
 

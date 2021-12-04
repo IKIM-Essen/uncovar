@@ -6,7 +6,7 @@
 
 rule samtools_sort:
     input:
-        get_samtools_sort_input
+        get_samtools_sort_input,
     output:
         "results/{date}/read-sorted/{read_type}/{sample}.{stage}.bam",
     params:
@@ -23,16 +23,18 @@ rule bamclipper:
     input:
         bam="results/{date}/read-sorted/{read_type}/{sample}.initial.bam",
         bamidx="results/{date}/read-sorted/{read_type}/{sample}.initial.bam.bai",
-        bed=config["adapters"]["amplicon-primers"]
+        bed=config["adapters"]["amplicon-primers"],
     output:
-        temp("results/{date}/read-clipping/softclipped/{read_type}/{sample}/{sample}.initial.primerclipped.bam"),
+        temp(
+            "results/{date}/read-clipping/softclipped/{read_type}/{sample}/{sample}.initial.primerclipped.bam"
+        ),
     params:
         output_dir=get_output_dir,
         cwd=lambda w: os.getcwd(),
         bed_path=lambda w, input: os.path.join(os.getcwd(), input.bed),
         bam=lambda w, input: os.path.basename(input.bam),
     log:
-        "logs/{date}/bamclipper/{read_type}/{sample}.log"
+        "logs/{date}/bamclipper/{read_type}/{sample}.log",
     conda:
         "../envs/bamclipper.yaml"
     threads: 6
@@ -53,7 +55,7 @@ rule fgbio:
     output:
         "results/{date}/read-clipping/hardclipped/{read_type}/{sample}/{sample}.bam",
     log:
-        "logs/{date}/fgbio/{read_type}/{sample}.log"
+        "logs/{date}/fgbio/{read_type}/{sample}.log",
     conda:
         "../envs/fgbio.yaml"
     shell:
@@ -64,10 +66,10 @@ rule samtools_fastq_pe:
     input:
         "results/{date}/read-sorted/{read_type}/{sample}.hardclipped.bam",
     output:
-        fq1 = "results/{date}/read-clipping/fastq/se/{sample}.1.fastq.gz",
-        fq2 = "results/{date}/read-clipping/fastq/pe/{sample}.2.fastq.gz"
+        fq1="results/{date}/read-clipping/fastq/se/{sample}.1.fastq.gz",
+        fq2="results/{date}/read-clipping/fastq/pe/{sample}.2.fastq.gz",
     log:
-        "logs/{date}/samtools_fastq/se/{sample}.log"
+        "logs/{date}/samtools_fastq/se/{sample}.log",
     conda:
         "../envs/samtools.yaml"
     threads: 4
@@ -79,9 +81,9 @@ rule samtools_fastq_se:
     input:
         "results/{date}/read-sorted/se/{sample}.hardclipped.bam",
     output:
-        "results/{date}/read-clipping/fastq/se/{sample}.fastq"
+        "results/{date}/read-clipping/fastq/se/{sample}.fastq",
     log:
-        "logs/{date}/samtools_fastq/se/{sample}.log"
+        "logs/{date}/samtools_fastq/se/{sample}.log",
     conda:
         "../envs/samtools.yaml"
     threads: 4

@@ -115,7 +115,9 @@ rule samtools_depth:
 rule species_diversity_before_pe:
     input:
         db="resources/minikraken-8GB",
-        reads=expand("results/{{date}}/trimmed/fastp-pe/{{sample}}.{read}.fastq.gz", read=[1, 2]),
+        reads=expand(
+            "results/{{date}}/trimmed/fastp-pe/{{sample}}.{read}.fastq.gz", read=[1, 2]
+        ),
     output:
         classified_reads=temp(
             expand(

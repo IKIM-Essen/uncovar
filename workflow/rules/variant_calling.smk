@@ -24,6 +24,7 @@ rule freebayes:
     wrapper:
         "0.68.0/bio/freebayes"
 
+
 # TODO: check delly single end mode
 rule delly:
     input:

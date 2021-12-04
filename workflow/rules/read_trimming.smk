@@ -37,7 +37,7 @@ rule fastp_se:
     output:
         trimmed="results/{date}/trimmed/fastp-se/{sample}.fastq.gz",
         html="results/{date}/trimmed/fastp-se/{sample}.html",
-        json="results/{date}/trimmed/fastp-se/{sample}.fastp.json"
+        json="results/{date}/trimmed/fastp-se/{sample}.fastp.json",
     params:
         adapters=get_adapters,
         extra="--qualified_quality_phred {} ".format(
@@ -47,7 +47,7 @@ rule fastp_se:
             config["quality-criteria"]["illumina"]["min-length-reads"]
         ),
     log:
-        "results/{date}/trimmed/fastp-se/{sample}.log"
+        "results/{date}/trimmed/fastp-se/{sample}.log",
     threads: 2
     wrapper:
         "0.80.2/bio/fastp"
