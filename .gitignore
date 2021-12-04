@@ -1,6 +1,6 @@
 *
 !.github
-!.github/*
+!.github/**
 !.tests
 !.tests/data
 !config
@@ -10,6 +10,8 @@
 !config/pep
 !config/pep/config.yaml
 !config/pep/samples.csv
+!docs
+!docs/**
 !publication
 !publication/*
 !resources/
@@ -27,6 +29,7 @@
 !.gitignore
 !.snakemake-workflow-catalog.yml
 !LICENSE
+!mkdocs.yml
 !README.md
 !CODE_OF_CONDUCT.md
 !CONTRIBUTING.md
