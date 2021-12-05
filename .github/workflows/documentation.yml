@@ -13,8 +13,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      
+      - name: SetUp Python
+        uses: actions/setup-python@v2
         with:
           python-version: 3.x
-      - run: pip install mkdocs-material
-      - run: mkdocs gh-deploy --force
+
+      - name: Update Changelog
+        run: cat CHANGELOG.md > docs/about/changelog.md
+
+      - name: Update License
+        run: cat LICENSE > docs/about/license.md
+
+      - name: Install Dependenceis
+        run: pip install mkdocs-material
+
+      - name: Publish Docs
+        run: mkdocs gh-deploy --force
