@@ -40,7 +40,7 @@ def get_base_count(pileupcolumn):
 
     # pileupread: representation of a read aligned to a particular position in the reference sequence.
     for pileupread in pileupcolumn.pileups:
-        # TODO: Check pileupread for missing bases
+        # TODO Check pileupread for missing bases
         if not pileupread.is_del and not pileupread.is_refskip:
 
             read_base = pileupread.alignment.query_sequence[pileupread.query_position]
@@ -98,7 +98,7 @@ def mask_sequence(sequence, coverages, base_counts):
     for position, base in enumerate(sequence):
 
         if position not in covered_postions:
-            # TODO: Check why there are postions that are not covered by any reads and are not Ns
+            # TODO Check why there are postions that are not covered by any reads and are not Ns
             # sequence[position] = "N"
 
             print(
