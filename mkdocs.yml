@@ -34,8 +34,8 @@ nav:
         - FAQs: dev-guide/faqs.md
     - About:
         - Team: about/team.md
-        - Release Notes: about/changelog.md
         - License: about/license.md
+        - Release Notes: about/changelog.md
 
 theme:
   name: material
