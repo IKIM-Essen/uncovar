@@ -22,13 +22,13 @@ nav:
         - Overview: dev-guide/index.md
         - How to Contribute: dev-guide/contributing.md
         - Pre-Analysis: dev-guide/pre-analysis.md
-        - Inital Quality Control: dev-guide/final-quality-control.md
+        - Initial Quality Control: dev-guide/final-quality-control.md
         - Sequence Preprocessing: dev-guide/sequence-preprocessing.md
         - Assembly: dev-guide/assembly.md
         - Lineage Calling: dev-guide/lineage-calling.md
-        - Varaint Calling: dev-guide/variant-calling.md
+        - Variant Calling: dev-guide/variant-calling.md
         - Reporting: dev-guide/reporting.md
-        - Final Quality Control: dev-guide/inital-quality-control.md
+        - Final Quality Control: dev-guide/initial-quality-control.md
         - Tests: dev-guide/tests.md
         - CI/CD: dev-guide/ci-cd.md
         - FAQs: dev-guide/faqs.md
@@ -40,18 +40,19 @@ nav:
 theme:
   name: material
   custom_dir: docs/.overrides
+  # logo: assets/img/UnCoVar_logo_1280.png
   palette:
     - media: "(prefers-color-scheme: light)" # light theme
       scheme: default
-      primary: teal
-      accent: green
+      primary: blue grey
+      accent: teal
       toggle:
         icon: material/toggle-switch-off-outline
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)" #   dark theme
       scheme: slate
-      primary: green
-      accent: teal
+      primary: teal
+      accent: green
       toggle:
         icon: material/toggle-switch
         name: Switch to light mode
