@@ -10,7 +10,7 @@ rule samtools_sort:
     output:
         "results/{date}/read-sorted/{read_type}~{sorted_by}/{sample}.{stage}.bam",
     params:
-        extra=lambda wildcards: "-n -m 4G" if wildcards.sorted_by =="name" else "-m 4G",
+        extra=lambda wildcards: "-n -m 4G" if wildcards.sorted_by == "name" else "-m 4G",
         tmp_dir="/tmp/",
     log:
         "logs/{date}/sort-bam/{read_type}~{sorted_by}/{sample}.{stage}.log",
