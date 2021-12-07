@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.4.1](https://www.github.com/IKIM-Essen/uncovar/compare/v0.4.0...v0.4.1) (2021-12-07)
+
+
+### Bug Fixes
+
+* **ci:** adjust commit message of copyright-preamble.yml to fit conventional commits format ([#369](https://www.github.com/IKIM-Essen/uncovar/issues/369)) ([e067895](https://www.github.com/IKIM-Essen/uncovar/commit/e067895adc368414000cba5e4db73edbb3d03b95))
+* GISAID lineage extraction [B.1.1.529 (probably).fasta] ([#372](https://www.github.com/IKIM-Essen/uncovar/issues/372)) ([7750862](https://www.github.com/IKIM-Essen/uncovar/commit/7750862a98890937885164b469b5f487ae70488a))
+
 ## [0.4.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.3.1...v0.4.0) (2021-12-02)
 
 
