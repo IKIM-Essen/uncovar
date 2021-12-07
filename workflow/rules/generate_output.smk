@@ -101,7 +101,7 @@ rule high_quality_genomes_report:
             caption="../report/rki-submission-csv.rst",
         ),
     params:
-        true_if_is_illumina,
+        seq_type=get_seq_type,
     conda:
         "../envs/pysam.yaml"
     log:
@@ -123,12 +123,8 @@ rule overview_table_csv:
         polished_contigs=expand_samples_for_date(
             "results/{{date}}/contigs/masked/polished/{sample}.fasta",
         ),
-        pseudo_contigs=get_for_report_if_illumina_sample(
-            "results/{{date}}/contigs/pseudoassembled/{sample}.fasta",
-        ),
-        consensus_contigs=get_for_report_if_ont_sample(
-            "results/{{date}}/contigs/masked/consensus/{sample}.fasta",
-        ),
+        pseudo_contigs=get_fallbacks_for_report("pseudo"),
+        consensus_contigs=get_fallbacks_for_report("consensus"),
         kraken=get_kraken_output,
         pangolin=expand_samples_for_date(
             "results/{{date}}/tables/strain-calls/{sample}.strains.pangolin.csv",
@@ -177,10 +173,10 @@ rule overview_table_html:
 rule filter_overview:
     input:
         de_novo="results/{date}/tables/filter_summary/masked-assembly.tsv",
-        pseudo=get_if_any_sample_is_illumina(
+        pseudo=get_if_any_pseudo_assembly(
             "results/{date}/tables/filter_summary/pseudo-assembly.tsv"
         ),
-        consensus=get_if_any_sample_is_ont(
+        consensus=get_if_any_consensus_assembly(
             "results/{date}/tables/filter_summary/consensus-assembly.tsv"
         ),
     output:
@@ -265,7 +261,7 @@ rule snakemake_reports:
         "results/{date}/plots/coverage-reference-genome.svg",
         "results/{date}/plots/coverage-assembled-genome.svg",
         lambda wildcards: "results/{date}/plots/primer-clipping-intervals.svg"
-        if len(get_samples_for_date_for_illumina_amplicon(wildcards.date)) > 0
+        if any_sample_is_amplicon(wildcards)
         else [],
         # 4. Assembly
         "results/{date}/filter-overview",

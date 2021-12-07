@@ -8,12 +8,12 @@ rule samtools_sort:
     input:
         get_samtools_sort_input,
     output:
-        "results/{date}/read-sorted/{read_type}/{sample}.{stage}.bam",
+        "results/{date}/read-sorted/{read_type}~{sorted_by}/{sample}.{stage}.bam",
     params:
-        extra="-m 4G",
+        extra=lambda wildcards: "-n -m 4G" if wildcards.sorted_by =="name" else "-m 4G",
         tmp_dir="/tmp/",
     log:
-        "logs/{date}/sort-bam/{read_type}/{sample}.{stage}.log",
+        "logs/{date}/sort-bam/{read_type}~{sorted_by}/{sample}.{stage}.log",
     threads: 8
     wrapper:
         "0.74.0/bio/samtools/sort"
@@ -21,8 +21,8 @@ rule samtools_sort:
 
 rule bamclipper:
     input:
-        bam="results/{date}/read-sorted/{read_type}/{sample}.initial.bam",
-        bamidx="results/{date}/read-sorted/{read_type}/{sample}.initial.bam.bai",
+        bam="results/{date}/read-sorted/{read_type}~position/{sample}.initial.bam",
+        bai="results/{date}/read-sorted/{read_type}~position/{sample}.initial.bam.bai",
         bed=config["adapters"]["amplicon-primers"],
     output:
         temp(
@@ -40,7 +40,7 @@ rule bamclipper:
     threads: 6
     shell:
         "(cp {input.bam} {params.output_dir} &&"
-        " cp {input.bamidx} {params.output_dir} &&"
+        " cp {input.bai} {params.output_dir} &&"
         " cd {params.output_dir} &&"
         " bamclipper.sh -b {params.bam} -p {params.bed_path} -n {threads}) "
         " > {params.cwd}/{log} 2>&1"
@@ -49,6 +49,7 @@ rule bamclipper:
 rule fgbio:
     input:
         bam="results/{date}/read-clipping/softclipped/{read_type}/{sample}/{sample}.initial.primerclipped.bam",
+        bai="results/{date}/read-clipping/softclipped/{read_type}/{sample}/{sample}.initial.primerclipped.bam.bai",
         ref="resources/genomes/{reference}.fasta".format(
             reference=config["adapters"]["amplicon-reference"]
         ),
@@ -64,22 +65,22 @@ rule fgbio:
 
 rule samtools_fastq_pe:
     input:
-        "results/{date}/read-sorted/{read_type}/{sample}.hardclipped.bam",
+        bam="results/{date}/read-sorted/pe~name/{sample}.hardclipped.bam",
     output:
-        fq1="results/{date}/read-clipping/fastq/se/{sample}.1.fastq.gz",
+        fq1="results/{date}/read-clipping/fastq/pe/{sample}.1.fastq.gz",
         fq2="results/{date}/read-clipping/fastq/pe/{sample}.2.fastq.gz",
     log:
-        "logs/{date}/samtools_fastq/se/{sample}.log",
+        "logs/{date}/samtools_fastq/pe/{sample}.log",
     conda:
         "../envs/samtools.yaml"
     threads: 4
     shell:
-        "samtools fastq -@ {threads} {input} -1 {output.fq1} -2 {output.fq2} 2> {log}"
+        "samtools fastq -@ {threads} {input.bam} -1 {output.fq1} -2 {output.fq2} 2> {log}"
 
 
 rule samtools_fastq_se:
     input:
-        "results/{date}/read-sorted/se/{sample}.hardclipped.bam",
+        bam="results/{date}/read-sorted/se~name/{sample}.hardclipped.bam",
     output:
         "results/{date}/read-clipping/fastq/se/{sample}.fastq",
     log:
@@ -88,22 +89,22 @@ rule samtools_fastq_se:
         "../envs/samtools.yaml"
     threads: 4
     shell:
-        "samtools fastq -@ {threads} {input} > {output} 2> {log}"
+        "samtools fastq -@ {threads} {input.bam} > {output} 2> {log}"
 
 
 rule plot_primer_clipping:
     input:
-        unclipped=expand_samples_for_date_amplicon(
-            "results/{{date}}/read-sorted/pe/{sample}.bam"
+        unclipped=lambda wildcards: get_unclipped_samples_for_date(
+            wildcards, stage="initial"
         ),
-        index_unclipped=expand_samples_for_date_amplicon(
-            "results/{{date}}/read-sorted/pe/{sample}.bam.bai"
+        index_unclipped=lambda wildcards: get_unclipped_samples_for_date(
+            wildcards, stage="initial", suffix=".bai"
         ),
-        clipped=expand_samples_for_date_amplicon(
-            "results/{{date}}/read-sorted/pe/{sample}.primerclipped.hard.sorted.bam"
+        clipped=lambda wildcards: get_unclipped_samples_for_date(
+            wildcards, stage="hardclipped"
         ),
-        index_clipped=expand_samples_for_date_amplicon(
-            "results/{{date}}/read-sorted/pe/{sample}.primerclipped.hard.sorted.bam.bai"
+        index_clipped=lambda wildcards: get_unclipped_samples_for_date(
+            wildcards, stage="hardclipped", suffix=".bai"
         ),
     output:
         plot=report(

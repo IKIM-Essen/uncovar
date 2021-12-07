@@ -25,7 +25,7 @@ rule freebayes:
         "0.68.0/bio/freebayes"
 
 
-# TODO: check delly single end mode
+# TODO check delly single end mode
 rule delly:
     input:
         ref=get_reference(),
@@ -85,6 +85,9 @@ rule longshot:
         "(longshot -P 0 -F -A --no_haps --bam {input.bam} --ref {input.ref} --out {output} &&"
         " sed -i '2 i\##contig=<ID={params.reference_name}>' {output})"
         " 2> {log}"
+
+
+# TODO adjust for ion
 
 
 rule vcf_2_bcf:
