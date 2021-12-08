@@ -479,7 +479,7 @@ def get_reads_after_qc(wildcards, read="both"):
         )
 
         ion_torrent_pattern = expand(
-            "results/{date}/nonhuman-reads/fastq/se/{sample}.fastq.gz", **wildcards
+            "results/{date}/nonhuman-reads/se/{sample}.fastq.gz", **wildcards
         )
 
         pattern = get_pattern_by_technology(
