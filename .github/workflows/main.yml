@@ -246,11 +246,20 @@ jobs:
       #       ${{ runner.os }}-sars-cov-benchmark-dependencies-${{ steps.get-date.outputs.date }}-
       #       ${{ runner.os }}-sars-cov-benchmark-dependencies-
 
-      - name: Add sample sheet
-        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'all' || matrix.rule == 'compare_assemblers')
+      - name: Add empty sample sheet
+        if: steps.test-data.outputs.cache-hit != true && matrix.rule != 'compare_assemblers')
         run: |
           mkdir -p .tests/data
           echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
+
+    - name: Prepare test data for assembler comparison
+        if: steps.test-data.outputs.cache-hit != true && matrix.rule == 'compare_assemblers')
+        run: |
+          mkdir -p .tests/data
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
+          echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
+          echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,0,illumina >> .tests/config/pep/samples.csv
 
       - name: Use smaller reference files for testing
         if: steps.test-resources.outputs.cache-hit != true
