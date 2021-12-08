@@ -1015,6 +1015,7 @@ def get_unclipped_samples_for_date(wildcards, stage, suffix=""):
 
 def get_fallbacks_for_report(fallback_type):
     """Returns path to the fallback sequences. The "main.fasta" is returned as an indicator that no fallback sequences is created."""
+
     def inner(wildcards):
         samples = get_samples_for_date(wildcards.date)
 
@@ -1348,6 +1349,7 @@ def get_varrange(wildcards):
 
 def get_if_any_consensus_assembly(path):
     """Returns the samples for which consensus-assemblies should be created."""
+
     def inner(wildcards):
         if any(
             has_consensus_assembly(None, sample)
@@ -1361,6 +1363,7 @@ def get_if_any_consensus_assembly(path):
 
 def get_if_any_pseudo_assembly(path):
     """Returns the samples for which pseudo-assemblies should be created."""
+
     def inner(wildcards):
         if any(
             has_pseudo_assembly(None, sample)
