@@ -486,7 +486,7 @@ def get_reads_after_qc(wildcards, read="both"):
             wildcards,
             illumina_pattern=illumina_pattern,
             ont_pattern=ont_pattern,
-            ion_torrent_pattern=ion_torrent_pattern
+            ion_torrent_pattern=ion_torrent_pattern,
         )
 
     if not pattern:
