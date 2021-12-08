@@ -426,14 +426,14 @@ def get_reads(wildcards):
 
 
 def get_non_human_reads(wildcards):
-    return get_list_of_patters_by_technology(
+    return get_pattern_by_technology(
         wildcards,
         illumina_pattern=expand(
-            "results/{{{{date}}}}/nonhuman-reads/pe/{{sample}}.{read}.fastq.gz",
+            "results/{{date}}/nonhuman-reads/pe/{{sample}}.{read}.fastq.gz",
             read=[1, 2],
         ),
-        ont_pattern="results/{{date}}/nonhuman-reads/se/{sample}.fastq.gz",
-        ion_torrent_pattern="results/{{date}}/nonhuman-reads/se/{sample}.fastq.gz",
+        ont_pattern="results/{date}/nonhuman-reads/se/{sample}.fastq.gz",
+        ion_torrent_pattern="results/{date}/nonhuman-reads/se/{sample}.fastq.gz",
     )
 
 
@@ -578,11 +578,11 @@ def get_filter_odds_input(wildcards):
         # If reference is not main, we are polishing an assembly.
         # Here, there is no need to structural variants or annotation based filtering.
         # Hence we directly take the output of varlociraptor call on the small variants.
-        return get_list_of_patters_by_technology(
+        return get_pattern_by_technology(
             wildcards,
-            illumina_pattern="results/{{date}}/calls/ref~{{reference}}/{sample}.small.bcf",
-            ont_pattern="results/{{date}}/calls/ref~{{reference}}/{sample}.bcf",
-            ion_torrent_pattern="results/{{date}}/calls/ref~{{reference}}/{sample}.small.bcf",
+            illumina_pattern="results/{date}/calls/ref~{reference}/{sample}.small.bcf",
+            ont_pattern="results/{date}/calls/ref~{reference}/{sample}.bcf",
+            ion_torrent_pattern="results/{date}/calls/ref~{reference}/{sample}.small.bcf",
         )
 
 
@@ -795,14 +795,14 @@ def get_recal_input(wildcards):
 def get_depth_input(wildcards):
     # use clipped reads
     if is_amplicon_data(wildcards.sample):
-        return get_list_of_patters_by_technology(
+        return get_pattern_by_technology(
             wildcards,
-            illumina_pattern="results/{{date}}/read-sorted/pe~position/{sample}.hardclipped.bam",
+            illumina_pattern="results/{date}/read-sorted/pe~position/{sample}.hardclipped.bam",
             ont_pattern=expand(
-                "results/{{{{date}}}}/mapped/ref~{ref}/{{sample}}.bam",
+                "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam",
                 ref=config["adapters"]["amplicon-reference"],
             ),
-            ion_torrent_pattern="results/{{date}}/read-sorted/se~position/{sample}.hardclipped.bam",
+            ion_torrent_pattern="results/{date}/read-sorted/se~position/{sample}.hardclipped.bam",
         )
 
     # use trimmed reads
@@ -815,13 +815,13 @@ def get_adapters(wildcards):
 
     # TODO Think about adapter handling. Related #356
     if is_amplicon_data(wildcards.sample):
-        patterns = get_list_of_patters_by_technology(
+        patterns = get_pattern_by_technology(
             wildcards,
             illumina_pattern=config["adapters"]["illumina-amplicon"],
             ion_torrent_pattern=config["adapters"]["illumina-amplicon"],
         )
     else:
-        patterns = get_list_of_patters_by_technology(
+        patterns = get_pattern_by_technology(
             wildcards,
             illumina_pattern=config["adapters"]["illumina-shotgun"],
         )
@@ -839,13 +839,13 @@ def get_final_assemblies(wildcards):
             sample=get_samples_for_date(wildcards.date),
         )
     elif wildcards.assembly_type == "pseudo-assembly":
-        return get_list_of_patters_by_technology(
+        return get_list_of_expanded_patters_by_technology(
             wildcards,
             illumina_pattern="results/{{date}}/contigs/pseudoassembled/{sample}.fasta",
             ion_torrent_pattern="results/{{date}}/contigs/pseudoassembled/{sample}.fasta",
         )
     elif wildcards.assembly_type == "consensus-assembly":
-        return get_list_of_patters_by_technology(
+        return get_list_of_expanded_patters_by_technology(
             wildcards,
             ont_pattern="results/{{date}}/contigs/masked/consensus/{sample}.fasta",
         )
@@ -858,13 +858,13 @@ def get_final_assemblies_identity(wildcards):
             sample=get_samples_for_date(wildcards.date),
         )
     elif wildcards.assembly_type == "pseudo-assembly":
-        return get_list_of_patters_by_technology(
+        return get_list_of_expanded_patters_by_technology(
             wildcards,
             illumina_pattern="results/{{date}}/quast/pseudoassembly/{sample}/report.tsv",
             ion_torrent_pattern="results/{{date}}/quast/pseudoassembly/{sample}/report.tsv",
         )
     elif wildcards.assembly_type == "consensus-assembly":
-        return get_list_of_patters_by_technology(
+        return get_list_of_expanded_patters_by_technology(
             wildcards,
             ont_pattern="results/{{date}}/quast/masked/consensus/{sample}/report.tsv",
         )
@@ -1001,7 +1001,7 @@ def expand_samples_for_date(paths, **kwargs):
 
 
 def get_unclipped_samples_for_date(wildcards, stage, suffix=""):
-    return get_list_of_patters_by_technology(
+    return get_list_of_expanded_patters_by_technology(
         wildcards,
         return_only_amplicon_samples=True,
         illumina_pattern=f"results/{{{{date}}}}/read-sorted/pe~position/{{sample}}.{stage}.bam{suffix}",
@@ -1079,7 +1079,7 @@ def format_patterns(input_patterns, sample, formated_patterns):
     return formated_patterns
 
 
-def get_list_of_patters_by_technology(
+def get_list_of_expanded_patters_by_technology(
     wildcards,
     illumina_pattern=None,
     ont_pattern=None,
@@ -1123,7 +1123,7 @@ def get_list_of_patters_by_technology(
 
 
 def get_raw_reads_counts(wildcards):
-    return get_list_of_patters_by_technology(
+    return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern="results/{{date}}/trimmed/fastp-pe/{sample}.fastp.json",
         ont_pattern="results/{{date}}/tables/fastq-read-counts/raw~{sample}.txt",
@@ -1132,7 +1132,7 @@ def get_raw_reads_counts(wildcards):
 
 
 def get_trimmed_reads_counts(wildcards):
-    return get_list_of_patters_by_technology(
+    return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern="results/{{date}}/trimmed/fastp-pe/{sample}.fastp.json",
         ont_pattern="results/{{date}}/tables/fastq-read-counts/trimmed~{sample}.txt",
@@ -1142,7 +1142,7 @@ def get_trimmed_reads_counts(wildcards):
 
 def get_fastp_results(wildcards):
     # fastp is only used on Illumina and Ion Torrent data
-    return get_list_of_patters_by_technology(
+    return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern="results/{{date}}/trimmed/fastp-pe/{sample}.fastp.json",
         ion_torrent_pattern="results/{{date}}/trimmed/fastp-se/{sample}.fastp.json",
@@ -1200,7 +1200,7 @@ def get_artic_primer(wildcards):
 
 
 def get_trimmed_reads(wildcards):
-    return get_list_of_patters_by_technology(
+    return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern=expand(
             "results/{{{{date}}}}/trimmed/fastp-pe/{{sample}}.{read}.fastq.gz",
@@ -1212,7 +1212,7 @@ def get_trimmed_reads(wildcards):
 
 
 def get_kraken_output(wildcards):
-    return get_list_of_patters_by_technology(
+    return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern="results/{date}/species-diversity/pe/{{sample}}/{{sample}}.uncleaned.kreport2".format(
             **wildcards
@@ -1227,7 +1227,7 @@ def get_kraken_output(wildcards):
 
 
 def get_kraken_output_after_filtering(wildcards):
-    return get_list_of_patters_by_technology(
+    return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern="results/{date}/species-diversity-nonhuman/pe/{{sample}}/{{sample}}.cleaned.kreport2".format(
             **wildcards
@@ -1305,20 +1305,20 @@ def get_reads_by_stage(wildcards):
 
 
 def get_polished_sequence(wildcards):
-    return get_list_of_patters_by_technology(
+    return get_pattern_by_technology(
         wildcards,
-        illumina_pattern="results/{{date}}/polishing/bcftools-illumina/{sample}.fasta",
-        ont_pattern="results/{{date}}/polishing/medaka/{sample}/{sample}.fasta",
-        ion_torrent_pattern="results/{{date}}/polishing/bcftools-illumina/{sample}.fasta",
+        illumina_pattern="results/{date}/polishing/bcftools-illumina/{sample}.fasta",
+        ont_pattern="results/{date}/polishing/medaka/{sample}/{sample}.fasta",
+        ion_torrent_pattern="results/{date}/polishing/bcftools-illumina/{sample}.fasta",
     )
 
 
 def get_fallback_sequence(wildcards):
-    return get_list_of_patters_by_technology(
+    return get_pattern_by_technology(
         wildcards,
-        illumina_pattern="results/{{date}}/contigs/pseudoassembled/{sample}.fasta",
-        ont_pattern="results/{{date}}/contigs/consensus/{sample}.fasta",
-        ion_torrent_pattern="results/{{date}}/contigs/pseudoassembled/{sample}.fasta",
+        illumina_pattern="results/{date}/contigs/pseudoassembled/{sample}.fasta",
+        ont_pattern="results/{date}/contigs/consensus/{sample}.fasta",
+        ion_torrent_pattern="results/{date}/contigs/pseudoassembled/{sample}.fasta",
     )
 
 
@@ -1357,7 +1357,7 @@ def get_if_any_pseudo_assembly(path):
 
 def get_seq_type(wildcards):
     # see: https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/DESH/Anleitung-Bereitstellung-Sequenzdaten.pdf?__blob=publicationFile
-    return get_list_of_patters_by_technology(
+    return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern="ILLUMINA",
         ont_pattern="OXFORD_NANOPORE",
