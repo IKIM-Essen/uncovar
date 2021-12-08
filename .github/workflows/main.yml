@@ -60,6 +60,7 @@ jobs:
       matrix:
         rule: [all, all -npr]
         technology: [all, illumina, ont, ion]
+        amplicon: [0, 1]
     steps:
       - uses: actions/checkout@v2
 
@@ -72,9 +73,9 @@ jobs:
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz 
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR574/003/ERR5745913/ERR5745913.fastq.gz > .tests/data/ion_reads.fastq.gz 
           echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
-          echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,0,illumina >> .tests/config/pep/samples.csv
-          echo ont-test,data/ont_reads.fastq.gz,,2022-01-01,1,ont >> .tests/config/pep/samples.csv
-          echo ion-test,data/ion_reads.fastq.gz,,2022-01-01,1,ion >> .tests/config/pep/samples.csv
+          echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,${{ matrix.amplicon }},illumina >> .tests/config/pep/samples.csv
+          echo ont-test,data/ont_reads.fastq.gz,,2022-01-01,${{ matrix.amplicon }},ont >> .tests/config/pep/samples.csv
+          echo ion-test,data/ion_reads.fastq.gz,,2022-01-01,${{ matrix.amplicon }},ion >> .tests/config/pep/samples.csv
 
       - name: Prepare test data for Illumina
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'illumina' || matrix.rule == 'compare_assemblers')
@@ -83,7 +84,7 @@ jobs:
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
           echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
-          echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,0,illumina >> .tests/config/pep/samples.csv
+          echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,${{ matrix.amplicon }},illumina >> .tests/config/pep/samples.csv
 
       - name: Prepare test data for Oxford Nanopore
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ont' || matrix.rule == 'compare_assemblers')
@@ -91,7 +92,7 @@ jobs:
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz 
           echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
-          echo ont-test,data/ont_reads.fastq.gz,2022-01-01,1,ont >> .tests/config/pep/samples.csv
+          echo ont-test,data/ont_reads.fastq.gz,2022-01-01,${{ matrix.amplicon }},ont >> .tests/config/pep/samples.csv
 
       - name: Prepare test data for Ion Torrent
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ion' || matrix.rule == 'compare_assemblers')
@@ -117,7 +118,7 @@ jobs:
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314997.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.1.7.fasta
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314998.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.351.fasta
 
-      - name: Test rule ${{ matrix.rule }} with technology ${{ matrix.technology }}
+      - name: Test rule ${{ matrix.rule }} with technology ${{ matrix.technology }} with amplicon flag ${{ matrix.amplicon }}
         uses: snakemake/snakemake-github-action@v1.24.0
         with:
           directory: .tests
@@ -136,7 +137,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: matrix.technology == 'all' && matrix.rule != 'all -npr'
         with:
-          name: report-rule-${{ matrix.rule }}-technology-${{ matrix.technology }}
+          name: report-rule-${{ matrix.rule }}-technology-${{ matrix.technology }}-amplicon-${{ matrix.amplicon }}
           path: .tests/report.zip
           
       - name: Upload logs
@@ -287,11 +288,11 @@ jobs:
           snakefile: workflow/Snakefile
           args: "${{ matrix.rule }} --report report.zip"
 
-      - name: Upload report
-        uses: actions/upload-artifact@v2
-        with:
-          name: report-rule-${{ matrix.rule }}
-          path: .tests/report.zip
+      # - name: Upload report
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: report-rule-${{ matrix.rule }}
+      #     path: .tests/report.zip
           
       - name: Upload logs
         uses: actions/upload-artifact@v2
