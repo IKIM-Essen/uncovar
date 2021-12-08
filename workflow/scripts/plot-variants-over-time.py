@@ -87,7 +87,7 @@ def plot_variants_over_time(sm_output, sm_output_table):
         threshold = len(calls) / 10
         calls.loc[
             calls["total occurrence"] < threshold, "alteration"
-        ] = "other (< low occ.)"
+        ] = "other (<"+str(threshold)+" occ.)"
 
     calls.rename(columns={"alteration": "Alteration", "date": "Date"}, inplace=True)
 
