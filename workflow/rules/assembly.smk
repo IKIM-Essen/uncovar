@@ -23,7 +23,7 @@ rule assembly_megahit_pe:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        contigs=temp(
+        temp(
             "results/{date}/assembly/{sample}/megahit-{preset}-pe/{sample}.contigs.fasta"
         ),
     wildcard_constraints:
@@ -38,7 +38,7 @@ rule assembly_megahit_pe:
         "../envs/megahit.yaml"
     shell:
         "(megahit -1 {input.fastq1} -2 {input.fastq2} {params.preset} --out-dir {params.outdir} -f && "
-        " mv {params.outdir}/final.contigs.fa {output.contigs} )"
+        " mv {params.outdir}/final.contigs.fa {output})"
         " > {log} 2>&1"
 
 
@@ -61,7 +61,7 @@ rule assembly_megahit_se:
         "../envs/megahit.yaml"
     shell:
         "(megahit -r {input} {params.preset} --out-dir {params.outdir} -f && "
-        " mv {params.outdir}/final.contigs.fa {output.contigs} )"
+        " mv {params.outdir}/final.contigs.fa {output})"
         " > {log} 2>&1"
 
 
@@ -71,7 +71,7 @@ rule assembly_spades_pe:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        contigs=temp(
+        temp(
             "results/{date}/assembly/{sample}/{spadesflavor}-pe/{sample}.contigs.fasta"
         ),
     wildcard_constraints:
@@ -85,7 +85,7 @@ rule assembly_spades_pe:
     threads: 8
     shell:
         "({wildcards.spadesflavor}.py -1 {input.fastq1} -2 {input.fastq2} -o {params.outdir} -t {threads} && "
-        " if [ -f {params.outdir}/raw_contigs.fasta ]; then mv {params.outdir}/raw_contigs.fasta {output.contigs}; else mv {params.outdir}/contigs.fasta {output.contigs}; fi )"
+        " if [ -f {params.outdir}/raw_contigs.fasta ]; then mv {params.outdir}/raw_contigs.fasta {output}; else mv {params.outdir}/contigs.fasta {output}; fi )"
         " > {log} 2>&1"
 
 
