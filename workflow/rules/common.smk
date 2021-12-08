@@ -1192,10 +1192,10 @@ def get_vep_args(wildcards, input):
 
 def get_samples_for_assembler_comparison(paths):
     return zip_expand(
-        paths,
-        get_illumina_samples_dates(),
-        get_illumina_samples(),
-        config["assemblers_for_comparison"],
+        expand_string=paths,
+        zip_wildcard_1=get_illumina_samples_dates(),
+        zip_wildcard_2=get_illumina_samples(),
+        expand_wildcard=config["assemblers_for_comparison"],
     )
 
 
