@@ -62,14 +62,21 @@ jobs:
       matrix:
         rule: [all, all -npr]
         technology: [all, illumina, ont, ion]
-        amplicon: [shotgun, amplicon]
+        seq_method: [shotgun, amplicon]
     steps:
       - uses: actions/checkout@v2
+
+      - name: Cache conda dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/.snakemake/conda
+          key: technology-${{ runner.os }}-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
 
       - name: Prepare test data for all technologies
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'all' || matrix.rule == 'compare_assemblers')
         run: |
-          if [[ "${{ matrix.amplicon }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
+          if [[ "${{ matrix.seq_method }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
@@ -83,7 +90,7 @@ jobs:
       - name: Prepare test data for Illumina
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'illumina' || matrix.rule == 'compare_assemblers')
         run: |
-          if [[ "${{ matrix.amplicon }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
+          if [[ "${{ matrix.seq_method }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
@@ -93,7 +100,7 @@ jobs:
       - name: Prepare test data for Oxford Nanopore
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ont' || matrix.rule == 'compare_assemblers')
         run: |
-          if [[ "${{ matrix.amplicon }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
+          if [[ "${{ matrix.seq_method }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz 
           echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
@@ -102,7 +109,7 @@ jobs:
       - name: Prepare test data for Ion Torrent
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ion' || matrix.rule == 'compare_assemblers')
         run: |
-          if [[ "${{ matrix.amplicon }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
+          if [[ "${{ matrix.seq_method }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
           mkdir -p .tests/data
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR574/003/ERR5745913/ERR5745913.fastq.gz > .tests/data/ion_reads.fastq.gz 
           echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
@@ -124,7 +131,7 @@ jobs:
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314997.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.1.7.fasta
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314998.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.351.fasta
 
-      - name: Test rule ${{ matrix.rule }} on ${{ matrix.technology }} ${{ matrix.amplicon }} data
+      - name: Test rule ${{ matrix.rule }} on ${{ matrix.technology }} ${{ matrix.seq_method }} data
         uses: snakemake/snakemake-github-action@v1.24.0
         with:
           directory: .tests
@@ -143,7 +150,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: matrix.technology == 'all' && matrix.rule != 'all -npr'
         with:
-          name: report-rule-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.amplicon }}
+          name: report-rule-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}
           path: .tests/report.zip
           
       - name: Upload logs
@@ -171,6 +178,14 @@ jobs:
         rule: [benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2, benchmark_reads, compare_assemblers]
     steps:
       - uses: actions/checkout@v2
+
+      - name: Cache conda dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            .tests/.snakemake/conda
+          key: benchmarks-${{ runner.os }}-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+
 
       # TODO caches are currently completely misleading, as they lead to certain files becoming present on disk which might
       # then hide failures that would otherwise be seen.
