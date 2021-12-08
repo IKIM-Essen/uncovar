@@ -466,6 +466,7 @@ def get_reads_after_qc(wildcards, read="both"):
             ont_pattern=ont_pattern,
             ion_torrent_pattern=ion_torrent_pattern,
         )
+    # shotgun reads
     else:
         illumina_pattern = expand(
             "results/{date}/nonhuman-reads/pe/{sample}.{read}.fastq.gz",
@@ -473,9 +474,19 @@ def get_reads_after_qc(wildcards, read="both"):
             **wildcards,
         )
 
+        ont_pattern = expand(
+            "results/{date}/nonhuman-reads/se/{sample}.fastq.gz", **wildcards
+        )
+
+        ion_torrent_pattern = expand(
+            "results/{date}/nonhuman-reads/fastq/se/{sample}.fastq", **wildcards
+        )
+
         pattern = get_pattern_by_technology(
             wildcards,
             illumina_pattern=illumina_pattern,
+            ont_pattern=ont_pattern,
+            ion_torrent_pattern=ion_torrent_pattern
         )
 
     if not pattern:
@@ -514,6 +525,8 @@ def return_assembler(sample):
             None,
             sample=sample,
             illumina_pattern=config["assembly"]["shotgun"],
+            ont_pattern=config["assembly"]["shotgun"],
+            ion_torrent_pattern=config["assembly"]["shotgun"],
         )
 
     if pattern:
