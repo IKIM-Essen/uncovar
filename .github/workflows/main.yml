@@ -58,7 +58,8 @@ jobs:
       - Linting
     strategy:
       matrix:
-        rule: [all, all -npr, benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2, compare_assemblers, benchmark_reads]
+        rule: [all, all -npr, benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2, benchmark_reads, compare_assemblers]
+        technology: [all, illumina, ont, ion]
     steps:
       - uses: actions/checkout@v2
 
@@ -143,14 +144,44 @@ jobs:
       #       ${{ runner.os }}-sars-cov-benchmark-dependencies-${{ steps.get-date.outputs.date }}-
       #       ${{ runner.os }}-sars-cov-benchmark-dependencies-
 
-      - name: Download test data
-        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') || matrix.rule == 'compare_assemblers')
+      - name: Prepare test data for all technologies
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.rule == 'all' || matrix.rule == 'compare_assemblers')
         run: |
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
-          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz
-      
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz 
+          curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR574/003/ERR5745913/ERR5745913.fastq.gz > .tests/data/ion_reads.fastq.gz 
+          echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
+          echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,0,illumina >> .tests/config/pep/samples.csv
+          echo ont-test,data/ont_reads.fastq.gz,,2022-01-01,1,ont >> .tests/config/pep/samples.csv
+          echo ion-test,data/ion_reads.fastq.gz,,2022-01-01,1,ion >> .tests/config/pep/samples.csv
+
+      - name: Prepare test data for Illumina
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.rule == 'illumina' || matrix.rule == 'compare_assemblers')
+        run: |
+          mkdir -p .tests/data
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
+          echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
+          echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,0,illumina >> .tests/config/pep/samples.csv
+
+      - name: Prepare test data for Oxford Nanopore
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.rule == 'ont' || matrix.rule == 'compare_assemblers')
+        run: |
+          mkdir -p .tests/data
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz 
+          echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
+          echo ont-test,data/ont_reads.fastq.gz,2022-01-01,1,ont >> .tests/config/pep/samples.csv
+
+      - name: Prepare test data for Ion Torrent
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.rule == 'ion' || matrix.rule == 'compare_assemblers')
+        run: |
+          mkdir -p .tests/data
+          curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR574/003/ERR5745913/ERR5745913.fastq.gz > .tests/data/ion_reads.fastq.gz 
+          echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
+          echo ion-test,data/ion_reads.fastq.gz,2022-01-01,1,ion >> .tests/config/pep/samples.csv
+
       - name: Use smaller reference files for testing
         if: steps.test-resources.outputs.cache-hit != true
         run: |
@@ -167,8 +198,7 @@ jobs:
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314997.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.1.7.fasta
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314998.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.351.fasta
 
-
-      - name: Test rule ${{ matrix.rule }}
+      - name: Test rule ${{ matrix.rule }} with technology ${{ matrix.technology }}
         uses: snakemake/snakemake-github-action@v1.24.0
         with:
           directory: .tests
@@ -185,12 +215,14 @@ jobs:
 
       - name: Upload report
         uses: actions/upload-artifact@v2
+        if: matrix.technology == 'all'
         with:
           name: report-${{ matrix.rule }}
           path: .tests/report.zip
           
       - name: Upload logs
         uses: actions/upload-artifact@v2
+        if: matrix.technology == 'all'
         with:
           name: log-${{ matrix.rule }}
           path: .tests/logs/
@@ -224,7 +256,7 @@ jobs:
           cat .tests/results/benchmarking/assembly/pseudoassembly.csv
           if [[ $(tail -1 .tests/results/benchmarking/assembly/pseudoassembly.csv) < 0.95 ]]
           then
-            echo "Pseudoassembly bechmarking failed. There is at least one assembly where the contigs do not cover 95% of the original sequence (see above)."
+            echo "Pseudoassembly benchmarking failed. There is at least one assembly where the contigs do not cover 95% of the original sequence (see above)."
             exit 1
           else
             echo "Pseudoassembly was successful."
@@ -236,7 +268,7 @@ jobs:
           cat .tests/results/benchmarking/assembly/assembly.csv
           if [[ $(tail -1 .tests/results/benchmarking/assembly/assembly.csv) < 0.8 ]]
           then
-            echo "Assembly bechmarking failed. There is at least one assembly where the contigs do not cover 80% of the original sequence (see above)."
+            echo "Assembly benchmarking failed. There is at least one assembly where the contigs do not cover 80% of the original sequence (see above)."
             exit 1
           else
             echo "Assembly was successful."
