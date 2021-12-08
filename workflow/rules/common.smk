@@ -1002,7 +1002,7 @@ def expand_samples_for_date(paths, **kwargs):
     return expand_samples_by_func(paths, get_samples_for_date, **kwargs)
 
 
-def get_unclipped_samples_for_date(wildcards, stage, suffix=""):
+def get_input_plotting_primer_clipping(wildcards, stage, suffix=""):
     """Returns list of unclipped bam files for a date. Used for visualizing the primer clipping."""
     return get_list_of_expanded_patters_by_technology(
         wildcards,
@@ -1131,7 +1131,7 @@ def get_list_of_expanded_patters_by_technology(
 
 
 def get_raw_reads_counts(wildcards):
-    """Get paths of files to be parsed by the overview table rule for the raw reads counts."""
+    """Returns paths of files to be parsed by the overview table rule for the raw reads counts."""
     return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern="results/{{date}}/trimmed/fastp-pe/{sample}.fastp.json",
@@ -1141,7 +1141,7 @@ def get_raw_reads_counts(wildcards):
 
 
 def get_trimmed_reads_counts(wildcards):
-    """Get paths of files to be parsed by the overview table rule for the trimmed reads counts."""
+    """Return paths of files to be parsed by the overview table rule for the trimmed reads counts."""
     return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern="results/{{date}}/trimmed/fastp-pe/{sample}.fastp.json",
@@ -1151,7 +1151,7 @@ def get_trimmed_reads_counts(wildcards):
 
 
 def get_fastp_results(wildcards):
-    """Get paths of files to aggregate the fastp results for the multiqc rule."""
+    """Returns paths of files to aggregate the fastp results for the multiqc rule."""
     # fastp is only used on Illumina and Ion Torrent data
     return get_list_of_expanded_patters_by_technology(
         wildcards,
@@ -1211,7 +1211,7 @@ def get_artic_primer(wildcards):
 
 
 def get_trimmed_reads(wildcards):
-    """Get paths of files of the trimmed reads for parsing by kraken."""
+    """Returns paths of files of the trimmed reads for parsing by kraken."""
     return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern=expand(

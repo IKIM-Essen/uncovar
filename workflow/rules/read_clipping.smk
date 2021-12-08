@@ -94,16 +94,16 @@ rule samtools_fastq_se:
 
 rule plot_primer_clipping:
     input:
-        unclipped=lambda wildcards: get_unclipped_samples_for_date(
+        unclipped=lambda wildcards: get_input_plotting_primer_clipping(
             wildcards, stage="initial"
         ),
-        index_unclipped=lambda wildcards: get_unclipped_samples_for_date(
+        index_unclipped=lambda wildcards: get_input_plotting_primer_clipping(
             wildcards, stage="initial", suffix=".bai"
         ),
-        clipped=lambda wildcards: get_unclipped_samples_for_date(
+        clipped=lambda wildcards: get_input_plotting_primer_clipping(
             wildcards, stage="hardclipped"
         ),
-        index_clipped=lambda wildcards: get_unclipped_samples_for_date(
+        index_clipped=lambda wildcards: get_input_plotting_primer_clipping(
             wildcards, stage="hardclipped", suffix=".bai"
         ),
     output:
