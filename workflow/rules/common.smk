@@ -1058,6 +1058,8 @@ wildcard_constraints:
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
     ),
     varrange="structural|small",
+
+
 def get_artic_primer(wildcards):
     # TODO: add more _adapters.py (not preferred) or
     # add a script to generate them from a link to a bed file.
