@@ -246,13 +246,13 @@ jobs:
       #       ${{ runner.os }}-sars-cov-benchmark-dependencies-${{ steps.get-date.outputs.date }}-
       #       ${{ runner.os }}-sars-cov-benchmark-dependencies-
 
-    - name: Add empty sample sheet
+      - name: Add empty sample sheet
         if: steps.test-data.outputs.cache-hit != true && matrix.rule != 'compare_assemblers')
         run: |
           mkdir -p .tests/data
           echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
 
-    - name: Prepare test data for assembler comparison
+      - name: Prepare test data for assembler comparison
         if: steps.test-data.outputs.cache-hit != true && matrix.rule == 'compare_assemblers')
         run: |
           mkdir -p .tests/data
