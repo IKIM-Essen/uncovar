@@ -839,16 +839,20 @@ def get_depth_input(wildcards):
 
 def get_adapters(wildcards):
     # TODO Think about adapter handling. Related #356
+    # Remove the temporary patters later
     if is_amplicon_data(wildcards.sample):
         patterns = get_pattern_by_technology(
             wildcards,
             illumina_pattern=config["adapters"]["illumina-amplicon"],
+            ont_pattern=config["adapters"]["illumina-amplicon"],
             ion_torrent_pattern=config["adapters"]["illumina-amplicon"],
         )
     else:
         patterns = get_pattern_by_technology(
             wildcards,
             illumina_pattern=config["adapters"]["illumina-shotgun"],
+            ont_pattern=config["adapters"]["illumina-shotgun"],
+            ion_torrent_pattern=config["adapters"]["illumina-shotgun"],
         )
 
     if patterns is not None:
@@ -959,7 +963,9 @@ def get_assemblies_for_submission(wildcards, agg_type):
             unqiue_samples.update(consensus_samples)
 
         if len(unqiue_samples) == 0:
-            raise NotImplementedError("No sequences are passing the quality filter.")
+            raise NotImplementedError(
+                f"No sequences are passing the quality filter for {wildcards.date}."
+            )
 
         for sample in unqiue_samples:
             if sample in masked_samples:
