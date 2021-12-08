@@ -85,9 +85,9 @@ def plot_variants_over_time(sm_output, sm_output_table):
 
         # mask low occurrences
         threshold = len(calls) / 10
-        calls.loc[
-            calls["total occurrence"] < threshold, "alteration"
-        ] = "other (<"+str(threshold)+" occ.)"
+        calls.loc[calls["total occurrence"] < threshold, "alteration"] = (
+            "other (<" + str(threshold) + " occ.)"
+        )
 
     calls.rename(columns={"alteration": "Alteration", "date": "Date"}, inplace=True)
 
