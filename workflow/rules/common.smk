@@ -127,24 +127,28 @@ def is_illumina(wildcards, sample=None):
 
 
 def is_ion_torrent(wildcards, sample=None):
+    """Returns if the sample was sequenced with the Ion Torrent platform."""
     if sample is None:
         return get_technology(wildcards) == ION_TORRENT
     return get_technology(None, sample) == ION_TORRENT
 
 
 def has_pseudo_assembly(wildcards, sample=None):
+    """Returns if a pseudo-assembly should be created for the sample."""
     if sample is None:
         return is_illumina(wildcards) or is_ion_torrent(wildcards)
     return is_illumina(None, sample) or is_ion_torrent(None, sample)
 
 
 def has_consensus_assembly(wildcards, sample=None):
+    """Returns if a consensus-assembly should be created for the sample."""
     if sample is None:
         return is_ont(wildcards)
     return is_ont(None, sample)
 
 
 def is_single_end(wildcards, sample=None):
+    """Returns if the sample was sequenced with single end technology."""
     if sample is None:
         return is_ont(wildcards) or is_ion_torrent(wildcards)
     return is_ont(None, sample) or is_ion_torrent(None, sample)
@@ -498,7 +502,6 @@ def get_min_coverage(wildcards):
 
 
 def return_assembler(sample):
-
     pattern = []
     if is_amplicon_data(sample):
         pattern = get_pattern_by_technology(
@@ -526,7 +529,6 @@ def return_assembler(sample):
 
 
 def get_contigs(wildcards, opt_sample=None):
-
     if "sample" in wildcards.keys():
         return "results/{{date}}/assembly/{{sample}}/{assembler}/{{sample}}.contigs.fasta".format(
             assembler=return_assembler(wildcards.sample)
@@ -762,6 +764,7 @@ def is_amplicon_data(sample):
 
 
 def any_sample_is_amplicon(wildcards):
+    """Returns if any sample of the date is based on amplicon data."""
     return any(
         is_amplicon_data(sample) for sample in get_samples_for_date(wildcards.date)
     )
@@ -812,7 +815,6 @@ def get_depth_input(wildcards):
 
 
 def get_adapters(wildcards):
-
     # TODO Think about adapter handling. Related #356
     if is_amplicon_data(wildcards.sample):
         patterns = get_pattern_by_technology(
@@ -1001,6 +1003,7 @@ def expand_samples_for_date(paths, **kwargs):
 
 
 def get_unclipped_samples_for_date(wildcards, stage, suffix=""):
+    """Returns list of unclipped bam files for a date. Used for visualizing the primer clipping."""
     return get_list_of_expanded_patters_by_technology(
         wildcards,
         return_only_amplicon_samples=True,
@@ -1011,6 +1014,7 @@ def get_unclipped_samples_for_date(wildcards, stage, suffix=""):
 
 
 def get_fallbacks_for_report(fallback_type):
+    """Returns path to the fallback sequences. The "main.fasta" is returned as an indicator that no fallback sequences is created."""
     def inner(wildcards):
         samples = get_samples_for_date(wildcards.date)
 
@@ -1044,6 +1048,7 @@ def get_pattern_by_technology(
     ion_torrent_pattern=None,
     sample=None,
 ):
+    """Returns the given pattern, depending on the sequencing technology used for the sample."""
     if sample is None:
         if is_illumina(wildcards):
             return illumina_pattern
@@ -1065,6 +1070,7 @@ def get_pattern_by_technology(
 
 
 def format_patterns(input_patterns, sample, formated_patterns):
+    """Add the sample to the given pattern, depending if its a string or a list."""
 
     if isinstance(input_patterns, str):
         formated_patterns.append(input_patterns.format(sample=sample))
@@ -1086,6 +1092,7 @@ def get_list_of_expanded_patters_by_technology(
     ion_torrent_pattern=None,
     return_only_amplicon_samples=False,
 ):
+    """Returns an aggregate list of given patterns, depending on their sequences technology. Formats the {sample} wildcard."""
     patterns = []
 
     samples = get_samples_for_date(wildcards.date)
@@ -1123,6 +1130,7 @@ def get_list_of_expanded_patters_by_technology(
 
 
 def get_raw_reads_counts(wildcards):
+    """Get paths of files to be parsed by the overview table rule for the raw reads counts."""
     return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern="results/{{date}}/trimmed/fastp-pe/{sample}.fastp.json",
@@ -1132,6 +1140,7 @@ def get_raw_reads_counts(wildcards):
 
 
 def get_trimmed_reads_counts(wildcards):
+    """Get paths of files to be parsed by the overview table rule for the trimmed reads counts."""
     return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern="results/{{date}}/trimmed/fastp-pe/{sample}.fastp.json",
@@ -1141,6 +1150,7 @@ def get_trimmed_reads_counts(wildcards):
 
 
 def get_fastp_results(wildcards):
+    """Get paths of files to aggregate the fastp results for the multiqc rule."""
     # fastp is only used on Illumina and Ion Torrent data
     return get_list_of_expanded_patters_by_technology(
         wildcards,
@@ -1200,6 +1210,7 @@ def get_artic_primer(wildcards):
 
 
 def get_trimmed_reads(wildcards):
+    """Get paths of files of the trimmed reads for parsing by kraken."""
     return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern=expand(
@@ -1212,6 +1223,7 @@ def get_trimmed_reads(wildcards):
 
 
 def get_kraken_output(wildcards):
+    """Returns the output of kraken on the raw reads, depend on sequencing technology."""
     return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern="results/{date}/species-diversity/pe/{{sample}}/{{sample}}.uncleaned.kreport2".format(
@@ -1227,6 +1239,7 @@ def get_kraken_output(wildcards):
 
 
 def get_kraken_output_after_filtering(wildcards):
+    """Returns the output of kraken on the filtered reads, depend on sequencing technology."""
     return get_list_of_expanded_patters_by_technology(
         wildcards,
         illumina_pattern="results/{date}/species-diversity-nonhuman/pe/{{sample}}/{{sample}}.cleaned.kreport2".format(
@@ -1305,6 +1318,7 @@ def get_reads_by_stage(wildcards):
 
 
 def get_polished_sequence(wildcards):
+    """Returns path to polished sequences, depend on sequencing technology."""
     return get_pattern_by_technology(
         wildcards,
         illumina_pattern="results/{date}/polishing/bcftools-illumina/{sample}.fasta",
@@ -1314,6 +1328,7 @@ def get_polished_sequence(wildcards):
 
 
 def get_fallback_sequence(wildcards):
+    """Returns path to fallback sequences, depend on sequencing technology."""
     return get_pattern_by_technology(
         wildcards,
         illumina_pattern="results/{date}/contigs/pseudoassembled/{sample}.fasta",
@@ -1332,6 +1347,7 @@ def get_varrange(wildcards):
 
 
 def get_if_any_consensus_assembly(path):
+    """Returns the samples for which consensus-assemblies should be created."""
     def inner(wildcards):
         if any(
             has_consensus_assembly(None, sample)
@@ -1344,6 +1360,7 @@ def get_if_any_consensus_assembly(path):
 
 
 def get_if_any_pseudo_assembly(path):
+    """Returns the samples for which pseudo-assemblies should be created."""
     def inner(wildcards):
         if any(
             has_pseudo_assembly(None, sample)
@@ -1356,6 +1373,7 @@ def get_if_any_pseudo_assembly(path):
 
 
 def get_seq_type(wildcards):
+    """Returns the sequencing type used for the samples of a given date."""
     # see: https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/DESH/Anleitung-Bereitstellung-Sequenzdaten.pdf?__blob=publicationFile
     return get_list_of_expanded_patters_by_technology(
         wildcards,
@@ -1366,6 +1384,7 @@ def get_seq_type(wildcards):
 
 
 def get_samtools_sort_input(wildcards):
+    """Returns the input for the samtools sort rule."""
     if wildcards.stage == "initial":
         return expand(
             "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam",
