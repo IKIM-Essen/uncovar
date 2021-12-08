@@ -516,17 +516,29 @@ def return_assembler(sample):
         pattern = get_pattern_by_technology(
             None,
             sample=sample,
-            illumina_pattern=config["assembly"]["amplicon"],
-            ont_pattern="spades_se",
-            ion_torrent_pattern="spades_se",
+            illumina_pattern="{assembler}-pe".format(
+                assembler=config["assembly"]["illumina"]["amplicon"]
+            ),
+            ont_pattern="{assembler}-se".format(
+                assembler=config["assembly"]["oxford nanopore"]["amplicon"]
+            ),
+            ion_torrent_pattern="{assembler}-se".format(
+                assembler=config["assembly"]["ion torrent"]["amplicon"]
+            ),
         )
     else:
         pattern = get_pattern_by_technology(
             None,
             sample=sample,
-            illumina_pattern=config["assembly"]["shotgun"],
-            ont_pattern=config["assembly"]["shotgun"],
-            ion_torrent_pattern=config["assembly"]["shotgun"],
+            illumina_pattern="{assembler}-pe".format(
+                assembler=config["assembly"]["illumina"]["shotgun"]
+            ),
+            ont_pattern="{assembler}-se".format(
+                assembler=config["assembly"]["oxford nanopore"]["shotgun"]
+            ),
+            ion_torrent_pattern="{assembler}-se".format(
+                assembler=config["assembly"]["ion torrent"]["shotgun"]
+            ),
         )
 
     if pattern:
