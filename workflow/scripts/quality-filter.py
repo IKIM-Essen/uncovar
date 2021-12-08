@@ -11,6 +11,7 @@ include_rki = "1"
 import pandas as pd
 from os import path
 from typing import List
+import pysam
 
 
 def get_identity(quast_report_paths: List[str]) -> dict:
@@ -47,6 +48,12 @@ def get_identity(quast_report_paths: List[str]) -> dict:
     return identity_dict
 
 
+def get_sequence(path: str):
+    with pysam.FastxFile(path) as fh:
+        for entry in fh:
+            return entry.name.split(".")[0], entry.sequence
+
+
 def get_n_share(contig_paths: List[str]) -> dict:
     """Extracts share of Ns in given contigs.
 
@@ -61,13 +68,9 @@ def get_n_share(contig_paths: List[str]) -> dict:
     seq_dict = {}
 
     for contig_path in contig_paths:
-        with open(contig_path, "r") as handle:
-            for line in handle.read().splitlines():
-                if line.startswith(">"):
-                    key = line.replace(">", "").split(" ")[0].split(".")[0]
-                    seq_dict[key] = ""
-                else:
-                    seq_dict[key] += line
+        name, sequence = get_sequence(contig_path)
+        assert isinstance(sequence, str), "More than one sequence in .fasta file."
+        seq_dict[name] = sequence
 
     for key, value in seq_dict.items():
         n_share_dict[key] = value.count("N") / len(value)
@@ -102,6 +105,7 @@ def filter_and_save(
     max_n: float,
     include_rki: int,
     save_path: str,
+    summary_path: str,
 ):
     """Filters and saves sample names
 
@@ -113,6 +117,7 @@ def filter_and_save(
         max_n (float): Max share of N in the reconstructed genome
         include_rki(int): Whether to include the sample in the rki files or not
         save_path (str): Path to save the filtered sample to as .txt
+        summary_path (str): Path to identity and n share to as .tsv
     """
 
     # aggregate all result into one df
@@ -123,6 +128,8 @@ def filter_and_save(
     # print agg_df to stderr for logging
     print("Aggregated data of all samples", file=sys.stderr)
     print(agg_df, file=sys.stderr)
+    agg_df.index.name = "Sample"
+    agg_df.to_csv(summary_path, sep="\t")
 
     # filter this accordingly to the given params
     filtered_df = agg_df[
@@ -157,5 +164,6 @@ filter_and_save(
     min_identity,
     max_n,
     include_rki,
-    snakemake.output[0],
+    snakemake.output.passed_filter,
+    snakemake.output.filter_summary,
 )

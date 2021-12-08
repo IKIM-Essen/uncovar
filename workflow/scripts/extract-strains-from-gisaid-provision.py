@@ -18,7 +18,7 @@ def extract_strains_from_provision(
 ):
     # select strain genomes
     provision = pd.DataFrame()
-    chunks = pd.read_json(path_to_provision, lines=True, chunksize=10000)
+    chunks = pd.read_json(path_to_provision, lines=True, chunksize=9000)
     for i, chunk in enumerate(chunks):
         print(f"Parsing chunk {i}", file=sys.stderr)
         provision = provision.append(select_oldest_strains(chunk), ignore_index=True)
@@ -55,6 +55,9 @@ def select_oldest_strains(df: pd.DataFrame):
         (df["covv_host"] == "Human")
         & (df["is_complete"] == True)
         & (df["covv_lineage"] != "None")
+        & (df["covv_lineage"] != "")
+        & ~(df["covv_lineage"].str.contains("\("))
+        & ~(df["covv_lineage"].str.contains("\)"))
     )
     cols_of_interesst = ["covv_lineage", "n_content", "covv_subm_date"]
     df = df.copy()

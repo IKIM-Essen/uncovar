@@ -1,2 +1,3 @@
-sample_name,fq1,fq2,date,is_amplicon_data,include_in_high_genome_summary
-NAME,PATH/TO/fq1,PATH/TO/fq2,2021-01-01,0,0
+sample_name,fq1,fq2,date,is_amplicon_data,technology,include_in_high_genome_summary
+NAME,PATH/TO/fq1,PATH/TO/fq2,2021-01-01,0,illumina,0
+NAME,PATH/TO/fq1,,ID,1,ont,0

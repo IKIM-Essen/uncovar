@@ -59,6 +59,10 @@ adapters:
   illumina-amplicon: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
   amplicon-primers: "resources/primer.bedpe"
   amplicon-reference: "MN908947"
+  # ARTIC primer version to clip from reads. See 
+  # https://github.com/artic-network/artic-ncov2019/tree/master/primer_schemes/nCoV-2019/V4
+  # for more information
+  artic-primer-version: 3
 
 variant-calling:
   # false discovery rate to control for
@@ -75,10 +79,14 @@ variant-calling:
 assembly:
   # minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
   min-variant-prob: 0.95
-  # assemblers used for shotgun sequencing  
+  # assemblers used for shotgun sequencing for Illumina data
   shotgun: "megahit-std"
-  # assemblers used for amplicon sequencing  
+  # assemblers used for amplicon sequencing for Illumina data
   amplicon: "metaspades"
+  # Medaka models are named to indicate i) the pore type, ii) the sequencing device (MinION or PromethION), iii) the basecaller variant, and iv) the basecaller version
+  # with the format: {pore}_{device}_{caller variant}_{caller version}
+  # See https://github.com/nanoporetech/medaka#models for more information.
+  medaka_model: r941_min_fast_g303
 
 
 strain-calling:

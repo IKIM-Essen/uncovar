@@ -25,13 +25,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Formatting
-        uses: github/super-linter@v4.7.3
+        uses: github/super-linter@v4.8.4
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FILTER_REGEX_EXCLUDE: CHANGELOG.md
           VALIDATE_SNAKEMAKE_SNAKEFMT: true
           VALIDATE_PYTHON_BLACK: true
+          VALIDATE_MARKDOWN: true
 
 
   Linting:
@@ -149,6 +151,7 @@ jobs:
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz
       
       - name: Use smaller reference files for testing
         if: steps.test-resources.outputs.cache-hit != true

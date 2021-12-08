@@ -1,0 +1,114 @@
+site_name: UnCoVar Documention
+site_url: https://ikim-essen.github.io/uncovar/
+site_description: SARS-CoV-2 Variant Calling and Lineage Assignment.
+site_author: Institute for Artificial Intelligence in Medicine, Medical Faculty of the University of Duisburg Essen and the University Hospital Essen
+
+repo_url: https://github.com/IKIM-Essen/uncovar/
+repo_name: ""
+
+
+nav:
+    - Welcome: index.md
+    - Getting Started: getting-started.md
+    - Consumer Guide:
+        - Overview: consumer-guide/index.md
+        - Structure of the Report : consumer-guide/report-structure.md
+        - Highlights: consumer-guide/first-impression.md
+        - Lineages and Variants: consumer-guide/lineages-and-variants.md
+        - Submission Read Genomes: consumer-guide/submission-ready-genomes.md
+        - FAQs: consumer-guide/faqs.md
+    - User Guide:
+        - Overview: user-guide/index.md
+        - Installation: user-guide/installation.md
+        - Configuration: user-guide/configuration.md
+        - Create Your Analysis: user-guide/create-your-analysis.md
+        - Share Your Results: user-guide/share-your-results.md
+        - Customize Your Analysis: user-guide/customize-your-analysis.md
+        - FAQs: user-guide/faqs.md
+    - Developer Guide:
+        - Overview: dev-guide/index.md
+        - How to Contribute: dev-guide/contributing.md
+        - Pre-Analysis: dev-guide/pre-analysis.md
+        - Initial Quality Control: dev-guide/final-quality-control.md
+        - Sequence Preprocessing: dev-guide/sequence-preprocessing.md
+        - Assembly: dev-guide/assembly.md
+        - Lineage Calling: dev-guide/lineage-calling.md
+        - Variant Calling: dev-guide/variant-calling.md
+        - Reporting: dev-guide/reporting.md
+        - Final Quality Control: dev-guide/initial-quality-control.md
+        - Tests: dev-guide/tests.md
+        - CI/CD: dev-guide/ci-cd.md
+        - FAQs: dev-guide/faqs.md
+    - About:
+        - Team: about/team.md
+        - License: about/license.md
+        - Release Notes: about/changelog.md
+
+theme:
+  name: material
+  custom_dir: docs/.overrides
+  # logo: assets/img/UnCoVar_logo_1280.png
+  palette:
+    - media: "(prefers-color-scheme: light)" # light theme
+      scheme: default
+      primary: blue grey
+      accent: teal
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)" #   dark theme
+      scheme: slate
+      primary: teal
+      accent: green
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+    logo: fontawesome/solid/virus
+  favicon: fontawesome/solid/heart
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.indexes
+    - navigation.tracking
+    - navigation.expand
+    # - navigation.sections
+    - navigation.top
+    - toc.integrate
+    - header.autohide
+
+extra:
+  version:
+    provider: mike
+  analytics:
+    provider: google
+    property: G-9R7WBBNN2S
+  generator: false
+
+plugins:
+  - search
+
+extra_css:
+    - css/extra.css
+
+markdown_extensions:
+    # permalinks: https://squidfunk.github.io/mkdocs-material/setup/extensions/python-markdown/?h=perma#table-of-contents
+    - toc:
+        permalink: True
+    # buttons: https://squidfunk.github.io/mkdocs-material/reference/buttons/
+    - attr_list
+    # codeblocks: https://squidfunk.github.io/mkdocs-material/reference/code-blocks/
+    - pymdownx.highlight
+    - pymdownx.inlinehilite
+    - pymdownx.superfences
+    - pymdownx.snippets
+    # call-outs: https://squidfunk.github.io/mkdocs-material/reference/admonitions/
+    - admonition
+    - pymdownx.details
+    # lists: https://squidfunk.github.io/mkdocs-material/reference/lists/
+    - def_list
+    - pymdownx.tasklist:
+        custom_checkbox: true
+    # tables: https://squidfunk.github.io/mkdocs-material/reference/tables/
+    - tables
