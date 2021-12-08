@@ -145,7 +145,7 @@ jobs:
       #       ${{ runner.os }}-sars-cov-benchmark-dependencies-
 
       - name: Prepare test data for all technologies
-        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.rule == 'all' || matrix.rule == 'compare_assemblers')
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'all' || matrix.rule == 'compare_assemblers')
         run: |
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
@@ -158,7 +158,7 @@ jobs:
           echo ion-test,data/ion_reads.fastq.gz,,2022-01-01,1,ion >> .tests/config/pep/samples.csv
 
       - name: Prepare test data for Illumina
-        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.rule == 'illumina' || matrix.rule == 'compare_assemblers')
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'illumina' || matrix.rule == 'compare_assemblers')
         run: |
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
@@ -167,7 +167,7 @@ jobs:
           echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,0,illumina >> .tests/config/pep/samples.csv
 
       - name: Prepare test data for Oxford Nanopore
-        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.rule == 'ont' || matrix.rule == 'compare_assemblers')
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ont' || matrix.rule == 'compare_assemblers')
         run: |
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz 
@@ -175,7 +175,7 @@ jobs:
           echo ont-test,data/ont_reads.fastq.gz,2022-01-01,1,ont >> .tests/config/pep/samples.csv
 
       - name: Prepare test data for Ion Torrent
-        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.rule == 'ion' || matrix.rule == 'compare_assemblers')
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ion' || matrix.rule == 'compare_assemblers')
         run: |
           mkdir -p .tests/data
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR574/003/ERR5745913/ERR5745913.fastq.gz > .tests/data/ion_reads.fastq.gz 
