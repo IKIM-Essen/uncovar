@@ -359,8 +359,8 @@ jobs:
               echo "Workflow sucessfully identified samples as non-sars-cov-2 in all cases."
           fi
 
-      - name: Print disk space
-        run: sudo df -h
-
       - name: Change permissions for caching
         run: sudo chmod -R 755 .tests/.snakemake/conda
+
+      - name: Print disk space
+        run: sudo df -h
