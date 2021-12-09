@@ -47,7 +47,7 @@ file = snakemake.input.bcf
 variants_of_interest = {}
 other_variants = {}
 
-def insert_entry(variants, hgvsp, vaf, nucl_pos, pos):
+def insert_entry(variants, hgvsp, vaf, nucl_pos, pos, number):
     if variants.get(hgvsp):
         prev_vaf = variants.get(hgvsp)
         if prev_vaf[0] is None or prev_vaf[0] < vaf:
@@ -58,9 +58,9 @@ def insert_entry(variants, hgvsp, vaf, nucl_pos, pos):
             # variant call with the highest VAF.
             # TODO: in principle, the different alterations could even be complementary.
             # Hence, one could try to determine that and provide a joint vaf.
-            variants[hgvsp] = [vaf, nucl_pos, pos]
+            variants[hgvsp] = [vaf, nucl_pos, pos, number]
     else:
-        variants[hgvsp] = [vaf, nucl_pos, pos]
+        variants[hgvsp] = [vaf, nucl_pos, pos, number]
 
 def fmt_variants(variants):
     return " ".join(sorted(f"{entry[1]} {hgvsp}:{entry[0]:.3f}" for hgvsp, entry in variants.items()))
@@ -68,6 +68,7 @@ def fmt_variants(variants):
 with pysam.VariantFile(file, "rb") as infile:
     for record in infile:
         vaf = record.samples[0]["AF"][0]
+        number = record.samples[0]["DP"][0]
         pos = record.pos
         for ann in record.info["ANN"]:
             ann = ann.split("|")
@@ -91,7 +92,7 @@ with pysam.VariantFile(file, "rb") as infile:
                     # reformat nucleotide position
                     m = re.match('([0-9]{1,})([ACTG])[>]([ACTG])', nuc_alteration)
                     nucl_pos = m.group(2) + m.group(1) + m.group(3)
-                    insert_entry(variants_of_interest, hgvsp, vaf, nucl_pos, pos)
+                    insert_entry(variants_of_interest, hgvsp, vaf, nucl_pos, pos, number)
                 elif "del" in nuc_alteration and not "ins" in nuc_alteration and not "inv" in nuc_alteration and "del" in hgvsp and not "ins" in hgvsp and not "inv" in hgvsp:
                     # reformat nucleotide position
                     coordinates = re.findall('([0-9]{1,})', nuc_alteration)
@@ -101,7 +102,7 @@ with pysam.VariantFile(file, "rb") as infile:
                     m = re.findall('([A-Z]{1}[0-9]{1,})', mutation)
                     for match in m:
                         hgvsp = feature + ":" + match + "-"
-                        insert_entry(variants_of_interest, hgvsp, vaf, nucl_pos, pos)
+                        insert_entry(variants_of_interest, hgvsp, vaf, nucl_pos, pos, number)
                 elif "delins" in nuc_alteration and not "inv" in nuc_alteration and not "inv" in hgvsp:
                     coordinates = re.findall('([0-9]{1,})', nuc_alteration)
                     insertion = re.search('[A-Z]+$', nuc_alteration)
@@ -113,12 +114,12 @@ with pysam.VariantFile(file, "rb") as infile:
                         insertion = re.search('[A-Z]+$', mutation)
                         for i in range(len(m)):
                             hgvsp = feature + ":" + m[i] + str(insertion)[i]
-                            insert_entry(variants_of_interest, hgvsp, vaf, nucl_pos, pos)
+                            insert_entry(variants_of_interest, hgvsp, vaf, nucl_pos, pos, number)
                     else:
-                        insert_entry(variants_of_interest, hgvsp, vaf, nucl_pos, pos)
+                        insert_entry(variants_of_interest, hgvsp, vaf, nucl_pos, pos, number)
                 else:
                     nucl_pos = nuc_alteration
-                    insert_entry(variants_of_interest, hgvsp, vaf, nucl_pos, pos)
+                    insert_entry(variants_of_interest, hgvsp, vaf, nucl_pos, pos, number)
                 
 
                 # insert_entry(variants_of_interest, hgvsp, vaf, nucl_pos)
@@ -127,6 +128,7 @@ for variant in variants_of_interest:
     data.loc[variant, "frequency"] = variants_of_interest[variant][0]
     data.loc[variant, "nucleotides"] = variants_of_interest[variant][1]
     data.loc[variant, "position"] = variants_of_interest[variant][2]
+    data.loc[variant, "num_reads"] = variants_of_interest[variant][3]
 
 with open("/local/data/repos/snakemake-workflow-sars-cov2/resources/voc-variants/Omicron", "r") as infile:
     for var in infile.read().splitlines():
