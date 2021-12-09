@@ -1,5 +1,39 @@
 # Changelog
 
+### [0.4.1](https://www.github.com/IKIM-Essen/uncovar/compare/v0.4.0...v0.4.1) (2021-12-07)
+
+
+### Bug Fixes
+
+* **ci:** adjust commit message of copyright-preamble.yml to fit conventional commits format ([#369](https://www.github.com/IKIM-Essen/uncovar/issues/369)) ([e067895](https://www.github.com/IKIM-Essen/uncovar/commit/e067895adc368414000cba5e4db73edbb3d03b95))
+* GISAID lineage extraction [B.1.1.529 (probably).fasta] ([#372](https://www.github.com/IKIM-Essen/uncovar/issues/372)) ([7750862](https://www.github.com/IKIM-Essen/uncovar/commit/7750862a98890937885164b469b5f487ae70488a))
+
+## [0.4.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.3.1...v0.4.0) (2021-12-02)
+
+
+### Features
+
+* **technology:** add Oxford Nanopore processing ([#305](https://www.github.com/IKIM-Essen/uncovar/issues/305)) ([55f38f3](https://www.github.com/IKIM-Essen/uncovar/commit/55f38f3f94146355c245f76d6c210dbf351a6eaf))
+
+
+### Bug Fixes
+
+* add bam index for extract_reads_of_interest ([#366](https://www.github.com/IKIM-Essen/uncovar/issues/366)) ([5f5dd27](https://www.github.com/IKIM-Essen/uncovar/commit/5f5dd27311d1bc27787b2061bba2312a50fbf720))
+* changed contigs file for quast-rule to avoid workflow to stop because of low read numbers ([#338](https://www.github.com/IKIM-Essen/uncovar/issues/338)) ([2d0e246](https://www.github.com/IKIM-Essen/uncovar/commit/2d0e2465217470f0e9f089b9c3e240cddfc6336e))
+* changed JSON schema validator and updated files [#364](https://www.github.com/IKIM-Essen/uncovar/issues/364) ([75e62f2](https://www.github.com/IKIM-Essen/uncovar/commit/75e62f20b88eaeb19389908e325b264b0f64081d))
+
+
+### Performance Improvements
+
+* changed chunksize of read json file from gisaid, excluded lineage without name ([#328](https://www.github.com/IKIM-Essen/uncovar/issues/328)) ([b9e5c49](https://www.github.com/IKIM-Essen/uncovar/commit/b9e5c49dbf8910ad0332a73dba0c027bf3545c81))
+
+### [0.3.1](https://www.github.com/IKIM-Essen/uncovar/compare/v0.3.0...v0.3.1) (2021-11-29)
+
+
+### Bug Fixes
+
+* nested function usage and remove code duplication ([#323](https://www.github.com/IKIM-Essen/uncovar/issues/323)) ([91e3ce9](https://www.github.com/IKIM-Essen/uncovar/commit/91e3ce922132309d3d226a9efceb995ce99b4489))
+
 ## [0.3.0](https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.5...v0.3.0) (2021-11-05)
 
 

@@ -8,7 +8,6 @@ import sys
 sys.stderr = open(snakemake.log[0], "w")
 
 import json
-import re
 
 import pandas as pd
 import pysam
@@ -20,54 +19,8 @@ def iter_with_samples(inputfiles):
     return zip(snakemake.params.samples, inputfiles)
 
 
-data = pd.DataFrame()
+data = pd.DataFrame(index=snakemake.params.samples)
 
-# add numbers of raw and Trimmed Reads
-for sample, file in iter_with_samples(snakemake.input.reads_unfiltered):
-    with open(file) as infile:
-        number_reads = json.load(infile)
-    data = data.append(
-        {
-            "Raw Reads (#)": number_reads["summary"]["before_filtering"]["total_reads"],
-            "Trimmed Reads (#)": number_reads["summary"]["after_filtering"][
-                "total_reads"
-            ],
-            "Sample": sample,
-        },
-        ignore_index=True,
-    )
-data.set_index("Sample", inplace=True)
-
-# add numbers of reads used for assembly
-for sample, file in iter_with_samples(snakemake.input.reads_used_for_assembly):
-    with open(file) as infile:
-        data.loc[sample, "Used Reads (#)"] = int(infile.read()) * 2
-
-
-def register_contig_lengths(assemblies, name):
-    for sample, file in iter_with_samples(assemblies):
-        with pysam.FastxFile(file) as infile:
-            data.loc[sample, name] = max(len(contig.sequence) for contig in infile)
-
-
-# add lengths of Initial contigs
-register_contig_lengths(snakemake.input.initial_contigs, "Initial Contig (bp)")
-
-# add lengths of polished contigs
-register_contig_lengths(snakemake.input.polished_contigs, "Final Contig (bp)")
-
-# add lengths of pseudo assembly
-register_contig_lengths(snakemake.input.pseudo_contigs, "Pseudo Contig (bp)")
-
-# add type of assembly use:
-for ele in snakemake.params.assembly_used:
-    sample, used = ele.split(",")
-    if "pseudo" == used:
-        data.loc[sample, "RKI Submission"] = "Pseudo"
-    elif "normal" == used:
-        data.loc[sample, "RKI Submission"] = "Normal"
-    elif "not-accepted" == used:
-        data.loc[sample, "RKI Submission"] = "-"
 
 # add kraken estimates
 species_columns = pd.DataFrame()
@@ -112,6 +65,70 @@ for sample, file in iter_with_samples(snakemake.input.kraken):
 
 data = data.join(species_columns.set_index("sample"))
 
+# add numbers of raw reads
+for sample, file in iter_with_samples(snakemake.input.reads_raw):
+    if "fastq-read-counts" in file:
+        with open(file) as infile:
+            number_reads = infile.read().strip()
+    else:
+        with open(file) as infile:
+            number_reads = json.load(infile)["summary"]["before_filtering"][
+                "total_reads"
+            ]
+    data.loc[sample, "Raw Reads (#)"] = int(int(number_reads) / 2)
+
+# add numbers of trimmed reads
+for sample, file in iter_with_samples(snakemake.input.reads_trimmed):
+    if "fastq-read-counts" in file:
+        with open(file) as infile:
+            number_reads = infile.read().strip()
+    else:
+        with open(file) as infile:
+            number_reads = json.load(infile)["summary"]["after_filtering"][
+                "total_reads"
+            ]
+    data.loc[sample, "Trimmed Reads (#)"] = int(int(number_reads) / 2)
+
+# add numbers of reads used for assembly
+for sample, file in iter_with_samples(snakemake.input.reads_used_for_assembly):
+    with open(file) as infile:
+        data.loc[sample, "Filtered Reads (#)"] = int(infile.read())
+
+
+def register_contig_lengths(assemblies, name):
+    for sample, file in iter_with_samples(assemblies):
+        if file == "resources/genomes/main.fasta":
+            data.loc[sample, name] = 0
+        else:
+            with pysam.FastxFile(file) as infile:
+                data.loc[sample, name] = max(len(contig.sequence) for contig in infile)
+
+
+# add lengths of Initial contigs
+register_contig_lengths(snakemake.input.initial_contigs, "Largest Contig (bp)")
+
+# add lengths of polished contigs
+register_contig_lengths(snakemake.input.polished_contigs, "De Novo Sequence (bp)")
+
+# add lengths of pseudo assembly
+register_contig_lengths(snakemake.input.pseudo_contigs, "Pseudo Sequence (bp)")
+
+# add lengths of Consensus assembly
+register_contig_lengths(snakemake.input.consensus_contigs, "Consensus Sequence (bp)")
+
+
+# add type of assembly use:
+for ele in snakemake.params.assembly_used:
+    sample, used = ele.split(",")
+    if "pseudo" == used:
+        data.loc[sample, "Best Quality"] = "Pseudo"
+    elif "normal" == used:
+        data.loc[sample, "Best Quality"] = "De Novo"
+    elif "consensus" == used:
+        data.loc[sample, "Best Quality"] = "Consensus"
+    elif "not-accepted" == used:
+        data.loc[sample, "Best Quality"] = "-"
+
 # add pangolin results
 for sample, file in iter_with_samples(snakemake.input.pangolin):
     pangolin_results = pd.read_csv(file)
@@ -135,7 +152,7 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
         #         varcount = f" ({varcount})"
         # pangolin_call = f"{lineage}{varcount}"
         pangolin_call = f"{lineage}"
-    data.loc[sample, "Pangolin Strain"] = pangolin_call
+    data.loc[sample, "Lineage"] = pangolin_call
 
 
 # add variant calls
@@ -174,7 +191,7 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
             # that lead to the same protein alteration.
             # We just report the protein alteration here, so what matters to us is the
             # variant call with the highest VAF.
-            # TODO: in principle, the different alterations could even be complementary.
+            # TODO in principle, the different alterations could even be complementary.
             # Hence, one could try to determine that and provide a joint vaf.
             variants[hgvsp] = vaf
 
@@ -207,15 +224,22 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
     data.loc[sample, "Other Variants"] = fmt_variants(other_variants)
 
 
+data["Other Variants"][
+    data["Other Variants"].str.len() > 32767
+] = "Too many variants to display"
+
 int_cols = [
     "Raw Reads (#)",
     "Trimmed Reads (#)",
-    "Used Reads (#)",
-    "Initial Contig (bp)",
-    "Final Contig (bp)",
-    "Pseudo Contig (bp)",
+    "Filtered Reads (#)",
+    "Largest Contig (bp)",
+    "De Novo Sequence (bp)",
+    "Pseudo Sequence (bp)",
+    "Consensus Sequence (bp)",
 ]
-data[int_cols] = data[int_cols].applymap(lambda x: "{0:,}".format(int(x)))
 
-
+data[int_cols] = data[int_cols].fillna("0").applymap(lambda x: "{0:,}".format(int(x)))
+data = data.loc[:, (data != "0").any(axis=0)]
+data.index.name = "Sample"
+data.sort_index(inplace=True)
 data.to_csv(snakemake.output[0], float_format="%.1f")
