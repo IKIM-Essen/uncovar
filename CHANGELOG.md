@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.4.1...v0.5.0) (2021-12-09)
+
+
+### Features
+
+* **technology:** add ion torrent processing ([#383](https://www.github.com/IKIM-Essen/uncovar/issues/383)) ([288777c](https://www.github.com/IKIM-Essen/uncovar/commit/288777cef21485fb0365c5c552690f2bf94b6e11))
+
 ### [0.4.1](https://www.github.com/IKIM-Essen/uncovar/compare/v0.4.0...v0.4.1) (2021-12-07)
 
 
