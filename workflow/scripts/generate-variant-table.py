@@ -130,7 +130,7 @@ for variant in variants_of_interest:
     data.loc[variant, "position"] = variants_of_interest[variant][2]
     data.loc[variant, "num_reads"] = variants_of_interest[variant][3]
 
-with open("/local/data/repos/snakemake-workflow-sars-cov2/resources/voc-variants/Omicron", "r") as infile:
+with open("resources/voc-variants/Omicron", "r") as infile:
     for var in infile.read().splitlines():
         data.loc[var, "omicron"] = var
 
