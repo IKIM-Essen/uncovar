@@ -152,6 +152,33 @@ rule overview_table_csv:
         "../scripts/generate-overview-table.py"
 
 
+rule variant_table:
+    input:
+        bcf="results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
+    output:
+        var_table="results/{date}/tables/variant-tables/{sample}-variant-table.csv",
+    log:
+        "logs/{date}/{sample}-variant-table.log"
+    params:
+        voc=config.get("voc"),
+        samples=lambda wildcards: get_samples_for_date(wildcards.date),
+    conda:
+        "../envs/pysam.yaml"
+    script:
+        "../scripts/generate-variant-table.py"
+    
+
+rule get_variant_tables:
+    input:
+        expand(
+                "results/{date}/tables/variant-tables/{sample}-variant-table.csv",
+                zip,
+                date=get_dates(),
+                sample=get_samples_for_date(get_dates()),
+            ),
+
+
+
 rule overview_table_html:
     input:
         "results/{date}/tables/overview.csv",
