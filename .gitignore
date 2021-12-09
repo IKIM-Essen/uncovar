@@ -16,6 +16,8 @@
 !publication/*
 !resources/
 !resources/custom-stylesheet.css
+!resources/voc-variants
+!resources/voc-variants/*
 !workflow
 !workflow/*
 !workflow/envs/*
