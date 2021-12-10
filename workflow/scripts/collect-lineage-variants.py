@@ -88,12 +88,12 @@ with FastaFile(snakemake.input.reference) as infasta:
     assert infasta.nreferences == 1
     contig = infasta.references[0]
     header = VariantHeader()
-    header.add_line(f"contig=<ID={contig},length={infasta.lengths[0]}")
+    header.add_line(f"##contig=<ID={contig},length={infasta.lengths[0]}")
     header.add_line(
-        'INFO=<ID=SIGNATURES,Number=.,Type=String,Description="Variant signature as obtained from covariants.org">'
+        '##INFO=<ID=SIGNATURES,Number=.,Type=String,Description="Variant signature as obtained from covariants.org">'
     )
     header.add_line(
-        'INFO=<ID=LINEAGES,Number=.,Type=String,Description="Lineages having this variant">'
+        '##INFO=<ID=LINEAGES,Number=.,Type=String,Description="Lineages having this variant">'
     )
 
     NonSynonymousVariant = namedtuple(
@@ -103,17 +103,19 @@ with FastaFile(snakemake.input.reference) as infasta:
 
     known_non_synonymous_variants = defaultdict(set)
     for lineage_entry in covariants_data["clusters"]:
-        for variant in lineage_entry["mutations"]["nonsynonymous"]:
-            known_non_synonymous_variants[NonSynonymousVariant(**variant)].add(
-                lineage_entry["build_name"]
-            )
+        if "mutations" in lineage_entry and "nonsynonymous" in lineage_entry["mutations"]:
+            for variant in lineage_entry["mutations"]["nonsynonymous"]:
+                known_non_synonymous_variants[NonSynonymousVariant(**variant)].add(
+                    lineage_entry["build_name"]
+                )
 
     known_synonymous_variants = defaultdict(set)
     for lineage_entry in covariants_data["clusters"]:
-        for variant in lineage_entry["mutations"]["synonymous"]:
-            known_synonymous_variants[SynonymousVariant(**variant)].add(
-                lineage_entry["build_name"]
-            )
+        if "mutations" in lineage_entry and "synonymous" in lineage_entry["mutations"]:
+            for variant in lineage_entry["mutations"]["synonymous"]:
+                known_synonymous_variants[SynonymousVariant(**variant)].add(
+                    lineage_entry["build_name"]
+                )
 
     with VariantFile(snakemake.output[0], "wb", header=header) as outvcf:
 
