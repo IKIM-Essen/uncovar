@@ -1,6 +1,6 @@
 rule collect_lineage_candidate_variants:
     output:
-        "resources/lineage-candidate-variants/all.bcf"
+        "resources/lineage-candidate-variants/all.bcf",
     conda:
         "../envs/pysam.yaml"
     script:
@@ -9,16 +9,16 @@ rule collect_lineage_candidate_variants:
 
 rule generate_lineage_variant_table:
     input:
-        "results/{date}/calls/ref~main/{sample}.lineage-variants.bcf"
+        "results/{date}/calls/ref~main/{sample}.lineage-variants.bcf",
     output:
-        "results/{data}/lineage-variants/{sample}.tsv"
+        "results/{data}/lineage-variants/{sample}.tsv",
     script:
         "../scripts/generate-lineage-variant-table.py"
 
 
 use rule overview_table_html as generate_lineage_variant_report with:
     input:
-        "results/{data}/lineage-variants/{sample}.tsv"
+        "results/{data}/lineage-variants/{sample}.tsv",
     output:
         report(
             directory("results/{date}/lineage-variants/{sample}.lineage-variants.tsv"),
