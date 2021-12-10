@@ -1,8 +1,13 @@
 rule collect_lineage_candidate_variants:
+    input:
+        annotation="resources/annotation.gff",
+        reference="resources/genomes/main.fasta",
     output:
         "resources/lineage-candidate-variants/all.bcf",
     conda:
         "../envs/pysam.yaml"
+    log:
+        "logs/"
     script:
         "../scripts/collect-lineage-variants.py"
 
