@@ -184,7 +184,7 @@ def update_sample_sheet(SAMPLE_SHEET, verbose=True, dry_run=False):
         new_sample_sheet.drop("NAME", inplace=True, errors="ignore")
 
         # check for duplicates
-        # TODO: Generalize for more than two samples
+        # TODO Generalize for more than two samples
         new_sample_sheet.index = new_sample_sheet.index.where(
             ~new_sample_sheet.index.duplicated(),
             new_sample_sheet.index.astype("str") + "_2",

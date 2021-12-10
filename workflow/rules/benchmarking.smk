@@ -223,7 +223,7 @@ rule assembly_comparison_trinity:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        temp("results/{date}/assembly/{sample}/trinity/{sample}.contigs.fasta"),
+        temp("results/{date}/assembly/{sample}/trinity-pe/{sample}.contigs.fasta"),
     log:
         "logs/{date}/trinity/{sample}.log",
     params:
@@ -242,7 +242,7 @@ rule assembly_comparison_velvet:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        temp("results/{date}/assembly/{sample}/velvet/{sample}.contigs.fasta"),
+        temp("results/{date}/assembly/{sample}/velvet-pe/{sample}.contigs.fasta"),
     log:
         "logs/{date}/velvet/{sample}.log",
     params:
@@ -261,7 +261,7 @@ rule assembly_comparison_velvet:
 
 rule order_contigs_assembly_comparison:
     input:
-        contigs="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
+        contigs="results/{date}/assembly/{sample}/{assembler}-pe/{sample}.contigs.fasta",
         reference="resources/genomes/main.fasta",
     output:
         temp(
@@ -294,7 +294,7 @@ use rule filter_chr0 as filter_chr0_assembly_comparison with:
 use rule align_contigs as align_contigs_assembly_comparison with:
     input:
         target="resources/genomes/main.fasta",
-        query="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
+        query="results/{date}/assembly/{sample}/{assembler}-pe/{sample}.contigs.fasta",
     output:
         "results/{date}/assembly/{sample}/{assembler}/main_{sample}.bam",
     log:
@@ -303,7 +303,7 @@ use rule align_contigs as align_contigs_assembly_comparison with:
 
 use rule quast as quast_assembly_comparison with:
     input:
-        fasta="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
+        fasta="results/{date}/assembly/{sample}/{assembler}-pe/{sample}.contigs.fasta",
         bam="results/{date}/assembly/{sample}/{assembler}/main_{sample}.bam",
         reference="resources/genomes/main.fasta",
     output:
@@ -316,7 +316,7 @@ use rule quast as quast_assembly_comparison with:
 rule plot_assemblies:
     input:
         initial=get_samples_for_assembler_comparison(
-            "results/{zip1}/assembly/{zip2}/{{exp}}/{zip2}.contigs.fasta"
+            "results/{zip1}/assembly/{zip2}/{{exp}}-pe/{zip2}.contigs.fasta"
         ),
         final=get_samples_for_assembler_comparison(
             "results/{zip1}/assembly/{zip2}/{{exp}}/{zip2}.contigs.ordered.filtered.fasta",

@@ -72,6 +72,7 @@ rule kallisto_quant:
         extra=lambda w, input: get_kallisto_quant_extra(w, input),
     log:
         "logs/{date}/kallisto_quant/{sample}.log",
+    threads: 8
     wrapper:
         "0.70.0/bio/kallisto/quant"
 
@@ -106,6 +107,8 @@ rule kallisto_plot_strains:
         "logs/{date}/plot-strains-kallisto/{sample}.log",
     params:
         min_fraction=config["strain-calling"]["min-fraction"],
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:

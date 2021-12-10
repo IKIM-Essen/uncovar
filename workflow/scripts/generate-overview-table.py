@@ -191,7 +191,7 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
             # that lead to the same protein alteration.
             # We just report the protein alteration here, so what matters to us is the
             # variant call with the highest VAF.
-            # TODO: in principle, the different alterations could even be complementary.
+            # TODO in principle, the different alterations could even be complementary.
             # Hence, one could try to determine that and provide a joint vaf.
             variants[hgvsp] = vaf
 
