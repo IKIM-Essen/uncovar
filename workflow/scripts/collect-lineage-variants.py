@@ -10,7 +10,7 @@ from dnachisel.biotools import get_backtranslation_table
 
 # TODO: Credits to covariants.org
 covariants_data = requests.get(
-    "https://github.com/hodcroftlab/covariants/blob/master/web/data/clusters.json"
+    "https://raw.githubusercontent.com/hodcroftlab/covariants/master/web/data/clusters.json"
 ).json()
 translate_aa = get_backtranslation_table("Standard")
 gff = gffutils.create_db(snakemake.input.annotation, dbfn=":memory:")
