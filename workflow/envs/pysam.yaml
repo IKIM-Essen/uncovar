@@ -4,5 +4,8 @@ channels:
   - bioconda
 dependencies:
   - jupyter =1.0
-  - pysam = 0.16.0
-  - pandas = 1.2
+  - pysam =0.16
+  - pandas =1.2
+  - requests =2.26
+  - dnachisel =3.2
+  - gffutils =0.10

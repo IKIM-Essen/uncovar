@@ -120,9 +120,7 @@ rule varlociraptor_preprocess:
     input:
         ref=get_reference(),
         ref_idx=get_reference(".fai"),
-        candidates=(
-            "results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.bcf"
-        ),
+        candidates=get_candidate_variants,
         bam="results/{date}/recal/ref~{reference}/{sample}.bam",
         bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:

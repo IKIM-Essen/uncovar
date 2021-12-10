@@ -1430,6 +1430,13 @@ def get_samtools_sort_input(wildcards):
     raise NotImplementedError(f"Sorting for {wildcards.stage} not supported.")
 
 
+def get_candidate_variants(wildcards):
+    if wildcards.varrange == "lineage-variants":
+        return "resources/lineage-candidate-variants/all.bcf"
+    else:
+        return "results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.bcf"
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),
@@ -1437,4 +1444,4 @@ wildcard_constraints:
     filter="|".join(
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
     ),
-    varrange="structural|small|homopolymer-medaka|homopolymer-longshot",
+    varrange="structural|small|homopolymer-medaka|homopolymer-longshot|lineage-variants",
