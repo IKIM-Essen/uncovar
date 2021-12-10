@@ -128,7 +128,7 @@ for variant in variants_of_interest:
     data.loc[variant, "frequency"] = variants_of_interest[variant][0]
     data.loc[variant, "nucleotides"] = variants_of_interest[variant][1]
     data.loc[variant, "position"] = variants_of_interest[variant][2]
-    data.loc[variant, "num_reads"] = variants_of_interest[variant][3]
+    data.loc[variant, "num_reads"] = variants_of_interest[variant][3] * variants_of_interest[variant][0]
 
 with open("resources/voc-variants/Omicron", "r") as infile:
     for var in infile.read().splitlines():
