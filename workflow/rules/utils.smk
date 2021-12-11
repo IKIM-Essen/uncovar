@@ -50,3 +50,16 @@ rule faidx:
         "logs/faidx/{prefix}.log",
     wrapper:
         "0.70.0/bio/samtools/faidx"
+
+
+rule gzip:
+    input:
+        "{prefix}.fastq",
+    output:
+        "{prefix}.fastq.gz",
+    log:
+        "logs/gzip/{prefix}.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "gzip --keep {input}"

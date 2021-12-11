@@ -1,4 +1,4 @@
-$schema: "https://json-schema.org/draft-06/schema#"
+$schema: "https://json-schema.org/draft/2020-12/schema"
 
 description: snakemake configuration file
 
@@ -112,15 +112,18 @@ properties:
         min-fraction: 
           type: number
           description: minimum reported strain fraction after quantification
-        use-gisaid: 
-          type: boolean
-          description: flag for using gisaid or genbank 
         extracted-strain-genomes: 
           type: string
           description: path to store genomes that are extracted from the full GISAID data
-        use-kallisto: 
+        use-gisaid: 
           type: boolean
-          description: flag for using kallisto (for quantifying abundances of transcripts)
+          description: flag for using gisaid or genbank 
+        lineage-references:
+          type: object
+  voc:
+      type: object
+      description: variants of concern (protein name -> variants)
+
 
 # entries that have to be in the config file for successful validation
 required:
@@ -133,3 +136,4 @@ required:
   - assembly
   - variant-calling
   - strain-calling
+  - voc
