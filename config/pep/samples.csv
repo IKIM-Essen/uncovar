@@ -1,2 +1,4 @@
-sample_name,fq1,fq2,date,is_amplicon_data
-NAME,PATH/TO/fq1,PATH/TO/fq2,2021-01-01,0
+sample_name,fq1,fq2,date,is_amplicon_data,technology
+SAMPLE_NAME_1,PATH/TO/fq1,PATH/TO/fq2,SEQUENCING_DATE,0,illumina # Required information for a sample sequencing on the Illumina platform
+SAMPLE_NAME_2,PATH/TO/fq,,SEQUENCING_DATE,1,ont # Required information for a sample sequencing on the Oxford Nanopore platform
+SAMPLE_NAME_3,PATH/TO/fq,,SEQUENCING_DATE,1,ion # Required information for a sample sequencing on the Ion Torrent platform

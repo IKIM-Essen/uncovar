@@ -16,7 +16,7 @@ rule fastqc:
         "0.69.0/bio/fastqc"
 
 
-# TODO: Change multiqc rules back to MultiQC wrapper once v1.11 is released
+# TODO Change multiqc rules back to MultiQC wrapper once v1.11 is released
 from os import path
 
 
@@ -25,9 +25,6 @@ rule multiqc:
         expand_samples_for_date(
             [
                 "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
-                "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
-                "results/{{date}}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
-                "results/{{date}}/trimmed/{sample}.fastp.json",
                 "results/{{date}}/quast/unpolished/{sample}/report.tsv",
                 "results/{{date}}/quast/polished/{sample}/report.tsv",
                 "results/{{date}}/qc/samtools_flagstat/{sample}.bam.flagstat",
@@ -35,6 +32,9 @@ rule multiqc:
             ]
         ),
         expand_samples_for_date("logs/{{date}}/kallisto_quant/{sample}.log"),
+        get_fastp_results,
+        get_kraken_output,
+        get_kraken_output_after_filtering,
     output:
         "results/{date}/qc/multiqc.html",
     params:
@@ -56,11 +56,11 @@ rule multiqc_lab:
         expand_samples_for_date(
             [
                 "results/{{date}}/qc/fastqc/{sample}_fastqc.zip",
-                "results/{{date}}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
-                "results/{{date}}/trimmed/{sample}.fastp.json",
                 "results/{{date}}/quast/unpolished/{sample}/report.tsv",
             ]
         ),
+        get_fastp_results,
+        get_kraken_output,
     output:
         report(
             "results/{date}/qc/laboratory/multiqc.html",
@@ -112,27 +112,31 @@ rule samtools_depth:
 
 
 # analysis of species diversity present BEFORE removing human contamination
-rule species_diversity_before:
+rule species_diversity_before_pe:
     input:
         db="resources/minikraken-8GB",
-        reads=expand("results/{{date}}/trimmed/{{sample}}.{read}.fastq.gz", read=[1, 2]),
+        reads=expand(
+            "results/{{date}}/trimmed/fastp-pe/{{sample}}.{read}.fastq.gz", read=[1, 2]
+        ),
     output:
         classified_reads=temp(
             expand(
-                "results/{{date}}/species-diversity/{{sample}}/{{sample}}_{read}.classified.fasta",
+                "results/{{date}}/species-diversity/pe/{{sample}}/{{sample}}_{read}.classified.fasta",
                 read=[1, 2],
             )
         ),
         unclassified_reads=temp(
             expand(
-                "results/{{date}}/species-diversity/{{sample}}/{{sample}}_{read}.unclassified.fasta",
+                "results/{{date}}/species-diversity/pe/{{sample}}/{{sample}}_{read}.unclassified.fasta",
                 read=[1, 2],
             )
         ),
-        kraken_output=temp("results/{date}/species-diversity/{sample}/{sample}.kraken"),
-        report="results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2",
+        kraken_output=temp(
+            "results/{date}/species-diversity/pe/{sample}/{sample}.kraken"
+        ),
+        report="results/{date}/species-diversity/pe/{sample}/{sample}.uncleaned.kreport2",
     log:
-        "logs/{date}/kraken/{sample}.log",
+        "logs/{date}/kraken/pe/{sample}.log",
     params:
         classified=lambda w, output: "#".join(
             output.classified_reads[0].rsplit("_1", 1)
@@ -149,12 +153,31 @@ rule species_diversity_before:
         "--paired {input.reads} > {output.kraken_output}) 2> {log}"
 
 
+rule species_diversity_before_se:
+    input:
+        db="resources/minikraken-8GB",
+        reads=get_trimmed_reads,
+    output:
+        kraken_output=temp(
+            "results/{date}/species-diversity/se/{sample}/{sample}.kraken"
+        ),
+        report="results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2",
+    log:
+        "logs/{date}/kraken/se/{sample}.log",
+    threads: 8
+    conda:
+        "../envs/kraken.yaml"
+    shell:
+        "(kraken2 --db {input.db} --threads {threads}"
+        " --report {output.report} --gzip-compressed"
+        " {input.reads} > {output.kraken_output})"
+        "2> {log}"
+
+
 # plot Korna charts BEFORE removing human contamination
 rule create_krona_chart:
     input:
-        kraken_output=(
-            "results/{date}/species-diversity/{sample}/{sample}.uncleaned.kreport2"
-        ),
+        kraken_output=get_kraken_output,
         taxonomy_database="resources/krona/",
     output:
         "results/{date}/species-diversity/{sample}/{sample}.html",
@@ -183,7 +206,8 @@ rule combine_references:
 # filter out human contamination
 rule extract_reads_of_interest:
     input:
-        "results/{date}/mapped/ref~main+human/{sample}.bam",
+        bam="results/{date}/mapped/ref~main+human/{sample}.bam",
+        index="results/{date}/mapped/ref~main+human/{sample}.bam.bai",
     output:
         temp("results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam"),
     log:
@@ -196,15 +220,15 @@ rule extract_reads_of_interest:
         "../scripts/extract-reads-of-interest.py"
 
 
-rule order_nonhuman_reads:
+rule order_nonhuman_reads_pe:
     input:
         "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
     output:
-        fq1=temp("results/{date}/nonhuman-reads/{sample}.1.fastq.gz"),
-        fq2=temp("results/{date}/nonhuman-reads/{sample}.2.fastq.gz"),
+        fq1=temp("results/{date}/nonhuman-reads/pe/{sample}.1.fastq.gz"),
+        fq2=temp("results/{date}/nonhuman-reads/pe/{sample}.2.fastq.gz"),
         bam_sorted=temp("results/{date}/nonhuman-reads/{sample}.sorted.bam"),
     log:
-        "logs/{date}/order_nonhuman_reads/{sample}.log",
+        "logs/{date}/order_nonhuman_reads/pe/{sample}.log",
     conda:
         "../envs/samtools.yaml"
     threads: 8
@@ -214,26 +238,60 @@ rule order_nonhuman_reads:
         " > {log} 2>&1"
 
 
+rule order_nonhuman_reads_se:
+    input:
+        "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
+    output:
+        fq=temp("results/{date}/nonhuman-reads/se/{sample}.fastq.gz"),
+        bam_sorted=temp("results/{date}/nonhuman-reads/{sample}.sorted.bam"),
+    log:
+        "logs/{date}/order_nonhuman_reads/se/{sample}.log",
+    conda:
+        "../envs/samtools.yaml"
+    threads: 8
+    shell:
+        "(samtools sort  -@ {threads} -n {input} -o {output.bam_sorted}; "
+        " samtools fastq -@ {threads} -0 {output.fq} {output.bam_sorted})"
+        " > {log} 2>&1"
+
+
 # analysis of species diversity present AFTER removing human contamination
-rule species_diversity_after:
+rule species_diversity_after_pe:
     input:
         db="resources/minikraken-8GB",
-        reads=expand(
-            "results/{{date}}/nonhuman-reads/{{sample}}.{read}.fastq.gz", read=[1, 2]
-        ),
+        reads=get_non_human_reads,
     output:
         kraken_output=temp(
-            "results/{date}/species-diversity-nonhuman/{sample}/{sample}.kraken"
+            "results/{date}/species-diversity-nonhuman/pe/{sample}/{sample}.kraken"
         ),
-        report="results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
+        report="results/{date}/species-diversity-nonhuman/pe/{sample}/{sample}.cleaned.kreport2",
     log:
-        "logs/{date}/kraken/{sample}_nonhuman.log",
+        "logs/{date}/kraken/{sample}_pe_nonhuman.log",
     conda:
         "../envs/kraken.yaml"
     threads: 8
     shell:
         "(kraken2 --db {input.db} --threads {threads} --report {output.report} --gzip-compressed "
         "--paired {input.reads} > {output.kraken_output}) 2> {log}"
+
+
+rule species_diversity_after_se:
+    input:
+        db="resources/minikraken-8GB",
+        reads=get_non_human_reads,
+    output:
+        kraken_output=temp(
+            "results/{date}/species-diversity-nonhuman/se/{sample}/{sample}.kraken"
+        ),
+        report="results/{date}/species-diversity-nonhuman/se/{sample}/{sample}.cleaned.kreport2",
+    log:
+        "logs/{date}/kraken/{sample}_se_nonhuman.log",
+    conda:
+        "../envs/kraken.yaml"
+    threads: 8
+    shell:
+        "(kraken2 --db {input.db} --threads {threads} --report {output.report} --gzip-compressed "
+        "{input.reads} > {output.kraken_output}) 2> {log}"
 
 
 # plotting Krona charts AFTER removing human contamination

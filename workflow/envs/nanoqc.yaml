@@ -1,0 +1,4 @@
+channels:
+  - bioconda
+dependencies:
+  - nanoqc =0.9
