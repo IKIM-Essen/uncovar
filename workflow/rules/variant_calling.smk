@@ -22,7 +22,7 @@ rule freebayes:
     log:
         "logs/{date}/freebayes/ref~{reference}/{sample}.log",
     wrapper:
-        "0.68.0/bio/freebayes"
+        "0.80.1/bio/freebayes"
 
 
 # TODO check delly single end mode
@@ -114,6 +114,21 @@ rule render_scenario:
         "../envs/unix.yaml"
     shell:
         "sed 's/sample:/{wildcards.sample}:/' {input} > {output}"
+
+
+rule varlociraptor_alignment_properties:
+    input:
+        ref=get_reference(),
+        ref_idx=get_reference(".fai"),
+        bam="results/{date}/recal/ref~{reference}/{sample}.bam",
+    output:
+        "results/{date}/alignment-properties/ref~{reference}/{sample}.json",
+    log:
+        "logs/{date}/varlociraptor/estimate-alignment-properties/ref~{reference}/{sample}.log",
+    conda:
+        "../envs/varlociraptor.yaml"
+    shell:
+        "varlociraptor estimate alignment-properties {input.ref} --bam {input.bam} > {output} 2> {log}"
 
 
 rule varlociraptor_preprocess:
