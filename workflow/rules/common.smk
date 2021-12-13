@@ -1461,17 +1461,25 @@ def get_pangolin_input(wildcards):
 
 def get_pangolin_stage_by_technolgy(sample):
     if has_pseudo_assembly(None, sample):
-        return ["scaffold","polished","masked-polished","pseudo"]
+        return ["scaffold", "polished", "masked-polished", "pseudo"]
     elif has_consensus_assembly(None, sample):
-        return ["scaffold","polished","masked-polished","consensus","masked-consensus"]
-    
+        return [
+            "scaffold",
+            "polished",
+            "masked-polished",
+            "consensus",
+            "masked-consensus",
+        ]
+
     raise NotImplementedError(f"No pangolin stages for technology {technology} found.")
 
 
 def get_aggregated_pangolin_calls(wildcards, return_list="paths"):
     samples = get_samples_for_date(wildcards.date)
 
-    pangolin_pattern="results/{date}/tables/strain-calls/{sample}.{stage}.strains.pangolin.csv"
+    pangolin_pattern = (
+        "results/{date}/tables/strain-calls/{sample}.{stage}.strains.pangolin.csv"
+    )
     expanded_patterns = []
 
     for sample in samples:
@@ -1485,19 +1493,20 @@ def get_aggregated_pangolin_calls(wildcards, return_list="paths"):
         )
 
         for stage in stage_wildcards:
-            if return_list=="paths":
+            if return_list == "paths":
                 expanded_patterns.append(
-                    pangolin_pattern.format(stage=stage, sample=sample, date=wildcards.date)
+                    pangolin_pattern.format(
+                        stage=stage, sample=sample, date=wildcards.date
+                    )
                 )
-            elif return_list=="stages":
+            elif return_list == "stages":
                 expanded_patterns.append(stage)
-            elif return_list=="samples":
+            elif return_list == "samples":
                 expanded_patterns.append(sample)
             else:
                 raise NameError(f"return_list {return_list} not recognized.")
 
     return expanded_patterns
-
 
 
 wildcard_constraints:

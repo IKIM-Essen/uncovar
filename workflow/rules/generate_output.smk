@@ -244,14 +244,18 @@ rule plot_lineages_over_time:
 
 rule pangolin_call_overview:
     input:
-        get_aggregated_pangolin_calls
+        get_aggregated_pangolin_calls,
     output:
         "results/{date}/tables/pangolin_calls_per_stage.csv",
     params:
-        samples=lambda wildcards: get_aggregated_pangolin_calls(wildcards, return_list="samples"),
-        stages=lambda wildcards: get_aggregated_pangolin_calls(wildcards, return_list="stages")
+        samples=lambda wildcards: get_aggregated_pangolin_calls(
+            wildcards, return_list="samples"
+        ),
+        stages=lambda wildcards: get_aggregated_pangolin_calls(
+            wildcards, return_list="stages"
+        ),
     log:
-        "logs/{date}/aggregate_pangolin_calls.log"
+        "logs/{date}/aggregate_pangolin_calls.log",
     conda:
         "../envs/python.yaml"
     script:
