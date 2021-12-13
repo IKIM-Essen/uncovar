@@ -951,8 +951,9 @@ def get_assemblies_for_submission(wildcards, agg_type):
     )
 
     # get accepted samples for rki submission
-    if agg_type == "accepted samples":
+    if agg_type == "accepted samples" or agg_type == "accepted samples technology":
         selected_assemblies = []
+        technolgy = []
         unqiue_samples = set()
 
         if len(set(masked_samples)) > 0:
@@ -981,7 +982,20 @@ def get_assemblies_for_submission(wildcards, agg_type):
                     consensus_assembly_pattern.format(sample=sample)
                 )
 
-        return selected_assemblies
+            technolgy.append(
+                get_pattern_by_technology(
+                    wildcards,
+                    sample=sample,
+                    illumina_pattern="ILLUMINA",
+                    ont_pattern="OXFORD_NANOPORE",
+                    ion_torrent_pattern="ION_TORRENT",
+                )
+            )
+
+        if agg_type == "accepted samples":
+            return selected_assemblies
+        elif agg_type == "accepted samples technology":
+            return technolgy
 
     # for the pangolin call
     elif agg_type == "single sample":
