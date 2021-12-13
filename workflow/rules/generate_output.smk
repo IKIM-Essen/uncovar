@@ -219,7 +219,7 @@ rule filter_overview_html:
 rule plot_lineages_over_time:
     input:
         lambda wildcards: expand(
-            "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
+            "results/{date}/tables/strain-calls/{sample}.polished.strains.pangolin.csv",
             zip,
             date=get_dates_before_date(wildcards),
             sample=get_samples_before_date(wildcards),
@@ -240,6 +240,43 @@ rule plot_lineages_over_time:
         "../envs/python.yaml"
     script:
         "../scripts/plot-lineages-over-time.py"
+
+
+rule pangolin_call_overview:
+    input:
+        get_aggregated_pangolin_calls
+    output:
+        "results/{date}/tables/pangolin_calls_per_stage.csv",
+    params:
+        samples=lambda wildcards: get_aggregated_pangolin_calls(wildcards, return_list="samples"),
+        stages=lambda wildcards: get_aggregated_pangolin_calls(wildcards, return_list="stages")
+    log:
+        "logs/{date}/aggregate_pangolin_calls.log"
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/aggregate-pangolin-calls-per-stage.py"
+
+
+rule pangolin_call_overview_html:
+    input:
+        "results/{date}/tables/pangolin_calls_per_stage.csv",
+    output:
+        report(
+            directory("results/{date}/pangolin-call-overview"),
+            htmlindex="index.html",
+            caption="../report/pangolin-call-overview.rst",
+            category="4. Assembly",
+            subcategory="0. Quality Overview",
+        ),
+    params:
+        pin_until="Sample",
+    log:
+        "logs/{date}/pangolin_call_overview_html.log",
+    conda:
+        "../envs/rbt.yaml"
+    shell:
+        "rbt csv-report {input} --pin-until {params.pin_until} {output} > {log} 2>&1"
 
 
 rule snakemake_reports:
@@ -267,6 +304,7 @@ rule snakemake_reports:
         else [],
         # 4. Assembly
         "results/{date}/filter-overview",
+        "results/{date}/pangolin-call-overview",
         expand_samples_for_date(
             [
                 "results/{{date}}/contigs/polished/{sample}.fasta",

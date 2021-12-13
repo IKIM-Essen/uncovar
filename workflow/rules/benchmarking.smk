@@ -412,7 +412,7 @@ rule collect_lineage_calls_of_various_stages:
             state_indi=READ_STATE_INDICATOR,
         ),
         pangolin=expand(
-            "results/benchmarking/tables/strain-calls/{prefix}{{lineage}}{number_indi}{{number}}{length_indi}{{length}}{state_indi}{state}.strains.pangolin.csv",
+            "results/benchmarking/tables/strain-calls/{prefix}{{lineage}}{number_indi}{{number}}{length_indi}{{length}}{state_indi}{state}.polished.strains.pangolin.csv",
             prefix=READ_TEST_PREFIX,
             number_indi=READ_NUMBER_INDICATOR,
             length_indi=READ_LENGTH_INDICATOR,
