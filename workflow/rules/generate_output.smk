@@ -10,7 +10,7 @@ rule masking:
         bai="results/{date}/mapped/ref~{reference}-{sample}/{sample}.bam.bai",
         sequence="results/{date}/contigs/{reference}/{sample}.fasta",
     output:
-        masked_sequence= report(
+        masked_sequence=report(
             "results/{date}/contigs/masked/{reference}/{sample}.fasta",
             category="4. Sequences",
             subcategory="4. Masked Sequences",
