@@ -108,21 +108,6 @@ def update_sample_sheet(SAMPLE_SHEET, verbose=True, dry_run=False):
 
     files_to_copy = [f for f in incoming_files if f not in data_files]
 
-    # get flag showing inclusion in rki-report
-    sample_list = []
-    for f in files_to_copy:
-        name_sample = f.split("_")[0]
-        if name_sample not in sample_list:
-            sample_list.append(name_sample)
-    include_in_data_df = pd.DataFrame(index=sample_list)
-    include_in_data_df.loc[
-        include_in_data_df.index.str.contains("No-RKI", case=False),
-        ["include_in_high_genome_summary"],
-    ] = "0"
-    include_in_data_df.loc[
-        ~include_in_data_df.index.str.contains("No-RKI", case=False),
-        ["include_in_high_genome_summary"],
-    ] = "1"
 
     ##################################
     ######### update the csv #########
@@ -168,9 +153,14 @@ def update_sample_sheet(SAMPLE_SHEET, verbose=True, dry_run=False):
         new_files_df.columns = ["fq1", "fq2"]
         new_files_df["date"] = today
         new_files_df["is_amplicon_data"] = 1
-        new_files_df["include_in_high_genome_summary"] = include_in_data_df[
-            "include_in_high_genome_summary"
-        ]
+        new_files_df.loc[
+            new_files_df.index.str.contains("No-RKI", case=False),
+            ["include_in_high_genome_summary"],
+            ] = "0"
+        new_files_df.loc[
+            ~new_files_df.index.str.contains("No-RKI", case=False),
+            ["include_in_high_genome_summary"],
+            ] = "1"
         print(new_files_df)
 
         new_sample_sheet = (
