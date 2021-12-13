@@ -982,7 +982,8 @@ def get_assemblies_for_submission(wildcards, agg_type):
                     consensus_assembly_pattern.format(sample=sample)
                 )
 
-            technolgy.append(get_pattern_by_technology(
+            technolgy.append(
+                get_pattern_by_technology(
                     wildcards,
                     sample=sample,
                     illumina_pattern="ILLUMINA",
