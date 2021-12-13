@@ -596,7 +596,7 @@ def get_target_events(wildcards):
         return "CLONAL"
 
 
-def get_filter_odds_input(wildcards):
+def get_control_fdr_input(wildcards):
     if wildcards.reference == "main":
         return "results/{date}/filtered-calls/ref~{reference}/{sample}.{filter}.bcf"
     else:

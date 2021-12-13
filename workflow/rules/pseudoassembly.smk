@@ -7,6 +7,7 @@
 rule vcf_to_fasta:
     input:
         bcf="results/{date}/calls/ref~main/{sample}.bcf",
+        csi="results/{date}/calls/ref~main/{sample}.bcf.csi",
         bam="results/{date}/recal/ref~main/{sample}.bam",
         bai="results/{date}/recal/ref~main/{sample}.bam.bai",
         fasta="resources/genomes/main.fasta",
