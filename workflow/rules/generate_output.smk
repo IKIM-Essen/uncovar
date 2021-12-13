@@ -76,8 +76,6 @@ checkpoint quality_filter:
     params:
         min_identity=config["quality-criteria"]["min-identity"],
         max_n=config["quality-criteria"]["max-n"],
-        samples=lambda wildcards: get_samples_for_date(wildcards.date),
-        includeflag=lambda wildcards: get_include_flag_for_date(wildcards.date),
     log:
         "logs/{date}/quality-filter/{assembly_type}.log",
     conda:
@@ -104,6 +102,7 @@ rule high_quality_genomes_report:
         ),
     params:
         seq_type=get_seq_type,
+        includeflag=lambda wildcards: get_include_flag_for_date(wildcards),
     conda:
         "../envs/pysam.yaml"
     log:

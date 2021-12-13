@@ -19,16 +19,20 @@ for file in snakemake.input.contigs:
             print(entry.sequence, file=outfile)
             sequence_names.append(entry.name)
 
+#include_flag = snakemake.params.includeflag
+df = pd.DataFrame.from_dict(snakemake.params.includeflag, orient="index", columns=["include_flag"])
+df["Seq_Type"] = snakemake.params.seq_type
+df = df[df.include_flag != "0"]
 # Creating csv-table
 csv_table = pd.DataFrame(
     {
         "SENDING_LAB": 10259,
         "DATE_DRAW": "",
-        "SEQ_TYPE": snakemake.params.seq_type,
+        "SEQ_TYPE": df["Seq_Type"].tolist(),
         "SEQ_REASON": "N",
         "SAMPLE_TYPE": "s001",
         "PUBLICATION_STATUS": "N",
-        "OWN_FASTA_ID": sequence_names,
+        "OWN_FASTA_ID": df.index.values.tolist(),
     }
 )
 

@@ -6,7 +6,6 @@
 sys.stderr = open(snakemake.log[0], "w")
 min_identity = snakemake.params.get("min_identity", 0.9)
 max_n = snakemake.params.get("max_n", 0.05)
-include_rki = "1"
 
 import pandas as pd
 from os import path
@@ -78,32 +77,11 @@ def get_n_share(contig_paths: List[str]) -> dict:
     return n_share_dict
 
 
-def get_include_rki(sample, includeflag):
-    """Extracts the information, whether the sample should be added to the rki files
-    or not out of the samples.csv file.
-
-    Args:
-        sample: List of samples for one specific date
-        includeflag: List of includeflag entries for the samples of one specific date
-
-    """
-
-    names_df = pd.DataFrame(
-        list(zip(sample, includeflag)),
-        columns=["sample_name", "include_in_high_genome_summary"],
-    )
-    include_dict = names_df.set_index("sample_name").T.to_dict("records")[0]
-
-    return include_dict
-
-
 def filter_and_save(
     identity: dict,
     n_share: dict,
-    include: dict,
     min_identity: float,
     max_n: float,
-    include_rki: int,
     save_path: str,
     summary_path: str,
 ):
@@ -122,7 +100,7 @@ def filter_and_save(
 
     # aggregate all result into one df
     agg_df = pd.DataFrame(
-        {"identity": identity, "n_share": n_share, "include": include}
+        {"identity": identity, "n_share": n_share}
     )
 
     # print agg_df to stderr for logging
@@ -135,7 +113,6 @@ def filter_and_save(
     filtered_df = agg_df[
         (agg_df["identity"] > min_identity)
         & (agg_df["n_share"] < max_n)
-        & (agg_df["include"] == include_rki)
     ]
 
     # print filtered to stderr for logging
@@ -156,14 +133,11 @@ def filter_and_save(
 
 identity_dict = get_identity(snakemake.input.quast)
 n_share_dict = get_n_share(snakemake.input.contigs)
-include_dict = get_include_rki(snakemake.params.samples, snakemake.params.includeflag)
 filter_and_save(
     identity_dict,
     n_share_dict,
-    include_dict,
     min_identity,
     max_n,
-    include_rki,
     snakemake.output.passed_filter,
     snakemake.output.filter_summary,
 )
