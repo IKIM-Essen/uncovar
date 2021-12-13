@@ -1233,7 +1233,12 @@ def get_lineage_by_accession(wildcards):
 def get_include_flag_for_date(wildcards):
     df = pep.sample_table
     df = df[df["date"] == wildcards.date]
-    includeflags_of_run = dict(zip(list(df["sample_name"].values),list(df["include_in_high_genome_summary"].values)))
+    includeflags_of_run = dict(
+        zip(
+            list(df["sample_name"].values),
+            list(df["include_in_high_genome_summary"].values),
+        )
+    )
     return includeflags_of_run
 
 

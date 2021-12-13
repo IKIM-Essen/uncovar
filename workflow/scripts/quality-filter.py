@@ -99,9 +99,7 @@ def filter_and_save(
     """
 
     # aggregate all result into one df
-    agg_df = pd.DataFrame(
-        {"identity": identity, "n_share": n_share}
-    )
+    agg_df = pd.DataFrame({"identity": identity, "n_share": n_share})
 
     # print agg_df to stderr for logging
     print("Aggregated data of all samples", file=sys.stderr)
@@ -111,8 +109,7 @@ def filter_and_save(
 
     # filter this accordingly to the given params
     filtered_df = agg_df[
-        (agg_df["identity"] > min_identity)
-        & (agg_df["n_share"] < max_n)
+        (agg_df["identity"] > min_identity) & (agg_df["n_share"] < max_n)
     ]
 
     # print filtered to stderr for logging

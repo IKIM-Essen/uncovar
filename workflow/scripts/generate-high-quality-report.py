@@ -19,8 +19,10 @@ for file in snakemake.input.contigs:
             print(entry.sequence, file=outfile)
             sequence_names.append(entry.name)
 
-#include_flag = snakemake.params.includeflag
-df = pd.DataFrame.from_dict(snakemake.params.includeflag, orient="index", columns=["include_flag"])
+# include_flag = snakemake.params.includeflag
+df = pd.DataFrame.from_dict(
+    snakemake.params.includeflag, orient="index", columns=["include_flag"]
+)
 df["Seq_Type"] = snakemake.params.seq_type
 df = df[df.include_flag != "0"]
 # Creating csv-table
