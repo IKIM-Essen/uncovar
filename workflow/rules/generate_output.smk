@@ -129,7 +129,7 @@ rule overview_table_csv:
         consensus_contigs=get_fallbacks_for_report("consensus"),
         kraken=get_kraken_output,
         pangolin=expand_samples_for_date(
-            "results/{{date}}/tables/strain-calls/{sample}.strains.pangolin.csv",
+            "results/{{date}}/tables/strain-calls/{sample}.polished.strains.pangolin.csv",
         ),
         bcf=expand_samples_for_date(
             "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
