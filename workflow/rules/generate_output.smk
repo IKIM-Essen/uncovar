@@ -134,12 +134,18 @@ rule overview_table_csv:
         bcf=expand_samples_for_date(
             "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
         ),
-        assembly_used=lambda wildcards: get_assemblies_for_submission(
-            wildcards, "all samples"
+        # Added because WorkflowError: Rule parameter depends on checkpoint but checkpoint output is not defined 
+        # as input file for the rule. Please add the output of the respective checkpoint to the rule inputs.
+        _=expand(
+            "results/{{date}}/tables/quality-filter/{assembly_type}.txt",
+            assembly_type=["masked-assembly", "pseudo-assembly", "consensus-assembly"],
         ),
     output:
         qc_data="results/{date}/tables/overview.csv",
     params:
+        assembly_used=lambda wildcards: get_assemblies_for_submission(
+            wildcards, "all samples"
+        ),
         voc=config.get("voc"),
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
     log:
