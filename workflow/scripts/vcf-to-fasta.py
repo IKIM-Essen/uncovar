@@ -4,9 +4,10 @@
 # except according to those terms.
 
 import re
-import pysam
-import numpy as np
 import sys
+
+import numpy as np
+import pysam
 
 sys.stderr = open(snakemake.log[0], "w")
 
@@ -65,7 +66,11 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
 
         last_pos = rec_pos - 1
 
-        dp_sample = record.samples[0]["DP"][0]
+        try:
+            dp_sample = record.samples[0]["DP"][0]
+        except TypeError:
+            dp_sample = record.samples[0]["DP"]
+
         if dp_sample is None:
             dp_sample = 0
 

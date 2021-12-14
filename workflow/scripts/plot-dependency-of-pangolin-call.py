@@ -13,9 +13,10 @@ MIXTURE_PREFIX = snakemake.params.get("prefix", "")
 MIXTURE_PART_INDICATOR = snakemake.params.get("separator", "")
 MIXTURE_PERCENTAGE_INDICATOR = snakemake.params.get("percentage", "")
 
-import pandas as pd
-import altair as alt
 import re
+
+import altair as alt
+import pandas as pd
 
 
 def regex_per_line(content, pattern):

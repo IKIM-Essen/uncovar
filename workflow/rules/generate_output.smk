@@ -101,7 +101,9 @@ rule high_quality_genomes_report:
             caption="../report/rki-submission-csv.rst",
         ),
     params:
-        seq_type=get_seq_type,
+        seq_type=lambda wildcards: get_assemblies_for_submission(
+            wildcards, "accepted samples technology"
+        ),
     conda:
         "../envs/pysam.yaml"
     log:

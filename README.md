@@ -1,17 +1,23 @@
+# UnCoVar
+
 ![UnCoVar2](https://user-images.githubusercontent.com/77535027/133610563-d190e25c-504e-4953-92dd-f84a5b4a1191.png)
-# UnCoVar: SARS-CoV-2 Variant Calling and Lineage Assignment
+
+## SARS-CoV-2 Variant Calling and Lineage Assignment
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.bitbucket.io)
 [![GitHub actions status](https://github.com/koesterlab/snakemake-workflow-sars-cov2/workflows/Tests/badge.svg?branch=master)](https://github.com/koesterlab/snakemake-workflow-sars-cov2/actions?query=branch%3Amaster+workflow%3ATests)
-[![Docker Repository on Quay](https://quay.io/repository/uncovar/uncovar/status "Docker Repository on Quay")](https://quay.io/repository/uncovar/uncovar)
+[![Docker Repository on Quay](https://quay.io/repository/uncovar/uncovar/status)](https://quay.io/repository/uncovar/uncovar)
 
-A reproducible and scalable workflow for transparent and robust SARS-CoV-2 variant calling and lineage assignment with comprehensive reporting.
+A reproducible and scalable workflow for transparent and robust SARS-CoV-2
+variant calling and lineage assignment with comprehensive reporting.
 
 ## Usage
 
-This workflow is written with snakemake and its usage is described in the [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog?usage=IKIM-Essen/uncovar).
+This workflow is written with snakemake and its usage is described in the
+[Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog?usage=IKIM-Essen/uncovar).
 
-If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this repository and its DOI (see above).
+If you use this workflow in a paper, don't forget to give credits to the
+authors by citing the URL of this repository and its DOI (see above).
 
 ## Authors
 
@@ -21,8 +27,7 @@ If you use this workflow in a paper, don't forget to give credits to the authors
 * Folker Meyer (@folker)
 * Johannes Köster (@johanneskoester)
 
-
-# Tools, Frameworks and Packages used
+## Tools, Frameworks and Packages used
 
 This project wouldn't be possible without several open source libraries:
 
@@ -47,7 +52,7 @@ This project wouldn't be possible without several open source libraries:
 | kallisto       | www.doi.org/10.1038/nbt.3519                      |
 | Kraken2        | www.doi.org/10.1186/s13059-019-1891-0             |
 | Krona          | www.doi.org/10.1186/1471-2105-12-385              |
-| mason          | www.http://publications.imp.fu-berlin.de/962      |
+| mason          | www.<http://publications.imp.fu-berlin.de/962>      |
 | MEGAHIT        | www.doi.org/10.1093/bioinformatics/btv033         |
 | Minimap2       | www.doi.org/10.1093/bioinformatics/bty191         |
 | MultiQC        | www.doi.org/10.1093/bioinformatics/btw354         |
