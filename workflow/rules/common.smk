@@ -694,14 +694,14 @@ def get_mixture_results(wildcards):
 
     if wildcards.caller == "pangolin":
         return expand(
-            "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.csv",
+            "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.polished.strains.{caller}.csv",
             prefix=MIXTURE_PREFIX,
             caller=wildcards.caller,
             mixtures=mixture_list,
         )
     else:
         return expand(
-            "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.tsv",
+            "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.polished.strains.{caller}.tsv",
             prefix=MIXTURE_PREFIX,
             caller=wildcards.caller,
             mixtures=mixture_list,
