@@ -136,9 +136,7 @@ rule overview_table_csv:
         ),
         # Added because WorkflowError: Rule parameter depends on checkpoint but checkpoint output is not defined 
         # as input file for the rule. Please add the output of the respective checkpoint to the rule inputs.
-        _=lambda wildcards: get_assemblies_for_submission(
-            wildcards, "all samples"
-        ),
+        _=lambda wildcards: get_assemblies_for_submission(wildcards, "all samples"),
     output:
         qc_data="results/{date}/tables/overview.csv",
     params:
