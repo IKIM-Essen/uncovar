@@ -1,11 +1,11 @@
 # general info
-custom_logo: "/Users/btf/Projects/snakemake-workflow-sars-cov2/resources/IKIM.png"
+# custom_logo: "/Users/btf/Projects/snakemake-workflow-sars-cov2/resources/IKIM.png"
 custom_logo_url: "https://www.ikim.uk-essen.de/"
 custom_logo_title: "Institut für Künstliche Intelligenz in der Medizin"
 show_analysis_time: True
 report_header_info:
-  - Authors: "Alexander Thomas, Thomas Battenfeld, Folker Meyer, Johannes Köster"
-  - Project: "SARS-Cov-2 strain and variant calling pipeline"
+  - Authors: "Thomas Battenfeld, Alexander Thomas, Johannes Köster, Folker Meyer"
+  - Project: "UnCoVar: SARS-CoV-2 Variant Calling and Lineage Assignment"
 
 # order of report
 module_order:

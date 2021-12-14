@@ -1,8 +1,8 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
-exclude: "^publication/|CHANGELOG.md"
+exclude: "^publication/|CHANGELOG.md|docs/index.md|"
 
-default_stages: [push]
+default_stages: [commit, push]
 
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
@@ -11,8 +11,7 @@ repos:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-yaml
-    -   id: check-json
-    -   id: pretty-format-json
+        exclude: ^config/multiqc_config_lab.yaml|.tests/config/multiqc_config_lab.yaml
     -   id: check-added-large-files
     -   id: no-commit-to-branch
 

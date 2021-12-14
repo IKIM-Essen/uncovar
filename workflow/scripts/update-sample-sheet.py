@@ -3,14 +3,13 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
-from os import path, getcwd, listdir
-from shutil import move, copy2
-from datetime import date, datetime
-from os import mkdir
-from ruamel import yaml  # conda install -c conda-forge ruamel.yaml
 import os
+from datetime import date, datetime
+from os import getcwd, listdir, mkdir, path
+from shutil import copy2, move
 
 import pandas as pd
+from ruamel import yaml  # conda install -c conda-forge ruamel.yaml
 
 # define location of sample sheet and workflow configx
 SAMPLE_SHEET = snakemake.input[0]  # "config/pep/samples.csv"

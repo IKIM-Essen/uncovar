@@ -7,10 +7,10 @@ import sys
 
 sys.stderr = open(snakemake.log[0], "w")
 
+import altair as alt
 import pandas as pd
 import pysam
 from intervaltree import IntervalTree
-import altair as alt
 
 # read primer bedpe to df
 PRIMER = pd.read_csv(snakemake.params.get("bed", ""), delimiter="\t", header=None)
