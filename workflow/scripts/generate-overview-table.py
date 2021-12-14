@@ -160,7 +160,7 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
         scorpio_call = f"{scorpio}"
     data.loc[sample, "WHO Label"] = scorpio_call
     data["WHO Label"].fillna("-", inplace=True)
-    data["WHO Label"].replace({"nan":"-"}, inplace=True)
+    data["WHO Label"].replace({"nan": "-"}, inplace=True)
 
 
 # add variant calls
