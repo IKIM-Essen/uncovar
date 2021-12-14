@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.5.0...v0.6.0) (2021-12-13)
+
+
+### Features
+
+* update pangolin to 3.1.17 ([#389](https://www.github.com/IKIM-Essen/uncovar/issues/389)) ([23ed39e](https://www.github.com/IKIM-Essen/uncovar/commit/23ed39e6b7471a7f4efc649efb51882cf692e125))
+* update varlociraptor to version 4.8 ([#331](https://www.github.com/IKIM-Essen/uncovar/issues/331)) ([0096376](https://www.github.com/IKIM-Essen/uncovar/commit/009637621a3f55b8852c2aa9b428775f1286f40b))
+
+
+### Bug Fixes
+
+* generation of high quality genomes ([#394](https://www.github.com/IKIM-Essen/uncovar/issues/394)) ([da00975](https://www.github.com/IKIM-Essen/uncovar/commit/da00975893a20144c28cf4185c9263f6bd6c5a7c))
+* relative aggregation of samples for variants and lineages over time plots ([#382](https://www.github.com/IKIM-Essen/uncovar/issues/382)) ([ebe556c](https://www.github.com/IKIM-Essen/uncovar/commit/ebe556c3dfa7d1bbf6797d51452d06e53184f679))
+
 ## [0.5.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.4.1...v0.5.0) (2021-12-09)
 
 

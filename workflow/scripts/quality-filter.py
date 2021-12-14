@@ -7,9 +7,10 @@ sys.stderr = open(snakemake.log[0], "w")
 min_identity = snakemake.params.get("min_identity", 0.9)
 max_n = snakemake.params.get("max_n", 0.05)
 
-import pandas as pd
 from os import path
 from typing import List
+
+import pandas as pd
 import pysam
 
 
