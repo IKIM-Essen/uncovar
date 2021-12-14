@@ -1,5 +1,6 @@
 from collections import namedtuple, defaultdict
 from enum import Enum
+from itertools import product
 
 import numpy as np
 import gffutils
@@ -8,19 +9,21 @@ from requests.models import ContentDecodingError
 from pysam import VariantFile, VariantHeader, VariantRecord, FastaFile
 from dnachisel.biotools import get_backtranslation_table
 
+
 # TODO: Credits to covariants.org
 covariants_data = requests.get(
     "https://raw.githubusercontent.com/hodcroftlab/covariants/master/web/data/clusters.json"
 ).json()
 translate_aa = get_backtranslation_table("Standard")
-
+print(translate_aa)
 gff = gffutils.create_db(snakemake.input.annotation, dbfn=":memory:")
-gene_start = {gene["Name"][0]: gene.start for gene in gff.features_of_type("gene")}
+gene_start = {gene["gene_name"][0]: gene.start for gene in gff.features_of_type("gene")}
 
 
 
 def aa_to_dna(aa_seq):
-    return "".join(translate_aa(aa) for aa in aa_seq)
+    print(aa_seq)
+    return ("".join(combination) for combination in product(*[translate_aa[aa] for aa in aa_seq]))
 
 
 class VariantType(Enum):
@@ -247,8 +250,12 @@ with FastaFile(snakemake.input.reference) as infasta:
         for variant, lineages in get_variants(
             known_non_synonymous_variants, VariantType.Subst, merge=False
         ):
-            pos = variant.genome_pos()
+            print(variant.gene, lineages)
+            if not variant.gene == "ORF10":
+                pos = variant.genome_pos()
 
-            ref_allele = infasta.fetch(reference=contig, start=pos, end=pos + 3)
-            for alt_allele in aa_to_dna(variant.right):
-                write_record(pos, ref_allele, alt_allele, lineages, [variant])
+                ref_allele = infasta.fetch(reference=contig, start=pos, end=pos + 3)
+                print(variant.right, "<---")
+                for alt_allele in aa_to_dna(variant.right):
+                    
+                    write_record(pos, ref_allele, alt_allele, lineages, [variant])

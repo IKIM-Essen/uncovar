@@ -1,6 +1,6 @@
 rule collect_lineage_candidate_variants:
     input:
-        annotation="resources/annotation.gff",
+        annotation="resources/annotation_known_variants.gff",
         reference="resources/genomes/main.fasta",
     output:
         "resources/lineage-candidate-variants/all.bcf",
