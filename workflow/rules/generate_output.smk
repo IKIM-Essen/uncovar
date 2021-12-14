@@ -72,7 +72,7 @@ checkpoint quality_filter:
         contigs=get_final_assemblies,
     output:
         passed_filter="results/{date}/tables/quality-filter/{assembly_type}.txt",
-        filter_summary="results/{date}/tables/filter_summary/{assembly_type}.tsv",
+        filter_summary="results/{date}/tables/filter-summary/{assembly_type}.tsv",
     params:
         min_identity=config["quality-criteria"]["min-identity"],
         max_n=config["quality-criteria"]["max-n"],
@@ -136,10 +136,7 @@ rule overview_table_csv:
         ),
         # Added because WorkflowError: Rule parameter depends on checkpoint but checkpoint output is not defined 
         # as input file for the rule. Please add the output of the respective checkpoint to the rule inputs.
-        _=expand(
-            "results/{{date}}/tables/quality-filter/{assembly_type}.txt",
-            assembly_type=["masked-assembly", "pseudo-assembly", "consensus-assembly"],
-        ),
+        _=get_checkpoints_for_overview_table,
     output:
         qc_data="results/{date}/tables/overview.csv",
     params:
@@ -180,12 +177,12 @@ rule overview_table_html:
 
 rule filter_overview:
     input:
-        de_novo="results/{date}/tables/filter_summary/masked-assembly.tsv",
+        de_novo="results/{date}/tables/filter-summary/masked-assembly.tsv",
         pseudo=get_if_any_pseudo_assembly(
-            "results/{date}/tables/filter_summary/pseudo-assembly.tsv"
+            "results/{date}/tables/filter-summary/pseudo-assembly.tsv"
         ),
         consensus=get_if_any_consensus_assembly(
-            "results/{date}/tables/filter_summary/consensus-assembly.tsv"
+            "results/{date}/tables/filter-summary/consensus-assembly.tsv"
         ),
     output:
         "results/{date}/tables/filter-overview.csv",
