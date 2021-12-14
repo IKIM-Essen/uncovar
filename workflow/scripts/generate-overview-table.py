@@ -153,7 +153,7 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
         #         varcount = f" ({varcount})"
         # pangolin_call = f"{lineage}{varcount}"
         pangolin_call = f"{lineage}"
-    data.loc[sample, "Pangolin Lineage"] = pangolin_call
+    data.loc[sample, "Pango Lineage"] = pangolin_call
     if scorpio == "None":
         scorpio_call = "no clear name because of missing strain"
     else:
