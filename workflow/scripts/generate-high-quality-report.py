@@ -24,7 +24,8 @@ with open(snakemake.output.fasta, "w") as outfile:
 
 
 # Creating csv-table
-csv_table = pd.DataFrame({
+csv_table = pd.DataFrame(
+    {
         "SENDING_LAB": 10259,
         "DATE_DRAW": "",
         "SEQ_TYPE": snakemake.params.seq_type,
@@ -32,7 +33,7 @@ csv_table = pd.DataFrame({
         "SAMPLE_TYPE": "s001",
         "PUBLICATION_STATUS": "N",
         "OWN_FASTA_ID": sequence_names,
-        "include" : snakemake.params.includeflag,
+        "include": snakemake.params.includeflag,
     }
 )
 
