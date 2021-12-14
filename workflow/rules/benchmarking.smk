@@ -149,10 +149,13 @@ rule test_non_cov2:
 rule report_non_cov2:
     input:
         summary="results/benchmarking/non-sars-cov-2.csv",
-        call_plots=expand(
-            "results/benchmarking/plots/strain-calls/non-cov2-{accession}.strains.{caller}.svg",
+        call_plots_kallisto=expand(
+            "results/benchmarking/plots/strain-calls/non-cov2-{accession}.strains.kallisto.svg",
             accession=get_non_cov2_accessions(),
-            caller=["pangolin", "kallisto"],
+        ),
+        call_plots_pangolin=expand(
+            "results/benchmarking/plots/strain-calls/non-cov2-{accession}.polished.strains.pangolin.svg",
+            accession=get_non_cov2_accessions(),
         ),
     output:
         report(

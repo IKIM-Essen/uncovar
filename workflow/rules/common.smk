@@ -701,7 +701,7 @@ def get_mixture_results(wildcards):
         )
     else:
         return expand(
-            "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.polished.strains.{caller}.tsv",
+            "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.tsv",
             prefix=MIXTURE_PREFIX,
             caller=wildcards.caller,
             mixtures=mixture_list,
