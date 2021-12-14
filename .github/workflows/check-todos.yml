@@ -2,7 +2,7 @@ name: Check TODOs in codebase
 
 on:
   push:
-    branches: 
+    branches:
       - master
 
 jobs:
