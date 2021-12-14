@@ -13,8 +13,10 @@ covariants_data = requests.get(
     "https://raw.githubusercontent.com/hodcroftlab/covariants/master/web/data/clusters.json"
 ).json()
 translate_aa = get_backtranslation_table("Standard")
+
 gff = gffutils.create_db(snakemake.input.annotation, dbfn=":memory:")
 gene_start = {gene["Name"][0]: gene.start for gene in gff.features_of_type("gene")}
+
 
 
 def aa_to_dna(aa_seq):
@@ -35,9 +37,9 @@ class SynonymousVariant:
 
     def __eq__(self, other):
         return (
-            self.left == other.left
-            and self.right == other.right
-            and self.pos == other.pos
+        self.left == other.left
+        and self.right == other.right
+        and self.pos == other.pos
         )
 
     def __hash__(self):
@@ -66,11 +68,11 @@ class SynonymousVariant:
 
 class NonSynonymousVariant(SynonymousVariant):
     def __init__(self, left, pos, right, gene):
-        super().__init__(self, left, pos, right)
+        super().__init__(left, pos, right)
         self.gene = gene
 
     def __eq__(self, other):
-        return super().__eq__(self, other) and self.gene == other.gene
+        return super().__eq__(other) and self.gene == other.gene
 
     def __hash__(self):
         return hash((self.left, self.pos, self.right, self.gene))
@@ -97,10 +99,10 @@ with FastaFile(snakemake.input.reference) as infasta:
         '##INFO=<ID=LINEAGES,Number=.,Type=String,Description="Lineages having this variant">'
     )
 
-    NonSynonymousVariant = namedtuple(
-        "NonSynonymousVariant", ["gene", "left", "pos", "right"]
-    )
-    SynonymousVariant = namedtuple("SynonymousVariant", ["left", "pos", "right"])
+    # NonSynonymousVariant = namedtuple(
+    #     "NonSynonymousVariant", ["gene", "left", "pos", "right"]
+    # )
+    # synonymousVariant = namedtuple("SynonymousVariant", ["left", "pos", "right"])
 
     known_non_synonymous_variants = defaultdict(set)
     for lineage_entry in covariants_data["clusters"]:
@@ -121,6 +123,7 @@ with FastaFile(snakemake.input.reference) as infasta:
     with VariantFile(snakemake.output[0], "wb", header=header) as outvcf:
 
         def get_variants(all_variants, variant_type, merge=True):
+            # import pdb; pdb.set_trace()
             filtered_variants = sorted(
                 filter(
                     lambda item: item[0].variant_type() == variant_type,
@@ -129,7 +132,7 @@ with FastaFile(snakemake.input.reference) as infasta:
             )
 
             if not merge:
-                return filtered_variants
+                yield from filtered_variants
 
             def process_batch(batch, batch_lineages):
                 # Step 1: collect all visited lineages in batch
@@ -150,7 +153,8 @@ with FastaFile(snakemake.input.reference) as infasta:
                     ]
                 )
                 # Step 3: remove duplicate columns
-                lineage_matrix = np.unique(lineage_matrix, axis=1)
+                if len(lineage_matrix) > 0:
+                    lineage_matrix = np.unique(lineage_matrix, axis=1)
                 # Step 4: iterate over combinations
                 batch = np.array(batch)
                 batch_lineages = np.array(batch_lineages)
@@ -172,17 +176,18 @@ with FastaFile(snakemake.input.reference) as infasta:
             batch = []
             batch_lineages = []
             for variant, lineages in filtered_variants:
-                if variant.pos == batch[-1].pos + 1 and variant.is_same_feature(
-                    batch[-1]
-                ):
-                    batch.append(variant)
-                    batch_lineages.append(lineages)
-                else:
-                    # yield and remove the last batch
-                    yield from process_batch(batch, batch_lineages)
-                    # clear and start with new batch
-                    batch = [variant]
-                    batch_lineages = [lineages]
+                if len(batch) > 0:
+                    if variant.pos == batch[-1].pos + 1 and variant.is_same_feature(
+                        batch[-1]
+                    ):
+                        batch.append(variant)
+                        batch_lineages.append(lineages)
+                    else:
+                        # yield and remove the last batch
+                        yield from process_batch(batch, batch_lineages)
+                        # clear and start with new batch
+                        batch = [variant]
+                        batch_lineages = [lineages]
 
             yield from process_batch(batch, batch_lineages)
 
@@ -192,9 +197,9 @@ with FastaFile(snakemake.input.reference) as infasta:
             record.alleles = (ref_allele, alt_allele)
             record.pos = pos
 
-            record.info["LINEAGES"] = lineages
+            record.info["LINEAGES"] = ",".join(lineages)
 
-            record.info["SIGNATURES"] = [variant.signature() for variant in variants]
+            record.info["SIGNATURES"] = ",".join(variant.signature() for variant in variants)
 
             outvcf.write(record)
 
@@ -217,7 +222,7 @@ with FastaFile(snakemake.input.reference) as infasta:
         for variant, lineages in get_variants(
             known_synonymous_variants, VariantType.Subst, merge=False
         ):
-            pos = variants[0].genome_pos()
+            pos = variant.genome_pos()
             write_record(pos, variant.left, variant.right, lineages, [variant])
 
         for variants, lineages in get_variants(
@@ -242,7 +247,7 @@ with FastaFile(snakemake.input.reference) as infasta:
         for variant, lineages in get_variants(
             known_non_synonymous_variants, VariantType.Subst, merge=False
         ):
-            pos = variants.genome_pos()
+            pos = variant.genome_pos()
 
             ref_allele = infasta.fetch(reference=contig, start=pos, end=pos + 3)
             for alt_allele in aa_to_dna(variant.right):
