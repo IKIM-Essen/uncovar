@@ -18,26 +18,9 @@ rule vembrane_filter:
         "0.71.1/bio/vembrane/filter"
 
 
-rule filter_odds:
-    input:
-        get_filter_odds_input,
-    output:
-        temp(
-            "results/{date}/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.odds.bcf"
-        ),
-    params:
-        events=get_target_events,
-    log:
-        "logs/{date}/filter-calls/odds/ref~{reference}/{sample}.{clonality}.{filter}.log",
-    conda:
-        "../envs/varlociraptor.yaml"
-    shell:
-        "varlociraptor filter-calls posterior-odds --events {params.events} --odds barely < {input} > {output} 2> {log}"
-
-
 rule control_fdr:
     input:
-        "results/{date}/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.odds.bcf",
+        get_control_fdr_input,
     output:
         temp(
             "results/{date}/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.{vartype}.fdr-controlled.bcf"
@@ -50,7 +33,7 @@ rule control_fdr:
     conda:
         "../envs/varlociraptor.yaml"
     shell:
-        "varlociraptor filter-calls control-fdr {input} --var {wildcards.vartype} "
+        "varlociraptor filter-calls control-fdr --local {input} --var {wildcards.vartype} "
         "--events {params.events} --fdr {params.fdr} > {output} 2> {log}"
 
 

@@ -9,12 +9,12 @@ human-genome-download-path:
   - ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.28_GRCh38.p13/GCA_000001405.28_GRCh38.p13_genomic.fna.gz
 
 data-handling:
-  # path of incoming data, which is moved to the 
+  # path of incoming data, which is moved to the
   # data directory by the preprocessing script
   incoming: ../incoming/
   # path to store data within the workflow
   data: data/
-  # path to archive data from incoming and 
+  # path to archive data from incoming and
   # the results from the latest run to
   archive: ../archive/
 
@@ -50,7 +50,7 @@ adapters:
   amplicon-primers: "resources/primer.bedpe"
   # GenBank accession of reference sequence of the amplicon primers
   amplicon-reference: "MN908947"
-  # ARTIC primer version to clip from reads. See 
+  # ARTIC primer version to clip from reads. See
   # https://github.com/artic-network/artic-ncov2019/tree/master/primer_schemes/nCoV-2019/V4
   # for more information
   artic-primer-version: 3
@@ -116,13 +116,13 @@ voc:
     - D80A
     - D138Y
     - Y144del
-    - F157_R158del 
+    - F157_R158del
     - R190S
     - D215G
     - R246I
     - K417N
     - K417T
-    - L452R 
+    - L452R
     - E484K
     - T478K
     - N501Y
@@ -144,8 +144,8 @@ voc:
 #      Configuration for benchmarking      #
 ############################################
 
-# NCBI reference sequences of non-SARS-CoV-2 coronavirus. 
-# Used to test whether the pipeline can distinguish between 
+# NCBI reference sequences of non-SARS-CoV-2 coronavirus.
+# Used to test whether the pipeline can distinguish between
 # non-SARS CoV-2 and SARS CoV-2 viruses.
 non_cov2_genomes:
   - NC_005831
@@ -153,7 +153,7 @@ non_cov2_genomes:
   - NC_006213
   - NC_006577
   - NC_019843
-  - NC_004718 
+  - NC_004718
 
 # for testing the read bases strain calling
 mixtures:
@@ -163,7 +163,7 @@ mixtures:
   no_mixtures: 500
   # number of strains to mix
   no_strains: 2
-  # or you can specify the mix you would like to have 
+  # or you can specify the mix you would like to have
   # this assumes, that strain files are available under resources/genomes
   # the used number of strains must match the no_strains defined above
   use_predefined_mixtures: False
@@ -212,7 +212,7 @@ assemblers_for_comparison:
   - spades
   - rnaviralspades
 
-# assemblers used for sequencing method 
+# assemblers used for sequencing method
 assemblers_used:
   shotgun: "megahit-std"
   amplicon: "metaspades"
@@ -228,7 +228,6 @@ orf_names:
   - ORF7a
   - ORF7b
   - ORF8
-  - N 
+  - N
   - ORF10
   - 3UTR
-
