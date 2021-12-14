@@ -1,0 +1,44 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+exclude: "^publication/|CHANGELOG.md"
+
+default_stages: [push]
+
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: check-json
+    -   id: pretty-format-json
+    -   id: check-added-large-files
+    -   id: no-commit-to-branch
+
+-   repo: https://github.com/snakemake/snakefmt
+    rev: 0.4.4
+    hooks:
+    -   id: snakefmt
+
+-   repo: https://github.com/psf/black
+    rev: 21.12b0
+    hooks:
+    -   id: black
+    -   id: black-jupyter
+
+-   repo: https://github.com/PyCQA/isort
+    rev: 5.10.1
+    hooks:
+    -   id: isort
+
+-   repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.30.0
+    hooks:
+    -   id: markdownlint-fix
+
+# sets up .pre-commit-ci.yaml to ensure pre-commit dependencies stay up to date
+ci:
+    autoupdate_schedule: weekly
+    skip: []
+    submodules: false
