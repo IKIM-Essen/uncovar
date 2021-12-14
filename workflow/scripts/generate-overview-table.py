@@ -155,7 +155,7 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
         pangolin_call = f"{lineage}"
     data.loc[sample, "Pango Lineage"] = pangolin_call
     if scorpio == "None":
-        scorpio_call = "no clear name because of missing strain"
+        scorpio_call = "-"
     else:
         scorpio_call = f"{scorpio}"
     data.loc[sample, "WHO Label"] = scorpio_call
