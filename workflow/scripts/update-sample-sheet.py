@@ -42,11 +42,12 @@ def update_sample_sheet(SAMPLE_SHEET, verbose=True, dry_run=False):
     if dry_run:
         print("DRY RUN - FILES ARE NOT MOVED")
 
+    # TODO Check if the cwd is the root of this repo
     # check if current working directory is the snakemake workflow
-    if not getcwd().endswith("snakemake-workflow-sars-cov2"):
-        raise Exception(
-            "Please change your working directory to 'snakemake-workflow-sars-cov2'"
-        )
+    # if not getcwd().endswith("snakemake-workflow-sars-cov2"):
+    #     raise Exception(
+    #         "Please change your working directory to 'snakemake-workflow-sars-cov2'"
+    #     )
 
     today = date.today().strftime("%Y-%m-%d")
 
