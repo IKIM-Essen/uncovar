@@ -10,11 +10,13 @@
 
 <!-- Mark with an `x` all the checkboxes that apply (like `[x]`) -->
 
-- [ ] I've formatted the PR title in accordance with the [structure of the conventional commit messages](https://www.conventionalcommits.org/en/v1.0.0/).
-- [ ] I've updated the code style using `snakefmt workflow/` and `black workflow/` if needed.
+- [ ] I've formatted the PR title in accordance with the
+[structure of the conventional commit messages](https://www.conventionalcommits.org/en/v1.0.0/).
+- [ ] I've updated the code style using `snakefmt workflow/` and
+`black workflow/` if needed.
 - [ ] I've updated or supplemented the documentation as needed.
-- [ ] I've read the [`CODE_OF_CONDUCT.md`](https://github.com/IKIM-Essen/uncovar/blob/master/CODE_OF_CONDUCT.md) document.
-- [ ] I've read the [`CONTRIBUTING.md`](https://github.com/IKIM-Essen/uncovar/blob/master/CONTRIBUTING.md) guide.
+- [ ] I've read the [`CODE_OF_CONDUCT.md`] document.
+- [ ] I've read the [`CONTRIBUTING.md`] guide.
 
 <!--
 ## Conventional Commits Format
@@ -33,3 +35,6 @@
 - **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc.)
 - **test**: Adding missing tests or correcting existing tests
 -->
+
+[`CODE_OF_CONDUCT.md`]: https://github.com/IKIM-Essen/uncovar/blob/master/CODE_OF_CONDUCT.md
+[`CONTRIBUTING.md`]:(https://github.com/IKIM-Essen/uncovar/blob/master/CONTRIBUTING.md)

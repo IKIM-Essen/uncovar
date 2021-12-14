@@ -19,11 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: SetUp Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.x
+
+      - name: Update Contributing
+        run: cat CONTRIBUTING.md > docs/dev-guide/contributing.md
 
       - name: Update Changelog
         run: cat CHANGELOG.md > docs/about/changelog.md
