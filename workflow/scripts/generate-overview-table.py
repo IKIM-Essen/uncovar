@@ -118,7 +118,7 @@ register_contig_lengths(snakemake.input.consensus_contigs, "Consensus Sequence (
 
 
 # add type of assembly use:
-for ele in snakemake.params.assembly_used:
+for ele in snakemake.input.assembly_used:
     sample, used = ele.split(",")
     if "pseudo" == used:
         data.loc[sample, "Best Quality"] = "Pseudo"
