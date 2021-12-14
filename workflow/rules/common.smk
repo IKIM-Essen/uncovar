@@ -902,6 +902,8 @@ def get_final_assemblies_identity(wildcards):
 def get_checkpoints_for_overview_table(wildcards):
     assembly_types = ["masked-assembly"]
 
+    all_samples_for_date = get_samples_for_date(wildcards.date)
+
     if any(has_pseudo_assembly(None, sample) for sample in all_samples_for_date):
         assembly_types.append("pseudo-assembly")
 
