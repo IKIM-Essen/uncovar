@@ -5,7 +5,7 @@ To configure this workflow, modify `config/config.yaml` according to your needs,
 The sample sheet contains all samples to be analyzed by UnCoVar.
 ## Auto filling
 
-UnCoVar offers the possibility to automatically append samples to the sample sheet. To load your data into the workflow execute 
+UnCoVar offers the possibility to automatically append samples to the sample sheet. To load your data into the workflow execute
 
     snakemake --cores all --use-conda update_sample
 
