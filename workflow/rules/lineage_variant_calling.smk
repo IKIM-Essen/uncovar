@@ -12,9 +12,24 @@ rule collect_lineage_candidate_variants:
         "../scripts/collect-lineage-variants.py"
 
 
+rule annotate_lineage_variants:
+    input:
+        calls="results/{date}/calls/ref~main/{sample}.lineage-variants.bcf",
+        annotation="resources/lineage-candidate-variants/all.bcf",
+    output:
+        "results/{date}/lineage-variants/{sample}.bcf",
+    log:
+        "logs/annotate-lineage-variants/{sample}.log"
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        "bcftools annotate -a {input.annotation} -c LINEAGES,SIGNATURES {input.calls} > {output} 2> {log}"
+
+
+# TODO add conda env and log file to this rule
 rule generate_lineage_variant_table:
     input:
-        "results/{date}/calls/ref~main/{sample}.lineage-variants.bcf",
+        "results/{date}/lineage-variants/{sample}.bcf",
     output:
         "results/{data}/lineage-variants/{sample}.tsv",
     script:
