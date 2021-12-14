@@ -4,7 +4,8 @@
 [![GitHub actions status](https://github.com/koesterlab/snakemake-workflow-sars-cov2/workflows/Tests/badge.svg?branch=master)](https://github.com/koesterlab/snakemake-workflow-sars-cov2/actions?query=branch%3Amaster+workflow%3ATests)
 [![Docker Repository on Quay](https://quay.io/repository/uncovar/uncovar/status "Docker Repository on Quay")](https://quay.io/repository/uncovar/uncovar)
 
-UnCoVar is a reproducible and scalable workflow for transparent and robust SARS-CoV-2 variant calling and lineage assignment with comprehensive reporting.
+UnCoVar is a reproducible and scalable workflow for transparent and robust
+SARS-CoV-2 variant calling and lineage assignment with comprehensive reporting.
 
 <div class="row">
   <div class="column">

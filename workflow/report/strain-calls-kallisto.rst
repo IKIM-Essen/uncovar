@@ -1,4 +1,4 @@
-Strain calls for {{ snakemake.wildcards.sample }}. 
+Strain calls for {{ snakemake.wildcards.sample }}.
 Horizontal axis shows the fraction in the sample, vertical axis shows the called strains.
 Strains below {{ snakemake.params.min_fraction }} are summarized under the term "other".
 

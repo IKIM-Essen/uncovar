@@ -4,9 +4,10 @@
 # except according to those terms.
 
 import re
-import pysam
-import numpy as np
 import sys
+
+import numpy as np
+import pysam
 
 sys.stderr = open(snakemake.log[0], "w")
 

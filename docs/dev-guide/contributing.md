@@ -1,1 +1,1 @@
-# Contributing
+<!-- Filled by GitHub action. -->

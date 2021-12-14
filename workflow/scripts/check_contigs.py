@@ -9,6 +9,7 @@ sys.stderr = open(snakemake.log[0], "w")
 # parameter = snakemake.params.get("parameter", "")
 
 from shutil import copyfile
+
 from Bio import SeqIO
 
 
