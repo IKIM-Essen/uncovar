@@ -8,24 +8,24 @@
     width: 50%;
     padding: 10px 10px;
   }
-  
+
   /* Remove extra left and right margins, due to padding in columns */
   .row {margin: -10px -10px;}
-  
+
   /* Clear floats after the columns */
   .row:after {
     content: "";
     display: table;
     clear: both;
   }
-  
+
   /* Style the counter cards */
   .card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
     padding: 10px 16px;
     text-align: center;
   }
-  
+
   .card-title {
     margin-top: -20px;
   }
