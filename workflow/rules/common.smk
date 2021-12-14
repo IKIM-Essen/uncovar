@@ -898,8 +898,9 @@ def get_final_assemblies_identity(wildcards):
             ont_pattern="results/{{date}}/quast/masked/consensus/{sample}/report.tsv",
         )
 
+
 def get_checkpoints_for_overview_table(wildcards):
-    assembly_types=["masked-assembly"]
+    assembly_types = ["masked-assembly"]
 
     if any(has_pseudo_assembly(None, sample) for sample in all_samples_for_date):
         assembly_types.append("pseudo-assembly")
@@ -908,9 +909,9 @@ def get_checkpoints_for_overview_table(wildcards):
         assembly_types.append("consensus-assembly")
 
     return expand(
-            "results/{{date}}/tables/quality-filter/{assembly_type}.txt",
-            assembly_type=assembly_types,
-        )
+        "results/{{date}}/tables/quality-filter/{assembly_type}.txt",
+        assembly_type=assembly_types,
+    )
 
 
 def load_filtered_samples(wildcards, assembly_type):
