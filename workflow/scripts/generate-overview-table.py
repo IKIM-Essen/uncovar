@@ -136,6 +136,7 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
         pangolin_results.shape[0] == 1
     ), "unexpected number of rows (>1) in pangolin results"
     lineage = pangolin_results.loc[0, "lineage"]
+    scorpio = pangolin_results.loc[0, "scorpio_call"]
     if lineage == "None":
         pangolin_call = "no strain called"
     else:
@@ -152,7 +153,12 @@ for sample, file in iter_with_samples(snakemake.input.pangolin):
         #         varcount = f" ({varcount})"
         # pangolin_call = f"{lineage}{varcount}"
         pangolin_call = f"{lineage}"
-    data.loc[sample, "Lineage"] = pangolin_call
+    data.loc[sample, "Pangolin Lineage"] = pangolin_call
+    if scorpio == "None":
+        scorpio_call = "no clear name because of missing strain"
+    else:
+        scorpio_call = f"{scorpio}"
+    data.loc[sample, "WHO Label"] = scorpio_call
 
 
 # add variant calls
