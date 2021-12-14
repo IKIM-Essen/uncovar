@@ -245,7 +245,7 @@ rule plot_lineages_over_time:
         "../scripts/plot-lineages-over-time.py"
 
 
-rule pangolin_call_overview:
+rule pangolin_call_overview_csv:
     input:
         get_aggregated_pangolin_calls,
     output:
