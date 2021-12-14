@@ -1244,9 +1244,17 @@ def get_lineage_by_accession(wildcards):
     ]
 
 
+def get_include_flag(sample):
+    try:
+        return pep.sample_table.loc[sample]["include_in_high_genome_summary"]
+    # if there is no include_in_high_genome_summary in the
+    # samples.csvdefined, always include the sample
+    except KeyError:
+        return 1
+
+
 def get_include_flag_for_date(wildcards):
-    df = pep.sample_table
-    return df[df["date"] == wildcards.date]["include_in_high_genome_summary"].to_list()
+    return [get_include_flag(sample) for sample in get_samples_for_date(wildcards.date)]
 
 
 def get_artic_primer(wildcards):
