@@ -13,7 +13,10 @@ covariants_data = requests.get(
     "https://raw.githubusercontent.com/hodcroftlab/covariants/master/web/data/clusters.json"
 ).json()
 translate_aa = get_backtranslation_table("Standard")
-gff = gffutils.create_db(snakemake.input.annotation, dbfn=":memory:", id_spec={"name": "Name"})
+
+gff = gffutils.create_db(snakemake.input.annotation, dbfn=":memory:")
+gene_start = {gene["Name"][0]: gene.start for gene in gff.features_of_type("gene")}
+
 
 
 def aa_to_dna(aa_seq):
@@ -78,7 +81,7 @@ class NonSynonymousVariant(SynonymousVariant):
         return self.gene == other.gene
 
     def genome_pos(self):
-        return gff[f"{self.gene}"].start - 1 + (self.pos - 1) * 3
+        return gene_start[self.gene] - 1 + (self.pos - 1) * 3
 
     def signature(self):
         return f"{self.gene}:{self.left}{self.pos}{self.right}"
