@@ -87,6 +87,8 @@ rule kallisto_call_strains:
         "logs/{date}/call-strains/{sample}.log",
     params:
         min_fraction=config["strain-calling"]["min-fraction"],
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
@@ -130,6 +132,8 @@ rule kallisto_plot_all_strains:
         ),
     log:
         "logs/{date}/plot-strains/all.{mode}.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
@@ -171,6 +175,8 @@ rule pangolin_plot_all_strains:
         ),
     log:
         "logs/{date}/plot-strains-pangolin/all.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:

@@ -964,9 +964,8 @@ def get_assemblies_for_submission(wildcards, agg_type):
             unqiue_samples.update(consensus_samples)
 
         if len(unqiue_samples) == 0:
-            # raise NotImplementedError(
-            #     f"No sequences are passing the quality filter for {wildcards.date}."
-            # )
+            # No sequences are passing the quality filter for date.
+            # Return dummy path as an indicator 
             return "resources/genomes/main.fasta"
 
         for sample in unqiue_samples:
