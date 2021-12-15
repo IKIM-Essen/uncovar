@@ -1,8 +1,8 @@
 # Consumer Guide
 
-This section of the documentation is focused on data interpretation. Its target
-group consists of virologists, epidemiologists or other scientists. In general,
-guidance for interpreting the results produced by UnCoVar is provided.
+This section of the documentation is focused on data interpretation, targeting
+virologists, epidemiologists and other involved scientists. General guidance for
+interpreting the results produced by UnCoVar is provided
 
 - [Highlights](installation.md)
 - [Understanding the Report](report-structure.md)
