@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.8.0...v0.9.0) (2021-12-15)
+
+
+### Features
+
+* added variants-over-time-plot to report again ([#405](https://www.github.com/IKIM-Essen/uncovar/issues/405)) ([bd5048a](https://www.github.com/IKIM-Essen/uncovar/commit/bd5048af11d3f1f28a1853a9ec1070fe85ff977b))
+
 ## [0.8.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.7.0...v0.8.0) (2021-12-15)
 
 
