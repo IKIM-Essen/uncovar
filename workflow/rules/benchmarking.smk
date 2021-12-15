@@ -264,7 +264,9 @@ rule assembly_comparison_velvet:
 
 rule order_contigs_assembly_comparison:
     input:
-        contigs="results/{date}/assembly/{sample}/{assembler}-pe/{sample}.contigs.fasta",
+        contigs=(
+            "results/{date}/assembly/{sample}/{assembler}-pe/{sample}.contigs.fasta"
+        ),
         reference="resources/genomes/main.fasta",
     output:
         temp(

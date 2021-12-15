@@ -43,7 +43,9 @@ rule ucsc_vcf:
         bcfs=get_report_input(
             "results/{date}/filtered-calls/ref~main/{sample}.subclonal.{filter}.bcf"
         ),
-        strain_call="results/{date}/tables/strain-calls/{target}.polished.strains.pangolin.csv",
+        strain_call=(
+            "results/{date}/tables/strain-calls/{target}.polished.strains.pangolin.csv"
+        ),
     output:
         report(
             "results/{date}/ucsc-vcfs/{target}.{filter}.vcf",
