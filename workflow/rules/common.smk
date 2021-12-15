@@ -335,7 +335,7 @@ def get_assembly_result(wildcards):
 def get_non_cov2_calls(from_caller="pangolin"):
     accessions = get_non_cov2_accessions()
     pattern = (
-        "results/benchmarking/tables/strain-calls/non-cov2-{accession}.strains.pangolin.csv"
+        "results/benchmarking/tables/strain-calls/non-cov2-{accession}.polished.strains.pangolin.csv"
         if from_caller == "pangolin"
         else "results/benchmarking/tables/strain-calls/non-cov2-{accession}.strains.kallisto.tsv"
         if from_caller == "kallisto"
@@ -694,7 +694,7 @@ def get_mixture_results(wildcards):
 
     if wildcards.caller == "pangolin":
         return expand(
-            "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.strains.{caller}.csv",
+            "results/benchmarking/tables/strain-calls/{prefix}{mixtures}.polished.strains.{caller}.csv",
             prefix=MIXTURE_PREFIX,
             caller=wildcards.caller,
             mixtures=mixture_list,
@@ -897,6 +897,23 @@ def get_final_assemblies_identity(wildcards):
             wildcards,
             ont_pattern="results/{{date}}/quast/masked/consensus/{sample}/report.tsv",
         )
+
+
+def get_checkpoints_for_overview_table(wildcards):
+    assembly_types = ["masked-assembly"]
+
+    all_samples_for_date = get_samples_for_date(wildcards.date)
+
+    if any(has_pseudo_assembly(None, sample) for sample in all_samples_for_date):
+        assembly_types.append("pseudo-assembly")
+
+    if any(has_consensus_assembly(None, sample) for sample in all_samples_for_date):
+        assembly_types.append("consensus-assembly")
+
+    return expand(
+        "results/{{date}}/tables/quality-filter/{assembly_type}.txt",
+        assembly_type=assembly_types,
+    )
 
 
 def load_filtered_samples(wildcards, assembly_type):
@@ -1457,6 +1474,71 @@ def get_samtools_sort_input(wildcards):
         )
 
     raise NotImplementedError(f"Sorting for {wildcards.stage} not supported.")
+
+
+def get_pangolin_input(wildcards):
+    if wildcards.stage == "scaffold":
+        return "results/{date}/contigs/ordered/{sample}.fasta"
+    elif wildcards.stage == "polished":
+        return "results/{date}/contigs/polished/{sample}.fasta"
+    elif wildcards.stage == "masked-polished":
+        return "results/{date}/contigs/masked/polished/{sample}.fasta"
+    elif wildcards.stage == "pseudo":
+        return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
+    elif wildcards.stage == "consensus":
+        return "results/{date}/consensus/bcftools/{sample}.fasta"
+    elif wildcards.stage == "masked-consensus":
+        return "results/{date}/contigs/masked/consensus/{sample}.fasta"
+
+
+def get_pangolin_stage_by_technolgy(sample):
+    if has_pseudo_assembly(None, sample):
+        return ["scaffold", "polished", "masked-polished", "pseudo"]
+    elif has_consensus_assembly(None, sample):
+        return [
+            "scaffold",
+            "polished",
+            "masked-polished",
+            "consensus",
+            "masked-consensus",
+        ]
+
+    raise NotImplementedError(f"No pangolin stages for technology {technology} found.")
+
+
+def get_aggregated_pangolin_calls(wildcards, return_list="paths"):
+    samples = get_samples_for_date(wildcards.date)
+
+    pangolin_pattern = (
+        "results/{date}/tables/strain-calls/{sample}.{stage}.strains.pangolin.csv"
+    )
+    expanded_patterns = []
+
+    for sample in samples:
+
+        stage_wildcards = get_pattern_by_technology(
+            wildcards,
+            sample=sample,
+            illumina_pattern=get_pangolin_stage_by_technolgy(sample),
+            ont_pattern=get_pangolin_stage_by_technolgy(sample),
+            ion_torrent_pattern=get_pangolin_stage_by_technolgy(sample),
+        )
+
+        for stage in stage_wildcards:
+            if return_list == "paths":
+                expanded_patterns.append(
+                    pangolin_pattern.format(
+                        stage=stage, sample=sample, date=wildcards.date
+                    )
+                )
+            elif return_list == "stages":
+                expanded_patterns.append(stage)
+            elif return_list == "samples":
+                expanded_patterns.append(sample)
+            else:
+                raise NameError(f"return_list {return_list} not recognized.")
+
+    return expanded_patterns
 
 
 wildcard_constraints:

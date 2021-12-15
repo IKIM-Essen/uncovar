@@ -77,7 +77,7 @@ checkpoint quality_filter:
         contigs=get_final_assemblies,
     output:
         passed_filter="results/{date}/tables/quality-filter/{assembly_type}.txt",
-        filter_summary="results/{date}/tables/filter_summary/{assembly_type}.tsv",
+        filter_summary="results/{date}/tables/filter-summary/{assembly_type}.tsv",
     params:
         min_identity=config["quality-criteria"]["min-identity"],
         max_n=config["quality-criteria"]["max-n"],
@@ -135,11 +135,14 @@ rule overview_table_csv:
         consensus_contigs=get_fallbacks_for_report("consensus"),
         kraken=get_kraken_output,
         pangolin=expand_samples_for_date(
-            "results/{{date}}/tables/strain-calls/{sample}.strains.pangolin.csv",
+            "results/{{date}}/tables/strain-calls/{sample}.polished.strains.pangolin.csv",
         ),
         bcf=expand_samples_for_date(
             "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
         ),
+        # Added because WorkflowError: Rule parameter depends on checkpoint but checkpoint output is not defined
+        # as input file for the rule. Please add the output of the respective checkpoint to the rule inputs.
+        _=get_checkpoints_for_overview_table,
     output:
         qc_data="results/{date}/tables/overview.csv",
     params:
@@ -180,12 +183,12 @@ rule overview_table_html:
 
 rule filter_overview:
     input:
-        de_novo="results/{date}/tables/filter_summary/masked-assembly.tsv",
+        de_novo="results/{date}/tables/filter-summary/masked-assembly.tsv",
         pseudo=get_if_any_pseudo_assembly(
-            "results/{date}/tables/filter_summary/pseudo-assembly.tsv"
+            "results/{date}/tables/filter-summary/pseudo-assembly.tsv"
         ),
         consensus=get_if_any_consensus_assembly(
-            "results/{date}/tables/filter_summary/consensus-assembly.tsv"
+            "results/{date}/tables/filter-summary/consensus-assembly.tsv"
         ),
     output:
         "results/{date}/tables/filter-overview.csv",
@@ -225,7 +228,7 @@ rule filter_overview_html:
 rule plot_lineages_over_time:
     input:
         lambda wildcards: expand(
-            "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
+            "results/{date}/tables/strain-calls/{sample}.polished.strains.pangolin.csv",
             zip,
             date=get_dates_before_date(wildcards),
             sample=get_samples_before_date(wildcards),
@@ -246,6 +249,47 @@ rule plot_lineages_over_time:
         "../envs/python.yaml"
     script:
         "../scripts/plot-lineages-over-time.py"
+
+
+rule pangolin_call_overview_csv:
+    input:
+        get_aggregated_pangolin_calls,
+    output:
+        "results/{date}/tables/pangolin_calls_per_stage.csv",
+    params:
+        samples=lambda wildcards: get_aggregated_pangolin_calls(
+            wildcards, return_list="samples"
+        ),
+        stages=lambda wildcards: get_aggregated_pangolin_calls(
+            wildcards, return_list="stages"
+        ),
+    log:
+        "logs/{date}/aggregate_pangolin_calls.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/aggregate-pangolin-calls-per-stage.py"
+
+
+rule pangolin_call_overview_html:
+    input:
+        "results/{date}/tables/pangolin_calls_per_stage.csv",
+    output:
+        report(
+            directory("results/{date}/pangolin-call-overview"),
+            htmlindex="index.html",
+            caption="../report/pangolin-call-overview.rst",
+            category="4. Assembly",
+            subcategory="0. Quality Overview",
+        ),
+    params:
+        pin_until="Sample",
+    log:
+        "logs/{date}/pangolin_call_overview_html.log",
+    conda:
+        "../envs/rbt.yaml"
+    shell:
+        "rbt csv-report {input} --pin-until {params.pin_until} {output} > {log} 2>&1"
 
 
 rule snakemake_reports:
@@ -273,6 +317,7 @@ rule snakemake_reports:
         else [],
         # 4. Assembly
         "results/{date}/filter-overview",
+        "results/{date}/pangolin-call-overview",
         expand_samples_for_date(
             [
                 "results/{{date}}/contigs/polished/{sample}.fasta",
