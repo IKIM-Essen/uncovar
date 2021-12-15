@@ -75,12 +75,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Cache conda dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            .tests/.snakemake/conda
-          key: technology-${{ runner.os }}-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+      # - name: Cache conda dependencies
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: |
+      #       .tests/.snakemake/conda
+      #     key: technology-${{ runner.os }}-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
 
       - name: Prepare test data for all technologies
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'all' || matrix.rule == 'compare_assemblers')
@@ -189,12 +189,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Cache conda dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            .tests/.snakemake/conda
-          key: benchmarks-${{ runner.os }}-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+      # - name: Cache conda dependencies
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: |
+      #       .tests/.snakemake/conda
+      #     key: benchmarks-${{ runner.os }}-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
 
 
       # TODO caches are currently completely misleading, as they lead to certain files becoming present on disk which might
