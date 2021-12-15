@@ -149,7 +149,7 @@ rule rename_conensus:
     output:
         report(
             "results/{date}/contigs/consensus/{sample}.fasta",
-            category="4. Assembly",
+            category="4. Sequences",
             subcategory="3. Consensus Sequences",
             caption="../report/assembly_consensus.rst",
         ),
