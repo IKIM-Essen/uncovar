@@ -1,5 +1,5 @@
 {
-    "Pangolin Strain": function format(value) {
+    "Lineage": function format(value) {
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
         })

@@ -25,6 +25,7 @@ rule freebayes:
         "0.68.0/bio/freebayes"
 
 
+# TODO check delly single end mode
 rule delly:
     input:
         ref=get_reference(),
@@ -39,6 +40,67 @@ rule delly:
         "../envs/delly.yaml"
     script:
         "../scripts/delly.py"
+
+
+rule medaka_variant:
+    input:
+        ref=get_reference(),
+        sample="results/{date}/recal/ref~{reference}/{sample}.bam",
+        bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
+    output:
+        temp(
+            "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer-medaka.vcf"
+        ),
+    params:
+        outdir=get_output_dir,
+    log:
+        "logs/{date}/medaka/variant/ref~{reference}/{sample}.log",
+    conda:
+        "../envs/medaka.yaml"
+    threads: 4
+    shell:
+        "(medaka_variant -i {input.sample} -f {input.ref} -o {params.outdir}/{wildcards.sample} -t {threads} &&"
+        " mv $(cat {log}| grep '\- Final VCF written to' | sed s/'- Final VCF written to '//\ ) {output})"
+        " > {log} 2>&1"
+
+
+rule longshot:
+    input:
+        ref=get_reference(),
+        bam="results/{date}/recal/ref~{reference}/{sample}.bam",
+        bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
+    output:
+        temp(
+            "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer-longshot.vcf"
+        ),
+    params:
+        reference_name=lambda w: config["virus-reference-genome"]
+        if w.reference == "main"
+        else f"{w.reference}.1",
+    log:
+        "logs/{date}/longshot/ref~{reference}/{sample}.log",
+    conda:
+        "../envs/longshot.yaml"
+    shell:
+        "(longshot -P 0 -F -A --no_haps --bam {input.bam} --ref {input.ref} --out {output} &&"
+        " sed -i '2 i\##contig=<ID={params.reference_name}>' {output})"
+        " 2> {log}"
+
+
+# TODO adjust for ion
+
+
+rule vcf_2_bcf:
+    input:
+        "results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.vcf",
+    output:
+        "results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.bcf",
+    log:
+        "logs/{date}/vcf_2_bcf/ref~{reference}/{sample}.{varrange}.log",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        "bcftools view -O u -o {output} {input} 2> {log}"
 
 
 rule render_scenario:
@@ -96,13 +158,13 @@ rule varlociraptor_call:
 
 rule merge_varranges:
     input:
-        calls=expand(
+        calls=lambda wildcards: expand(
             "results/{{date}}/calls/ref~{{reference}}/{{sample}}.{varrange}.bcf",
-            varrange=["small", "structural"],
+            varrange=get_varrange(wildcards),
         ),
-        idx=expand(
+        idx=lambda wildcards: expand(
             "results/{{date}}/calls/ref~{{reference}}/{{sample}}.{varrange}.bcf.csi",
-            varrange=["small", "structural"],
+            varrange=get_varrange(wildcards),
         ),
     output:
         "results/{date}/calls/ref~{reference}/{sample}.bcf",
