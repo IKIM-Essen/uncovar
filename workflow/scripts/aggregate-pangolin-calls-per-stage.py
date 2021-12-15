@@ -1,6 +1,6 @@
 import sys
 
-sys.stderr = open(snakemake.log[0], "w")
+# sys.stderr = open(snakemake.log[0], "w")
 
 import pandas as pd
 
@@ -20,6 +20,16 @@ for path, sample, stage in zip(
     pangolin_calls.append(pangolin_call)
 
 pangolin_calls_by_stage = pd.concat(pangolin_calls, axis=0, ignore_index=True)
+
+failed_called = (pangolin_calls_by_stage["status"] == "fail") | (
+    pangolin_calls_by_stage["lineage"] == "None"
+)
+pangolin_calls_by_stage.loc[failed_called, "lineage"] = (
+    "Call failed. Reason: " + pangolin_calls_by_stage.loc[failed_called, "note"]
+)
+
+print(pangolin_calls_by_stage)
+
 pangolin_calls_by_stage = pangolin_calls_by_stage.pivot(
     index="sample", columns="stage", values="lineage"
 ).reset_index()
@@ -75,8 +85,8 @@ pangolin_calls_by_stage.rename(
     inplace=True,
 )
 
-pangolin_calls_by_stage.fillna("-", inplace=True)
-pangolin_calls_by_stage.replace({"None": "Call failed"}, inplace=True)
+pangolin_calls_by_stage.fillna("Not called on", inplace=True)
+# pangolin_calls_by_stage.replace({"None": "Call failed"}, inplace=True)
 pangolin_calls_by_stage.sort_values(by="Sample", inplace=True)
 
 print(pangolin_calls_by_stage)
