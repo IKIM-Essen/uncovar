@@ -31,7 +31,13 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
     ].transform(lambda s: s.count())
 
     # mask low occurrences
-    threshold = len(pangolin_calls) / 10
+    threshold = 0
+    if len(pangolin_calls) < 10:
+        threshold = len(pangolin_calls) / 10
+    elif len(pangolin_calls) >= 10 & len(pangolin_calls) < 100:
+        threshold = len(pangolin_calls) / 20
+    elif len(pangolin_calls) >= 100:
+        threshold = len(pangolin_calls) / 100
     pangolin_calls.loc[pangolin_calls["lineage_count"] < threshold, "lineage"] = (
         "other (<" + str(threshold) + " occ.)"
     )
