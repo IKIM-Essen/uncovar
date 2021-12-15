@@ -282,8 +282,8 @@ rule plot_variants_over_time:
         "../envs/python.yaml"
     script:
         "../scripts/plot-variants-over-time.py"
-        
-        
+
+
 rule pangolin_call_overview_csv:
     input:
         get_aggregated_pangolin_calls,
