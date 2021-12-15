@@ -81,7 +81,7 @@
                 result.push(x);
             }
         }
-        
+
         result = result.join(", ");
 
         if (value.trim() !== "") {
