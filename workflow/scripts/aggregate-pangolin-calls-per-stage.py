@@ -1,9 +1,8 @@
 import sys
 
-# sys.stderr = open(snakemake.log[0], "w")
+sys.stderr = open(snakemake.log[0], "w")
 
 import pandas as pd
-
 
 pangolin_calls = []
 

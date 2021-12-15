@@ -134,7 +134,7 @@ rule overview_table_csv:
         bcf=expand_samples_for_date(
             "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
         ),
-        # Added because WorkflowError: Rule parameter depends on checkpoint but checkpoint output is not defined 
+        # Added because WorkflowError: Rule parameter depends on checkpoint but checkpoint output is not defined
         # as input file for the rule. Please add the output of the respective checkpoint to the rule inputs.
         _=get_checkpoints_for_overview_table,
     output:
