@@ -7,8 +7,9 @@ import sys
 
 sys.stderr = open(snakemake.log[0], "w")
 
-import pysam
 from collections import Counter
+
+import pysam
 
 # source: https://www.bioinformatics.org/sms/iupac.html
 IUPAC = {

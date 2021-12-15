@@ -1,4 +1,4 @@
-Strain calls for all samples. 
+Strain calls for all samples.
 Horizontal axis shows the count of the respective strain, vertical axis shows the called strains.
 {% if snakemake.wildcards.mode == "major" %}
 Only the major strain in each sample is counted.
