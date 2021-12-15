@@ -7,8 +7,8 @@ import sys
 
 sys.stderr = open(snakemake.log[0], "w")
 
-import pandas as pd
 import altair as alt
+import pandas as pd
 
 
 def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):

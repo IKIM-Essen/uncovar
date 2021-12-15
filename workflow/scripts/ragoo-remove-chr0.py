@@ -9,8 +9,8 @@ sys.stderr = open(snakemake.log[0], "w")
 sample = snakemake.wildcards.sample
 
 from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 
 
 def remove_chr0(data_path, out_path):

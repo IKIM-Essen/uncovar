@@ -3,8 +3,8 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
-from snakemake.shell import shell
 import pysam
+from snakemake.shell import shell
 
 exclude = (
     "-x {}".format(snakemake.input.exclude)

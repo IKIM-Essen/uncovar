@@ -7,8 +7,8 @@ import sys
 
 sys.stderr = open(snakemake.log[0], "w")
 
-import pandas as pd
 import altair as alt
+import pandas as pd
 
 MIXTURE_PART_INDICATOR = snakemake.params.separator
 MIXTURE_PERCENTAGE_INDICATOR = snakemake.params.percentage

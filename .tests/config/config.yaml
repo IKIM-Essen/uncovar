@@ -59,7 +59,7 @@ adapters:
   illumina-amplicon: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
   amplicon-primers: "resources/primer.bedpe"
   amplicon-reference: "MN908947"
-  # ARTIC primer version to clip from reads. See 
+  # ARTIC primer version to clip from reads. See
   # https://github.com/artic-network/artic-ncov2019/tree/master/primer_schemes/nCoV-2019/V4
   # for more information
   artic-primer-version: 3
@@ -115,8 +115,8 @@ strain-calling:
     P.1: MZ477759
     B.1.617.2: OK091006
 
-# NCBI reference sequences of non-SARS-CoV-2 coronavirus. 
-# Used to test whether the pipeline can distinguish between 
+# NCBI reference sequences of non-SARS-CoV-2 coronavirus.
+# Used to test whether the pipeline can distinguish between
 # non-SARS CoV-2 and SARS CoV-2 viruses.
 non_cov2_genomes:
   - NC_005831
@@ -134,7 +134,7 @@ mixtures:
   no_mixtures: 500
   # number of strains to mix
   no_strains: 2
-  # or you can specify the mix you would like to have 
+  # or you can specify the mix you would like to have
   # this assumes, that strain files are available under resources/genomes
   # the used number of strains must match the no_strains defined above
   use_predefined_mixtures: True
@@ -159,7 +159,7 @@ read_lineage_call:
   length_of_reads:
     - 100
     - 250
-  
+
 # assemblers used for assembly comparison
 assemblers_for_comparison:
   - megahit-std
@@ -172,7 +172,7 @@ assemblers_for_comparison:
   - spades
   - rnaviralspades
 
-# assemblers used for sequencing method 
+# assemblers used for sequencing method
 assemblers_used:
   shotgun: "megahit-std"
   amplicon: "metaspades"
