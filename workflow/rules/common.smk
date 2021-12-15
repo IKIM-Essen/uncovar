@@ -1246,7 +1246,9 @@ def get_lineage_by_accession(wildcards):
 
 def get_include_flag(sample):
     try:
-        return pep.sample_table.loc[sample]["include_in_high_genome_summary"]
+        samples = pep.sample_table.copy()
+        samples.dropna(subset=["include_in_high_genome_summary"], inplace=True)
+        return samples.loc[sample]["include_in_high_genome_summary"]
     # if there is no include_in_high_genome_summary in the
     # samples.csvdefined, always include the sample
     except KeyError:
