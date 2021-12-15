@@ -1017,11 +1017,11 @@ def get_assemblies_for_submission(wildcards, agg_type):
     # for the pangolin call
     elif agg_type == "single sample":
         if wildcards.sample in masked_samples:
-            return "results/{date}/contigs/masked/polished/{sample}.fasta"
+            return "results/{date}/contigs/polished/{sample}.fasta"
         elif wildcards.sample in pseudo_samples:
             return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
         elif wildcards.sample in consensus_samples:
-            return "results/{date}/contigs/masked/consensus/{sample}.fasta"
+            return "results/{date}/contigs/consensus/{sample}.fasta"
         # for not accepted samples call on the polished-contigs
         else:
             return "results/{date}/contigs/polished/{sample}.fasta"
