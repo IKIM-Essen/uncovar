@@ -91,10 +91,8 @@ def filter_and_save(
     Args:
         identity (dict): Dict consisting of sample name and genome fractions
         n_share (dict): Dict consisting of sample name and share of Ns
-        include (dict): Dict consisting of sample name and whether or not to add sample to the rki file
         min_identity (float): Min identity to virus reference genome of reconstructed genome
         max_n (float): Max share of N in the reconstructed genome
-        include_rki(int): Whether to include the sample in the rki files or not
         save_path (str): Path to save the filtered sample to as .txt
         summary_path (str): Path to identity and n share to as .tsv
     """
