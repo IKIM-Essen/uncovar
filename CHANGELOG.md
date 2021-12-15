@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.6.0...v0.7.0) (2021-12-14)
+
+
+### Features
+
+* add pre commit checks ([#398](https://www.github.com/IKIM-Essen/uncovar/issues/398)) ([6982b3d](https://www.github.com/IKIM-Essen/uncovar/commit/6982b3dcaca308840d9a70caec22e79bdb9025fc))
+
+
+### Bug Fixes
+
+* remove cwd-check in update sample sheet script ([#393](https://www.github.com/IKIM-Essen/uncovar/issues/393)) ([44d49d3](https://www.github.com/IKIM-Essen/uncovar/commit/44d49d34e7ed2ad94002ed9b9e8868ec9665a541))
+* trigger docs build on release created ([#391](https://www.github.com/IKIM-Essen/uncovar/issues/391)) ([e240aeb](https://www.github.com/IKIM-Essen/uncovar/commit/e240aeb5f13d38a2ccf14ce1cb2277af197d9117))
+
 ## [0.6.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.5.0...v0.6.0) (2021-12-13)
 
 
