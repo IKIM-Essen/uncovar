@@ -7,8 +7,8 @@ import sys
 
 sys.stderr = open(snakemake.log[0], "w")
 
-import pandas as pd
 import altair as alt
+import pandas as pd
 
 
 def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
@@ -31,9 +31,10 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
     ].transform(lambda s: s.count())
 
     # mask low occurrences
-    pangolin_calls.loc[
-        pangolin_calls["lineage_count"] < 10, "lineage"
-    ] = "other (< 10 occ.)"
+    threshold = len(pangolin_calls) / 10
+    pangolin_calls.loc[pangolin_calls["lineage_count"] < threshold, "lineage"] = (
+        "other (<" + str(threshold) + " occ.)"
+    )
 
     pangolin_calls.rename(columns={"lineage": "Lineage", "date": "Date"}, inplace=True)
 
