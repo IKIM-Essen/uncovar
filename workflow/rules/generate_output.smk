@@ -285,7 +285,10 @@ rule snakemake_reports:
         # 1. Overview
         "results/{date}/overview/",
         "results/{date}/plots/lineages-over-time.svg",
-        "results/{{date}}/plots/variants-{ORFNAME}-over-time.svg"
+        expand(
+            "results/{{date}}/tables/variants-{ORFNAME}-over-time.csv",
+            ORFNAME=config["orf_names"],
+        ),
         "results/{date}/plots/all.strains.pangolin.svg",
         "results/{date}/plots/all.major-strain.strains.kallisto.svg",
         expand_samples_for_date(
