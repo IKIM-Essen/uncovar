@@ -106,6 +106,7 @@ rule high_quality_genomes_report:
             caption="../report/rki-submission-csv.rst",
         ),
     params:
+        includeflag=get_include_flag_for_date,
         seq_type=lambda wildcards: get_assemblies_for_submission(
             wildcards, "accepted samples technology"
         ),
