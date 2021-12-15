@@ -10,7 +10,12 @@ rule masking:
         bai="results/{date}/mapped/ref~{reference}-{sample}/{sample}.bam.bai",
         sequence="results/{date}/contigs/{reference}/{sample}.fasta",
     output:
-        masked_sequence="results/{date}/contigs/masked/{reference}/{sample}.fasta",
+        masked_sequence=report(
+            "results/{date}/contigs/masked/{reference}/{sample}.fasta",
+            category="4. Sequences",
+            subcategory="4. Masked Sequences",
+            caption="../report/masked_sequences.rst",
+        ),
         coverage="results/{date}/tables/coverage/{reference}/{sample}.txt",
     params:
         min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
@@ -204,7 +209,7 @@ rule filter_overview_html:
             directory("results/{date}/filter-overview"),
             htmlindex="index.html",
             caption="../report/filter-overview.rst",
-            category="4. Assembly",
+            category="4. Sequences",
             subcategory="0. Quality Overview",
         ),
     params:
