@@ -965,7 +965,7 @@ def get_assemblies_for_submission(wildcards, agg_type):
 
         if len(unqiue_samples) == 0:
             # No sequences are passing the quality filter for date.
-            # Return dummy path as an indicator 
+            # Return dummy path as an indicator
             return "resources/genomes/main.fasta"
 
         for sample in unqiue_samples:
