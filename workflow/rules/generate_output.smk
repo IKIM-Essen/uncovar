@@ -247,11 +247,45 @@ rule plot_lineages_over_time:
         "../scripts/plot-lineages-over-time.py"
 
 
+rule plot_variants_over_time:
+     input:
+         bcf=lambda wildcards: expand(
+             "results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
+             zip,
+             date=get_dates_before_date(wildcards),
+             sample=get_samples_before_date(wildcards),
+         ),
+         csi=lambda wildcards: expand(
+             "results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf.csi",
+             zip,
+             date=get_dates_before_date(wildcards),
+             sample=get_samples_before_date(wildcards),
+         ),
+     output:
+         report(
+             "results/{date}/plots/variants-{ORFNAME}-over-time.svg",
+             caption="../report/variants-over-time.rst",
+             category="1. Overview",
+             subcategory="3. Variants Development",
+         ),
+         "results/{date}/tables/variants-{ORFNAME}-over-time.csv",
+     params:
+         dates=get_dates_before_date,
+         samples=get_samples_before_date,
+     log:
+         "logs/{date}/{ORFNAME}-over-time.log",
+     conda:
+         "../envs/python.yaml"
+     script:
+         "../scripts/plot-variants-over-time.py"
+
+
 rule snakemake_reports:
     input:
         # 1. Overview
         "results/{date}/overview/",
         "results/{date}/plots/lineages-over-time.svg",
+        "results/{{date}}/plots/variants-{ORFNAME}-over-time.svg"
         "results/{date}/plots/all.strains.pangolin.svg",
         "results/{date}/plots/all.major-strain.strains.kallisto.svg",
         expand_samples_for_date(
