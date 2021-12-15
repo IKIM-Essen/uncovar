@@ -37,7 +37,7 @@ module_order:
       name: "Contigs (assembly)"
       anchor: "quast_assembly"
       path_filters:
-        - "*/quast/unpolished/*/report.tsv" 
+        - "*/quast/unpolished/*/report.tsv"
   - picard:
       name: Duplication (raGOO)
       info: 'is used to mark duplicates of the raGOO outout against the covid reference genome.'
@@ -68,17 +68,15 @@ fn_clean_exts:
   - "_S"
   - ".1"
 
+# customising general Statistics
 table_columns_visible:
   samtools-flagstat: False
   Samtools: False
   samtools: False
-  
-# customising general Statistics
-table_columns_visible:
   Reads Quality Control:
     percent_duplicates: False
     percent_gc: False
-    avg_sequence_length: 
+    avg_sequence_length:
     percent_fails: False
     total_sequences: True
   Reads Preprocessing:
@@ -115,7 +113,6 @@ table_columns_visible:
     fragment_length: False
     percent_aligned: False
     pseudoaligned_reads: False
-
 
 # number formatting
 read_count_multiplier: 0.001

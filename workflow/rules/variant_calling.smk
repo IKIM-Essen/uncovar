@@ -14,7 +14,7 @@ rule freebayes:
     output:
         temp("results/{date}/candidate-calls/ref~{reference}/{sample}.small.bcf"),
     params:
-        # genotyping is performed by varlociraptor, hence we deactivate it in freebayes by 
+        # genotyping is performed by varlociraptor, hence we deactivate it in freebayes by
         # always setting --pooled-continuous
         extra=(
             "--pooled-continuous --min-alternate-count 1 --min-alternate-fraction 0.01"
