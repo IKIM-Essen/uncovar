@@ -49,7 +49,7 @@ are only generated for Illumina and Ion Torrent data.
 ##### Quality Criteria
 
 1. Positions in the reconstructed genome that are covered by less than a certain
-amount (default: `20`) reads must be masked with N.
+amount (default: `20`) reads are be masked with N.
 1. Informative positions (A, T, G, C) which are not supported by a certain
 percentage (default: `90%`) of the aligned reads are masked by non-informative
 placeholders of the [IUPAC nucleotide code](https://www.bioinformatics.org/sms/iupac.html).
