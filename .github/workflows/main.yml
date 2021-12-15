@@ -51,8 +51,9 @@ jobs:
           args: "--lint"
 
 
-  Pre-commit:
+  Pre-Commit:
     runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/master'
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
@@ -66,7 +67,7 @@ jobs:
     needs:
       - Formatting
       - Linting
-      - Pre-commit
+      - Pre-Commit
     strategy:
       matrix:
         rule: [all, all -npr]
@@ -182,7 +183,7 @@ jobs:
     needs:
       - Formatting
       - Linting
-      - Pre-commit
+      - Pre-Commit
     strategy:
       matrix:
         rule: [benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2, benchmark_reads, compare_assemblers]
