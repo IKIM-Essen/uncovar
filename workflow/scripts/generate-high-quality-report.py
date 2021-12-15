@@ -10,7 +10,7 @@ sys.stderr = open(snakemake.log[0], "w")
 import pandas as pd
 import pysam
 
-# No samples make it past the qulaity filter
+# No samples make it past the quality filter
 if snakemake.input.contigs == "resources/genomes/main.fasta":
     # write empty fasta file
     with open(snakemake.output.fasta, "w") as outfile:
@@ -32,14 +32,15 @@ if snakemake.input.contigs == "resources/genomes/main.fasta":
 else:
     # Aggregating fasta files
     sequence_names = []
-    for file in snakemake.input.contigs:
-        with pysam.FastxFile(file) as infile, open(
-            snakemake.output.fasta, "a"
-        ) as outfile:
-            for entry in infile:
-                print(f">{entry.name}", file=outfile)
-                print(entry.sequence, file=outfile)
-                sequence_names.append(entry.name)
+
+    with open(snakemake.output.fasta, "w") as outfile:
+        for file, include in zip(snakemake.input.contigs, snakemake.params.includeflag):
+            with pysam.FastxFile(file) as infile:
+                for entry in infile:
+                    sequence_names.append(entry.name)
+                    if bool(int(include)):
+                        print(f">{entry.name}", file=outfile)
+                        print(entry.sequence, file=outfile)
 
     # Creating csv-table
     csv_table = pd.DataFrame(
@@ -51,8 +52,14 @@ else:
             "SAMPLE_TYPE": "s001",
             "PUBLICATION_STATUS": "N",
             "OWN_FASTA_ID": sequence_names,
+            "include": snakemake.params.includeflag,
         }
     )
 
+    # Only include samples with include flag
+    csv_table = csv_table[csv_table["include"] == "1"]
+    csv_table.drop(columns=["include"], inplace=True)
+
+    # Final touches
     csv_table.sort_values(by="OWN_FASTA_ID", inplace=True)
     csv_table.to_csv(snakemake.output.table, sep=";", index=False)

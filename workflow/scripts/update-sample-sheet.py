@@ -107,6 +107,7 @@ def update_sample_sheet(SAMPLE_SHEET, verbose=True, dry_run=False):
             print("\tIn total: {}".format(i))
 
     files_to_copy = [f for f in incoming_files if f not in data_files]
+
     ##################################
     ######### update the csv #########
     ##################################
@@ -151,6 +152,15 @@ def update_sample_sheet(SAMPLE_SHEET, verbose=True, dry_run=False):
         new_files_df.columns = ["fq1", "fq2"]
         new_files_df["date"] = today
         new_files_df["is_amplicon_data"] = 1
+        new_files_df.loc[
+            new_files_df.index.str.contains("No-RKI", case=False),
+            ["include_in_high_genome_summary"],
+        ] = "0"
+        new_files_df.loc[
+            ~new_files_df.index.str.contains("No-RKI", case=False),
+            ["include_in_high_genome_summary"],
+        ] = "1"
+        print(new_files_df)
 
         new_sample_sheet = (
             pd.read_csv(SAMPLE_SHEET, index_col="sample_name")
