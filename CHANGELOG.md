@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.9.0...v0.10.0) (2021-12-16)
+
+
+### Features
+
+* complete workflow if no samples pass the quality filter ([#411](https://www.github.com/IKIM-Essen/uncovar/issues/411)) ([55b2dcc](https://www.github.com/IKIM-Essen/uncovar/commit/55b2dcce83c6349b4651c07acfda2cfe885ed0f6))
+
 ## [0.9.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.8.0...v0.9.0) (2021-12-15)
 
 
