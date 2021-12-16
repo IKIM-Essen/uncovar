@@ -96,6 +96,8 @@ rule test_benchmark_results:
         true_accessions=get_strain_accessions,
     log:
         "logs/test-benchmark-results.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
@@ -124,6 +126,8 @@ rule summarize_assembly_results:
         "results/benchmarking/assembly/{assembly_type}.csv",
     log:
         "logs/summarize-assembly-results/{assembly_type}/assembly-results.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/pysam.yaml"
     notebook:
@@ -484,6 +488,8 @@ rule plot_read_call:
         "results/benchmarking/plots/aggregated_read_calls.svg",
     log:
         "logs/plot_read_call.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
