@@ -26,9 +26,12 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
     pangolin_calls = pangolin_calls[pangolin_calls["lineage"] != "None"]
 
     # get occurrences
-    pangolin_calls["lineage_count"] = pangolin_calls.groupby("lineage", as_index=False)[
-        "lineage"
-    ].transform(lambda s: s.count())
+    if len(pangolin_calls) > 0:
+        pangolin_calls["lineage_count"] = pangolin_calls.groupby(
+            "lineage", as_index=False
+        )["lineage"].transform(lambda s: s.count())
+    else:
+        pangolin_calls["lineage_count"] = pd.Series()
 
     # mask low occurrences
     threshold = len(pangolin_calls) / 10

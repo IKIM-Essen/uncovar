@@ -1,6 +1,6 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
-exclude: "^publication/|CHANGELOG.md|docs/index.md|"
+exclude: "^publication/|CHANGELOG.md|docs/index.md|.github/pull_request_template.md"
 
 default_stages: [commit, push]
 

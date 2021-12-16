@@ -21,6 +21,7 @@ def extract_mixture_sample(path, prefix, separator, percentage, mix, max_reads):
     path = [ele.split(percentage) for ele in path]
     df = pd.DataFrame(path, columns=["target_id", "true_fraction"])
     df["mix"] = mix
+    df["true_fraction"] = df["true_fraction"].str.replace(".polished", "")
     df["true_fraction"] = df["true_fraction"].astype(int)
     df["true_fraction"] = df["true_fraction"] / 100
     df["true_counts"] = round(df["true_fraction"] * int(max_reads))
