@@ -7,7 +7,7 @@ rule collect_lineage_candidate_variants:
     conda:
         "../envs/pysam.yaml"
     log:
-        "logs/"
+        "logs/collect-lineage-candidate-variants.log"
     script:
         "../scripts/collect-lineage-variants.py"
 

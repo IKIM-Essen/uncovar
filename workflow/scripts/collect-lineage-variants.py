@@ -1,6 +1,9 @@
 from collections import namedtuple, defaultdict
 from enum import Enum
 from itertools import product
+import sys
+
+sys.stderr = open(snakemake.log[0], "w")
 
 import numpy as np
 import gffutils
@@ -111,9 +114,13 @@ with FastaFile(snakemake.input.reference) as infasta:
     for lineage_entry in covariants_data["clusters"]:
         if "mutations" in lineage_entry and "nonsynonymous" in lineage_entry["mutations"]:
             for variant in lineage_entry["mutations"]["nonsynonymous"]:
-                known_non_synonymous_variants[NonSynonymousVariant(**variant)].add(
-                    lineage_entry["build_name"]
-                )
+                variant = NonSynonymousVariant(**variant)
+                if variant.gene in gene_start:
+                    known_non_synonymous_variants[variant].add(
+                        lineage_entry["build_name"]
+                    )
+                else:
+                    print(f"Skipping variant at {variant.gene} because gene is not in given GFF annotation.", file=sys.stderr)
 
     known_synonymous_variants = defaultdict(set)
     for lineage_entry in covariants_data["clusters"]:
@@ -126,7 +133,6 @@ with FastaFile(snakemake.input.reference) as infasta:
     with VariantFile(snakemake.output[0], "wb", header=header) as outvcf:
 
         def get_variants(all_variants, variant_type, merge=True):
-            # import pdb; pdb.set_trace()
             filtered_variants = sorted(
                 filter(
                     lambda item: item[0].variant_type() == variant_type,
@@ -198,7 +204,7 @@ with FastaFile(snakemake.input.reference) as infasta:
             record = outvcf.new_record()
             record.contig = contig
             record.alleles = (ref_allele, alt_allele)
-            record.pos = pos
+            record.pos = pos + 1 # pysam expects 1-based positions here
 
             record.info["LINEAGES"] = ",".join(lineages)
 
@@ -250,12 +256,10 @@ with FastaFile(snakemake.input.reference) as infasta:
         for variant, lineages in get_variants(
             known_non_synonymous_variants, VariantType.Subst, merge=False
         ):
-            print(variant.gene, lineages)
-            if not variant.gene == "ORF10":
-                pos = variant.genome_pos()
+            pos = variant.genome_pos()
 
-                ref_allele = infasta.fetch(reference=contig, start=pos, end=pos + 3)
-                print(variant.right, "<---")
-                for alt_allele in aa_to_dna(variant.right):
-                    
-                    write_record(pos, ref_allele, alt_allele, lineages, [variant])
+            ref_allele = infasta.fetch(reference=contig, start=pos, end=pos + 3)
+            print(variant.right, "<---")
+            for alt_allele in aa_to_dna(variant.right):
+                
+                write_record(pos, ref_allele, alt_allele, lineages, [variant])
