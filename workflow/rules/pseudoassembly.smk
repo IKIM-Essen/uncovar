@@ -7,6 +7,7 @@
 rule vcf_to_fasta:
     input:
         bcf="results/{date}/calls/ref~main/{sample}.bcf",
+        csi="results/{date}/calls/ref~main/{sample}.bcf.csi",
         bam="results/{date}/recal/ref~main/{sample}.bam",
         bai="results/{date}/recal/ref~main/{sample}.bam.bai",
         fasta="resources/genomes/main.fasta",
@@ -14,7 +15,7 @@ rule vcf_to_fasta:
     output:
         report(
             "results/{date}/contigs/pseudoassembled/{sample}.fasta",
-            category="4. Assembly",
+            category="4. Sequences",
             subcategory="2. Pseudo Assembled Sequences",
             caption="../report/assembly_pesudo.rst",
         ),

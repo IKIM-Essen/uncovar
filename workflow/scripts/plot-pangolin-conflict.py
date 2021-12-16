@@ -7,8 +7,8 @@ import sys
 
 sys.stderr = open(snakemake.log[0], "w")
 
-import pandas as pd
 import altair as alt
+import pandas as pd
 
 MIXTURE_PART_INDICATOR = snakemake.params.separator
 MIXTURE_PERCENTAGE_INDICATOR = snakemake.params.percentage
@@ -29,7 +29,7 @@ def plot_pangolin_conflict(sm_input, sm_output):
             MIXTURE_PERCENTAGE_INDICATOR
         )
         true_lineage = true_lineage.replace("-", ".")
-        percent = percent.replace(".strains.pangolin.csv", "")
+        percent = percent.replace(".polished.strains.pangolin.csv", "")
 
         # create df for one call
         pangolin_output = pd.read_csv(input)

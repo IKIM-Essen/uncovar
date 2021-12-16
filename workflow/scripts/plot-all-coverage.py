@@ -7,8 +7,8 @@ import sys
 
 sys.stderr = open(snakemake.log[0], "w")
 
-import pandas as pd
 import altair as alt
+import pandas as pd
 
 
 def plot_coverage(sm_input, sm_output, min_coverage):
