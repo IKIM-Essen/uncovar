@@ -1446,7 +1446,7 @@ def get_samtools_sort_input(wildcards):
 
 def get_candidate_variants(wildcards):
     if wildcards.varrange == "lineage-variants":
-        return "resources/lineage-candidate-variants/all.bcf"
+        return "resources/lineage-candidate-variants/all_sorted.bcf"
     else:
         return "results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.bcf"
 
