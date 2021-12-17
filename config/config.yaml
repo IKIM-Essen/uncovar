@@ -105,8 +105,8 @@ strain-calling:
     P.1: MZ477759
     B.1.617.2: OK091006
 
-# variants of concern (protein name -> variants)
-voc:
+# mutations to be highlighted (protein name -> variants)
+mth:
   S:
     - L18F
     - T19R
