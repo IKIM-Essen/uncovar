@@ -188,8 +188,8 @@ AA_ALPHABET_TRANSLATION = {
 }
 
 for sample, file in iter_with_samples(snakemake.input.bcf):
-    variants_of_interest = {}
-    other_variants = {}
+    mutations_of_interest = {}
+    other_mutations = {}
 
     def insert_entry(variants, hgvsp, vaf):
         prev_vaf = variants.get(hgvsp)
@@ -223,17 +223,17 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
 
                     hgvsp = f"{feature}:{alteration}"
                     entry = (hgvsp, f"{vaf:.3f}")
-                    if alteration in snakemake.params.voc.get(feature, {}):
-                        insert_entry(variants_of_interest, hgvsp, vaf)
+                    if alteration in snakemake.params.mth.get(feature, {}):
+                        insert_entry(mutations_of_interest, hgvsp, vaf)
                     else:
-                        insert_entry(other_variants, hgvsp, vaf)
+                        insert_entry(other_mutations, hgvsp, vaf)
 
-    data.loc[sample, "Variants of Interest"] = fmt_variants(variants_of_interest)
-    data.loc[sample, "Other Variants"] = fmt_variants(other_variants)
+    data.loc[sample, "Highlighted Mutations"] = fmt_variants(mutations_of_interest)
+    data.loc[sample, "Other Mutations"] = fmt_variants(other_mutations)
 
 
-data["Other Variants"][
-    data["Other Variants"].str.len() > 32767
+data["Other Mutations"][
+    data["Other Mutations"].str.len() > 32767
 ] = "Too many variants to display"
 
 int_cols = [
