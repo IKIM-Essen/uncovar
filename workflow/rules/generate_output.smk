@@ -312,7 +312,7 @@ rule pangolin_call_overview_html:
             directory("results/{date}/pangolin-call-overview"),
             htmlindex="index.html",
             caption="../report/pangolin-call-overview.rst",
-            category="4. Assembly",
+            category="4. Sequences",
             subcategory="0. Quality Overview",
         ),
     params:
