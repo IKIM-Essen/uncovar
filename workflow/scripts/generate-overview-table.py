@@ -228,7 +228,7 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
                     else:
                         insert_entry(other_mutations, hgvsp, vaf)
 
-    data.loc[sample, "Highlighted Mutations"] = fmt_variants(mutations_of_interest)
+    data.loc[sample, "VOC Mutations"] = fmt_variants(mutations_of_interest)
     data.loc[sample, "Other Mutations"] = fmt_variants(other_mutations)
 
 
