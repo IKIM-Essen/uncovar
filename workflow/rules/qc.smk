@@ -41,7 +41,9 @@ rule multiqc:
         input_dirs=lambda w, input: set(path.dirname(fp) for fp in input),
         output_dir=lambda w, output: path.dirname(output[0]),
         output_name=lambda w, output: path.basename(output[0]),
-        params="--config config/multiqc_config.yaml --title 'Results for data from {date}'",
+        params=(
+            "--config config/multiqc_config.yaml --title 'Results for data from {date}'"
+        ),
     log:
         "logs/{date}/multiqc.log",
     conda:
@@ -134,7 +136,9 @@ rule species_diversity_before_pe:
         kraken_output=temp(
             "results/{date}/species-diversity/pe/{sample}/{sample}.kraken"
         ),
-        report="results/{date}/species-diversity/pe/{sample}/{sample}.uncleaned.kreport2",
+        report=(
+            "results/{date}/species-diversity/pe/{sample}/{sample}.uncleaned.kreport2"
+        ),
     log:
         "logs/{date}/kraken/pe/{sample}.log",
     params:
@@ -161,7 +165,9 @@ rule species_diversity_before_se:
         kraken_output=temp(
             "results/{date}/species-diversity/se/{sample}/{sample}.kraken"
         ),
-        report="results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2",
+        report=(
+            "results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2"
+        ),
     log:
         "logs/{date}/kraken/se/{sample}.log",
     threads: 8

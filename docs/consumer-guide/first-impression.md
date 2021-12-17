@@ -1,1 +1,0 @@
-# Getting a First Impression

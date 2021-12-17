@@ -12,8 +12,8 @@ nav:
     - Getting Started: getting-started.md
     - Consumer Guide:
         - Overview: consumer-guide/index.md
-        - Structure of the Report : consumer-guide/report-structure.md
         - Highlights: consumer-guide/first-impression.md
+        - Understanding the Report : consumer-guide/report-structure.md
         - Lineages and Variants: consumer-guide/lineages-and-variants.md
         - Submission Read Genomes: consumer-guide/submission-ready-genomes.md
         - FAQs: consumer-guide/faqs.md

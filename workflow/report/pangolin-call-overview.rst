@@ -1,0 +1,1 @@
+Lineage calls for all samples throughout several stages, as determined by `Pangolin <https://github.com/cov-lineages/pangolin>`_,. See the `consumer guide <https://ikim-essen.github.io/uncovar/consumer-guide/report-structure/#pangolin-call-overview>`_ for a detailed explanation.

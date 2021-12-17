@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.10.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.9.0...v0.10.0) (2021-12-16)
+
+
+### Features
+
+* complete workflow if no samples pass the quality filter ([#411](https://www.github.com/IKIM-Essen/uncovar/issues/411)) ([55b2dcc](https://www.github.com/IKIM-Essen/uncovar/commit/55b2dcce83c6349b4651c07acfda2cfe885ed0f6))
+
+## [0.9.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.8.0...v0.9.0) (2021-12-15)
+
+
+### Features
+
+* added variants-over-time-plot to report again ([#405](https://www.github.com/IKIM-Essen/uncovar/issues/405)) ([bd5048a](https://www.github.com/IKIM-Essen/uncovar/commit/bd5048af11d3f1f28a1853a9ec1070fe85ff977b))
+
+## [0.8.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.7.0...v0.8.0) (2021-12-15)
+
+
+### Features
+
+* add pangolin call table ([#397](https://www.github.com/IKIM-Essen/uncovar/issues/397)) ([953211a](https://www.github.com/IKIM-Essen/uncovar/commit/953211a552f0ce84594e598318cc25a7d406c3cd))
+* add rki include/exclude flag ([#319](https://www.github.com/IKIM-Essen/uncovar/issues/319)) ([d2e6d20](https://www.github.com/IKIM-Essen/uncovar/commit/d2e6d20de0429323989d107eac5c4282561b57ce))
+* added column in overview table for the clear name of the lineage ([#400](https://www.github.com/IKIM-Essen/uncovar/issues/400)) ([38e34bb](https://www.github.com/IKIM-Essen/uncovar/commit/38e34bba65ab28481466e5897019f060d57596f8))
+
+
+### Bug Fixes
+
+* change report structure, add masked sequence, pangolin call on polished sequence ([#396](https://www.github.com/IKIM-Essen/uncovar/issues/396)) ([d2ecaaa](https://www.github.com/IKIM-Essen/uncovar/commit/d2ecaaa55efaf916fe380f042758f1560a5b389f))
+* rmv pipe from pre-commit ([#401](https://www.github.com/IKIM-Essen/uncovar/issues/401)) ([3222bb2](https://www.github.com/IKIM-Essen/uncovar/commit/3222bb2220ce517ba514f28f416c730ef884d52f))
+
 ## [0.7.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.6.0...v0.7.0) (2021-12-14)
 
 
