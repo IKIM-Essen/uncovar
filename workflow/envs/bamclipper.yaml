@@ -3,3 +3,4 @@ channels:
   - conda-forge
 dependencies:
   - bamclipper =1.0
+  - samtools =1.9 # see https://github.com/merenlab/anvio/issues/1479
