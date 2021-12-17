@@ -1273,7 +1273,10 @@ def get_include_flag(sample):
 
 
 def get_include_flag_for_date(wildcards):
-    return [get_include_flag(sample) for sample in get_assemblies_for_submission(wildcards, "accepted samples")]
+    return [
+        get_include_flag(sample)
+        for sample in get_assemblies_for_submission(wildcards, "accepted samples")
+    ]
 
 
 def get_artic_primer(wildcards):
@@ -1540,8 +1543,9 @@ def get_aggregated_pangolin_calls(wildcards, return_list="paths"):
 
     return expanded_patterns
 
+
 def get_pangolin_for_report(wildcards):
-    paths=[]
+    paths = []
 
     path = "results/{date}/tables/strain-calls/{sample}.{stage}.strains.pangolin.csv"
 
