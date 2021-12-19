@@ -21,7 +21,7 @@ def phred_to_prob(phred):
 def has_numbers(inputString):
     return any(char.isdigit() for char in inputString)
 
-variants = pd.DataFrame()
+variants_df = pd.DataFrame()
 lineage_df = pd.DataFrame()
 
 gff = gffutils.create_db(snakemake.input.annotation, dbfn=":memory:")
@@ -44,7 +44,7 @@ with pysam.VariantFile(snakemake.input[0], "rb") as infile:
             for item in lineages:
                 lineage_dict[item] = "x"
             # print(lineage_dict)
-            variants = variants.append(
+            variants_df = variants_df.append(
 
                 {
                     "Signatures": signatures,
@@ -66,23 +66,31 @@ with pysam.VariantFile(snakemake.input[0], "rb") as infile:
                 ignore_index=True
             )
 
-
-sigs = list(variants["Signatures"])
-print(sigs)
-print(len(sigs))
-sigs = list(dict.fromkeys(sigs))
-print(sorted(sigs))
-print(len(sigs))
-variants.to_csv(snakemake.output.lineage_df)
-variants = variants.groupby(["Signatures"]).sum().reset_index()
-print(variants)
-# print(variants)
+print(lineage_df.count())
+lineage_dict = dict(lineage_df.count())
+# print(lineage_dict)
+lineage_dict = dict(sorted(lineage_dict.items(), key=lambda item: item[1], reverse=True))
+keys = list(lineage_dict.keys())
+print(keys)
+sigs = list(variants_df["Signatures"])
+# print(sigs)
+# print(len(sigs))
+# sigs = list(dict.fromkeys(sigs))
+# print(sorted(sigs))
+# print(len(sigs))
+print(lineage_df.columns)
+lineage_df.drop(labels=keys[7:], axis=1, inplace=True)
+lineage_df = lineage_df[keys[:7]]
+lineage_df.to_csv(snakemake.output.lineage_df)
+variants_df = variants_df.groupby(["Signatures"]).sum().reset_index()
+print(variants_df)
+# print(variants_df)
 # calculation = lambda value: 
-# variants = variants.groupby(["Signatures"]).agg(sum_VAF=("VAF", "sum"), sum_PROB=("Prob_clonal", "sum")).reset_index()
+# variants_df = variants_df.groupby(["Signatures"]).agg(sum_VAF=("VAF", "sum"), sum_PROB=("Prob_clonal", "sum")).reset_index()
 # lineage_df.drop_duplicates(inplace=True)
 lineage_df = lineage_df.groupby(["Signatures"]).agg("max").reset_index()
 lineage_df.sort_values("Signatures", inplace=True)
-variants = variants.merge(lineage_df, left_on="Signatures", right_on="Signatures")
+variants_df = variants_df.merge(lineage_df, left_on="Signatures", right_on="Signatures")
 # lineage_df.to_csv(snakemake.output.lineage_df)
 sigs = list(lineage_df["Signatures"])
 print(sigs)
@@ -90,22 +98,22 @@ print(len(sigs))
 sigs = list(dict.fromkeys(sigs))
 print(sorted(sigs))
 print(len(sigs))
-variants["Features"] = variants["Signatures"].str.extract(r'(.+)[:].+|\*')
+variants_df["Features"] = variants_df["Signatures"].str.extract(r'(.+)[:].+|\*')
 # print(no_number)
-variants.sort_values(by=["Signatures"], inplace=True)
+variants_df.sort_values(by=["Signatures"], inplace=True)
 
-# variants["is AA"] = variants["Signatures"].str.contains(":")
-variants["Position"] = variants["Signatures"].str.extract(r'([0-9]+)([A-Z]+|\*)$')[0]
-variants = variants.astype({'Position':'int64'})
+# variants_df["is AA"] = variants_df["Signatures"].str.contains(":")
+variants_df["Position"] = variants_df["Signatures"].str.extract(r'([0-9]+)([A-Z]+|\*)$')[0]
+variants_df = variants_df.astype({'Position':'int64'})
 
 sorterIndex = dict(zip(sorter, range(len(sorter))))
 print(sorterIndex)
-variants["Features_Rank"] = variants["Features"].map(sorterIndex)
+variants_df["Features_Rank"] = variants_df["Features"].map(sorterIndex)
 
-print(variants.dtypes)
-variants.replace([0, 0.0], '', inplace=True)
-# variants.sort_values(by=["Signatures_Rank", "Position", "is AA"], ascending=[True, True, False], inplace=True)
-variants.sort_values(by=["Features_Rank", "Position"], inplace=True)
-variants.to_csv(snakemake.output[0], index=False, sep=",")
+print(variants_df.dtypes)
+variants_df.replace([0, 0.0], '', inplace=True)
+# variants_df.sort_values(by=["Signatures_Rank", "Position", "is AA"], ascending=[True, True, False], inplace=True)
+variants_df.sort_values(by=["Features_Rank", "Position", "VAF"], inplace=True)
+variants_df.to_csv(snakemake.output[0], index=False, sep=",")
 
     
