@@ -8,7 +8,7 @@
 
 ## Section 4: Sequences
 
-### 0. Quality Overview
+### Quality Overview
 
 #### Filter Overview
 
@@ -41,7 +41,7 @@ Masked consensus Sequences are only generated for Oxford Nanopore data.
 genome (default: Wuhan-Hu-1 Reference
 [`NC_045512.2`](https://www.ncbi.nlm.nih.gov/nuccore/1798174254)) and by applying
 variants with an allele frequency of 100% (called by
-[Varlociraptor](https://varlociraptor.github.io) with a default FDR of 5%).
+[Varlociraptor](https://varlociraptor.github.io) with a default FDR of `5%`).
 Masked Pseudo Sequences are not generated, as the quality criteria [below](#quality-criteria)
 are implicit considered when creating a "normal" Pseudo Sequence. Pseudo sequences
 are only generated for Illumina and Ion Torrent data.

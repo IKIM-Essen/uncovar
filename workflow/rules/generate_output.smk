@@ -134,9 +134,7 @@ rule overview_table_csv:
         pseudo_contigs=get_fallbacks_for_report("pseudo"),
         consensus_contigs=get_fallbacks_for_report("consensus"),
         kraken=get_kraken_output,
-        pangolin=expand_samples_for_date(
-            "results/{{date}}/tables/strain-calls/{sample}.polished.strains.pangolin.csv",
-        ),
+        pangolin=get_pangolin_for_report,
         bcf=expand_samples_for_date(
             "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
         ),
@@ -149,7 +147,7 @@ rule overview_table_csv:
         assembly_used=lambda wildcards: get_assemblies_for_submission(
             wildcards, "all samples"
         ),
-        voc=config.get("voc"),
+        mth=config.get("mth"),
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
     log:
         "logs/{date}/overview-table.log",
@@ -312,7 +310,7 @@ rule pangolin_call_overview_html:
             directory("results/{date}/pangolin-call-overview"),
             htmlindex="index.html",
             caption="../report/pangolin-call-overview.rst",
-            category="4. Assembly",
+            category="4. Sequences",
             subcategory="0. Quality Overview",
         ),
     params:

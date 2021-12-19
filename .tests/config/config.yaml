@@ -143,8 +143,8 @@ mixtures:
     - "_MIX_B-1-1-7_PERC_50_MIX_B-1-351_PERC_50"
     - "_MIX_B-1-1-7_PERC_90_MIX_B-1-351_PERC_10"
 
-# variants of concern (protein name -> variants)
-voc:
+# mutations to be highlighted (protein name -> variants)
+mth:
   S:
     - N501Y
     - E484K
