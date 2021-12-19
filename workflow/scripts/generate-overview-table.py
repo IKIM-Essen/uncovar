@@ -20,7 +20,7 @@ def iter_with_samples(inputfiles):
 
 
 def is_patient_report():
-    return snakemake.parms.mode == "patient"
+    return snakemake.params.mode == "patient"
 
 
 data = pd.DataFrame(index=snakemake.params.samples)
