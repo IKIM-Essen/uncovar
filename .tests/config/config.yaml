@@ -1,5 +1,8 @@
 pepfile: config/pep/config.yaml
 
+# execution mode. Can be either "patient" or "environment"
+mode: patient
+
 # for testing, uncomment to limit to n strain genomes
 testing:
   limit-strain-genomes: 5
