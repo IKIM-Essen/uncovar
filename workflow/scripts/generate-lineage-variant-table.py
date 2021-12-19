@@ -3,23 +3,26 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
-import sys
 import re
+import sys
 
 sys.stderr = open(snakemake.log[0], "w")
 # sys.stdout = open(snakemake.log[0], "a")
 
+import gffutils
 import pandas as pd
 import pysam
-import gffutils
+
 
 def phred_to_prob(phred):
     if phred is None:
         return 0
     return 10 ** (-phred / 10)
 
+
 def has_numbers(inputString):
     return any(char.isdigit() for char in inputString)
+
 
 variants_df = pd.DataFrame()
 lineage_df = pd.DataFrame()
@@ -45,7 +48,6 @@ with pysam.VariantFile(snakemake.input[0], "rb") as infile:
                 lineage_dict[item] = "x"
             # print(lineage_dict)
             variants_df = variants_df.append(
-
                 {
                     "Signatures": signatures,
                     "VAF": vaf,
@@ -56,19 +58,17 @@ with pysam.VariantFile(snakemake.input[0], "rb") as infile:
                     # "Prob_subclonal_high": prob_subclonal_high,
                     # "Prob_low": prob_low,
                 },
-                ignore_index=True
+                ignore_index=True,
             )
             lineage_df = lineage_df.append(
-                {
-                    "Signatures": signatures,
-                    **lineage_dict
-                },
-                ignore_index=True
+                {"Signatures": signatures, **lineage_dict}, ignore_index=True
             )
 
 # count occurences of x in lineage columns and get sorted list
 lineage_dict = dict(lineage_df.count())
-lineage_dict = dict(sorted(lineage_dict.items(), key=lambda item: item[1], reverse=True))
+lineage_dict = dict(
+    sorted(lineage_dict.items(), key=lambda item: item[1], reverse=True)
+)
 keys = list(lineage_dict.keys())
 
 # only include variant names + top 5 variants and reorder
@@ -84,19 +84,19 @@ lineage_df = lineage_df.groupby(["Signatures"]).agg("max").reset_index()
 variants_df = variants_df.merge(lineage_df, left_on="Signatures", right_on="Signatures")
 
 # add feature column for sorting
-variants_df["Features"] = variants_df["Signatures"].str.extract(r'(.+)[:].+|\*')
+variants_df["Features"] = variants_df["Signatures"].str.extract(r"(.+)[:].+|\*")
 
 # position of variant for sorting and change type
-variants_df["Position"] = variants_df["Signatures"].str.extract(r'([0-9]+)([A-Z]+|\*)$')[0]
-variants_df = variants_df.astype({'Position':'int64'})
+variants_df["Position"] = variants_df["Signatures"].str.extract(
+    r"([0-9]+)([A-Z]+|\*)$"
+)[0]
+variants_df = variants_df.astype({"Position": "int64"})
 
 # generate sorting list with correct range of features
 sorterIndex = dict(zip(sorter, range(len(sorter))))
 variants_df["Features_Rank"] = variants_df["Features"].map(sorterIndex)
 
 # replace zeros with empty string and sort final DF
-# variants_df.replace([0, 0.0], '', inplace=True)
+variants_df.replace([0, 0.0], "", inplace=True)
 variants_df.sort_values(by=["Features_Rank", "Position", "VAF"], inplace=True)
 variants_df.to_csv(snakemake.output[0], index=False, sep=",")
-
-    
