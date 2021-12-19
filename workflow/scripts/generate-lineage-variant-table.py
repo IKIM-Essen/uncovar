@@ -66,53 +66,36 @@ with pysam.VariantFile(snakemake.input[0], "rb") as infile:
                 ignore_index=True
             )
 
-print(lineage_df.count())
+# count occurences of x in lineage columns and get sorted list
 lineage_dict = dict(lineage_df.count())
-# print(lineage_dict)
 lineage_dict = dict(sorted(lineage_dict.items(), key=lambda item: item[1], reverse=True))
 keys = list(lineage_dict.keys())
-print(keys)
-sigs = list(variants_df["Signatures"])
-# print(sigs)
-# print(len(sigs))
-# sigs = list(dict.fromkeys(sigs))
-# print(sorted(sigs))
-# print(len(sigs))
-print(lineage_df.columns)
+
+# only include variant names + top 5 variants and reorder
 lineage_df.drop(labels=keys[7:], axis=1, inplace=True)
 lineage_df = lineage_df[keys[:7]]
 lineage_df.to_csv(snakemake.output.lineage_df)
-variants_df = variants_df.groupby(["Signatures"]).sum().reset_index()
-print(variants_df)
-# print(variants_df)
-# calculation = lambda value: 
-# variants_df = variants_df.groupby(["Signatures"]).agg(sum_VAF=("VAF", "sum"), sum_PROB=("Prob_clonal", "sum")).reset_index()
-# lineage_df.drop_duplicates(inplace=True)
-lineage_df = lineage_df.groupby(["Signatures"]).agg("max").reset_index()
-lineage_df.sort_values("Signatures", inplace=True)
-variants_df = variants_df.merge(lineage_df, left_on="Signatures", right_on="Signatures")
-# lineage_df.to_csv(snakemake.output.lineage_df)
-sigs = list(lineage_df["Signatures"])
-print(sigs)
-print(len(sigs))
-sigs = list(dict.fromkeys(sigs))
-print(sorted(sigs))
-print(len(sigs))
-variants_df["Features"] = variants_df["Signatures"].str.extract(r'(.+)[:].+|\*')
-# print(no_number)
-variants_df.sort_values(by=["Signatures"], inplace=True)
 
-# variants_df["is AA"] = variants_df["Signatures"].str.contains(":")
+# aggregate both dataframes by summing up repeating rows for variants
+variants_df = variants_df.groupby(["Signatures"]).sum().reset_index()
+lineage_df = lineage_df.groupby(["Signatures"]).agg("max").reset_index()
+
+# merge variants dataframe and lineage dataframe
+variants_df = variants_df.merge(lineage_df, left_on="Signatures", right_on="Signatures")
+
+# add feature column for sorting
+variants_df["Features"] = variants_df["Signatures"].str.extract(r'(.+)[:].+|\*')
+
+# position of variant for sorting and change type
 variants_df["Position"] = variants_df["Signatures"].str.extract(r'([0-9]+)([A-Z]+|\*)$')[0]
 variants_df = variants_df.astype({'Position':'int64'})
 
+# generate sorting list with correct range of features
 sorterIndex = dict(zip(sorter, range(len(sorter))))
-print(sorterIndex)
 variants_df["Features_Rank"] = variants_df["Features"].map(sorterIndex)
 
-print(variants_df.dtypes)
-variants_df.replace([0, 0.0], '', inplace=True)
-# variants_df.sort_values(by=["Signatures_Rank", "Position", "is AA"], ascending=[True, True, False], inplace=True)
+# replace zeros with empty string and sort final DF
+# variants_df.replace([0, 0.0], '', inplace=True)
 variants_df.sort_values(by=["Features_Rank", "Position", "VAF"], inplace=True)
 variants_df.to_csv(snakemake.output[0], index=False, sep=",")
 
