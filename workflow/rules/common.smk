@@ -1544,7 +1544,6 @@ def get_aggregated_pangolin_calls(wildcards, return_list="paths"):
     return expanded_patterns
 
 
-
 def get_checked_mode():
     mode = config["mode"]
     if mode == "patient" or mode == "environment":
