@@ -395,7 +395,7 @@ rule snakemake_reports_patient:
         "results/high-quality-genomes/{date}.fasta",
         "results/high-quality-genomes/{date}.csv",
     output:
-        "results/reports/{date}.zip",
+        "results/patient-reports/{date}.zip",
     params:
         for_testing=get_if_testing("--snakefile ../workflow/Snakefile"),
     conda:
@@ -429,6 +429,6 @@ use rule snakemake_reports_patient as snakemake_reports_environment with:
         "results/{date}/qc/laboratory/multiqc.html",
         "results/{date}/plots/coverage-reference-genome.svg",
     output:
-        "results/reports/environment/{date}.zip",
+        "results/environment-reports/{date}.zip",
     log:
         "logs/snakemake_reports/{date}.log",
