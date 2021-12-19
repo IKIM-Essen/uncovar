@@ -68,13 +68,11 @@ fn_clean_exts:
   - "_S"
   - ".1"
 
+# customising general Statistics
 table_columns_visible:
   samtools-flagstat: False
   Samtools: False
   samtools: False
-
-# customising general Statistics
-table_columns_visible:
   Reads Quality Control:
     percent_duplicates: False
     percent_gc: False
@@ -115,7 +113,6 @@ table_columns_visible:
     fragment_length: False
     percent_aligned: False
     pseudoaligned_reads: False
-
 
 # number formatting
 read_count_multiplier: 0.001

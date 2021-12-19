@@ -87,6 +87,8 @@ rule kallisto_call_strains:
         "logs/{date}/call-strains/{sample}.log",
     params:
         min_fraction=config["strain-calling"]["min-fraction"],
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
@@ -130,6 +132,8 @@ rule kallisto_plot_all_strains:
         ),
     log:
         "logs/{date}/plot-strains/all.{mode}.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
@@ -138,15 +142,13 @@ rule kallisto_plot_all_strains:
 
 rule pangolin_call_strains:
     input:
-        contigs=lambda wildcards: get_assemblies_for_submission(
-            wildcards, "single sample"
-        ),
+        contigs=get_pangolin_input,
         pangoLEARN="results/{date}/pangolin/pangoLEARN",
         lineages="results/{date}/pangolin/lineages",
     output:
-        "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
+        "results/{date}/tables/strain-calls/{sample}.{stage}.strains.pangolin.csv",
     log:
-        "logs/{date}/pangolin/{sample}.log",
+        "logs/{date}/pangolin/{sample}.{stage}.log",
     params:
         pango_data_path=lambda w, input: os.path.dirname(input.pangoLEARN),
     conda:
@@ -159,7 +161,7 @@ rule pangolin_call_strains:
 rule pangolin_plot_all_strains:
     input:
         lambda wildcards: expand(
-            "results/{{date}}/tables/strain-calls/{sample}.strains.pangolin.csv",
+            "results/{{date}}/tables/strain-calls/{sample}.polished.strains.pangolin.csv",
             sample=get_samples_for_date(wildcards.date),
         ),
     output:
@@ -171,6 +173,8 @@ rule pangolin_plot_all_strains:
         ),
     log:
         "logs/{date}/plot-strains-pangolin/all.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:

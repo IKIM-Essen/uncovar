@@ -164,7 +164,7 @@ rule assembly_polishing_illumina:
     output:
         report(
             "results/{date}/polishing/bcftools-illumina/{sample}.fasta",
-            category="4. Assembly",
+            category="4. Sequences",
             subcategory="1. De Novo Assembled Sequences",
             caption="../report/assembly_illumina.rst",
         ),
@@ -184,7 +184,7 @@ rule assembly_polishing_ont:
     output:
         report(
             "results/{date}/polishing/medaka/{sample}/{sample}.fasta",
-            category="4. Assembly",
+            category="4. Sequences",
             subcategory="1. De Novo Assembled Sequences",
             caption="../report/assembly_ont.rst",
         ),

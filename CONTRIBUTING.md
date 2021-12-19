@@ -5,8 +5,8 @@ to UnCoVar.
 
 ## Snakemake
 
-We use [`snakemake`](https://snakemake.readthedocs.io/en/stable/) as the backbone of this project. Have a look at the
-[official documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
+We use [`snakemake`](https://snakemake.readthedocs.io/en/stable/) as the
+backbone of this project. Have a look at the [official documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
 If you already have [`conda`](https://docs.conda.io/en/latest/) installed, run:
 
@@ -21,7 +21,9 @@ For faster installation, you can use [`mamba`](https://github.com/mamba-org/mamb
 mamba create -c conda-forge -c bioconda -n snakemake snakemake
 ```
 
-Once installed, activate your [`snakemake`](https://snakemake.readthedocs.io/en/stable/) environment by running
+Once installed, activate your [`snakemake`](https://snakemake.readthedocs.io/en/stable/)
+environment by running
+
 `conda activate snakemake`.
 
 ## Pre-Commit
@@ -77,8 +79,9 @@ Before submitting your code, please do the following:
 
 1. Add tests, if possible, for the new changes.
 1. Edit documentation if you have changed something significant.
-1. Make sure the [`pre-commit`](https://pre-commit.com/) hooks had run (e.g. by `precommit run --all`).
-1. [Commit](https://git-scm.com/docs/git-commit) and [push](https://git-scm.com/docs/git-push)
+1. Make sure the [`pre-commit`](https://pre-commit.com/)
+hooks had run (e.g. by `precommit run --all`).
+1. [Commit](https://git-scm.com/docs/git-commit)and [push](https://git-scm.com/docs/git-push)
 your changes to your fork.
 1. Create a [pull request](https://help.github.com/en/articles/creating-a-pull-request)
 against the original repository.
