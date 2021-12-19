@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.10.2](https://www.github.com/IKIM-Essen/uncovar/compare/v0.10.1...v0.10.2) (2021-12-19)
+
+
+### Bug Fixes
+
+* pangolin input for overview table, bamclipper samtools error, include flag for high quality genome report ([#418](https://www.github.com/IKIM-Essen/uncovar/issues/418)) ([9690f12](https://www.github.com/IKIM-Essen/uncovar/commit/9690f12e6725447e035903d3b4eecf31d01b1576))
+
 ### [0.10.1](https://www.github.com/IKIM-Essen/uncovar/compare/v0.10.0...v0.10.1) (2021-12-17)
 
 
