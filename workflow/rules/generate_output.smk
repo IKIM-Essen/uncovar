@@ -149,7 +149,7 @@ rule overview_table_csv:
         assembly_used=lambda wildcards: get_assemblies_for_submission(
             wildcards, "all samples"
         ),
-        voc=config.get("voc"),
+        mth=config.get("mth"),
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
     log:
         "logs/{date}/overview-table.log",
