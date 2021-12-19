@@ -31,17 +31,17 @@ rule annotate_lineage_variants:
 # TODO add conda env and log file to this rule
 rule generate_lineage_variant_table:
     input:
-        lambda wildcards: expand(
-            "results/{date}/lineage-variants/{sample}.bcf",
-            date=get_dates(),
-            sample=get_samples_for_date(get_dates),
-            ),
-    # input:
-    #     "results/{date}/lineage-variants/{sample}.bcf",
-    # output:
-    #     "results/{data}/lineage-variants/{sample}.tsv",
-    # script:
-    #     "../scripts/generate-lineage-variant-table.py"
+        "results/{date}/lineage-variants/{sample}.bcf",
+        annotation="resources/annotation_known_variants.gff",
+    output:
+        "results/{date}/lineage-variants/{sample}.tsv",
+        lineage_df="results/{date}/lineage-variants/{sample}_lineages.csv",
+    log:
+        "logs/{date}/{sample}-variant-table.log"
+    conda:
+        "../envs/pysam.yaml"
+    script:
+        "../scripts/generate-lineage-variant-table.py"
 
 
 use rule overview_table_html as generate_lineage_variant_report with:
