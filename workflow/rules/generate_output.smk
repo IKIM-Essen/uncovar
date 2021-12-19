@@ -196,7 +196,7 @@ rule overview_table_html:
         formatter=get_resource("report-table-formatter.js"),
         pin_until="Sample",
     log:
-        "logs/{date}/qc_report_html.log",
+        "logs/{date}/{execution_mode}-qc-report-html.log",
     conda:
         "../envs/rbt.yaml"
     shell:
