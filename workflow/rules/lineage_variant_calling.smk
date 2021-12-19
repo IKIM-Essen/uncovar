@@ -7,7 +7,7 @@ rule collect_lineage_candidate_variants:
     conda:
         "../envs/pysam.yaml"
     log:
-        "logs/collect-lineage-candidate-variants.log"
+        "logs/collect-lineage-candidate-variants.log",
     script:
         "../scripts/collect-lineage-variants.py"
 
@@ -21,7 +21,7 @@ rule annotate_lineage_variants:
     output:
         "results/{date}/lineage-variants/{sample}.bcf",
     log:
-        "logs/{date}/annotate-lineage-variants/{sample}.log"
+        "logs/{date}/annotate-lineage-variants/{sample}.log",
     conda:
         "../envs/bcftools.yaml"
     shell:
@@ -34,10 +34,10 @@ rule generate_lineage_variant_table:
         "results/{date}/lineage-variants/{sample}.bcf",
         annotation="resources/annotation_known_variants.gff",
     output:
-        "results/{date}/lineage-variants/{sample}.tsv",
+        "results/{date}/lineage-variants/{sample}.csv",
         lineage_df="results/{date}/lineage-variants/{sample}_lineages.csv",
     log:
-        "logs/{date}/{sample}-variant-table.log"
+        "logs/{date}/{sample}-variant-table.log",
     conda:
         "../envs/pysam.yaml"
     script:
