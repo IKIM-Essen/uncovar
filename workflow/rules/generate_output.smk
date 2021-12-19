@@ -352,7 +352,7 @@ rule snakemake_reports_patient:
         # 1. Overview
         expand(
             "results/{{date}}/{execution_mode}/overview/",
-            execution_mode=config["mode"],
+            execution_mode=get_checked_mode(),
         ),
         "results/{date}/plots/lineages-over-time.svg",
         expand(
@@ -413,7 +413,7 @@ use rule snakemake_reports_patient as snakemake_reports_environment with:
         # 1. Overview
         expand(
             "results/{{date}}/{execution_mode}/overview/",
-            execution_mode=config["mode"],
+            execution_mode=get_checked_mode(),
         ),
         "results/{date}/plots/all.major-strain.strains.kallisto.svg",
         expand_samples_for_date(

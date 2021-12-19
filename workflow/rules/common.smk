@@ -1541,6 +1541,14 @@ def get_aggregated_pangolin_calls(wildcards, return_list="paths"):
     return expanded_patterns
 
 
+def get_checked_mode():
+    mode = config["mode"]
+    if mode == "patient" or mode == "environment":
+        return mode
+
+    raise TypeError(f'Mode {mode} not recognized. Can be "patient" or "environment".')
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),
