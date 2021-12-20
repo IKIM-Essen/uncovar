@@ -104,6 +104,7 @@ variants_df = variants_df.merge(lineage_df, left_on="Signatures", right_on="Sign
 # add feature column for sorting
 variants_df["Features"] = variants_df["Signatures"].str.extract(r"(.+)[:].+|\*")
 
+print(variants_df)
 # position of variant for sorting and change type
 variants_df["Position"] = variants_df["Signatures"].str.extract(
     r"([0-9]+)([A-Z]+|\*)$"
