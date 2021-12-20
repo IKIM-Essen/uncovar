@@ -91,10 +91,10 @@
         }
 
     },
-    "Variants of Interest": function format(value) {
+    "VOC Mutations": function format(value) {
         return this["variant helper"](value, true);
     },
-    "Other Variants": function format(value) {
+    "Other Mutations": function format(value) {
         let result = this["variant helper"](value, false);
         return result;
     }
