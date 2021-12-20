@@ -96,6 +96,8 @@ rule test_benchmark_results:
         true_accessions=get_strain_accessions,
     log:
         "logs/test-benchmark-results.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
@@ -124,6 +126,8 @@ rule summarize_assembly_results:
         "results/benchmarking/assembly/{assembly_type}.csv",
     log:
         "logs/summarize-assembly-results/{assembly_type}/assembly-results.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/pysam.yaml"
     notebook:
@@ -149,10 +153,13 @@ rule test_non_cov2:
 rule report_non_cov2:
     input:
         summary="results/benchmarking/non-sars-cov-2.csv",
-        call_plots=expand(
-            "results/benchmarking/plots/strain-calls/non-cov2-{accession}.strains.{caller}.svg",
+        call_plots_kallisto=expand(
+            "results/benchmarking/plots/strain-calls/non-cov2-{accession}.strains.kallisto.svg",
             accession=get_non_cov2_accessions(),
-            caller=["pangolin", "kallisto"],
+        ),
+        call_plots_pangolin=expand(
+            "results/benchmarking/plots/strain-calls/non-cov2-{accession}.polished.strains.pangolin.svg",
+            accession=get_non_cov2_accessions(),
         ),
     output:
         report(
@@ -261,7 +268,9 @@ rule assembly_comparison_velvet:
 
 rule order_contigs_assembly_comparison:
     input:
-        contigs="results/{date}/assembly/{sample}/{assembler}-pe/{sample}.contigs.fasta",
+        contigs=(
+            "results/{date}/assembly/{sample}/{assembler}-pe/{sample}.contigs.fasta"
+        ),
         reference="resources/genomes/main.fasta",
     output:
         temp(
@@ -412,7 +421,7 @@ rule collect_lineage_calls_of_various_stages:
             state_indi=READ_STATE_INDICATOR,
         ),
         pangolin=expand(
-            "results/benchmarking/tables/strain-calls/{prefix}{{lineage}}{number_indi}{{number}}{length_indi}{{length}}{state_indi}{state}.strains.pangolin.csv",
+            "results/benchmarking/tables/strain-calls/{prefix}{{lineage}}{number_indi}{{number}}{length_indi}{{length}}{state_indi}{state}.polished.strains.pangolin.csv",
             prefix=READ_TEST_PREFIX,
             number_indi=READ_NUMBER_INDICATOR,
             length_indi=READ_LENGTH_INDICATOR,
@@ -479,6 +488,8 @@ rule plot_read_call:
         "results/benchmarking/plots/aggregated_read_calls.svg",
     log:
         "logs/plot_read_call.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
