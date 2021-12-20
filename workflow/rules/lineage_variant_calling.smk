@@ -31,11 +31,10 @@ rule annotate_lineage_variants:
 # TODO add conda env and log file to this rule
 rule generate_lineage_variant_table:
     input:
-        "results/{date}/lineage-variants/{sample}.bcf",
+        variant_file="results/{date}/lineage-variants/{sample}.bcf",
         annotation="resources/annotation_known_variants.gff",
     output:
-        "results/{date}/lineage-variants/{sample}.csv",
-        lineage_df="results/{date}/lineage-variants/{sample}_lineages.csv",
+        variant_table="results/{date}/lineage-variants/{sample}.csv",
     log:
         "logs/{date}/{sample}-variant-table.log",
     conda:
