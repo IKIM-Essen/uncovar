@@ -90,6 +90,6 @@ sorterIndex = dict(zip(sorter, range(len(sorter))))
 variants_df["Features_Rank"] = variants_df["Features"].map(sorterIndex)
 
 # replace zeros with empty string and sort final DF
-variants_df.replace([0, 0.0], "", inplace=True)
+# variants_df.replace([0, 0.0], "", inplace=True)
 variants_df.sort_values(by=["Features_Rank", "Position", "VAF"], inplace=True)
 variants_df.to_csv(snakemake.output[0], index=False, sep=",")
