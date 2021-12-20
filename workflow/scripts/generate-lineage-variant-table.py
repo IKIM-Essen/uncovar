@@ -36,11 +36,9 @@ with pysam.VariantFile(snakemake.input[0], "rb") as infile:
         if "SIGNATURES" in record.info:
             signatures = record.info.get("SIGNATURES", ("#ERROR0",))[0]
             vaf = record.samples[0]["AF"][0]
-            prob_clonal = phred_to_prob(record.info["PROB_CLONAL"][0])
-            prob_subclonal_min = phred_to_prob(record.info["PROB_SUBCLONAL_MINOR"][0])
-            prob_subclonal_maj = phred_to_prob(record.info["PROB_SUBCLONAL_MAJOR"][0])
-            prob_subclonal_high = phred_to_prob(record.info["PROB_SUBCLONAL_HIGH"][0])
-            prob_low = phred_to_prob(record.info["PROB_LOW"][0])
+            prob_present = phred_to_prob(record.info["PROB_ABSENT"][0]) + phred_to_prob(
+                record.info["PROB_ARTIFACT"][0]
+            )
             lineages = record.info["LINEAGES"]
             lineage_dict = {}
             # print(lineages)
@@ -51,12 +49,7 @@ with pysam.VariantFile(snakemake.input[0], "rb") as infile:
                 {
                     "Signatures": signatures,
                     "VAF": vaf,
-                    "Prob_clonal": prob_clonal,
-                    # [x for x in lineages]: ["x" f],
-                    # "Prob_subclonal_min": prob_subclonal_min,
-                    # "Prob_subclonal_maj": prob_subclonal_maj,
-                    # "Prob_subclonal_high": prob_subclonal_high,
-                    # "Prob_low": prob_low,
+                    "Prob_present": prob_present,
                 },
                 ignore_index=True,
             )

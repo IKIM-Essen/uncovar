@@ -1,17 +1,16 @@
-from collections import namedtuple, defaultdict
+import sys
+from collections import defaultdict, namedtuple
 from enum import Enum
 from itertools import product
-import sys
 
 sys.stderr = open(snakemake.log[0], "w")
 
-import numpy as np
 import gffutils
+import numpy as np
 import requests
-from requests.models import ContentDecodingError
-from pysam import VariantFile, VariantHeader, VariantRecord, FastaFile
 from dnachisel.biotools import get_backtranslation_table
-
+from pysam import FastaFile, VariantFile, VariantHeader, VariantRecord
+from requests.models import ContentDecodingError
 
 # TODO: Credits to covariants.org
 covariants_data = requests.get(
@@ -22,9 +21,11 @@ gff = gffutils.create_db(snakemake.input.annotation, dbfn=":memory:")
 gene_start = {gene["gene_name"][0]: gene.start for gene in gff.features_of_type("gene")}
 
 
-
 def aa_to_dna(aa_seq):
-    return ("".join(combination) for combination in product(*[translate_aa[aa] for aa in aa_seq]))
+    return (
+        "".join(combination)
+        for combination in product(*[translate_aa[aa] for aa in aa_seq])
+    )
 
 
 class VariantType(Enum):
@@ -41,9 +42,9 @@ class SynonymousVariant:
 
     def __eq__(self, other):
         return (
-        self.left == other.left
-        and self.right == other.right
-        and self.pos == other.pos
+            self.left == other.left
+            and self.right == other.right
+            and self.pos == other.pos
         )
 
     def __hash__(self):
@@ -110,7 +111,10 @@ with FastaFile(snakemake.input.reference) as infasta:
 
     known_non_synonymous_variants = defaultdict(set)
     for lineage_entry in covariants_data["clusters"]:
-        if "mutations" in lineage_entry and "nonsynonymous" in lineage_entry["mutations"]:
+        if (
+            "mutations" in lineage_entry
+            and "nonsynonymous" in lineage_entry["mutations"]
+        ):
             for variant in lineage_entry["mutations"]["nonsynonymous"]:
                 variant = NonSynonymousVariant(**variant)
                 if variant.gene in gene_start:
@@ -118,7 +122,10 @@ with FastaFile(snakemake.input.reference) as infasta:
                         lineage_entry["build_name"]
                     )
                 else:
-                    print(f"Skipping variant at {variant.gene} because gene is not in given GFF annotation.", file=sys.stderr)
+                    print(
+                        f"Skipping variant at {variant.gene} because gene is not in given GFF annotation.",
+                        file=sys.stderr,
+                    )
 
     known_synonymous_variants = defaultdict(set)
     for lineage_entry in covariants_data["clusters"]:
@@ -202,11 +209,13 @@ with FastaFile(snakemake.input.reference) as infasta:
             record = outvcf.new_record()
             record.contig = contig
             record.alleles = (ref_allele, alt_allele)
-            record.pos = pos + 1 # pysam expects 1-based positions here
+            record.pos = pos + 1  # pysam expects 1-based positions here
 
             record.info["LINEAGES"] = ",".join(lineages)
 
-            record.info["SIGNATURES"] = ",".join(variant.signature() for variant in variants)
+            record.info["SIGNATURES"] = ",".join(
+                variant.signature() for variant in variants
+            )
 
             outvcf.write(record)
 
@@ -258,5 +267,5 @@ with FastaFile(snakemake.input.reference) as infasta:
 
             ref_allele = infasta.fetch(reference=contig, start=pos, end=pos + 3)
             for alt_allele in aa_to_dna(variant.right):
-                
+
                 write_record(pos, ref_allele, alt_allele, lineages, [variant])

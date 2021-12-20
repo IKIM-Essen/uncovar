@@ -1,6 +1,20 @@
 import pandas as pd
 
-input_gff = pd.read_csv(snakemake.input[0], delimiter="\t", names=["seqname", "source", "feature", "start", "end", "score", "strand", "frame", "attribute"], )
+input_gff = pd.read_csv(
+    snakemake.input[0],
+    delimiter="\t",
+    names=[
+        "seqname",
+        "source",
+        "feature",
+        "start",
+        "end",
+        "score",
+        "strand",
+        "frame",
+        "attribute",
+    ],
+)
 
 input_gff["seqname"] = "MN908947.3"
 input_gff["source"] = "nextclade"
