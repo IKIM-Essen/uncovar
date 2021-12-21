@@ -19,7 +19,7 @@ rule annotate_lineage_variants:
         annotation="resources/lineage-candidate-variants/all_sorted.bcf",
         index2="resources/lineage-candidate-variants/all_sorted.bcf.csi",
     output:
-        "results/{date}/lineage-variants/{sample}.bcf",
+        "results/{date}/lineage-variant-report/{sample}.bcf",
     log:
         "logs/{date}/annotate-lineage-variants/{sample}.log",
     conda:
@@ -31,10 +31,10 @@ rule annotate_lineage_variants:
 # TODO add conda env and log file to this rule
 rule generate_lineage_variant_table:
     input:
-        variant_file="results/{date}/lineage-variants/{sample}.bcf",
+        variant_file="results/{date}/lineage-variant-report/{sample}.bcf",
         annotation="resources/annotation_known_variants.gff",
     output:
-        variant_table="results/{date}/lineage-variants/{sample}.csv",
+        variant_table="results/{date}/lineage-variant-report/{sample}.csv",
     log:
         "logs/{date}/{sample}-variant-table.log",
     conda:
@@ -45,10 +45,12 @@ rule generate_lineage_variant_table:
 
 use rule overview_table_html as generate_lineage_variant_report with:
     input:
-        "results/{data}/lineage-variants/{sample}.tsv",
+        "results/{date}/lineage-variants/{sample}.csv",
     output:
         report(
-            directory("results/{date}/lineage-variants/{sample}.lineage-variants.tsv"),
+            directory(
+                "results/{date}/lineage-variant-report/{sample}.lineage-variants"
+            ),
             htmlindex="index.html",
             caption="../report/lineage-variant-report.rst",
             category="1. Overview",
@@ -56,3 +58,6 @@ use rule overview_table_html as generate_lineage_variant_report with:
         ),
     log:
         "logs/{date}/lineage-variant-report/{sample}.log",
+    params:
+        formatter=get_resource("lineage-variant-table-formatter.js"),
+        pin_until="VAF",
