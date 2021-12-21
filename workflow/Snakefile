@@ -149,4 +149,4 @@ rule benchmark_reads:
 
 rule generate_test_cases:
     input:
-        get_test_cases
+        get_test_cases,

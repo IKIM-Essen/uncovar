@@ -12,8 +12,8 @@ from snakemake.utils import validate
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
 ILLUMINA_VARRANGE = ["small", "structural"]
-ONT_VARRANGE=["homopolymer-medaka", "homopolymer-longshot"]
-ION_VARRANGE=["small", "structural"]
+ONT_VARRANGE = ["homopolymer-medaka", "homopolymer-longshot"]
+ION_VARRANGE = ["small", "structural"]
 
 # clear text / content of flag "technology" in sample sheet
 ILLUMINA = "illumina"

@@ -511,14 +511,14 @@ rule get_publication_plots:
 
 rule get_chrom_and_pos_for_test_cases:
     input:
-        illumina_bcf = get_test_cases_variant_calls(ILLUMINA), 
-        illumina_csi = get_test_cases_variant_calls(ILLUMINA, ".csi"), 
-        ont_bcf = get_test_cases_variant_calls(ONT),
-        ont_csi = get_test_cases_variant_calls(ONT, ".csi"),
+        illumina_bcf=get_test_cases_variant_calls(ILLUMINA),
+        illumina_csi=get_test_cases_variant_calls(ILLUMINA, ".csi"),
+        ont_bcf=get_test_cases_variant_calls(ONT),
+        ont_csi=get_test_cases_variant_calls(ONT, ".csi"),
     output:
         "results/benchmarking/tables/test-cases/{test_case}/found-variants.tsv",
     log:
-        "logs/test_cases/{test_case}.log"
+        "logs/test_cases/{test_case}.log",
     conda:
         "../envs/pysam.yaml"
     script:
@@ -529,13 +529,13 @@ checkpoint filter_test_case_variants:
     input:
         "results/benchmarking/tables/test-cases/{test_case}/found-variants.tsv",
     output:
-        underrepresented = "results/benchmarking/tables/test-cases/{test_case}/underrepresented-variants.tsv",
-        ont_variants = "results/benchmarking/tables/test-cases/{test_case}/variants-found-by-ont-and-not-by-illumina.tsv",
-        illumina_variants = "results/benchmarking/tables/test-cases/{test_case}/variants-found-by-illumina-and-not-by-ont.tsv",
+        underrepresented="results/benchmarking/tables/test-cases/{test_case}/underrepresented-variants.tsv",
+        ont_variants="results/benchmarking/tables/test-cases/{test_case}/variants-found-by-ont-and-not-by-illumina.tsv",
+        illumina_variants="results/benchmarking/tables/test-cases/{test_case}/variants-found-by-illumina-and-not-by-ont.tsv",
     params:
-        min_vaf_difference = 0.2
+        min_vaf_difference=0.2,
     log:
-        "logs/filter_test_case_variants/{test_case}.log"
+        "logs/filter_test_case_variants/{test_case}.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -544,21 +544,24 @@ checkpoint filter_test_case_variants:
 
 checkpoint aggregate_test_case_variants:
     input:
-        lambda wildcards: expand("results/benchmarking/tables/test-cases/{test_case}/underrepresented-variants.tsv", test_case=get_all_test_cases_names(wildcards))
+        lambda wildcards: expand(
+            "results/benchmarking/tables/test-cases/{test_case}/underrepresented-variants.tsv",
+            test_case=get_all_test_cases_names(wildcards),
+        ),
     output:
         overview="testcases/underrepresented-overview.tsv",
         paths="results/benchmarking/tables/test-cases/testcase-paths.tsv",
     params:
-        illumina = ILLUMINA,
-        ont = ONT,
+        illumina=ILLUMINA,
+        ont=ONT,
         illumina_varrange=ILLUMINA_VARRANGE,
         ont_varrange=ONT_VARRANGE,
-        illumina_dates = get_test_cases_data(ILLUMINA, "date"),
-        illumina_sample_names = get_test_cases_data(ILLUMINA, "sample"),
-        ont_dates = get_test_cases_data(ONT, "date"),
-        ont_sample_names = get_test_cases_data(ONT, "sample"),
+        illumina_dates=get_test_cases_data(ILLUMINA, "date"),
+        illumina_sample_names=get_test_cases_data(ILLUMINA, "sample"),
+        ont_dates=get_test_cases_data(ONT, "date"),
+        ont_sample_names=get_test_cases_data(ONT, "sample"),
     log:
-        "logs/aggregate_test_case_variants.log"
+        "logs/aggregate_test_case_variants.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -570,8 +573,12 @@ rule varlociraptor_test_case:
         obs="results/{date}/observations/ref~{reference}/{sample}.{varrange}.bcf",
         scenario="results/{date}/scenarios/{sample}.yaml",
     output:
-        bcf = temp("results/{date}/call-test-cases/ref~{reference}/{sample}.{varrange}.chrom~{chrom}.pos~{pos}.bcf"),
-        testcase= directory("testcases/{sample}@{chrom}:{pos}-from:{date}-ref:{reference}-varrange:{varrange}.")
+        bcf=temp(
+            "results/{date}/call-test-cases/ref~{reference}/{sample}.{varrange}.chrom~{chrom}.pos~{pos}.bcf"
+        ),
+        testcase=directory(
+            "testcases/{sample}@{chrom}:{pos}-from:{date}-ref:{reference}-varrange:{varrange}."
+        ),
     params:
         biases=get_varlociraptor_bias_flags,
     log:
@@ -584,4 +591,3 @@ rule varlociraptor_test_case:
         "--testcase-locus {wildcards.chrom}:{wildcards.pos} "
         "{params.biases} generic --obs {wildcards.sample}={input.obs} "
         "--scenario {input.scenario} > {output.bcf} 2> {log}"
-
