@@ -11,6 +11,9 @@ from snakemake.utils import validate
 
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
+ILLUMINA_VARRANGE = ["small", "structural"]
+ONT_VARRANGE=["homopolymer-medaka", "homopolymer-longshot"]
+ION_VARRANGE=["small", "structural"]
 
 # clear text / content of flag "technology" in sample sheet
 ILLUMINA = "illumina"
@@ -1419,9 +1422,9 @@ def get_fallback_sequence(wildcards):
 def get_varrange(wildcards):
     return get_pattern_by_technology(
         wildcards,
-        illumina_pattern=["small", "structural"],
-        ont_pattern=["homopolymer-medaka", "homopolymer-longshot"],
-        ion_torrent_pattern=["small", "structural"],
+        illumina_pattern=ILLUMINA_VARRANGE,
+        ont_pattern=ONT_VARRANGE,
+        ion_torrent_pattern=ION_VARRANGE,
     )
 
 

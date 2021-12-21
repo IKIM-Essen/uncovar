@@ -186,7 +186,7 @@ jobs:
       - Pre-Commit
     strategy:
       matrix:
-        rule: [benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2, benchmark_reads, compare_assemblers]
+        rule: [benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2, benchmark_reads, compare_assemblers, generate_test_cases]
     steps:
       - uses: actions/checkout@v2
 
@@ -281,7 +281,18 @@ jobs:
 
 
       - name: Prepare test data
-        if: steps.test-data.outputs.cache-hit != true
+        if: matrix.rule != generate_test_cases
+        run: |
+          mkdir -p .tests/data
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz
+          echo sample_name,fq1,fq2,date,is_amplicon_data,technology,test_case > .tests/config/pep/samples.csv
+          echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,1,illumina,case >> .tests/config/pep/samples.csv
+          echo ont-test,data/ont_reads.fastq.gz,,2022-01-01,1,ont,case >> .tests/config/pep/samples.csv
+
+      - name: Prepare test data
+        if: matrix.rule != generate_test_cases
         run: |
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
