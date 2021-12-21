@@ -109,17 +109,47 @@ sorter = [k[0] for k in sorted(gene_start.items(), key=lambda item: item[1])]
 sorterIndex = dict(zip(sorter, range(len(sorter))))
 variants_df["Features_Rank"] = variants_df["Features"].map(sorterIndex)
 
+# define categories for sorting
+variants_df.loc[
+    (variants_df[top5_lineages[1]] == "x") & (variants_df["Prob_present"] >= 0.95),
+    "Order",
+] = 0
+variants_df.loc[
+    (variants_df[top5_lineages[1]] == "x") & (variants_df["Prob_present"] <= 0.05),
+    "Order",
+] = 1
+variants_df.loc[
+    (variants_df[top5_lineages[1]] == "x")
+    & ((variants_df["Prob_present"] > 0.05) & (variants_df["Prob_present"] < 0.95)),
+    "Order",
+] = 2
+variants_df.loc[
+    (variants_df[top5_lineages[1]] != "x") & (variants_df["Prob_present"] <= 0.05),
+    "Order",
+] = 3
+variants_df.loc[
+    (variants_df[top5_lineages[1]] != "x") & (variants_df["Prob_present"] >= 0.95),
+    "Order",
+] = 4
+variants_df.loc[
+    (variants_df[top5_lineages[1]] != "x")
+    & ((variants_df["Prob_present"] > 0.05) & (variants_df["Prob_present"] < 0.95)),
+    "Order",
+] = 5
+
 # sort final DF
 variants_df["Prob X VAF"].replace([0, 0.0], np.NaN, inplace=True)
 variants_df.sort_values(
-    by=["Prob X VAF", top5_lineages[1], "Features_Rank", "Position"],
-    ascending=[False, True, True, True],
+    by=["Order", "Features_Rank", "Position"],
+    ascending=[True, True, True],
     na_position="last",
     inplace=True,
 )
-# concat row with Jaccard coefficient, drop unneccesary columns and sort with Jaccard coefficient
+
+# concat row with Jaccard coefficient, drop unneccesary columns, sort with Jaccard coefficient, round
 variants_df = pd.concat([jaccard_row, variants_df]).reset_index(drop=True)
 variants_df = variants_df[["Signatures", "Prob_present", "VAF", *top5_lineages[1:7]]]
+variants_df = variants_df.round({"Prob_present": 5, "VAF": 5})
 variants_df.set_index("Signatures", inplace=True)
 variants_df.sort_values(
     by="Jaccard", axis=1, na_position="first", ascending=False, inplace=True
