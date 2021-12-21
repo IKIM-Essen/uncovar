@@ -45,7 +45,7 @@ rule generate_lineage_variant_table:
 
 use rule overview_table_html as generate_lineage_variant_report with:
     input:
-        "results/{date}/lineage-variants/{sample}.csv",
+        "results/{date}/lineage-variant-report/{sample}.csv",
     output:
         report(
             directory(
