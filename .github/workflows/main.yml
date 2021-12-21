@@ -17,8 +17,7 @@ jobs:
         with:
           workflows: "main.yml"
         env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   Formatting:
     runs-on: ubuntu-latest
@@ -35,7 +34,6 @@ jobs:
           VALIDATE_PYTHON_BLACK: true
           VALIDATE_MARKDOWN: true
 
-
   Linting:
     runs-on: ubuntu-latest
     env:
@@ -50,15 +48,13 @@ jobs:
           stagein: mamba install -n snakemake -c conda-forge peppy
           args: "--lint"
 
-
   Pre-Commit:
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/master'
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-    - uses: pre-commit/action@v2.0.3
-
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: pre-commit/action@v2.0.3
 
   Technology-Tests:
     runs-on: ubuntu-latest
@@ -186,7 +182,15 @@ jobs:
       - Pre-Commit
     strategy:
       matrix:
-        rule: [benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2, benchmark_reads, compare_assemblers]
+        rule:
+          [
+            benchmark_strain_calling,
+            benchmark_assembly,
+            benchmark_mixtures,
+            benchmark_non_sars_cov_2,
+            benchmark_reads,
+            compare_assemblers,
+          ]
     steps:
       - uses: actions/checkout@v2
 
@@ -196,7 +200,6 @@ jobs:
       #     path: |
       #       .tests/.snakemake/conda
       #     key: benchmarks-${{ runner.os }}-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
-
 
       # TODO caches are currently completely misleading, as they lead to certain files becoming present on disk which might
       # then hide failures that would otherwise be seen.
@@ -278,7 +281,6 @@ jobs:
       #     restore-keys: |
       #       ${{ runner.os }}-sars-cov-benchmark-dependencies-${{ steps.get-date.outputs.date }}-
       #       ${{ runner.os }}-sars-cov-benchmark-dependencies-
-
 
       - name: Prepare test data
         if: steps.test-data.outputs.cache-hit != true

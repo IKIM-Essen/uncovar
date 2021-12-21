@@ -42,7 +42,6 @@ module_order:
       path_filters:
         - "*quast-polished/*/report.tsv"
 
-
 # sample name cleaning
 fn_clean_exts:
   - ".kreport2"
