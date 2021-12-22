@@ -509,7 +509,7 @@ rule get_publication_plots:
         "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
 
 
-rule get_chrom_and_pos_for_test_cases:
+rule indentify_test_case_variants:
     input:
         illumina_bcf=get_test_cases_variant_calls(ILLUMINA),
         illumina_csi=get_test_cases_variant_calls(ILLUMINA, ".csi"),
@@ -525,47 +525,73 @@ rule get_chrom_and_pos_for_test_cases:
         "../scripts/benchmarking/compare-vcf.py"
 
 
-checkpoint filter_test_case_variants:
+rule aggregate_test_case_variants:
     input:
-        "results/benchmarking/tables/test-cases/{test_case}/found-variants.tsv",
+        lambda wildcards: expand(
+            "results/benchmarking/tables/test-cases/{test_case}/found-variants.tsv",
+            test_case=get_all_test_cases_names(wildcards),
+        ),
     output:
-        underrepresented="results/benchmarking/tables/test-cases/{test_case}/underrepresented-variants.tsv",
-        ont_variants="results/benchmarking/tables/test-cases/{test_case}/variants-found-by-ont-and-not-by-illumina.tsv",
-        illumina_variants="results/benchmarking/tables/test-cases/{test_case}/variants-found-by-illumina-and-not-by-ont.tsv",
-    params:
-        min_vaf_difference=0.2,
+        "results/benchmarking/tables/test-cases/found-variants.tsv",
     log:
-        "logs/filter_test_case_variants/{test_case}.log",
+        "logs/aggregate_test_case_variants.log"
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/benchmarking/aggregate-test-case-variants.py"
+
+
+rule filter_test_case_variants:
+    input:
+        "results/benchmarking/tables/test-cases/found-variants.tsv",
+    output:
+        different_probs="results/benchmarking/tables/test-cases/different-prob-calls.tsv",
+        illumina_only="results/benchmarking/tables/test-cases/illumina-only-calls.tsv",
+        ont_only="results/benchmarking/tables/test-cases/ont-only-calls.tsv",
+    log:
+        "logs/filter_test_case_variants.log",
     conda:
         "../envs/python.yaml"
     script:
         "../scripts/benchmarking/filter-test-case-variants.py"
 
 
-checkpoint aggregate_test_case_variants:
+checkpoint get_test_case_variant_paths:
     input:
-        lambda wildcards: expand(
-            "results/benchmarking/tables/test-cases/{test_case}/underrepresented-variants.tsv",
-            test_case=get_all_test_cases_names(wildcards),
-        ),
+        "results/benchmarking/tables/test-cases/different-prob-calls.tsv"
     output:
-        overview="testcases/underrepresented-overview.tsv",
-        paths="results/benchmarking/tables/test-cases/testcase-paths.tsv",
+        overview="results/testcases/different-probs-overview.tsv",
+        paths="results/benchmarking/tables/test-cases/aggregated-variants.tsv",
     params:
         illumina=ILLUMINA,
         ont=ONT,
         illumina_varrange=ILLUMINA_VARRANGE,
         ont_varrange=ONT_VARRANGE,
-        illumina_dates=get_test_cases_data(ILLUMINA, "date"),
-        illumina_sample_names=get_test_cases_data(ILLUMINA, "sample"),
-        ont_dates=get_test_cases_data(ONT, "date"),
-        ont_sample_names=get_test_cases_data(ONT, "sample"),
+        sample_table=pep.sample_table.to_dict(),
     log:
-        "logs/aggregate_test_case_variants.log",
+        "logs/get_test_case_variant_paths.log",
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/benchmarking/aggregate-test-case-variants.py"
+        "../scripts/benchmarking/get-test-case-variant-paths.py"
+
+
+checkpoint check_presence_of_test_case_variant_in_call:
+    input:
+        bcfs=get_aggregated_test_case_variants("bcf"),
+        csi=get_aggregated_test_case_variants("csi")
+    output:
+        "results/benchmarking/tables/test-cases/presence-test-case-varaints.tsv",
+    params:
+        variants=get_aggregated_test_case_variants("variants"),
+        poses=get_aggregated_test_case_variants("poses"),
+        test_cases=get_aggregated_test_case_variants("test-case-paths"),
+    log:
+        "logs/check_presence_of_test_case_variant.log"
+    conda:
+        "../envs/pysam.yaml"
+    script:
+        "../scripts/benchmarking/check-presence-of-test-case-variant-in-call.py"
 
 
 rule varlociraptor_test_case:
@@ -577,7 +603,7 @@ rule varlociraptor_test_case:
             "results/{date}/call-test-cases/ref~{reference}/{sample}.{varrange}.chrom~{chrom}.pos~{pos}.bcf"
         ),
         testcase=directory(
-            "testcases/{sample}@{chrom}:{pos}-from:{date}-ref:{reference}-varrange:{varrange}."
+            "results/testcases/{sample}@{chrom}:{pos}-from:{date}-ref:{reference}-varrange:{varrange}."
         ),
     params:
         biases=get_varlociraptor_bias_flags,

@@ -41,6 +41,7 @@ validate(config, "../schemas/config.schema.yaml")
 validate(pep.sample_table, "../schemas/samples.schema.yaml")
 
 
+
 def get_samples():
     return list(pep.sample_table["sample_name"].values)
 
