@@ -534,7 +534,7 @@ rule aggregate_test_case_variants:
     output:
         "results/benchmarking/tables/test-cases/found-variants.tsv",
     log:
-        "logs/aggregate_test_case_variants.log"
+        "logs/aggregate_test_case_variants.log",
     conda:
         "../envs/python.yaml"
     script:
@@ -558,7 +558,7 @@ rule filter_test_case_variants:
 
 checkpoint get_test_case_variant_paths:
     input:
-        "results/benchmarking/tables/test-cases/different-prob-calls.tsv"
+        "results/benchmarking/tables/test-cases/different-prob-calls.tsv",
     output:
         overview="results/testcases/different-probs-overview.tsv",
         paths="results/benchmarking/tables/test-cases/aggregated-variants.tsv",
@@ -579,7 +579,7 @@ checkpoint get_test_case_variant_paths:
 checkpoint check_presence_of_test_case_variant_in_call:
     input:
         bcfs=get_aggregated_test_case_variants("bcf"),
-        csi=get_aggregated_test_case_variants("csi")
+        csi=get_aggregated_test_case_variants("csi"),
     output:
         "results/benchmarking/tables/test-cases/presence-test-case-varaints.tsv",
     params:
@@ -587,7 +587,7 @@ checkpoint check_presence_of_test_case_variant_in_call:
         poses=get_aggregated_test_case_variants("poses"),
         test_cases=get_aggregated_test_case_variants("test-case-paths"),
     log:
-        "logs/check_presence_of_test_case_variant.log"
+        "logs/check_presence_of_test_case_variant.log",
     conda:
         "../envs/pysam.yaml"
     script:

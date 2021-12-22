@@ -20,19 +20,19 @@ def get_test_cases_variant_calls(technology, suffix="", get="path"):
         bcf_path_low = "results/{date}/filtered-calls/ref~main/{sample}.subclonal.low-impact.bcf{suffix}"
 
         high_impact = expand(
-                bcf_path_high,
-                zip,
-                date=sample_table["date"],
-                sample=sample_table["sample_name"],
-                suffix=suffix,
-            )[0]
+            bcf_path_high,
+            zip,
+            date=sample_table["date"],
+            sample=sample_table["sample_name"],
+            suffix=suffix,
+        )[0]
         low_impact = expand(
-                bcf_path_low,
-                zip,
-                date=sample_table["date"],
-                sample=sample_table["sample_name"],
-                suffix=suffix,
-            )[0]
+            bcf_path_low,
+            zip,
+            date=sample_table["date"],
+            sample=sample_table["sample_name"],
+            suffix=suffix,
+        )[0]
 
         if get == "path":
             return [high_impact, low_impact]
@@ -64,21 +64,21 @@ def get_all_test_cases_names(wildcards):
 
 def get_aggregated_test_case_variants(return_typ):
     def inner(wildcards):
-        variants=[]
-        test_case_paths=[]
-        vcf_paths=[]
-        csi_paths=[]
-        poses=[]
-        
+        variants = []
+        test_case_paths = []
+        vcf_paths = []
+        csi_paths = []
+        poses = []
+
         with checkpoints.get_test_case_variant_paths.get().output.paths.open() as f:
-            for line in f.read().splitlines() :
+            for line in f.read().splitlines():
                 pos, variant, test_case_path, vcf_path = line.split("\t")
                 poses.append(pos)
                 variants.append(variant)
                 test_case_paths.append(test_case_path)
                 vcf_paths.append(vcf_path)
                 csi_paths.append(f"{vcf_path}.csi")
-        
+
         if return_typ == "bcf":
             return vcf_paths
         if return_typ == "csi":
@@ -96,5 +96,7 @@ def get_aggregated_test_case_variants(return_typ):
 
 
 def get_test_cases(wildcards):
-    with checkpoints.check_presence_of_test_case_variant_in_call.get().output[0].open() as f:
+    with checkpoints.check_presence_of_test_case_variant_in_call.get().output[
+        0
+    ].open() as f:
         return f.read().splitlines()
