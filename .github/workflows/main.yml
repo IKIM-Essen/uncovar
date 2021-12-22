@@ -72,12 +72,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # - name: Cache conda dependencies
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: |
-      #       .tests/.snakemake/conda
-      #     key: technology-${{ runner.os }}-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
+      # android - will release about 10 GB if you don't need Android
+      # dotnet  - will release about 20 GB if you don't need .NET
+      - name: Free up some disk sapce
+        run: |
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
 
       - name: Prepare test data for all technologies
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'all' || matrix.rule == 'compare_assemblers')
