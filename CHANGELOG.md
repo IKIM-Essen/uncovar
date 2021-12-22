@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.11.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.10.2...v0.11.0) (2021-12-21)
+
+
+### Features
+
+* update to rust-bio-tools 0.33 ([#388](https://www.github.com/IKIM-Essen/uncovar/issues/388)) ([8f66915](https://www.github.com/IKIM-Essen/uncovar/commit/8f669159d7db8dad503cccf505c34a8271795bcd))
+* update to varlociraptor 4.9 ([#424](https://www.github.com/IKIM-Essen/uncovar/issues/424)) ([5a7ca5b](https://www.github.com/IKIM-Essen/uncovar/commit/5a7ca5be08afdc6642a0db103c9fec2f6842fc53))
+
+### [0.10.2](https://www.github.com/IKIM-Essen/uncovar/compare/v0.10.1...v0.10.2) (2021-12-19)
+
+
+### Bug Fixes
+
+* pangolin input for overview table, bamclipper samtools error, include flag for high quality genome report ([#418](https://www.github.com/IKIM-Essen/uncovar/issues/418)) ([9690f12](https://www.github.com/IKIM-Essen/uncovar/commit/9690f12e6725447e035903d3b4eecf31d01b1576))
+
 ### [0.10.1](https://www.github.com/IKIM-Essen/uncovar/compare/v0.10.0...v0.10.1) (2021-12-17)
 
 

@@ -94,7 +94,7 @@ rule vcf_2_bcf:
     input:
         "results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.vcf",
     output:
-        "results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.bcf",
+        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.bcf"),
     log:
         "logs/{date}/vcf_2_bcf/ref~{reference}/{sample}.{varrange}.log",
     conda:
@@ -122,7 +122,7 @@ rule varlociraptor_alignment_properties:
         ref_idx=get_reference(".fai"),
         bam="results/{date}/recal/ref~{reference}/{sample}.bam",
     output:
-        "results/{date}/alignment-properties/ref~{reference}/{sample}.json",
+        temp("results/{date}/alignment-properties/ref~{reference}/{sample}.json"),
     log:
         "logs/{date}/varlociraptor/estimate-alignment-properties/ref~{reference}/{sample}.log",
     conda:
@@ -139,7 +139,7 @@ rule varlociraptor_preprocess:
         bam="results/{date}/recal/ref~{reference}/{sample}.bam",
         bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        "results/{date}/observations/ref~{reference}/{sample}.{varrange}.bcf",
+        temp("results/{date}/observations/ref~{reference}/{sample}.{varrange}.bcf"),
     params:
         depth=config["variant-calling"]["max-read-depth"],
     log:
