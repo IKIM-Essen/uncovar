@@ -371,10 +371,10 @@ def get_reference(suffix=""):
             return "results/{date}/contigs/consensus/{sample}.fasta".format(
                 sample=wildcards.reference.replace("consensus-", ""), **wildcards
             )
-        elif wildcards.reference == config["adapters"]["amplicon-reference"]:
+        elif wildcards.reference == config["preprocessing"]["amplicon-reference"]:
             # return reference genome of amplicon primers
             return "resources/genomes/{reference}.fasta{suffix}".format(
-                reference=config["adapters"]["amplicon-reference"], suffix=suffix
+                reference=config["preprocessing"]["amplicon-reference"], suffix=suffix
             )
         else:
             # return assembly result
@@ -423,7 +423,7 @@ def get_reads(wildcards):
         )
 
     # theses reads are used to generate the bam file for the BAMclipper and the coverage plot of the main reference
-    elif wildcards.reference == config["adapters"]["amplicon-reference"]:
+    elif wildcards.reference == config["preprocessing"]["amplicon-reference"]:
         return get_non_human_reads(wildcards)
 
     # aligments to the references main reference genome,
@@ -829,39 +829,35 @@ def get_depth_input(wildcards):
             illumina_pattern="results/{date}/read-sorted/pe~position/{sample}.hardclipped.bam",
             ont_pattern=expand(
                 "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam",
-                ref=config["adapters"]["amplicon-reference"],
+                ref=config["preprocessing"]["amplicon-reference"],
             ),
             ion_torrent_pattern="results/{date}/read-sorted/se~position/{sample}.hardclipped.bam",
         )
 
     # use trimmed reads
     return "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam".format(
-        ref=config["adapters"]["amplicon-reference"]
+        ref=config["preprocessing"]["amplicon-reference"]
     )
 
 
 def get_adapters(wildcards):
-    # TODO Think about adapter handling. Related #356
-    # Remove the temporary patters later
-    if is_amplicon_data(wildcards.sample):
-        patterns = get_pattern_by_technology(
-            wildcards,
-            illumina_pattern=config["adapters"]["illumina-amplicon"],
-            ont_pattern=config["adapters"]["illumina-amplicon"],
-            ion_torrent_pattern=config["adapters"]["illumina-amplicon"],
-        )
-    else:
-        patterns = get_pattern_by_technology(
-            wildcards,
-            illumina_pattern=config["adapters"]["illumina-shotgun"],
-            ont_pattern=config["adapters"]["illumina-shotgun"],
-            ion_torrent_pattern=config["adapters"]["illumina-shotgun"],
-        )
+    try:
+        samples = pep.sample_table
+        samples.dropna(subset=["adapters"], inplace=True)
+        adapters = samples.loc[wildcards.sample]["adapters"]
 
-    if patterns is not None:
-        return patterns
+        # predefined adapters
+        # https://lifesciences.tecan.com/revelo-rna-seq-library-prep-kit
+        if adapters == "revelo-rna-seq":
+            return "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+        # https://www.nimagen.com/shop/products/rc-cov096/easyseq-sars-cov-2-novel-coronavirus-whole-genome-sequencing-kit
+        elif adapters == "nimagen-easy-seq":
+            return "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
 
-    raise NotImplementedError(f"No adapters implemented for {wildcards.sample}.")
+    # If there is no column namend "adapters" in the sample sheet
+    # return the adapters defined in the config file
+    except KeyError:
+        return config["preprocessing"]["kit-adapters"]
 
 
 def get_final_assemblies(wildcards):
@@ -1266,7 +1262,7 @@ def get_lineage_by_accession(wildcards):
 
 def get_include_flag(sample):
     try:
-        samples = pep.sample_table.copy()
+        samples = pep.sample_table
         samples.dropna(subset=["include_in_high_genome_summary"], inplace=True)
         return samples.loc[sample]["include_in_high_genome_summary"]
     # if there is no include_in_high_genome_summary in the
@@ -1287,7 +1283,7 @@ def get_artic_primer(wildcards):
     # add a script to generate them from a link to a bed file.
     # The bed file can be found in the artic repo. Related to #356
     return "resources/ARTIC_v{}_adapters.py".format(
-        config["adapters"]["artic-primer-version"]
+        config["preprocessing"]["artic-primer-version"]
     )
 
 
@@ -1472,7 +1468,7 @@ def get_samtools_sort_input(wildcards):
     if wildcards.stage == "initial":
         return expand(
             "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam",
-            ref=config["adapters"]["amplicon-reference"],
+            ref=config["preprocessing"]["amplicon-reference"],
         )
     elif wildcards.stage == "hardclipped":
         return (

@@ -35,6 +35,7 @@ repos:
     rev: v0.30.0
     hooks:
     -   id: markdownlint-fix
+        args: [-c, .markdownlint.yaml]
 
 # sets up .pre-commit-ci.yaml to ensure pre-commit dependencies stay up to date
 ci:

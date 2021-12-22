@@ -25,7 +25,7 @@ rule bamclipper:
     input:
         bam="results/{date}/read-sorted/{read_type}~position/{sample}.initial.bam",
         bai="results/{date}/read-sorted/{read_type}~position/{sample}.initial.bam.bai",
-        bed=config["adapters"]["amplicon-primers"],
+        bed=config["preprocessing"]["amplicon-primers"],
     output:
         temp(
             "results/{date}/read-clipping/softclipped/{read_type}/{sample}/{sample}.initial.primerclipped.bam"
@@ -53,7 +53,7 @@ rule fgbio:
         bam="results/{date}/read-clipping/softclipped/{read_type}/{sample}/{sample}.initial.primerclipped.bam",
         bai="results/{date}/read-clipping/softclipped/{read_type}/{sample}/{sample}.initial.primerclipped.bam.bai",
         ref="resources/genomes/{reference}.fasta".format(
-            reference=config["adapters"]["amplicon-reference"]
+            reference=config["preprocessing"]["amplicon-reference"]
         ),
     output:
         "results/{date}/read-clipping/hardclipped/{read_type}/{sample}/{sample}.bam",
@@ -117,7 +117,7 @@ rule plot_primer_clipping:
         ),
     params:
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
-        bed=config["adapters"]["amplicon-primers"],
+        bed=config["preprocessing"]["amplicon-primers"],
     log:
         "logs/{date}/plot-primer-clipping.log",
     conda:

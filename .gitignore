@@ -27,6 +27,7 @@
 !.editorconfig
 !.gitattributes
 !.gitignore
+!.markdownlint.yaml
 !.pre-commit-config.yaml
 !.snakemake-workflow-catalog.yml
 !LICENSE

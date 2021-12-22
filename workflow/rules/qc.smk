@@ -106,7 +106,7 @@ rule samtools_depth:
     conda:
         "../envs/samtools.yaml"
     params:
-        ref=config["adapters"]["amplicon-reference"],
+        ref=config["preprocessing"]["amplicon-reference"],
     shell:
         "(samtools depth -aH -o {output} {input} && "
         " sed -i 's/{params.ref}.3/{wildcards.sample}/' {output})"
