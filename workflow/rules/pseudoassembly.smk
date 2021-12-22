@@ -35,7 +35,7 @@ rule compare_assemblies:
         assembly="results/{date}/contigs/polished/{sample}.fasta",
         pseudoassembly="results/{date}/contigs/pseudoassembled/{sample}.fasta",
     output:
-        "results/{date}/aligned/assemblies/{sample}.bam",
+        temp("results/{date}/aligned/assemblies/{sample}.bam"),
     log:
         "logs/{date}/aligned/assemblies/{sample}log",
     conda:
@@ -48,7 +48,7 @@ rule aggregate_assembly_comparisons:
     input:
         expand_samples_for_date("results/{{date}}/aligned/assemblies/{sample}.bam"),
     output:
-        "results/{date}/tables/assembly_comparison.tsv",
+        temp("results/{date}/tables/assembly_comparison.tsv"),
     params:
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
     log:

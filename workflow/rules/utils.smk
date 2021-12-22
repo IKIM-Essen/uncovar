@@ -8,7 +8,7 @@ rule tabix_index:
     input:
         "{prefix}.{fmt}.gz",
     output:
-        "{prefix}.{fmt}.gz.tbi",
+        temp("{prefix}.{fmt}.gz.tbi"),
     params:
         "-p {fmt}",
     log:
@@ -21,7 +21,7 @@ rule bam_index:
     input:
         "{prefix}.bam",
     output:
-        "{prefix}.bam.bai",
+        temp("{prefix}.bam.bai"),
     log:
         "logs/bam-index/{prefix}.log",
     wrapper:
@@ -32,7 +32,7 @@ rule bcf_index:
     input:
         "{prefix}.bcf",
     output:
-        "{prefix}.bcf.csi",
+        temp("{prefix}.bcf.csi"),
     log:
         "logs/bcf-index/{prefix}.log",
     conda:
@@ -45,7 +45,7 @@ rule faidx:
     input:
         "{prefix}.fasta",
     output:
-        "{prefix}.fasta.fai",
+        temp("{prefix}.fasta.fai"),
     log:
         "logs/faidx/{prefix}.log",
     wrapper:
@@ -56,7 +56,7 @@ rule gzip:
     input:
         "{prefix}.fastq",
     output:
-        "{prefix}.fastq.gz",
+        temp("{prefix}.fastq.gz"),
     log:
         "logs/gzip/{prefix}.log",
     conda:

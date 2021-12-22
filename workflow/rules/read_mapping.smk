@@ -67,7 +67,7 @@ rule mark_duplicates:
         "results/{date}/mapped/ref~{reference}/{sample}.bam",
     output:
         bam=temp("results/{date}/dedup/ref~{reference}/{sample}.bam"),
-        metrics="results/{date}/qc/dedup/ref~{reference}/{sample}.metrics.txt",
+        metrics=temp("results/{date}/qc/dedup/ref~{reference}/{sample}.metrics.txt"),
     log:
         "logs/{date}/picard/dedup/ref~{reference}/{sample}.log",
     params:
@@ -81,7 +81,7 @@ rule samtools_calmd:
         aln=get_recal_input,
         ref=get_reference(),
     output:
-        "results/{date}/recal/ref~{reference}/{sample}.bam",
+        temp("results/{date}/recal/ref~{reference}/{sample}.bam"),
     log:
         "logs/{date}/samtools-calmd/ref~{reference}/{sample}.log",
     params:

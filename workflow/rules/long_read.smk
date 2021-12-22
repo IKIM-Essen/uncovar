@@ -23,7 +23,7 @@ rule count_fastq_reads:
     input:
         get_reads_by_stage,
     output:
-        "results/{date}/tables/fastq-read-counts/{stage}~{sample}.txt",
+        temp("results/{date}/tables/fastq-read-counts/{stage}~{sample}.txt"),
     log:
         "logs/{date}/count_reads/{stage}~{sample}.log",
     conda:
@@ -36,7 +36,7 @@ rule porechop_adapter_barcode_trimming:
     input:
         get_fastqs,
     output:
-        "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq",
+        temp("results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"),
     conda:
         "../envs/porechop.yaml"
     log:
@@ -68,7 +68,7 @@ rule porechop_primer_trimming:
         ),
         repl_flag="results/.indicators/replacement_notice.txt",
     output:
-        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
+        temp("results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"),
     conda:
         "../envs/primechop.yaml"
     log:
@@ -82,7 +82,7 @@ rule nanofilt:
     input:
         "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
     output:
-        "results/{date}/trimmed/nanofilt/{sample}.fastq",
+        temp("results/{date}/trimmed/nanofilt/{sample}.fastq"),
     log:
         "logs/{date}/nanofilt/{sample}.log",
     params:
@@ -126,7 +126,7 @@ use rule assembly_polishing_ont as medaka_consensus_reference with:
         fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
         reference="resources/genomes/main.fasta",
     output:
-        "results/{date}/consensus/medaka/{sample}/{sample}.fasta",
+        temp("results/{date}/consensus/medaka/{sample}/{sample}.fasta"),
 
 
 # polish consensus
@@ -136,7 +136,7 @@ rule bcftools_consensus_ont:
         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf",  # clonal vs. subclonal?
         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf.csi",
     output:
-        "results/{date}/consensus/bcftools/{sample}.fasta",
+        temp("results/{date}/consensus/bcftools/{sample}.fasta"),
     log:
         "logs/{date}/bcftools-consensus-ont/{sample}.log",
     conda:
