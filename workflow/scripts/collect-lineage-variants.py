@@ -70,6 +70,9 @@ class SynonymousVariant:
     def signature(self):
         return f"{self.left}{self.pos}{self.right}"
 
+    def __repr__(self):
+        return repr(self.signature())
+
 
 class NonSynonymousVariant(SynonymousVariant):
     def __init__(self, left, pos, right, gene):
@@ -147,52 +150,55 @@ with FastaFile(snakemake.input.reference) as infasta:
 
             if not merge:
                 yield from filtered_variants
+            else:
 
-            def process_batch(batch, batch_lineages):
-                # Step 1: collect all visited lineages in batch
-                all_lineages = np.array(
-                    list(
-                        set(
-                            lineage
-                            for lineages in batch_lineages
-                            for lineage in lineages
+                def process_batch(batch, batch_lineages):
+                    # Step 1: collect all visited lineages in batch
+                    all_lineages = np.array(
+                        list(
+                            set(
+                                lineage
+                                for lineages in batch_lineages
+                                for lineage in lineages
+                            )
                         )
                     )
-                )
-                # Step 2: build matrix of variants vs lineages (columns mark combinations of variants that can be merged)
-                lineage_matrix = np.array(
-                    [
-                        [(lineage in lineages) for lineage in all_lineages]
-                        for lineages in batch_lineages
-                    ]
-                )
-                # Step 3: remove duplicate columns
-                if len(lineage_matrix) > 0:
-                    lineage_matrix = np.unique(lineage_matrix, axis=1)
-                # Step 4: iterate over combinations
-                batch = np.array(batch)
-                batch_lineages = np.array(batch_lineages)
-                for variant_combination in lineage_matrix.T:
-                    # select variants and lineages
-                    variants = batch[variant_combination]
-                    lineages = set.intersection(*batch_lineages[variant_combination])
-                    # yield them in consecutive inner batches
-                    last_pos = None
-                    inner_batch_start = 0
-                    for i, variant in enumerate(variants):
-                        if variant.pos != last_pos + 1:
-                            # yield inner batch
-                            yield variants[inner_batch_start:i], lineages
-                            inner_batch_start = i
-                        last_pos = variant.pos
-                    yield variants[inner_batch_start:], lineages
+                    # Step 2: build matrix of variants vs lineages (columns mark combinations of variants that can be merged)
+                    lineage_matrix = np.array(
+                        [
+                            [(lineage in lineages) for lineage in all_lineages]
+                            for lineages in batch_lineages
+                        ]
+                    )
+                    # Step 3: remove duplicate columns
+                    if len(lineage_matrix) > 0:
+                        lineage_matrix = np.unique(lineage_matrix, axis=1)
+                    # Step 4: iterate over combinations
+                    batch = np.array(batch)
+                    batch_lineages = np.array(batch_lineages)
+                    for variant_combination in lineage_matrix.T:
+                        # select variants and lineages
+                        variants = batch[variant_combination]
+                        lineages = set.intersection(
+                            *batch_lineages[variant_combination]
+                        )
+                        # yield them in consecutive inner batches
+                        last_pos = None
+                        inner_batch_start = 0
+                        for i, variant in enumerate(variants):
+                            if last_pos is not None and variant.pos != last_pos + 1:
+                                # yield inner batch
+                                yield variants[inner_batch_start:i], lineages
+                                inner_batch_start = i
+                            last_pos = variant.pos
+                        yield variants[inner_batch_start:], lineages
 
-            batch = []
-            batch_lineages = []
-            for variant, lineages in filtered_variants:
-                if len(batch) > 0:
-                    if variant.pos == batch[-1].pos + 1 and variant.is_same_feature(
-                        batch[-1]
+                batch = []
+                batch_lineages = []
+                for variant, lineages in filtered_variants:
+                    if not batch or (
+                        variant.pos == batch[-1].pos + 1
+                        and variant.is_same_feature(batch[-1])
                     ):
                         batch.append(variant)
                         batch_lineages.append(lineages)
@@ -203,7 +209,7 @@ with FastaFile(snakemake.input.reference) as infasta:
                         batch = [variant]
                         batch_lineages = [lineages]
 
-            yield from process_batch(batch, batch_lineages)
+                yield from process_batch(batch, batch_lineages)
 
         def write_record(pos, ref_allele, alt_allele, lineages, variants):
             record = outvcf.new_record()
@@ -255,8 +261,8 @@ with FastaFile(snakemake.input.reference) as infasta:
         ):
             pos = variants[0].genome_pos() - 1
             alt_allele = infasta.fetch(reference=contig, start=pos, end=pos + 1)
-            ref_allele = alt_allele + aa_to_dna(
-                "".join(variant.left for variant in variants)
+            ref_allele = infasta.fetch(
+                reference=contig, start=pos, end=pos + len(variants) * 3 + 1
             )
             write_record(pos, ref_allele, alt_allele, lineages, variants)
 
