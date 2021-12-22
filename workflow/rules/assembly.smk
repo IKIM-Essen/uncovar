@@ -93,7 +93,7 @@ rule spades_assemble_se:
     input:
         get_reads_after_qc,
     output:
-        "results/{date}/assembly/{sample}/spades-se/{sample}.contigs.fasta",
+        temp("results/{date}/assembly/{sample}/spades-se/{sample}.contigs.fasta"),
     log:
         "logs/{date}/spades/se/{sample}.log",
     conda:
