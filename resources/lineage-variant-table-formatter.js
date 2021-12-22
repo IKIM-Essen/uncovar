@@ -59,8 +59,37 @@
             }
 
             return `<span class="badge text-white p-0 m-1"><span class="p-1 rounded-left" style="background:${gene_colors[gene]};">${gene}:</span><span class="p-1" style="background:${aa_colors[ref]};">${ref}</span><span class="bg-secondary p-1">${pos}</span><span class="p-1 rounded-right" style="background:${aa_colors[alt]};">${alt}</span></span>`
+
         } else {
-            return signature
+
+            var nucl_colors = {
+                'A': '#B6EE92',
+                'T': '#B4D3FA',
+                'G': '#FFD63F',
+                'C': '#FBBFAB',
+                // 'U': '#8A89FF',
+                // 'R': '#FFFE80',
+                // 'Y': '#E180FF',
+                // 'S': '#FF9B80',
+                // 'W': '#80FFF2',
+                // 'M': '#CE8834',
+                // 'K': '#90B82C',
+                // 'D': '#C7FFB9',
+                // 'B': '#F8C1C0',
+                // 'V': '#FFE3B9',
+                // 'H': '#BFD8F9',
+                'N': '#AAAAAA',
+                'X': '#AAAAAA',
+                '-': '#AAAAAA',
+            }
+
+            const match = /^(?<left>[.a-z-]{0,1})(?<pos>(\d)*)(?<right>[.a-z-]{0,1})$/i.exec(signature)
+
+            var ref = match.groups?.left
+            var alt = match.groups?.right
+            var pos = match.groups?.pos
+
+            return `<span class="badge text-white p-0 m-1"><span class="p-1 rounded-left" style="background:${nucl_colors[ref]};">${ref}</span><span class="bg-secondary p-1">${pos}</span><span class="p-1 rounded-right" style="background:${nucl_colors[alt]};">${alt}</span></span>`
         }
     },
     "VAF": function(vaf) {
