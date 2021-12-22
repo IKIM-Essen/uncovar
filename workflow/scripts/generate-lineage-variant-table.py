@@ -171,3 +171,5 @@ variants_df.to_csv(snakemake.output.variant_table, index=True, sep=",")
 # prob of all top lineage mutations summed up divided by sum of all probs of all mutations
 # keep VAF and prob
 # function for min 1 for VAF
+# rename columns: Prob_present = Prob (present)
+# rename columns: Lineages remove .
