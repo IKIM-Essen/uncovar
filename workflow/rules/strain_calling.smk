@@ -50,8 +50,8 @@ rule kallisto_metrics:
     input:
         get_reads_after_qc,
     output:
-        avg_read_length="results/{date}/tables/avg_read_length/{sample}.txt",
-        standard_deviation="results/{date}/tables/standard_deviation/{sample}.txt",
+        avg_read_length=temp("results/{date}/tables/avg_read_length/{sample}.txt"),
+        standard_deviation=temp("results/{date}/tables/standard_deviation/{sample}.txt"),
     log:
         "logs/{date}/kallisto/metrics/{sample}.log",
     conda:
