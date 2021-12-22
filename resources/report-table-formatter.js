@@ -1,6 +1,5 @@
-{
-  ("Lineage");
-  function format(value) {
+var formatter = {
+  Lineage: function format(value) {
     $(function () {
       $('[data-toggle="tooltip"]').tooltip();
     });
@@ -11,9 +10,8 @@
     } else {
       return value;
     }
-  }
-  ("variant helper");
-  function format(value, voi) {
+  },
+  "variant helper": function format(value, voi) {
     $(function () {
       $('[data-toggle="popover"]').popover();
     });
@@ -91,14 +89,12 @@
     } else {
       return "";
     }
-  }
-  ("Variants of Interest");
-  function format(value) {
+  },
+  "Variants of Interest": function format(value) {
     return this["variant helper"](value, true);
-  }
-  ("Other Variants");
-  function format(value) {
+  },
+  "Other Variants": function format(value) {
     let result = this["variant helper"](value, false);
     return result;
-  }
-}
+  },
+};
