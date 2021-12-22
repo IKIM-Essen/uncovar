@@ -228,7 +228,6 @@ with FastaFile(snakemake.input.reference) as infasta:
         for variants, lineages in get_variants(
             known_synonymous_variants, VariantType.Ins
         ):
-            print(variants, file=sys.stderr)
             pos = variants[0].genome_pos() - 1
             ref_allele = infasta.fetch(reference=contig, start=pos, end=pos + 1)
             alt_allele = ref_allele + "".join(variant.right for variant in variants)
@@ -237,7 +236,6 @@ with FastaFile(snakemake.input.reference) as infasta:
         for variants, lineages in get_variants(
             known_synonymous_variants, VariantType.Del
         ):
-            print(variants, file=sys.stderr)
             pos = variants[0].genome_pos() - 1
             alt_allele = infasta.fetch(reference=contig, start=pos, end=pos + 1)
             ref_allele = alt_allele + "".join(variant.left for variant in variants)
@@ -246,14 +244,12 @@ with FastaFile(snakemake.input.reference) as infasta:
         for variant, lineages in get_variants(
             known_synonymous_variants, VariantType.Subst, merge=False
         ):
-            print(variant, "foo", file=sys.stderr)
             pos = variant.genome_pos()
             write_record(pos, variant.left, variant.right, lineages, [variant])
 
         for variants, lineages in get_variants(
             known_non_synonymous_variants, VariantType.Ins
         ):
-            print(variants, file=sys.stderr)
             pos = variants[0].genome_pos() - 1
             ref_allele = infasta.fetch(reference=contig, start=pos, end=pos + 1)
             for ins_seq in aa_to_dna("".join(variant.right for variant in variants)):
@@ -263,7 +259,6 @@ with FastaFile(snakemake.input.reference) as infasta:
         for variants, lineages in get_variants(
             known_non_synonymous_variants, VariantType.Del
         ):
-            print(variants, file=sys.stderr)
             pos = variants[0].genome_pos() - 1
             alt_allele = infasta.fetch(reference=contig, start=pos, end=pos + 1)
             ref_allele = infasta.fetch(
@@ -274,7 +269,6 @@ with FastaFile(snakemake.input.reference) as infasta:
         for variant, lineages in get_variants(
             known_non_synonymous_variants, VariantType.Subst, merge=False
         ):
-            print(variant, "bar", file=sys.stderr)
             pos = variant.genome_pos()
 
             ref_allele = infasta.fetch(reference=contig, start=pos, end=pos + 3)
