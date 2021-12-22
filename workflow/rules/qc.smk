@@ -89,7 +89,7 @@ rule samtools_flagstat:
     input:
         "results/{date}/recal/ref~main/{sample}.bam",
     output:
-        temp("results/{date}/qc/samtools_flagstat/{sample}.bam.flagstat"),
+        "results/{date}/qc/samtools_flagstat/{sample}.bam.flagstat",
     log:
         "logs/{date}/samtools/{sample}_flagstat.log",
     wrapper:
@@ -100,7 +100,7 @@ rule samtools_depth:
     input:
         get_depth_input,
     output:
-        temp("results/{date}/qc/samtools_depth/{sample}.txt"),
+        "results/{date}/qc/samtools_depth/{sample}.txt",
     log:
         "logs/{date}/samtools/{sample}_depth.txt",
     conda:
@@ -186,7 +186,7 @@ rule create_krona_chart:
         kraken_output=get_kraken_output,
         taxonomy_database="resources/krona/",
     output:
-        temp("results/{date}/species-diversity/{sample}/{sample}.html"),
+        "results/{date}/species-diversity/{sample}/{sample}.html",
     log:
         "logs/{date}/krona/{sample}.log",
     conda:
@@ -306,7 +306,7 @@ rule create_krona_chart_after:
         kraken_output="results/{date}/species-diversity-nonhuman/{sample}/{sample}.cleaned.kreport2",
         taxonomy_database="resources/krona/",
     output:
-        temp("results/{date}/species-diversity-nonhuman/{sample}/{sample}.html"),
+        "results/{date}/species-diversity-nonhuman/{sample}/{sample}.html",
     log:
         "logs/{date}/krona/{sample}_nonhuman.log",
     conda:

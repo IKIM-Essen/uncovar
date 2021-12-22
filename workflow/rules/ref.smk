@@ -160,7 +160,7 @@ checkpoint get_lineages_for_non_gisaid_based_calling:
             accession=config["strain-calling"]["lineage-references"].values(),
         ),
     output:
-        temp("results/{date}/tables/predefinded-strain-genomes.txt"),
+        "results/{date}/tables/predefinded-strain-genomes.txt",
     params:
         lineage_references=config["strain-calling"]["lineage-references"],
     log:

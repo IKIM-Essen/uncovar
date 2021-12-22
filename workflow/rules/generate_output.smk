@@ -76,8 +76,8 @@ checkpoint quality_filter:
         quast=get_final_assemblies_identity,
         contigs=get_final_assemblies,
     output:
-        passed_filter=temp("results/{date}/tables/quality-filter/{assembly_type}.txt"),
-        filter_summary=temp("results/{date}/tables/filter-summary/{assembly_type}.tsv"),
+        passed_filter="results/{date}/tables/quality-filter/{assembly_type}.txt",
+        filter_summary="results/{date}/tables/filter-summary/{assembly_type}.tsv",
     params:
         min_identity=config["quality-criteria"]["min-identity"],
         max_n=config["quality-criteria"]["max-n"],
@@ -142,7 +142,7 @@ rule overview_table_csv:
         # as input file for the rule. Please add the output of the respective checkpoint to the rule inputs.
         _=get_checkpoints_for_overview_table,
     output:
-        qc_data=temp("results/{date}/tables/overview.csv"),
+        qc_data="results/{date}/tables/overview.csv",
     params:
         assembly_used=lambda wildcards: get_assemblies_for_submission(
             wildcards, "all samples"
@@ -189,7 +189,7 @@ rule filter_overview:
             "results/{date}/tables/filter-summary/consensus-assembly.tsv"
         ),
     output:
-        temp("results/{date}/tables/filter-overview.csv"),
+        "results/{date}/tables/filter-overview.csv",
     params:
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
         min_identity=config["quality-criteria"]["min-identity"],

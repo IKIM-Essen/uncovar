@@ -94,7 +94,7 @@ rule vcf_2_bcf:
     input:
         "results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.vcf",
     output:
-        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.bcf"),
+        "results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.bcf",
     log:
         "logs/{date}/vcf_2_bcf/ref~{reference}/{sample}.{varrange}.log",
     conda:
@@ -107,7 +107,7 @@ rule render_scenario:
     input:
         local(get_resource("scenario.yaml")),
     output:
-        temp("results/{date}/scenarios/{sample}.yaml"),
+        "results/{date}/scenarios/{sample}.yaml",
     log:
         "logs/{date}/render-scenario/{sample}.log",
     conda:
@@ -122,7 +122,7 @@ rule varlociraptor_alignment_properties:
         ref_idx=get_reference(".fai"),
         bam="results/{date}/recal/ref~{reference}/{sample}.bam",
     output:
-        temp("results/{date}/alignment-properties/ref~{reference}/{sample}.json"),
+        "results/{date}/alignment-properties/ref~{reference}/{sample}.json",
     log:
         "logs/{date}/varlociraptor/estimate-alignment-properties/ref~{reference}/{sample}.log",
     conda:
@@ -141,7 +141,7 @@ rule varlociraptor_preprocess:
         bam="results/{date}/recal/ref~{reference}/{sample}.bam",
         bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        temp("results/{date}/observations/ref~{reference}/{sample}.{varrange}.bcf"),
+        "results/{date}/observations/ref~{reference}/{sample}.{varrange}.bcf",
     params:
         depth=config["variant-calling"]["max-read-depth"],
     log:
@@ -182,7 +182,7 @@ rule merge_varranges:
             varrange=get_varrange(wildcards),
         ),
     output:
-        temp("results/{date}/calls/ref~{reference}/{sample}.bcf"),
+        "results/{date}/calls/ref~{reference}/{sample}.bcf",
     log:
         "logs/{date}/merge-calls/ref~{reference}/{sample}.log",
     params:

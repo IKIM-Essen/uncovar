@@ -8,7 +8,7 @@ rule samtools_sort:
     input:
         get_samtools_sort_input,
     output:
-        temp("results/{date}/read-sorted/{read_type}~{sorted_by}/{sample}.{stage}.bam"),
+        "results/{date}/read-sorted/{read_type}~{sorted_by}/{sample}.{stage}.bam",
     params:
         extra=(
             lambda wildcards: "-n -m 4G" if wildcards.sorted_by == "name" else "-m 4G"
@@ -56,9 +56,7 @@ rule fgbio:
             reference=config["adapters"]["amplicon-reference"]
         ),
     output:
-        temp(
-            "results/{date}/read-clipping/hardclipped/{read_type}/{sample}/{sample}.bam"
-        ),
+        "results/{date}/read-clipping/hardclipped/{read_type}/{sample}/{sample}.bam",
     log:
         "logs/{date}/fgbio/{read_type}/{sample}.log",
     conda:
@@ -71,8 +69,8 @@ rule samtools_fastq_pe:
     input:
         bam="results/{date}/read-sorted/pe~name/{sample}.hardclipped.bam",
     output:
-        fq1=temp("results/{date}/read-clipping/fastq/pe/{sample}.1.fastq.gz"),
-        fq2=temp("results/{date}/read-clipping/fastq/pe/{sample}.2.fastq.gz"),
+        fq1="results/{date}/read-clipping/fastq/pe/{sample}.1.fastq.gz",
+        fq2="results/{date}/read-clipping/fastq/pe/{sample}.2.fastq.gz",
     log:
         "logs/{date}/samtools_fastq/pe/{sample}.log",
     conda:
@@ -86,7 +84,7 @@ rule samtools_fastq_se:
     input:
         bam="results/{date}/read-sorted/se~name/{sample}.hardclipped.bam",
     output:
-        temp("results/{date}/read-clipping/fastq/se/{sample}.fastq"),
+        "results/{date}/read-clipping/fastq/se/{sample}.fastq",
     log:
         "logs/{date}/samtools_fastq/se/{sample}.log",
     conda:
