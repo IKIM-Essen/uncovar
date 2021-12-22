@@ -22,7 +22,7 @@
 !workflow/notebooks/*
 !workflow/report/*
 !workflow/rules/*
-!workflow/scripts/*
+!workflow/scripts/**
 !workflow/schemas/*
 !.editorconfig
 !.gitattributes
