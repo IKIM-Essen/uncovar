@@ -7,7 +7,7 @@ from the raw data.
 
 ### Config File
 
-The adapter sequences used can be entered in the config file under
+The adapter sequences used can be specified in the config file under
 `preprocessing` -> `kit adapters`.
 
 For **paired-end data**, the adapters can be detected by per-read overlap
