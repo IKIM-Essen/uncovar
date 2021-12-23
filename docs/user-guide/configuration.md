@@ -52,7 +52,7 @@ namely:
 1. [Revelo RNA-Seq library preparation kit](https://lifesciences.tecan.com/revelo-rna-seq-library-prep-kit?p=tab--5)
 1. [EasySeq RC-PCR SARS CoV-2  Whole Genome Sequencing kit](https://www.nimagen.com/shop/products/rc-cov096/easyseq-sars-cov-2-novel-coronavirus-whole-genome-sequencing-kit)
 
-The `adapters` column in the sample sheet is used to trim the adapters sequences
+The `adapters` column in the sample sheet is used to trim the adapter sequences
 of these kits. Revelo adapters are trimmed by specifying
 `revelo-rna-seq` in the column per sample, while the Nimagen adapters are
 removed by specifying `nimagen-easy-seq`.  A short example:
