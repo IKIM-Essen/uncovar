@@ -134,9 +134,7 @@ rule overview_table_csv:
         pseudo_contigs=get_fallbacks_for_report("pseudo"),
         consensus_contigs=get_fallbacks_for_report("consensus"),
         kraken=get_kraken_output,
-        pangolin=expand_samples_for_date(
-            "results/{{date}}/tables/strain-calls/{sample}.polished.strains.pangolin.csv",
-        ),
+        pangolin=get_pangolin_for_report,
         bcf=expand_samples_for_date(
             "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
         ),

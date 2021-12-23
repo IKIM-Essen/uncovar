@@ -1269,7 +1269,10 @@ def get_include_flag(sample):
 
 
 def get_include_flag_for_date(wildcards):
-    return [get_include_flag(sample) for sample in get_samples_for_date(wildcards.date)]
+    return [
+        get_include_flag(sample)
+        for sample in get_assemblies_for_submission(wildcards, "accepted samples")
+    ]
 
 
 def get_artic_primer(wildcards):
@@ -1535,6 +1538,27 @@ def get_aggregated_pangolin_calls(wildcards, return_list="paths"):
                 raise NameError(f"return_list {return_list} not recognized.")
 
     return expanded_patterns
+
+
+def get_pangolin_for_report(wildcards):
+    paths = []
+
+    path = "results/{date}/tables/strain-calls/{sample}.{stage}.strains.pangolin.csv"
+
+    for entry in get_assemblies_for_submission(wildcards, "all samples"):
+        sample, assembly = entry.split(",")
+        if assembly == "normal":
+            pango_stage = "polished"
+        elif assembly == "pseudo":
+            pango_stage = "pseudo"
+        elif assembly == "consensus":
+            pango_stage = "consensus"
+        elif assembly == "not-accepted":
+            pango_stage = "polished"
+
+        paths.append(path.format(sample=sample, date=wildcards.date, stage=pango_stage))
+
+    return paths
 
 
 wildcard_constraints:
