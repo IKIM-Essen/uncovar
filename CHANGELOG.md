@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.11.1](https://www.github.com/IKIM-Essen/uncovar/compare/v0.11.0...v0.11.1) (2021-12-23)
+
+
+### Bug Fixes
+
+* update the mutations columns in the overview table formatter ([#423](https://www.github.com/IKIM-Essen/uncovar/issues/423)) ([3af43b9](https://www.github.com/IKIM-Essen/uncovar/commit/3af43b991af218931996d9093ecf944bff907476))
+
 ## [0.11.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.10.2...v0.11.0) (2021-12-21)
 
 
