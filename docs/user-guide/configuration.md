@@ -12,7 +12,7 @@ The adapter sequences used can be specified in the config file under
 
 For **paired-end data**, the adapters can be detected by per-read overlap
 analysis, which seeks the overlap for each pair of reads. The adapter sequences
-can specify the adapter sequences for read one by `—adapter_sequence` and for
+can be specified for read one by `—adapter_sequence` and for
 read two by`—adapter_sequence_r2`. An example is for [Illuminas TruSeq library] (<https://www.illumina.com/products/by-type/sequencing-kits/library-prep-kits/truseq-rna-v2.html>)
 is shown below:
 
