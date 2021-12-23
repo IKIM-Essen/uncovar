@@ -2,7 +2,7 @@
 
 ## Adapters
 
-There are three ways to transfer adapter sequences to UnCoVar to remove them
+There are three ways to transfer adapter sequences to UnCoVar for removing them
 from the raw data.
 
 ### Config File
