@@ -40,8 +40,8 @@ an exemplary samples sheet:
 | example-1   | PATH/TO/fq1 | PATH/TO/fq2 | 1970-01-01 | 1                | illumina   | --adapter_sequence=ACGT --adapter_sequence_r2=TGCA |
 | example-2   | PATH/TO/fq  |             | 1970-01-01 | 1                | ion        | --adapter_sequence=ACGT                            |
 
-If an adapter sequence is entered into the sample sheet for one sample, this
-adapter sequence is obviously used to trim the sequences of this sample. For
+If an adapter sequence is specified for a sample in the sample sheet, this
+adapter sequence is used to trim the sequences of only this sample. For
 empty entries, UnCoVar uses the adapter sequence from the config file.
 
 ### Pre-Defined Adapters
