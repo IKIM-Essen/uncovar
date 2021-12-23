@@ -1,5 +1,5 @@
-var formatter = {
-  Lineage: function format(value) {
+{
+  "Lineage" : function format(value) { // prettier-ignore
     $(function () {
       $('[data-toggle="tooltip"]').tooltip();
     });
@@ -10,8 +10,8 @@ var formatter = {
     } else {
       return value;
     }
-  },
-  "variant helper": function format(value, voi) {
+  }
+  "variant helper" : function format(value, voi) {
     $(function () {
       $('[data-toggle="popover"]').popover();
     });
@@ -89,12 +89,12 @@ var formatter = {
     } else {
       return "";
     }
-  },
-  "Variants of Interest": function format(value) {
+  }
+  "Variants of Interest" : function format(value) {
     return this["variant helper"](value, true);
-  },
-  "Other Variants": function format(value) {
+  }
+  "Other Variants" : function format(value) {
     let result = this["variant helper"](value, false);
     return result;
-  },
-};
+  }
+}
