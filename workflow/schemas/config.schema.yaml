@@ -120,9 +120,9 @@ properties:
           description: flag for using gisaid or genbank
         lineage-references:
           type: object
-  voc:
+  mth:
       type: object
-      description: variants of concern (protein name -> variants)
+      description: mutations to be highlighted (protein name -> variants)
 
 
 # entries that have to be in the config file for successful validation
@@ -136,4 +136,4 @@ required:
   - assembly
   - variant-calling
   - strain-calling
-  - voc
+  - mth
