@@ -1,5 +1,5 @@
 var formatter = {
-  Lineage: function format(value) {
+  "Lineage": function format(value) {
     $(function () {
       $('[data-toggle="tooltip"]').tooltip();
     });
