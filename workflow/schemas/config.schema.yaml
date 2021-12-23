@@ -63,17 +63,17 @@ properties:
         min-allele:
           type: number
           description: minimum informative allele frequency
-  adapters:
+  preprocessing:
       properties:
-        illumina-shotgun:
+        kit-adapters:
           type: string
-          description: adapters used for shotgun sequencing
-        illumina-amplicon:
-          type: string
-          description: adapters used for amplicon sequencing
+          description: only for *non* Oxford Nanopore data. Adapters to trim.
+        artic-primer-version:
+          type: integer
+          description: only for Oxford Nanopore data. ARTIC primer version to clip from reads
         amplicon-primers:
           type: string
-          description: path to amplicon primers in bedpe format for hard-clipping
+          description: path to amplicon primers in bedpe format for hard-clipping on paired end files (illumina)
         amplicon-reference:
           type: string
           description: GenBank accession of reference sequence of the amplicon primers
@@ -132,7 +132,7 @@ required:
   - human-genome-download-path
   - data-handling
   - quality-criteria
-  - adapters
+  - preprocessing
   - assembly
   - variant-calling
   - strain-calling
