@@ -31,7 +31,7 @@ Adapters for **single-end data** can be specified only using the
 ### Sample Sheet
 
 The second way to remove adapter sequences is to specify the adapter sequence
-directly sample in the sample sheet. The adapters must enter it in a column
+ per sample in the sample sheet. The adapters must be entered in a column
 called `adapters`. For paired-end and single-end format, see above. Here is
 an exemplary samples sheet:
 
