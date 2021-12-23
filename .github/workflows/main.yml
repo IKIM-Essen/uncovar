@@ -190,7 +190,7 @@ jobs:
             benchmark_non_sars_cov_2,
             benchmark_reads,
             compare_assemblers,
-            generate_test_cases
+            generate_test_cases,
           ]
     steps:
       - uses: actions/checkout@v2
