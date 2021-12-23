@@ -31,6 +31,7 @@ if config["strain-calling"]["use-gisaid"]:
 
 
 include: "rules/common.smk"
+include: "rules/benchmarking_common.smk"
 include: "rules/utils.smk"
 include: "rules/ref.smk"
 include: "rules/qc.smk"
@@ -144,3 +145,8 @@ rule benchmark_mixtures:
 rule benchmark_reads:
     input:
         "results/benchmarking/plots/aggregated_read_calls.svg",
+
+
+rule generate_test_cases:
+    input:
+        get_test_cases,
