@@ -12,7 +12,7 @@ jobs:
       GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
     steps:
 
-      - uses: GoogleCloudPlatform/release-please-action@v2
+      - uses: GoogleCloudPlatform/release-please-action@v3
         id: release
         with:
           release-type: simple
