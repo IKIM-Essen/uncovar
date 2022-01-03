@@ -38,14 +38,14 @@ properties:
             type: integer
             description: minimal length of acceptable reads for illumina reads
           min-PHRED:
-              type: integer
-              description: average quality of acceptable reads for Oxfort Nanopore reads
+            type: integer
+            description: average quality of acceptable reads for Oxfort Nanopore reads
         min-identity:
           type: number
           description: identity to virus reference genome of reconstructed sequence
         max-n:
           type: number
-          description:  share N in the reconstructed sequence
+          description: share N in the reconstructed sequence
         min-depth-with-PCR-duplicates:
           type: number
           description: minimum local sequencing depth without filtering of PCR duplicates
@@ -56,19 +56,19 @@ properties:
           type: number
           description: minimum informative allele frequency
   preprocessing:
-      properties:
-        kit-adapters:
-          type: string
-          description: only for *non* Oxford Nanopore data. Adapters to trim.
-        artic-primer-version:
-          type: integer
-          description: only for Oxford Nanopore data. ARTIC primer version to clip from reads
-        amplicon-primers:
-          type: string
-          description: path to amplicon primers in bedpe format for hard-clipping on paired end files (illumina)
-        amplicon-reference:
-          type: string
-          description: GenBank accession of reference sequence of the amplicon primers
+    properties:
+      kit-adapters:
+        type: string
+        description: only for *non* Oxford Nanopore data. Adapters to trim.
+      artic-primer-version:
+        type: integer
+        description: only for Oxford Nanopore data. ARTIC primer version to clip from reads
+      amplicon-primers:
+        type: string
+        description: path to amplicon primers in bedpe format for hard-clipping on paired end files (illumina)
+      amplicon-reference:
+        type: string
+        description: GenBank accession of reference sequence of the amplicon primers
   assembly:
     properties:
       min-variant-prob:
