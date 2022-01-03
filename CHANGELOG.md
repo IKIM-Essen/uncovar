@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.12.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.11.0...v0.12.0) (2021-12-23)
+
+
+### Features
+
+* add varlociraptor test case generation ([#429](https://www.github.com/IKIM-Essen/uncovar/issues/429)) ([3ec7975](https://www.github.com/IKIM-Essen/uncovar/commit/3ec79756226500f2e686c1f5e7ed83d50de545c3))
+
+
+### Bug Fixes
+
+* update the mutations columns in the overview table formatter ([#423](https://www.github.com/IKIM-Essen/uncovar/issues/423)) ([3af43b9](https://www.github.com/IKIM-Essen/uncovar/commit/3af43b991af218931996d9093ecf944bff907476))
+
+## [0.11.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.10.2...v0.11.0) (2021-12-21)
+
+
+### Features
+
+* update to rust-bio-tools 0.33 ([#388](https://www.github.com/IKIM-Essen/uncovar/issues/388)) ([8f66915](https://www.github.com/IKIM-Essen/uncovar/commit/8f669159d7db8dad503cccf505c34a8271795bcd))
+* update to varlociraptor 4.9 ([#424](https://www.github.com/IKIM-Essen/uncovar/issues/424)) ([5a7ca5b](https://www.github.com/IKIM-Essen/uncovar/commit/5a7ca5be08afdc6642a0db103c9fec2f6842fc53))
+
 ### [0.10.2](https://www.github.com/IKIM-Essen/uncovar/compare/v0.10.1...v0.10.2) (2021-12-19)
 
 
