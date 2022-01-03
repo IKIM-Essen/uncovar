@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -57,7 +57,8 @@ else:
     )
 
     # Only include samples with include flag
-    csv_table = csv_table[csv_table["include"] == "1"]
+    csv_table["include"] = csv_table["include"].astype(int)
+    csv_table = csv_table[csv_table["include"] == 1]
     csv_table.drop(columns=["include"], inplace=True)
 
     # Final touches
