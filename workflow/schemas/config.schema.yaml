@@ -39,30 +39,22 @@ properties:
             description: minimal length of acceptable reads for illumina reads
           min-PHRED:
             type: integer
-            description: average quality of acceptable reads for illumina reads
-      ont:
-        properties:
-          min-length-reads:
-            type: integer
-            description: minimal length of acceptable reads for  Oxfort Nanopore reads
-        min-PHRED:
-          type: integer
-          description: average quality of acceptable reads for Oxfort Nanopore reads
-      min-identity:
-        type: number
-        description: identity to virus reference genome of reconstructed sequence
-      max-n:
-        type: number
-        description: share N in the reconstructed sequence
-      min-depth-with-PCR-duplicates:
-        type: number
-        description: minimum local sequencing depth without filtering of PCR duplicates
-      min-depth-without-PCR-duplicates:
-        type: number
-        description: minimum local sequencing depth after filtering PCR duplicates
-      min-allele:
-        type: number
-        description: minimum informative allele frequency
+            description: average quality of acceptable reads for Oxfort Nanopore reads
+        min-identity:
+          type: number
+          description: identity to virus reference genome of reconstructed sequence
+        max-n:
+          type: number
+          description: share N in the reconstructed sequence
+        min-depth-with-PCR-duplicates:
+          type: number
+          description: minimum local sequencing depth without filtering of PCR duplicates
+        min-depth-without-PCR-duplicates:
+          type: number
+          description: minimum local sequencing depth after filtering PCR duplicates
+        min-allele:
+          type: number
+          description: minimum informative allele frequency
   preprocessing:
     properties:
       kit-adapters:
