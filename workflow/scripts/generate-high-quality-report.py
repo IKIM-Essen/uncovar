@@ -57,7 +57,8 @@ else:
     )
 
     # Only include samples with include flag
-    csv_table = csv_table[csv_table["include"] == "1"]
+    csv_table["include"] = csv_table["include"].astype(int)
+    csv_table = csv_table[csv_table["include"] == 1]
     csv_table.drop(columns=["include"], inplace=True)
 
     # Final touches
