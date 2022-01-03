@@ -62,6 +62,13 @@ pre-commit install
 ```
 
 Now, [`pre-commit`](https://pre-commit.com/) will run automatically on `git commit`.
+If you want to manually run all pre-commit hooks on a repository, run
+
+```bash
+pre-commit run --all-files
+```
+
+To run individual hooks use `pre-commit run <hook_id>`.
 
 ## Get a Copy of the Workflow
 
