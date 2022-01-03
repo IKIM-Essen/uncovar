@@ -5,9 +5,9 @@ on:
     branches:
       - master
     paths:
-      - '**.md'
-      - 'docs/**'
-      - 'mkdocs.yml'
+      - "**.md"
+      - "docs/**"
+      - "mkdocs.yml"
   # Also trigger on page_build, as well as release created events
   page_build:
   release:

@@ -2,10 +2,11 @@
 
 ## Adapters
 
-There are three ways to transfer adapter sequences to UnCoVar for removing them
+There are three ways to transfer adapter sequences to UnCoVar to remove them
 from the raw data.
 
 ### Config File
+
 
 The adapter sequences used can be specified in the config file under
 `preprocessing` -> `kit adapters`.

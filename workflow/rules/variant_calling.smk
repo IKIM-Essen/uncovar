@@ -100,7 +100,7 @@ rule vcf_2_bcf:
     conda:
         "../envs/bcftools.yaml"
     shell:
-        "bcftools view -O u -o {output} {input} 2> {log}"
+        "bcftools view -Oz -o {output} {input} 2> {log}"
 
 
 rule render_scenario:
