@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -49,6 +49,7 @@ include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
 include: "rules/preprocessing.smk"
 include: "rules/long_read.smk"
+include: "rules/dashboard.smk"
 
 
 rule save_latest_run:
