@@ -28,10 +28,10 @@ However, this structure is not set in stone and can be adjusted via the
 corresponding folders, relative to the directory of UnCoVar are needed:
 
 - **incoming**: path of incoming data, which is moved to the data directory by
-the preprocessing script. Defaults to `../incoming/`.
+  the preprocessing script. Defaults to `../incoming/`.
 - **data**: path to store data within the workflow. defaults to `data/`.
 - **archive**: path to archive data from the results from the analysis to.
-Defaults to `../archive/`.
+  Defaults to `../archive/`.
 
 The incoming directory should contain paired end reads in (compressed) FASTQ
 format. UnCoVar automatically copies your data into the data directory and moves
@@ -39,7 +39,7 @@ all files from incoming directory to the archive. After the analysis, all result
 are compressed and saved alongside the reads.
 
 Moreover, the sample sheet is automatically updated with the new files. Please
-note, that only the part of the filename before the first '_' character is used
+note, that only the part of the filename before the first '\_' character is used
 as the sample name within the workflow.
 
 ## Manual filling
@@ -53,4 +53,4 @@ content has to be defined:
 - **fq2**: path to read 2 in FASTQ format
 - **date**: sampling date of the sample
 - **is_amplicon_data**: indicates whether the data was generated with a
-shotgun (0) or amplicon (1) sequencing
+  shotgun (0) or amplicon (1) sequencing

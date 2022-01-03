@@ -12,7 +12,7 @@ Nanopore platform. Add a new column to the `config/pep/samples.csv` named
 an example:
 
 | sample_name     | fq1         | fq2         | date       | is_amplicon_data | technology | test_case   |
-|-----------------|-------------|-------------|------------|------------------|------------|-------------|
+| --------------- | ----------- | ----------- | ---------- | ---------------- | ---------- | ----------- |
 | illumina-sample | PATH/TO/fq1 | PATH/TO/fq2 | 1970-01-01 | 0                | illumina   | test-case-1 |
 | nanopore-sample | PATH/TO/fq  |             | 1970-01-01 | 1                | ont        | test-case-1 |
 
