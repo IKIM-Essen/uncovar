@@ -20,104 +20,104 @@ properties:
       type: string
     description: download path of human genome reference
   data-handling:
-      properties: 
-        incoming: 
+      properties:
+        incoming:
           type: string
           description: path of incoming data, which is moved to the data directory by the preprocessing script
-        data: 
+        data:
           type: string
           description: path to store data within the workflow
-        archive: 
+        archive:
           type: string
           description: path to archive data from incoming and the results from the latest run to
   quality-criteria:
       properties:
-        illumina: 
-          properties: 
-            min-length-reads: 
+        illumina:
+          properties:
+            min-length-reads:
               type: integer
               description: minimal length of acceptable reads for illumina reads
-            min-PHRED: 
+            min-PHRED:
               type: integer
               description: average quality of acceptable reads for illumina reads
-        ont: 
-          properties: 
-            min-length-reads: 
+        ont:
+          properties:
+            min-length-reads:
               type: integer
               description: minimal length of acceptable reads for  Oxfort Nanopore reads
-          min-PHRED: 
+          min-PHRED:
               type: integer
               description: average quality of acceptable reads for Oxfort Nanopore reads
-        min-identity: 
+        min-identity:
           type: number
           description: identity to virus reference genome of reconstructed sequence
-        max-n: 
+        max-n:
           type: number
           description:  share N in the reconstructed sequence
-        min-depth-with-PCR-duplicates: 
+        min-depth-with-PCR-duplicates:
           type: number
           description: minimum local sequencing depth without filtering of PCR duplicates
-        min-depth-without-PCR-duplicates: 
+        min-depth-without-PCR-duplicates:
           type: number
           description: minimum local sequencing depth after filtering PCR duplicates
-        min-allele: 
+        min-allele:
           type: number
           description: minimum informative allele frequency
   adapters:
-      properties: 
-        illumina-shotgun: 
+      properties:
+        illumina-shotgun:
           type: string
           description: adapters used for shotgun sequencing
-        illumina-amplicon: 
+        illumina-amplicon:
           type: string
           description: adapters used for amplicon sequencing
-        amplicon-primers: 
+        amplicon-primers:
           type: string
           description: path to amplicon primers in bedpe format for hard-clipping
-        amplicon-reference: 
+        amplicon-reference:
           type: string
           description: GenBank accession of reference sequence of the amplicon primers
   assembly:
-      properties: 
-        min-variant-prob: 
+      properties:
+        min-variant-prob:
           type: number
           description: minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
-        shotgun: 
+        shotgun:
           type: string
           description: assemblers used for shotgun sequencing
-        amplicon: 
+        amplicon:
           type: string
-          description: assemblers used for amplicon sequencing  
+          description: assemblers used for amplicon sequencing
   variant-calling:
-      properties: 
-        fdr: 
+      properties:
+        fdr:
           type: number
           description: false discovery rate to control for
-        max-read-depth: 
+        max-read-depth:
           type: integer
           description: downsample loci to this read depth
-        report: 
-          properties: 
-            max-read-depth: 
+        report:
+          properties:
+            max-read-depth:
               type: number
               description: downsample loci to this read depth for visualization in report
-        filters: 
-          properties: 
-            low-impact: 
+        filters:
+          properties:
+            low-impact:
               type: string
-            high+moderate-impact: 
+            high+moderate-impact:
               type: string
   strain-calling:
-      properties: 
-        min-fraction: 
+      properties:
+        min-fraction:
           type: number
           description: minimum reported strain fraction after quantification
-        extracted-strain-genomes: 
+        extracted-strain-genomes:
           type: string
           description: path to store genomes that are extracted from the full GISAID data
-        use-gisaid: 
+        use-gisaid:
           type: boolean
-          description: flag for using gisaid or genbank 
+          description: flag for using gisaid or genbank
         lineage-references:
           type: object
   voc:

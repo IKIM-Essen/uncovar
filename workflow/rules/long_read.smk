@@ -63,7 +63,9 @@ rule customize_primer_porechop:
 
 rule porechop_primer_trimming:
     input:
-        fastq_in="results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq",
+        fastq_in=(
+            "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"
+        ),
         repl_flag="results/.indicators/replacement_notice.txt",
     output:
         "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
@@ -149,7 +151,7 @@ rule rename_conensus:
     output:
         report(
             "results/{date}/contigs/consensus/{sample}.fasta",
-            category="4. Assembly",
+            category="4. Sequences",
             subcategory="3. Consensus Sequences",
             caption="../report/assembly_consensus.rst",
         ),

@@ -1,5 +1,54 @@
 # Changelog
 
+## [0.9.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.8.0...v0.9.0) (2021-12-15)
+
+
+### Features
+
+* added variants-over-time-plot to report again ([#405](https://www.github.com/IKIM-Essen/uncovar/issues/405)) ([bd5048a](https://www.github.com/IKIM-Essen/uncovar/commit/bd5048af11d3f1f28a1853a9ec1070fe85ff977b))
+
+## [0.8.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.7.0...v0.8.0) (2021-12-15)
+
+
+### Features
+
+* add pangolin call table ([#397](https://www.github.com/IKIM-Essen/uncovar/issues/397)) ([953211a](https://www.github.com/IKIM-Essen/uncovar/commit/953211a552f0ce84594e598318cc25a7d406c3cd))
+* add rki include/exclude flag ([#319](https://www.github.com/IKIM-Essen/uncovar/issues/319)) ([d2e6d20](https://www.github.com/IKIM-Essen/uncovar/commit/d2e6d20de0429323989d107eac5c4282561b57ce))
+* added column in overview table for the clear name of the lineage ([#400](https://www.github.com/IKIM-Essen/uncovar/issues/400)) ([38e34bb](https://www.github.com/IKIM-Essen/uncovar/commit/38e34bba65ab28481466e5897019f060d57596f8))
+
+
+### Bug Fixes
+
+* change report structure, add masked sequence, pangolin call on polished sequence ([#396](https://www.github.com/IKIM-Essen/uncovar/issues/396)) ([d2ecaaa](https://www.github.com/IKIM-Essen/uncovar/commit/d2ecaaa55efaf916fe380f042758f1560a5b389f))
+* rmv pipe from pre-commit ([#401](https://www.github.com/IKIM-Essen/uncovar/issues/401)) ([3222bb2](https://www.github.com/IKIM-Essen/uncovar/commit/3222bb2220ce517ba514f28f416c730ef884d52f))
+
+## [0.7.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.6.0...v0.7.0) (2021-12-14)
+
+
+### Features
+
+* add pre commit checks ([#398](https://www.github.com/IKIM-Essen/uncovar/issues/398)) ([6982b3d](https://www.github.com/IKIM-Essen/uncovar/commit/6982b3dcaca308840d9a70caec22e79bdb9025fc))
+
+
+### Bug Fixes
+
+* remove cwd-check in update sample sheet script ([#393](https://www.github.com/IKIM-Essen/uncovar/issues/393)) ([44d49d3](https://www.github.com/IKIM-Essen/uncovar/commit/44d49d34e7ed2ad94002ed9b9e8868ec9665a541))
+* trigger docs build on release created ([#391](https://www.github.com/IKIM-Essen/uncovar/issues/391)) ([e240aeb](https://www.github.com/IKIM-Essen/uncovar/commit/e240aeb5f13d38a2ccf14ce1cb2277af197d9117))
+
+## [0.6.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.5.0...v0.6.0) (2021-12-13)
+
+
+### Features
+
+* update pangolin to 3.1.17 ([#389](https://www.github.com/IKIM-Essen/uncovar/issues/389)) ([23ed39e](https://www.github.com/IKIM-Essen/uncovar/commit/23ed39e6b7471a7f4efc649efb51882cf692e125))
+* update varlociraptor to version 4.8 ([#331](https://www.github.com/IKIM-Essen/uncovar/issues/331)) ([0096376](https://www.github.com/IKIM-Essen/uncovar/commit/009637621a3f55b8852c2aa9b428775f1286f40b))
+
+
+### Bug Fixes
+
+* generation of high quality genomes ([#394](https://www.github.com/IKIM-Essen/uncovar/issues/394)) ([da00975](https://www.github.com/IKIM-Essen/uncovar/commit/da00975893a20144c28cf4185c9263f6bd6c5a7c))
+* relative aggregation of samples for variants and lineages over time plots ([#382](https://www.github.com/IKIM-Essen/uncovar/issues/382)) ([ebe556c](https://www.github.com/IKIM-Essen/uncovar/commit/ebe556c3dfa7d1bbf6797d51452d06e53184f679))
+
 ## [0.5.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.4.1...v0.5.0) (2021-12-09)
 
 
