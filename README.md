@@ -21,18 +21,18 @@ authors by citing the URL of this repository and its DOI (see above).
 
 ## Authors
 
-* Thomas Battenfeld (@thomasbtf)
-* Alexander Thomas (@alethomas)
-* Felix Wiegand (@fxwiegand)
-* Folker Meyer (@folker)
-* Johannes Köster (@johanneskoester)
+- Thomas Battenfeld (@thomasbtf)
+- Alexander Thomas (@alethomas)
+- Felix Wiegand (@fxwiegand)
+- Folker Meyer (@folker)
+- Johannes Köster (@johanneskoester)
 
 ## Tools, Frameworks and Packages used
 
 This project wouldn't be possible without several open source libraries:
 
 | Tool           | Link                                              |
-|----------------|---------------------------------------------------|
+| -------------- | ------------------------------------------------- |
 | ABySS          | www.doi.org/10.1101/gr.214346.116                 |
 | Altair         | www.doi.org/10.21105/joss.01057                   |
 | BAMClipper     | www.doi.org/10.1038/s41598-017-01703-6            |
@@ -52,7 +52,7 @@ This project wouldn't be possible without several open source libraries:
 | kallisto       | www.doi.org/10.1038/nbt.3519                      |
 | Kraken2        | www.doi.org/10.1186/s13059-019-1891-0             |
 | Krona          | www.doi.org/10.1186/1471-2105-12-385              |
-| mason          | www.<http://publications.imp.fu-berlin.de/962>      |
+| mason          | www.<http://publications.imp.fu-berlin.de/962>    |
 | MEGAHIT        | www.doi.org/10.1093/bioinformatics/btv033         |
 | Minimap2       | www.doi.org/10.1093/bioinformatics/bty191         |
 | MultiQC        | www.doi.org/10.1093/bioinformatics/btw354         |
