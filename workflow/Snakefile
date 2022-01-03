@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -21,7 +21,7 @@ report: "report/workflow.rst"
 container: "docker://condaforge/mambaforge"
 
 
-containerized: "quay.io/uncovar/uncovar#0.11.0"
+containerized: "quay.io/uncovar/uncovar#0.12.0"
 
 
 if config["strain-calling"]["use-gisaid"]:
@@ -31,6 +31,7 @@ if config["strain-calling"]["use-gisaid"]:
 
 
 include: "rules/common.smk"
+include: "rules/benchmarking_common.smk"
 include: "rules/utils.smk"
 include: "rules/ref.smk"
 include: "rules/qc.smk"
@@ -78,25 +79,7 @@ rule save_latest_run:
 
 checkpoint all:
     input:
-        expand(
-            [
-                "results/{date}/qc/multiqc.html",
-                "results/reports/{date}.zip",
-                "results/{date}/tables/assembly_comparison.tsv",
-            ],
-            date=get_all_run_dates(),
-        ),
-        expand(
-            "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
-            date=get_all_run_dates(),
-            mode=["major", "any"],
-        ),
-        zip_expand(
-            "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.bcf",
-            zip_wildcard_1=get_dates(),
-            zip_wildcard_2=get_samples(),
-            expand_wildcard=config["variant-calling"]["filters"],
-        ),
+        get_input_by_mode,
     output:
         touch(
             expand(
@@ -144,3 +127,8 @@ rule benchmark_mixtures:
 rule benchmark_reads:
     input:
         "results/benchmarking/plots/aggregated_read_calls.svg",
+
+
+rule generate_test_cases:
+    input:
+        get_test_cases,

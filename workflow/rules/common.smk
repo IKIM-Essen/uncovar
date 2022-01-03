@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -11,6 +11,9 @@ from snakemake.utils import validate
 
 
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
+ILLUMINA_VARRANGE = ["small", "structural"]
+ONT_VARRANGE = ["homopolymer-medaka", "homopolymer-longshot"]
+ION_VARRANGE = ["small", "structural"]
 
 # clear text / content of flag "technology" in sample sheet
 ILLUMINA = "illumina"
@@ -368,10 +371,10 @@ def get_reference(suffix=""):
             return "results/{date}/contigs/consensus/{sample}.fasta".format(
                 sample=wildcards.reference.replace("consensus-", ""), **wildcards
             )
-        elif wildcards.reference == config["adapters"]["amplicon-reference"]:
+        elif wildcards.reference == config["preprocessing"]["amplicon-reference"]:
             # return reference genome of amplicon primers
             return "resources/genomes/{reference}.fasta{suffix}".format(
-                reference=config["adapters"]["amplicon-reference"], suffix=suffix
+                reference=config["preprocessing"]["amplicon-reference"], suffix=suffix
             )
         else:
             # return assembly result
@@ -420,7 +423,7 @@ def get_reads(wildcards):
         )
 
     # theses reads are used to generate the bam file for the BAMclipper and the coverage plot of the main reference
-    elif wildcards.reference == config["adapters"]["amplicon-reference"]:
+    elif wildcards.reference == config["preprocessing"]["amplicon-reference"]:
         return get_non_human_reads(wildcards)
 
     # aligments to the references main reference genome,
@@ -826,39 +829,35 @@ def get_depth_input(wildcards):
             illumina_pattern="results/{date}/read-sorted/pe~position/{sample}.hardclipped.bam",
             ont_pattern=expand(
                 "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam",
-                ref=config["adapters"]["amplicon-reference"],
+                ref=config["preprocessing"]["amplicon-reference"],
             ),
             ion_torrent_pattern="results/{date}/read-sorted/se~position/{sample}.hardclipped.bam",
         )
 
     # use trimmed reads
     return "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam".format(
-        ref=config["adapters"]["amplicon-reference"]
+        ref=config["preprocessing"]["amplicon-reference"]
     )
 
 
 def get_adapters(wildcards):
-    # TODO Think about adapter handling. Related #356
-    # Remove the temporary patters later
-    if is_amplicon_data(wildcards.sample):
-        patterns = get_pattern_by_technology(
-            wildcards,
-            illumina_pattern=config["adapters"]["illumina-amplicon"],
-            ont_pattern=config["adapters"]["illumina-amplicon"],
-            ion_torrent_pattern=config["adapters"]["illumina-amplicon"],
-        )
-    else:
-        patterns = get_pattern_by_technology(
-            wildcards,
-            illumina_pattern=config["adapters"]["illumina-shotgun"],
-            ont_pattern=config["adapters"]["illumina-shotgun"],
-            ion_torrent_pattern=config["adapters"]["illumina-shotgun"],
-        )
+    try:
+        samples = pep.sample_table
+        samples.dropna(subset=["adapters"], inplace=True)
+        adapters = samples.loc[wildcards.sample]["adapters"]
 
-    if patterns is not None:
-        return patterns
+        # predefined adapters
+        # https://lifesciences.tecan.com/revelo-rna-seq-library-prep-kit
+        if adapters == "revelo-rna-seq":
+            return "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+        # https://www.nimagen.com/shop/products/rc-cov096/easyseq-sars-cov-2-novel-coronavirus-whole-genome-sequencing-kit
+        elif adapters == "nimagen-easy-seq":
+            return "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
 
-    raise NotImplementedError(f"No adapters implemented for {wildcards.sample}.")
+    # If there is no column namend "adapters" in the sample sheet
+    # return the adapters defined in the config file
+    except KeyError:
+        return config["preprocessing"]["kit-adapters"]
 
 
 def get_final_assemblies(wildcards):
@@ -1263,7 +1262,7 @@ def get_lineage_by_accession(wildcards):
 
 def get_include_flag(sample):
     try:
-        samples = pep.sample_table.copy()
+        samples = pep.sample_table
         samples.dropna(subset=["include_in_high_genome_summary"], inplace=True)
         return samples.loc[sample]["include_in_high_genome_summary"]
     # if there is no include_in_high_genome_summary in the
@@ -1284,7 +1283,7 @@ def get_artic_primer(wildcards):
     # add a script to generate them from a link to a bed file.
     # The bed file can be found in the artic repo. Related to #356
     return "resources/ARTIC_v{}_adapters.py".format(
-        config["adapters"]["artic-primer-version"]
+        config["preprocessing"]["artic-primer-version"]
     )
 
 
@@ -1419,9 +1418,9 @@ def get_fallback_sequence(wildcards):
 def get_varrange(wildcards):
     return get_pattern_by_technology(
         wildcards,
-        illumina_pattern=["small", "structural"],
-        ont_pattern=["homopolymer-medaka", "homopolymer-longshot"],
-        ion_torrent_pattern=["small", "structural"],
+        illumina_pattern=ILLUMINA_VARRANGE,
+        ont_pattern=ONT_VARRANGE,
+        ion_torrent_pattern=ION_VARRANGE,
     )
 
 
@@ -1469,7 +1468,7 @@ def get_samtools_sort_input(wildcards):
     if wildcards.stage == "initial":
         return expand(
             "results/{{date}}/mapped/ref~{ref}/{{sample}}.bam",
-            ref=config["adapters"]["amplicon-reference"],
+            ref=config["preprocessing"]["amplicon-reference"],
         )
     elif wildcards.stage == "hardclipped":
         return (
@@ -1542,6 +1541,48 @@ def get_aggregated_pangolin_calls(wildcards, return_list="paths"):
                 raise NameError(f"return_list {return_list} not recognized.")
 
     return expanded_patterns
+
+
+def get_checked_mode():
+    mode = config["mode"]
+    if mode == "patient" or mode == "environment":
+        return mode
+
+    raise TypeError(f'Mode {mode} not recognized. Can be "patient" or "environment".')
+
+
+def get_input_by_mode(wildcard):
+    paths = [
+        expand(
+            "results/{mode}-reports/{date}.zip",
+            mode=config["mode"],
+            date=get_all_run_dates(),
+        ),
+        expand(
+            "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
+            date=get_all_run_dates(),
+            mode=["major", "any"],
+        ),
+        zip_expand(
+            "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.bcf",
+            zip_wildcard_1=get_dates(),
+            zip_wildcard_2=get_samples(),
+            expand_wildcard=config["variant-calling"]["filters"],
+        ),
+    ]
+
+    if config["mode"] == "patient":
+        paths += [
+            expand(
+                [
+                    "results/{date}/qc/multiqc.html",
+                    "results/{date}/tables/assembly_comparison.tsv",
+                ],
+                date=get_all_run_dates(),
+            ),
+        ]
+
+    return sum(paths, [])
 
 
 def get_pangolin_for_report(wildcards):

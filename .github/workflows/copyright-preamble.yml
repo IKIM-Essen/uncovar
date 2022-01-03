@@ -15,21 +15,21 @@ jobs:
       - uses: VinnyBabuManjaly/copyright-action@v1.0.0
         with:
           CopyrightString: |
-            # Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+            # Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
             # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
             # This file may not be copied, modified, or distributed
             # except according to those terms.\n
-          FileType: '.py, .smk, Snakefile'
-          Path: 'workflow/rules/, workflow/scripts/'
-          IgnorePath: ''
+          FileType: ".py, .smk, Snakefile"
+          Path: "workflow/rules/, workflow/scripts/"
+          IgnorePath: ""
 
       # Creates pull request with all changes in file
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          commit-message: 'chore: update copyright preamble'
+          commit-message: "chore: update copyright preamble"
           delete-branch: true
-          title: 'chore: update copyright preamble'
+          title: "chore: update copyright preamble"
           body: |
             This PR updates the copyright preamble in .smk and .py files.
 
