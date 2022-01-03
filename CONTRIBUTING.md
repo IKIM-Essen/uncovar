@@ -15,7 +15,7 @@ conda create -c conda-forge -c bioconda -n snakemake snakemake
 ```
 
 For faster installation, you can use [`mamba`](https://github.com/mamba-org/mamba),
- a reimplementation of the conda package manager in C++.
+a reimplementation of the conda package manager in C++.
 
 ```bash
 mamba create -c conda-forge -c bioconda -n snakemake snakemake
@@ -62,15 +62,22 @@ pre-commit install
 ```
 
 Now, [`pre-commit`](https://pre-commit.com/) will run automatically on `git commit`.
+If you want to manually run all pre-commit hooks on a repository, run
+
+```bash
+pre-commit run --all-files
+```
+
+To run individual hooks use `pre-commit run <hook_id>`.
 
 ## Get a Copy of the Workflow
 
 Follow the following steps to acquire a local copy of UnCoVar:
 
 1. [Fork](https://help.github.com/en/articles/fork-a-repo) the original repo
-to a personal or lab account.
+   to a personal or lab account.
 1. [Clone](https://help.github.com/en/articles/cloning-a-repository) the
-fork to your local system (to a different place than where you would run analysis).
+   fork to your local system (to a different place than where you would run analysis).
 1. Implement your changes.
 
 ## Before Submitting
@@ -80,11 +87,11 @@ Before submitting your code, please do the following:
 1. Add tests, if possible, for the new changes.
 1. Edit documentation if you have changed something significant.
 1. Make sure the [`pre-commit`](https://pre-commit.com/)
-hooks had run (e.g. by `precommit run --all`).
+   hooks had run (e.g. by `precommit run --all`).
 1. [Commit](https://git-scm.com/docs/git-commit)and [push](https://git-scm.com/docs/git-push)
-your changes to your fork.
+   your changes to your fork.
 1. Create a [pull request](https://help.github.com/en/articles/creating-a-pull-request)
-against the original repository.
+   against the original repository.
 
 ## Testing
 

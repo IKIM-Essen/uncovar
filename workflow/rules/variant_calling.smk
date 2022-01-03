@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -100,7 +100,7 @@ rule vcf_2_bcf:
     conda:
         "../envs/bcftools.yaml"
     shell:
-        "bcftools view -O u -o {output} {input} 2> {log}"
+        "bcftools view -Oz -o {output} {input} 2> {log}"
 
 
 rule render_scenario:

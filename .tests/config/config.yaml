@@ -12,7 +12,6 @@ testing:
       # flag for using genomes from genbank. Only for benchmarking purposes.
   use-genbank: True
 
-
 # genome to use as reference. Must be a NCBI accession
 virus-reference-genome:
   - NC_045512.2
@@ -53,16 +52,19 @@ quality-criteria:
   # minimum contig length
   minimum-length: 20000
 
-adapters:
-  #  Illumina TruSeq adapters
-  illumina-shotgun: "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
-  illumina-amplicon: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
-  amplicon-primers: "resources/primer.bedpe"
-  amplicon-reference: "MN908947"
+preprocessing:
+  # only for *non* Oxford Nanopore data. Adapters to trim.
+  # see: https://www.nimagen.com/shop/products/rc-cov096/easyseq-sars-cov-2-novel-coronavirus-whole-genome-sequencing-kit
+  kit-adapters: "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+  # only for Oxford Nanopore data.
   # ARTIC primer version to clip from reads. See
   # https://github.com/artic-network/artic-ncov2019/tree/master/primer_schemes/nCoV-2019/V4
   # for more information
   artic-primer-version: 3
+  # path to amplicon primers in bedpe format for hard-clipping on paired end files (illumina)
+  amplicon-primers: "resources/primer.bedpe"
+  # GenBank accession of reference sequence of the amplicon primers
+  amplicon-reference: "MN908947"
 
 variant-calling:
   # false discovery rate to control for
@@ -98,7 +100,6 @@ assembly:
     amplicon: "spades"
   # minimum posterior probability for a clonal variant to be included in the generated pseudo-assembly
   min-variant-prob: 0.95
-
 
 strain-calling:
   # minimum reported strain fraction after quantification
