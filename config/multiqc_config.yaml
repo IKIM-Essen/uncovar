@@ -40,8 +40,8 @@ module_order:
         - "*/quast/unpolished/*/report.tsv"
   - picard:
       name: Duplication (raGOO)
-      info: 'is used to mark duplicates of the raGOO outout against the covid reference genome.'
-      target: 'Picard'
+      info: "is used to mark duplicates of the raGOO outout against the covid reference genome."
+      target: "Picard"
   - samtools:
       name: "Samtools (?)"
   - quast:
@@ -49,7 +49,6 @@ module_order:
       anchor: "quast_consensus"
       path_filters:
         - "*/quast/polished/*/report.tsv"
-
 
 # sample name cleaning
 fn_clean_exts:
