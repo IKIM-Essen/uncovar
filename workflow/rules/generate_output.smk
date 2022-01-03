@@ -118,7 +118,7 @@ rule high_quality_genomes_report:
         "../scripts/generate-high-quality-report.py"
 
 
-rule overview_table_csv:
+rule overview_table_patient_csv:
     input:
         reads_raw=get_raw_reads_counts,
         reads_trimmed=get_trimmed_reads_counts,
@@ -142,27 +142,49 @@ rule overview_table_csv:
         # as input file for the rule. Please add the output of the respective checkpoint to the rule inputs.
         _=get_checkpoints_for_overview_table,
     output:
-        qc_data="results/{date}/tables/overview.csv",
+        qc_data="results/{date}/tables/patient-overview.csv",
     params:
         assembly_used=lambda wildcards: get_assemblies_for_submission(
             wildcards, "all samples"
         ),
         mth=config.get("mth"),
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
+        mode=config["mode"],
     log:
-        "logs/{date}/overview-table.log",
+        "logs/{date}/patient-overview-table.log",
     conda:
         "../envs/pysam.yaml"
     script:
         "../scripts/generate-overview-table.py"
 
 
+use rule overview_table_patient_csv as overview_table_environment_csv with:
+    input:
+        reads_raw=get_raw_reads_counts,
+        reads_trimmed=get_trimmed_reads_counts,
+        kraken=get_kraken_output,
+        reads_used_for_assembly=expand_samples_for_date(
+            "results/{{date}}/tables/read_pair_counts/{sample}.txt",
+        ),
+        bcf=expand_samples_for_date(
+            "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
+        ),
+    output:
+        qc_data="results/{date}/tables/environment-overview.csv",
+    params:
+        mth=config.get("mth"),
+        samples=lambda wildcards: get_samples_for_date(wildcards.date),
+        mode=config["mode"],
+    log:
+        "logs/{date}/environment-overview-table.log",
+
+
 rule overview_table_html:
     input:
-        "results/{date}/tables/overview.csv",
+        "results/{date}/tables/{execution_mode}-overview.csv",
     output:
         report(
-            directory("results/{date}/overview/"),
+            directory("results/{date}/{execution_mode}/overview/"),
             htmlindex="index.html",
             caption="../report/qc-report.rst",
             category="1. Overview",
@@ -172,7 +194,7 @@ rule overview_table_html:
         formatter=get_resource("report-table-formatter.js"),
         pin_until="Sample",
     log:
-        "logs/{date}/qc_report_html.log",
+        "logs/{date}/{execution_mode}-qc-report-html.log",
     conda:
         "../envs/rbt.yaml"
     shell:
@@ -323,10 +345,13 @@ rule pangolin_call_overview_html:
         "rbt csv-report {input} --pin-until {params.pin_until} {output} > {log} 2>&1"
 
 
-rule snakemake_reports:
+rule snakemake_reports_patient:
     input:
         # 1. Overview
-        "results/{date}/overview/",
+        expand(
+            "results/{{date}}/{execution_mode}/overview/",
+            execution_mode=get_checked_mode(),
+        ),
         "results/{date}/plots/lineages-over-time.svg",
         expand(
             "results/{{date}}/tables/variants-{ORFNAME}-over-time.csv",
@@ -368,7 +393,7 @@ rule snakemake_reports:
         "results/high-quality-genomes/{date}.fasta",
         "results/high-quality-genomes/{date}.csv",
     output:
-        "results/reports/{date}.zip",
+        "results/patient-reports/{date}.zip",
     params:
         for_testing=get_if_testing("--snakefile ../workflow/Snakefile"),
     conda:
@@ -379,3 +404,29 @@ rule snakemake_reports:
         "snakemake --nolock --report-stylesheet resources/custom-stylesheet.css {input} "
         "--report {output} {params.for_testing} "
         "> {log} 2>&1"
+
+
+use rule snakemake_reports_patient as snakemake_reports_environment with:
+    input:
+        # 1. Overview
+        expand(
+            "results/{{date}}/{execution_mode}/overview/",
+            execution_mode=get_checked_mode(),
+        ),
+        "results/{date}/plots/all.major-strain.strains.kallisto.svg",
+        expand_samples_for_date(
+            ["results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg"]
+        ),
+        # 2. Variant Call Details
+        lambda wildcards: expand(
+            "results/{{date}}/vcf-report/{target}.{filter}",
+            target=get_samples_for_date(wildcards.date) + ["all"],
+            filter=config["variant-calling"]["filters"],
+        ),
+        # 3. Sequencing Details
+        "results/{date}/qc/laboratory/multiqc.html",
+        "results/{date}/plots/coverage-reference-genome.svg",
+    output:
+        "results/environment-reports/{date}.zip",
+    log:
+        "logs/snakemake_reports/{date}.log",
