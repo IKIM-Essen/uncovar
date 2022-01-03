@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -106,7 +106,7 @@ rule samtools_depth:
     conda:
         "../envs/samtools.yaml"
     params:
-        ref=config["adapters"]["amplicon-reference"],
+        ref=config["preprocessing"]["amplicon-reference"],
     shell:
         "(samtools depth -aH -o {output} {input} && "
         " sed -i 's/{params.ref}.3/{wildcards.sample}/' {output})"

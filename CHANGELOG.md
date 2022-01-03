@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.12.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.11.0...v0.12.0) (2021-12-23)
+
+
+### Features
+
+* add varlociraptor test case generation ([#429](https://www.github.com/IKIM-Essen/uncovar/issues/429)) ([3ec7975](https://www.github.com/IKIM-Essen/uncovar/commit/3ec79756226500f2e686c1f5e7ed83d50de545c3))
+
+
+### Bug Fixes
+
+* update the mutations columns in the overview table formatter ([#423](https://www.github.com/IKIM-Essen/uncovar/issues/423)) ([3af43b9](https://www.github.com/IKIM-Essen/uncovar/commit/3af43b991af218931996d9093ecf944bff907476))
+
 ## [0.11.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.10.2...v0.11.0) (2021-12-21)
 
 

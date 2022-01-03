@@ -23,11 +23,12 @@
 !workflow/notebooks/*
 !workflow/report/*
 !workflow/rules/*
-!workflow/scripts/*
+!workflow/scripts/**
 !workflow/schemas/*
 !.editorconfig
 !.gitattributes
 !.gitignore
+!.markdownlint.yaml
 !.pre-commit-config.yaml
 !.snakemake-workflow-catalog.yml
 !LICENSE
