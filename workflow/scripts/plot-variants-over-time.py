@@ -84,10 +84,16 @@ def plot_variants_over_time(sm_output, sm_output_table):
         ].transform(lambda s: s.count())
 
         # mask low occurrences
-        threshold = len(calls) / 10
-        calls.loc[calls["total occurrence"] < threshold, "alteration"] = (
-            "other (<" + str(threshold) + " occ.)"
-        )
+        print(calls["alteration"].value_counts())
+        df = pd.DataFrame(calls["alteration"].value_counts())
+        df.sort_values(by=["alteration"])
+        if len(df.index) > 10:
+            # print(calls.loc[calls["alteration"].isin(df.head(10).index)])
+            calls.loc[
+                ~calls["alteration"].isin(df.head(10).index), "alteration"
+            ] = "other occ."
+        else:
+            calls.loc[calls["total occurrence"] < 0, "alteration"] = "other occ."
 
     calls.rename(columns={"alteration": "Alteration", "date": "Date"}, inplace=True)
 
