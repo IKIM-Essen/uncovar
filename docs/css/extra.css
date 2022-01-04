@@ -1,43 +1,45 @@
 * {
-    box-sizing: border-box;
-  }
+  box-sizing: border-box;
+}
 
-  /* Float four columns side by side */
+/* Float four columns side by side */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px 10px;
+}
+
+/* Remove extra left and right margins, due to padding in columns */
+.row {
+  margin: -10px -10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Style the counter cards */
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
+  padding: 10px 16px;
+  text-align: center;
+}
+
+.card-title {
+  margin-top: -20px;
+}
+
+/* Responsive columns - one column layout (vertical) on small screens */
+@media screen and (max-width: 600px) {
   .column {
-    float: left;
-    width: 50%;
-    padding: 10px 10px;
+    width: 100%;
+    display: block;
+    margin-bottom: 10px;
   }
-
-  /* Remove extra left and right margins, due to padding in columns */
-  .row {margin: -10px -10px;}
-
-  /* Clear floats after the columns */
-  .row:after {
-    content: "";
-    display: table;
-    clear: both;
-  }
-
-  /* Style the counter cards */
-  .card {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
-    padding: 10px 16px;
-    text-align: center;
-  }
-
-  .card-title {
-    margin-top: -20px;
-  }
-
-  /* Responsive columns - one column layout (vertical) on small screens */
-  @media screen and (max-width: 600px) {
-    .column {
-      width: 100%;
-      display: block;
-      margin-bottom: 10px;
-    }
-  }
+}
 
 /* :root {
   --md-primary-fg-color: #7D9F95;

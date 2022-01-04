@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -35,7 +35,7 @@ rule compare_assemblies:
         assembly="results/{date}/contigs/polished/{sample}.fasta",
         pseudoassembly="results/{date}/contigs/pseudoassembled/{sample}.fasta",
     output:
-        "results/{date}/aligned/assemblies/{sample}.bam",
+        temp("results/{date}/aligned/assemblies/{sample}.bam"),
     log:
         "logs/{date}/aligned/assemblies/{sample}log",
     conda:

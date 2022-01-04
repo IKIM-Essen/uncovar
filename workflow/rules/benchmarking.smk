@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -96,6 +96,8 @@ rule test_benchmark_results:
         true_accessions=get_strain_accessions,
     log:
         "logs/test-benchmark-results.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
@@ -124,6 +126,8 @@ rule summarize_assembly_results:
         "results/benchmarking/assembly/{assembly_type}.csv",
     log:
         "logs/summarize-assembly-results/{assembly_type}/assembly-results.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/pysam.yaml"
     notebook:
@@ -484,6 +488,8 @@ rule plot_read_call:
         "results/benchmarking/plots/aggregated_read_calls.svg",
     log:
         "logs/plot_read_call.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
@@ -501,3 +507,113 @@ rule get_publication_plots:
         ),
         "results/benchmarking/plots/assembler-comparison.svg",
         "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
+
+
+rule indentify_test_case_variants:
+    input:
+        illumina_bcf=get_test_cases_variant_calls(ILLUMINA),
+        illumina_csi=get_test_cases_variant_calls(ILLUMINA, ".csi"),
+        ont_bcf=get_test_cases_variant_calls(ONT),
+        ont_csi=get_test_cases_variant_calls(ONT, ".csi"),
+    output:
+        "results/benchmarking/tables/test-cases/{test_case}/found-variants.tsv",
+    log:
+        "logs/test_cases/{test_case}.log",
+    conda:
+        "../envs/pysam.yaml"
+    script:
+        "../scripts/benchmarking/compare-vcf.py"
+
+
+rule aggregate_test_case_variants:
+    input:
+        lambda wildcards: expand(
+            "results/benchmarking/tables/test-cases/{test_case}/found-variants.tsv",
+            test_case=get_all_test_cases_names(wildcards),
+        ),
+    output:
+        "results/benchmarking/tables/test-cases/found-variants.tsv",
+    log:
+        "logs/aggregate_test_case_variants.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/benchmarking/aggregate-test-case-variants.py"
+
+
+rule filter_test_case_variants:
+    input:
+        "results/benchmarking/tables/test-cases/found-variants.tsv",
+    output:
+        different_probs="results/benchmarking/tables/test-cases/different-prob-calls.tsv",
+        illumina_only="results/benchmarking/tables/test-cases/illumina-only-calls.tsv",
+        ont_only="results/benchmarking/tables/test-cases/ont-only-calls.tsv",
+    log:
+        "logs/filter_test_case_variants.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/benchmarking/filter-test-case-variants.py"
+
+
+checkpoint get_test_case_variant_paths:
+    input:
+        "results/benchmarking/tables/test-cases/different-prob-calls.tsv",
+    output:
+        overview="results/testcases/different-probs-overview.tsv",
+        paths="results/benchmarking/tables/test-cases/aggregated-variants.tsv",
+    params:
+        illumina=ILLUMINA,
+        ont=ONT,
+        illumina_varrange=ILLUMINA_VARRANGE,
+        ont_varrange=ONT_VARRANGE,
+        sample_table=pep.sample_table.to_dict(),
+    log:
+        "logs/get_test_case_variant_paths.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/benchmarking/get-test-case-variant-paths.py"
+
+
+checkpoint check_presence_of_test_case_variant_in_call:
+    input:
+        bcfs=get_aggregated_test_case_variants("bcf"),
+        csi=get_aggregated_test_case_variants("csi"),
+    output:
+        "results/benchmarking/tables/test-cases/presence-test-case-varaints.tsv",
+    params:
+        variants=get_aggregated_test_case_variants("variants"),
+        poses=get_aggregated_test_case_variants("poses"),
+        test_cases=get_aggregated_test_case_variants("test-case-paths"),
+    log:
+        "logs/check_presence_of_test_case_variant.log",
+    conda:
+        "../envs/pysam.yaml"
+    script:
+        "../scripts/benchmarking/check-presence-of-test-case-variant-in-call.py"
+
+
+rule varlociraptor_test_case:
+    input:
+        obs="results/{date}/observations/ref~{reference}/{sample}.{varrange}.bcf",
+        scenario="results/{date}/scenarios/{sample}.yaml",
+    output:
+        bcf=temp(
+            "results/{date}/call-test-cases/ref~{reference}/{sample}.{varrange}.chrom~{chrom}.pos~{pos}.bcf"
+        ),
+        testcase=directory(
+            "results/testcases/{sample}@{chrom}:{pos}-from:{date}-ref:{reference}-varrange:{varrange}."
+        ),
+    params:
+        biases=get_varlociraptor_bias_flags,
+    log:
+        "logs/{date}/varlociraptor/call/ref~{reference}/chrom~{chrom}.pos~{pos}.{sample}.{varrange}.log",
+    conda:
+        "../envs/varlociraptor.yaml"
+    shell:
+        "varlociraptor call variants "
+        "--testcase-prefix {output.testcase} "
+        "--testcase-locus {wildcards.chrom}:{wildcards.pos} "
+        "{params.biases} generic --obs {wildcards.sample}={input.obs} "
+        "--scenario {input.scenario} > {output.bcf} 2> {log}"

@@ -20,40 +20,32 @@ properties:
       type: string
     description: download path of human genome reference
   data-handling:
-      properties:
-        incoming:
-          type: string
-          description: path of incoming data, which is moved to the data directory by the preprocessing script
-        data:
-          type: string
-          description: path to store data within the workflow
-        archive:
-          type: string
-          description: path to archive data from incoming and the results from the latest run to
+    properties:
+      incoming:
+        type: string
+        description: path of incoming data, which is moved to the data directory by the preprocessing script
+      data:
+        type: string
+        description: path to store data within the workflow
+      archive:
+        type: string
+        description: path to archive data from incoming and the results from the latest run to
   quality-criteria:
-      properties:
-        illumina:
-          properties:
-            min-length-reads:
-              type: integer
-              description: minimal length of acceptable reads for illumina reads
-            min-PHRED:
-              type: integer
-              description: average quality of acceptable reads for illumina reads
-        ont:
-          properties:
-            min-length-reads:
-              type: integer
-              description: minimal length of acceptable reads for  Oxfort Nanopore reads
+    properties:
+      illumina:
+        properties:
+          min-length-reads:
+            type: integer
+            description: minimal length of acceptable reads for illumina reads
           min-PHRED:
-              type: integer
-              description: average quality of acceptable reads for Oxfort Nanopore reads
+            type: integer
+            description: average quality of acceptable reads for Oxfort Nanopore reads
         min-identity:
           type: number
           description: identity to virus reference genome of reconstructed sequence
         max-n:
           type: number
-          description:  share N in the reconstructed sequence
+          description: share N in the reconstructed sequence
         min-depth-with-PCR-duplicates:
           type: number
           description: minimum local sequencing depth without filtering of PCR duplicates
@@ -63,67 +55,66 @@ properties:
         min-allele:
           type: number
           description: minimum informative allele frequency
-  adapters:
-      properties:
-        illumina-shotgun:
-          type: string
-          description: adapters used for shotgun sequencing
-        illumina-amplicon:
-          type: string
-          description: adapters used for amplicon sequencing
-        amplicon-primers:
-          type: string
-          description: path to amplicon primers in bedpe format for hard-clipping
-        amplicon-reference:
-          type: string
-          description: GenBank accession of reference sequence of the amplicon primers
+  preprocessing:
+    properties:
+      kit-adapters:
+        type: string
+        description: only for *non* Oxford Nanopore data. Adapters to trim.
+      artic-primer-version:
+        type: integer
+        description: only for Oxford Nanopore data. ARTIC primer version to clip from reads
+      amplicon-primers:
+        type: string
+        description: path to amplicon primers in bedpe format for hard-clipping on paired end files (illumina)
+      amplicon-reference:
+        type: string
+        description: GenBank accession of reference sequence of the amplicon primers
   assembly:
-      properties:
-        min-variant-prob:
-          type: number
-          description: minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
-        shotgun:
-          type: string
-          description: assemblers used for shotgun sequencing
-        amplicon:
-          type: string
-          description: assemblers used for amplicon sequencing
+    properties:
+      min-variant-prob:
+        type: number
+        description: minimum posterior probability for a clonal variant to be included in the generated pseudoassembly
+      shotgun:
+        type: string
+        description: assemblers used for shotgun sequencing
+      amplicon:
+        type: string
+        description: assemblers used for amplicon sequencing
   variant-calling:
-      properties:
-        fdr:
-          type: number
-          description: false discovery rate to control for
-        max-read-depth:
-          type: integer
-          description: downsample loci to this read depth
-        report:
-          properties:
-            max-read-depth:
-              type: number
-              description: downsample loci to this read depth for visualization in report
-        filters:
-          properties:
-            low-impact:
-              type: string
-            high+moderate-impact:
-              type: string
+    properties:
+      fdr:
+        type: number
+        description: false discovery rate to control for
+      max-read-depth:
+        type: integer
+        description: downsample loci to this read depth
+      report:
+        properties:
+          max-read-depth:
+            type: number
+            description: downsample loci to this read depth for visualization in report
+      filters:
+        properties:
+          low-impact:
+            type: string
+          high+moderate-impact:
+            type: string
   strain-calling:
-      properties:
-        min-fraction:
-          type: number
-          description: minimum reported strain fraction after quantification
-        extracted-strain-genomes:
-          type: string
-          description: path to store genomes that are extracted from the full GISAID data
-        use-gisaid:
-          type: boolean
-          description: flag for using gisaid or genbank
-        lineage-references:
-          type: object
-  voc:
-      type: object
-      description: variants of concern (protein name -> variants)
-
+    properties:
+      min-fraction:
+        type: number
+        description: minimum reported strain fraction after quantification
+      extracted-strain-genomes:
+        type: string
+        description: path to store genomes that are extracted from the full GISAID data
+      use-gisaid:
+        type: boolean
+        description: flag for using gisaid or genbank
+      lineage-references:
+        type: object
+  mth:
+    type: object
+    description: mutations to be highlighted (protein name -> variants)
 
 # entries that have to be in the config file for successful validation
 required:
@@ -132,8 +123,8 @@ required:
   - human-genome-download-path
   - data-handling
   - quality-criteria
-  - adapters
+  - preprocessing
   - assembly
   - variant-calling
   - strain-calling
-  - voc
+  - mth

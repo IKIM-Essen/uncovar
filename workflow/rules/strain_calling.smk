@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -50,8 +50,8 @@ rule kallisto_metrics:
     input:
         get_reads_after_qc,
     output:
-        avg_read_length="results/{date}/tables/avg_read_length/{sample}.txt",
-        standard_deviation="results/{date}/tables/standard_deviation/{sample}.txt",
+        avg_read_length=temp("results/{date}/tables/avg_read_length/{sample}.txt"),
+        standard_deviation=temp("results/{date}/tables/standard_deviation/{sample}.txt"),
     log:
         "logs/{date}/kallisto/metrics/{sample}.log",
     conda:
@@ -87,6 +87,8 @@ rule kallisto_call_strains:
         "logs/{date}/call-strains/{sample}.log",
     params:
         min_fraction=config["strain-calling"]["min-fraction"],
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
@@ -130,6 +132,8 @@ rule kallisto_plot_all_strains:
         ),
     log:
         "logs/{date}/plot-strains/all.{mode}.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
@@ -169,6 +173,8 @@ rule pangolin_plot_all_strains:
         ),
     log:
         "logs/{date}/plot-strains-pangolin/all.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:

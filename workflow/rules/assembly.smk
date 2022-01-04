@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -93,7 +93,7 @@ rule spades_assemble_se:
     input:
         get_reads_after_qc,
     output:
-        "results/{date}/assembly/{sample}/spades-se/{sample}.contigs.fasta",
+        temp("results/{date}/assembly/{sample}/spades-se/{sample}.contigs.fasta"),
     log:
         "logs/{date}/spades/se/{sample}.log",
     conda:
@@ -112,7 +112,7 @@ rule check_contigs:
     input:
         get_contigs,
     output:
-        "results/{date}/contigs/checked/{sample}.fasta",
+        temp("results/{date}/contigs/checked/{sample}.fasta"),
     log:
         "logs/{date}/check_contigs/{sample}.log",
     conda:
@@ -146,7 +146,7 @@ rule filter_chr0:
     input:
         "results/{date}/contigs/ordered-unfiltered/{sample}.fasta",
     output:
-        "results/{date}/contigs/ordered/{sample}.fasta",
+        temp("results/{date}/contigs/ordered/{sample}.fasta"),
     log:
         "logs/{date}/ragoo/{sample}_cleaned.log",
     conda:
@@ -206,7 +206,7 @@ rule aggregate_polished_de_novo_sequences:
     input:
         get_polished_sequence,
     output:
-        "results/{date}/contigs/polished/{sample}.fasta",
+        temp("results/{date}/contigs/polished/{sample}.fasta"),
     log:
         "logs/{date}/aggregate_polished_de_novo_sequences/{sample}.log",
     conda:
@@ -219,7 +219,7 @@ rule aggregate_fallback_sequences:
     input:
         get_fallback_sequence,
     output:
-        "results/{date}/contigs/fallback/{sample}.fasta",
+        temp("results/{date}/contigs/fallback/{sample}.fasta"),
     log:
         "logs/{date}/aggregate_fallback_sequences/{sample}.log",
     conda:
@@ -233,7 +233,7 @@ rule align_contigs:
         target="resources/genomes/main.fasta",
         query=get_quast_fastas,
     output:
-        "results/{date}/aligned/ref~main/{stage}~{sample}.bam",
+        temp("results/{date}/aligned/ref~main/{stage}~{sample}.bam"),
     log:
         "results/{date}/aligned/ref~main/{stage}~{sample}.log",
     conda:
