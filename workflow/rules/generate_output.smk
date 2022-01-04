@@ -258,7 +258,7 @@ rule plot_lineages_over_time:
             "results/{date}/plots/lineages-over-time.svg",
             caption="../report/lineages-over-time.rst",
             category="1. Overview",
-            subcategory="2. Lineages Development",
+            subcategory="2. Lineage Development",
         ),
         "results/{date}/tables/lineages-over-time.csv",
     params:
