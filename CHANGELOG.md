@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.13.1](https://github.com/IKIM-Essen/uncovar/compare/v0.13.0...v0.13.1) (2022-01-04)
+
+
+### Bug Fixes
+
+* relative aggregation sample plot ([#412](https://github.com/IKIM-Essen/uncovar/issues/412)) ([6a8155e](https://github.com/IKIM-Essen/uncovar/commit/6a8155ec0b227da9907fb709c909afdb35571375))
+
 ## [0.13.0](https://github.com/IKIM-Essen/uncovar/compare/v0.12.0...v0.13.0) (2022-01-03)
 
 
