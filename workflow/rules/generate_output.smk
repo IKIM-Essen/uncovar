@@ -290,7 +290,7 @@ rule plot_variants_over_time:
             "results/{date}/plots/variants-{ORFNAME}-over-time.svg",
             caption="../report/variants-over-time.rst",
             category="1. Overview",
-            subcategory="3. Variants Development",
+            subcategory="5. Variants Development",
         ),
         "results/{date}/tables/variants-{ORFNAME}-over-time.csv",
     params:
