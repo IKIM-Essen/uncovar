@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.13.2](https://github.com/IKIM-Essen/uncovar/compare/v0.13.1...v0.13.2) (2022-01-06)
+
+
+### Bug Fixes
+
+* wrong enumeration with kallisto included ([#439](https://github.com/IKIM-Essen/uncovar/issues/439)) ([1a68969](https://github.com/IKIM-Essen/uncovar/commit/1a6896926c4f38d897541a6d38dc874d54b57176))
+
 ### [0.13.1](https://github.com/IKIM-Essen/uncovar/compare/v0.13.0...v0.13.1) (2022-01-04)
 
 
