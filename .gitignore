@@ -17,6 +17,7 @@
 !resources/
 !resources/custom-stylesheet.css
 !resources/lineage-variant-table-formatter.js
+!resources/annotation_known_variants.gff
 !workflow
 !workflow/*
 !workflow/envs/*
