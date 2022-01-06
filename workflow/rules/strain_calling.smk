@@ -128,7 +128,7 @@ rule kallisto_plot_all_strains:
             "results/{date}/plots/all.{mode,(major|any)}-strain.strains.kallisto.svg",
             caption="../report/all-strain-calls-kallisto.rst",
             category="1. Overview",
-            subcategory="2. Strain Calls",
+            subcategory="3. Lineage Calls",
         ),
     log:
         "logs/{date}/plot-strains/all.{mode}.log",
@@ -169,7 +169,7 @@ rule pangolin_plot_all_strains:
             "results/{date}/plots/all.strains.pangolin.svg",
             caption="../report/all-strain-calls-pangolin.rst",
             category="1. Overview",
-            subcategory="2. Strain Calls",
+            subcategory="3. Lineage Calls",
         ),
     log:
         "logs/{date}/plot-strains-pangolin/all.log",

@@ -19,6 +19,10 @@ def iter_with_samples(inputfiles):
     return zip(snakemake.params.samples, inputfiles)
 
 
+def is_patient_report():
+    return snakemake.params.mode == "patient"
+
+
 data = pd.DataFrame(index=snakemake.params.samples)
 
 
@@ -104,63 +108,65 @@ def register_contig_lengths(assemblies, name):
                 data.loc[sample, name] = max(len(contig.sequence) for contig in infile)
 
 
-# add lengths of Initial contigs
-register_contig_lengths(snakemake.input.initial_contigs, "Largest Contig (bp)")
+if is_patient_report():
+    # add lengths of Initial contigs
+    register_contig_lengths(snakemake.input.initial_contigs, "Largest Contig (bp)")
 
-# add lengths of polished contigs
-register_contig_lengths(snakemake.input.polished_contigs, "De Novo Sequence (bp)")
+    # add lengths of polished contigs
+    register_contig_lengths(snakemake.input.polished_contigs, "De Novo Sequence (bp)")
 
-# add lengths of pseudo assembly
-register_contig_lengths(snakemake.input.pseudo_contigs, "Pseudo Sequence (bp)")
+    # add lengths of pseudo assembly
+    register_contig_lengths(snakemake.input.pseudo_contigs, "Pseudo Sequence (bp)")
 
-# add lengths of Consensus assembly
-register_contig_lengths(snakemake.input.consensus_contigs, "Consensus Sequence (bp)")
+    # add lengths of Consensus assembly
+    register_contig_lengths(
+        snakemake.input.consensus_contigs, "Consensus Sequence (bp)"
+    )
 
+    # add type of assembly use:
+    for ele in snakemake.params.assembly_used:
+        sample, used = ele.split(",")
+        if "pseudo" == used:
+            data.loc[sample, "Best Quality"] = "Pseudo"
+        elif "normal" == used:
+            data.loc[sample, "Best Quality"] = "De Novo"
+        elif "consensus" == used:
+            data.loc[sample, "Best Quality"] = "Consensus"
+        elif "not-accepted" == used:
+            data.loc[sample, "Best Quality"] = "-"
 
-# add type of assembly use:
-for ele in snakemake.params.assembly_used:
-    sample, used = ele.split(",")
-    if "pseudo" == used:
-        data.loc[sample, "Best Quality"] = "Pseudo"
-    elif "normal" == used:
-        data.loc[sample, "Best Quality"] = "De Novo"
-    elif "consensus" == used:
-        data.loc[sample, "Best Quality"] = "Consensus"
-    elif "not-accepted" == used:
-        data.loc[sample, "Best Quality"] = "-"
-
-# add pangolin results
-for sample, file in iter_with_samples(snakemake.input.pangolin):
-    pangolin_results = pd.read_csv(file)
-    assert (
-        pangolin_results.shape[0] == 1
-    ), "unexpected number of rows (>1) in pangolin results"
-    lineage = pangolin_results.loc[0, "lineage"]
-    scorpio = pangolin_results.loc[0, "scorpio_call"]
-    if lineage == "None":
-        pangolin_call = "no strain called"
-    else:
-        # TODO parse scorpio output
-        #     match = re.match(
-        #         "((?P<varcount>\d+/\d+) .+ SNPs$)|(seq_len:\d+)$|($)",
-        #         pangolin_results.fillna("").loc[0, "note"].strip(),
-        #     )
-        #     assert (
-        #         match is not None
-        #     ), "unexpected pangolin note, please update above regular expression"
-        #     varcount = match.group("varcount") or ""
-        #     if varcount:
-        #         varcount = f" ({varcount})"
-        # pangolin_call = f"{lineage}{varcount}"
-        pangolin_call = f"{lineage}"
-    data.loc[sample, "Pango Lineage"] = pangolin_call
-    if scorpio == "None":
-        scorpio_call = "-"
-    else:
-        scorpio_call = f"{scorpio}"
-    data.loc[sample, "WHO Label"] = scorpio_call
-    data["WHO Label"].fillna("-", inplace=True)
-    data["WHO Label"].replace({"nan": "-"}, inplace=True)
+    # add pangolin results
+    for sample, file in iter_with_samples(snakemake.input.pangolin):
+        pangolin_results = pd.read_csv(file)
+        assert (
+            pangolin_results.shape[0] == 1
+        ), "unexpected number of rows (>1) in pangolin results"
+        lineage = pangolin_results.loc[0, "lineage"]
+        scorpio = pangolin_results.loc[0, "scorpio_call"]
+        if lineage == "None":
+            pangolin_call = "no strain called"
+        else:
+            # TODO parse scorpio output
+            #     match = re.match(
+            #         "((?P<varcount>\d+/\d+) .+ SNPs$)|(seq_len:\d+)$|($)",
+            #         pangolin_results.fillna("").loc[0, "note"].strip(),
+            #     )
+            #     assert (
+            #         match is not None
+            #     ), "unexpected pangolin note, please update above regular expression"
+            #     varcount = match.group("varcount") or ""
+            #     if varcount:
+            #         varcount = f" ({varcount})"
+            # pangolin_call = f"{lineage}{varcount}"
+            pangolin_call = f"{lineage}"
+        data.loc[sample, "Pango Lineage"] = pangolin_call
+        if scorpio == "None":
+            scorpio_call = "-"
+        else:
+            scorpio_call = f"{scorpio}"
+        data.loc[sample, "WHO Label"] = scorpio_call
+        data["WHO Label"].fillna("-", inplace=True)
+        data["WHO Label"].replace({"nan": "-"}, inplace=True)
 
 
 # add variant calls
@@ -240,11 +246,16 @@ int_cols = [
     "Raw Reads (#)",
     "Trimmed Reads (#)",
     "Filtered Reads (#)",
-    "Largest Contig (bp)",
-    "De Novo Sequence (bp)",
-    "Pseudo Sequence (bp)",
-    "Consensus Sequence (bp)",
 ]
+
+if is_patient_report():
+    int_cols += [
+        "Largest Contig (bp)",
+        "De Novo Sequence (bp)",
+        "Pseudo Sequence (bp)",
+        "Consensus Sequence (bp)",
+    ]
+
 
 data[int_cols] = data[int_cols].fillna("0").applymap(lambda x: "{0:,}".format(int(x)))
 data = data.loc[:, (data != "0").any(axis=0)]

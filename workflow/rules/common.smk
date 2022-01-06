@@ -1550,6 +1550,48 @@ def get_aggregated_pangolin_calls(wildcards, return_list="paths"):
     return expanded_patterns
 
 
+def get_checked_mode():
+    mode = config["mode"]
+    if mode == "patient" or mode == "environment":
+        return mode
+
+    raise TypeError(f'Mode {mode} not recognized. Can be "patient" or "environment".')
+
+
+def get_input_by_mode(wildcard):
+    paths = [
+        expand(
+            "results/{mode}-reports/{date}.zip",
+            mode=config["mode"],
+            date=get_all_run_dates(),
+        ),
+        expand(
+            "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
+            date=get_all_run_dates(),
+            mode=["major", "any"],
+        ),
+        zip_expand(
+            "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.bcf",
+            zip_wildcard_1=get_dates(),
+            zip_wildcard_2=get_samples(),
+            expand_wildcard=config["variant-calling"]["filters"],
+        ),
+    ]
+
+    if config["mode"] == "patient":
+        paths += [
+            expand(
+                [
+                    "results/{date}/qc/multiqc.html",
+                    "results/{date}/tables/assembly_comparison.tsv",
+                ],
+                date=get_all_run_dates(),
+            ),
+        ]
+
+    return sum(paths, [])
+
+
 def get_pangolin_for_report(wildcards):
     paths = []
 
