@@ -58,7 +58,7 @@ rule get_genome_annotation_for_known_variants:
     shell:
         # download, sort and bgzip gff (see https://www.ensembl.org/info/docs/tools/vep/script/vep_custom.html)
         "(curl -sSL https://raw.githubusercontent.com/thomasbtf/nextclade/master/data/sars-cov-2/genemap.gff | "
-        "cat | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -t$'\t'  | bgzip -c > {output})"
+        "cat | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -t$'\t'  | bgzip -c > {output}) 2> {log}"
 
 
 rule edit_genome_annotation:
