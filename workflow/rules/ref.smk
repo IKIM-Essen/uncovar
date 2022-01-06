@@ -61,19 +61,6 @@ rule get_genome_annotation_for_known_variants:
         "cat | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -t$'\t'  | bgzip -c > {output}) 2> {log}"
 
 
-rule edit_genome_annotation:
-    input:
-        "resources/annotation_known_variants.gff.gz",
-    output:
-        "resources/annotation_known_variants_edited.gff",
-    log:
-        "logs/edit-annotation_known_variants.log",
-    conda:
-        "../envs/python.yaml"
-    script:
-        "../scripts/edit_annotation_known_variants.py"
-
-
 rule get_problematic_sites:
     output:
         temp("resources/problematic-sites.vcf.gz"),  # always retrieve the latest VCF
