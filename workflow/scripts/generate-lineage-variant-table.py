@@ -32,27 +32,30 @@ lineage_df = pd.DataFrame()
 with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
     for record in infile:
         if "SIGNATURES" in record.info:
-            signatures = record.info.get("SIGNATURES", ("#ERROR0",))[0]
+            signatures = record.info.get("SIGNATURES", ("#ERROR0",))
             vaf = record.samples[0]["AF"][0]
             prob_not_present = phred_to_prob(
                 record.info["PROB_ABSENT"][0]
             ) + phred_to_prob(record.info["PROB_ARTIFACT"][0])
             lineages = record.info["LINEAGES"]
-
-            # generate df with all signatures + VAF and Prob_not_present from calculation
-            variants_df = variants_df.append(
-                {
-                    "Signatures": signatures,
-                    "VAF": vaf,
-                    "Prob_not_present": prob_not_present,
-                },
-                ignore_index=True,
-            )
-            # generate df with lineage matrix for all signatures
-            lineage_df = lineage_df.append(
-                {"Signatures": signatures, **{lineage: "x" for lineage in lineages}},
-                ignore_index=True,
-            )
+            for signature in signatures:
+                # generate df with all signatures + VAF and Prob_not_present from calculation
+                variants_df = variants_df.append(
+                    {
+                        "Variant": signature,
+                        "Frequency": vaf,
+                        "Prob_not_present": prob_not_present,
+                    },
+                    ignore_index=True,
+                )
+                # generate df with lineage matrix for all signatures
+                lineage_df = lineage_df.append(
+                    {
+                        "Variant": signature,
+                        **{lineage.replace(".", " "): "x" for lineage in lineages},
+                    },
+                    ignore_index=True,
+                )
 
 # count occurences of signatures (x) in lineage columns and get sorted list
 lineage_dict = dict(lineage_df.count())
@@ -67,39 +70,43 @@ lineage_df = lineage_df[top5_lineages[:7]]
 
 # aggregate both dataframes by summing up repeating rows for VAR (maximum=1) and multiply Prob_not_present
 variants_df = (
-    variants_df.groupby(["Signatures"])
-    .agg(func={"VAF": lambda x: min(sum(x), 1.0), "Prob_not_present": np.prod}, axis=1)
+    variants_df.groupby(["Variant"])
+    .agg(
+        func={"Frequency": lambda x: min(sum(x), 1.0), "Prob_not_present": np.prod},
+        axis=1,
+    )
     .reset_index()
 )
 
 # new column for 1-prob_not_present = prob_present
-variants_df["Prob_present"] = 1.0 - variants_df["Prob_not_present"]
-variants_df["Prob X VAF"] = variants_df["Prob_present"] * variants_df["VAF"]
-lineage_df = lineage_df.groupby(["Signatures"]).agg("max").reset_index()
+variants_df["Probability"] = 1.0 - variants_df["Prob_not_present"]
+variants_df["Prob X VAF"] = variants_df["Probability"] * variants_df["Frequency"]
+lineage_df = lineage_df.drop_duplicates()
 
 # calculate Jaccard coefficient for top 5 lineages and save row as df to append after sorting
 jaccard_coefficient = {}
-for lineage in range(1, len(top5_lineages[:7])):
-    jaccard_coefficient[top5_lineages[lineage]] = (
+for lineage in range(1, len(top5_lineages[:6])):
+    jaccard_coefficient[top5_lineages[lineage]] = round(
         variants_df[
-            variants_df["Signatures"].isin(
-                lineage_df[lineage_df[top5_lineages[lineage]] == "x"]["Signatures"]
+            variants_df["Variant"].isin(
+                lineage_df[lineage_df[top5_lineages[lineage]] == "x"]["Variant"]
             )
         ]["Prob X VAF"].sum()
-        / variants_df["Prob X VAF"].sum()
+        / variants_df["Prob X VAF"].sum(),
+        3,
     )
-jaccard_row = pd.DataFrame({"Signatures": "Jaccard", **jaccard_coefficient}, index=[0])
+jaccard_row = pd.DataFrame({"Variant": "Similarity", **jaccard_coefficient}, index=[0])
 
 # merge variants dataframe and lineage dataframe
-variants_df = variants_df.merge(lineage_df, left_on="Signatures", right_on="Signatures")
+variants_df = variants_df.merge(lineage_df, left_on="Variant", right_on="Variant")
 
 # add feature column for sorting
-variants_df["Features"] = variants_df["Signatures"].str.extract(r"(.+)[:].+|\*")
+variants_df["Features"] = variants_df["Variant"].str.extract(r"(.+)[:].+|\*")
 
 # position of variant for sorting and change type
-variants_df["Position"] = variants_df["Signatures"].str.extract(
-    r"([0-9]+)([A-Z]+|\*)$"
-)[0]
+variants_df["Position"] = variants_df["Variant"].str.extract(
+    r"(.*:?[A-Z]+|\*$|-)([0-9]+)([A-Z]+$|\*$|-)$"
+)[1]
 variants_df = variants_df.astype({"Position": "int64"})
 
 # generate sorting list from .gff with correct order of features
@@ -111,31 +118,35 @@ variants_df["Features_Rank"] = variants_df["Features"].map(sorterIndex)
 
 # define categories for sorting
 variants_df.loc[
-    (variants_df[top5_lineages[1]] == "x") & (variants_df["Prob_present"] >= 0.95),
+    (variants_df[top5_lineages[1]] == "x") & (variants_df["Probability"] >= 0.95),
     "Order",
 ] = 0
 variants_df.loc[
-    (variants_df[top5_lineages[1]] == "x") & (variants_df["Prob_present"] <= 0.05),
+    (variants_df[top5_lineages[1]] == "x") & (variants_df["Probability"] <= 0.05),
     "Order",
 ] = 1
 variants_df.loc[
-    (variants_df[top5_lineages[1]] == "x")
-    & ((variants_df["Prob_present"] > 0.05) & (variants_df["Prob_present"] < 0.95)),
+    (variants_df[top5_lineages[1]] != "x") & (variants_df["Probability"] >= 0.95),
     "Order",
 ] = 2
 variants_df.loc[
-    (variants_df[top5_lineages[1]] != "x") & (variants_df["Prob_present"] <= 0.05),
+    (variants_df[top5_lineages[1]] == "x")
+    & ((variants_df["Probability"] > 0.05) & (variants_df["Probability"] < 0.95)),
     "Order",
 ] = 3
 variants_df.loc[
-    (variants_df[top5_lineages[1]] != "x") & (variants_df["Prob_present"] >= 0.95),
+    (variants_df[top5_lineages[1]] != "x") & (variants_df["Probability"] <= 0.05),
     "Order",
 ] = 4
 variants_df.loc[
     (variants_df[top5_lineages[1]] != "x")
-    & ((variants_df["Prob_present"] > 0.05) & (variants_df["Prob_present"] < 0.95)),
+    & ((variants_df["Probability"] > 0.05) & (variants_df["Probability"] < 0.95)),
     "Order",
 ] = 5
+
+top5_lineages_row_df = pd.DataFrame(
+    {"Variant": "Lineage", **{x: x for x in top5_lineages[1:6]}}, index=[0]
+)
 
 # sort final DF
 variants_df["Prob X VAF"].replace([0, 0.0], np.NaN, inplace=True)
@@ -148,28 +159,24 @@ variants_df.sort_values(
 
 # concat row with Jaccard coefficient, drop unneccesary columns, sort with Jaccard coefficient, round
 variants_df = pd.concat([jaccard_row, variants_df]).reset_index(drop=True)
-variants_df = variants_df[["Signatures", "Prob_present", "VAF", *top5_lineages[1:7]]]
-variants_df = variants_df.round({"Prob_present": 5, "VAF": 5})
-variants_df.set_index("Signatures", inplace=True)
+variants_df = pd.concat([top5_lineages_row_df, variants_df]).reset_index(drop=True)
+variants_df = variants_df[["Variant", "Probability", "Frequency", *top5_lineages[1:6]]]
+variants_df = variants_df.round({"Probability": 5, "Frequency": 5})
+variants_df.set_index("Variant", inplace=True)
 variants_df.sort_values(
-    by="Jaccard", axis=1, na_position="first", ascending=False, inplace=True
+    by="Similarity", axis=1, na_position="first", ascending=False, inplace=True
+)
+# rename top 5 hits
+variants_df.rename(
+    columns={
+        x: y
+        for x, y in zip(
+            list(variants_df.columns)[2:],
+            ["Highest similarity", "2nd", "3rd", "4th", "5th"],
+        )
+    },
+    errors="raise",
+    inplace=True,
 )
 # output variant_df
 variants_df.to_csv(snakemake.output.variant_table, index=True, sep=",")
-
-# TODO
-# mutations of top lineage present, that are not present overall
-# mutations of sample, not in top lineage
-# mutations of top lineage, that are present over all
-# all sorted by feature rank and postion per block
-# for small probabilties fsum
-
-# DONE
-# sorted with top lineage, feature_rank, position
-# Jaccard coefficient:
-# multiply VAF with prob before
-# prob of all top lineage mutations summed up divided by sum of all probs of all mutations
-# keep VAF and prob
-# function for min 1 for VAF
-# rename columns: Prob_present = Prob (present)
-# rename columns: Lineages remove .
