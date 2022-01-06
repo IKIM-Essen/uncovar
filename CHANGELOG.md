@@ -1,5 +1,26 @@
 # Changelog
 
+### [0.13.1](https://github.com/IKIM-Essen/uncovar/compare/v0.13.0...v0.13.1) (2022-01-04)
+
+
+### Bug Fixes
+
+* relative aggregation sample plot ([#412](https://github.com/IKIM-Essen/uncovar/issues/412)) ([6a8155e](https://github.com/IKIM-Essen/uncovar/commit/6a8155ec0b227da9907fb709c909afdb35571375))
+
+## [0.13.0](https://github.com/IKIM-Essen/uncovar/compare/v0.12.0...v0.13.0) (2022-01-03)
+
+
+### Features
+
+* add optional column for adapters ([#419](https://github.com/IKIM-Essen/uncovar/issues/419)) ([f883ce2](https://github.com/IKIM-Essen/uncovar/commit/f883ce24231d3e249c1c3a2798ad5c42cd954342))
+* add patient or environmental mode flag ([#420](https://github.com/IKIM-Essen/uncovar/issues/420)) ([9ac2002](https://github.com/IKIM-Essen/uncovar/commit/9ac2002e733ecd215e89f5043409c4ab90d9064b))
+* add prettier to pre-commit ([#427](https://github.com/IKIM-Essen/uncovar/issues/427)) ([e7cb0a7](https://github.com/IKIM-Essen/uncovar/commit/e7cb0a7a6de37b767befb314bdd32828437c53b7))
+
+
+### Bug Fixes
+
+* generate high quality report .csv file ([#433](https://github.com/IKIM-Essen/uncovar/issues/433)) ([077b80d](https://github.com/IKIM-Essen/uncovar/commit/077b80d2b2b00026fc9944a26c0183505f9060cf))
+
 ## [0.12.0](https://www.github.com/IKIM-Essen/uncovar/compare/v0.11.0...v0.12.0) (2021-12-23)
 
 
