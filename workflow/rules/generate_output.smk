@@ -338,6 +338,9 @@ rule snakemake_reports:
             ["results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg"]
         ),
         # 2. Variant Call Details
+        expand_samples_for_date(
+            ["results/{{date}}/lineage-variant-report/{sample}.lineage-variants"]
+        ),
         lambda wildcards: expand(
             "results/{{date}}/vcf-report/{target}.{filter}",
             target=get_samples_for_date(wildcards.date) + ["all"],

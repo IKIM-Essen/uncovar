@@ -53,8 +53,8 @@ use rule overview_table_html as generate_lineage_variant_report with:
             ),
             htmlindex="index.html",
             caption="../report/lineage-variant-report.rst",
-            category="1. Overview",
-            subcategory="1. Report",
+            category="2. Variant Call Details",
+            subcategory="1. VOC Similarity",
         ),
     log:
         "logs/{date}/lineage-variant-report/{sample}.log",
