@@ -1,6 +1,6 @@
 rule collect_lineage_candidate_variants:
     input:
-        annotation="resources/annotation_known_variants.gff",
+        annotation="resources/annotation_known_variants.gff.gz",
         reference="resources/genomes/main.fasta",
     output:
         "resources/lineage-candidate-variants/all.bcf",
@@ -32,7 +32,7 @@ rule annotate_lineage_variants:
 rule generate_lineage_variant_table:
     input:
         variant_file="results/{date}/lineage-variant-report/{sample}.bcf",
-        annotation="resources/annotation_known_variants.gff",
+        annotation="resources/annotation_known_variants.gff.gz",
     output:
         variant_table="results/{date}/lineage-variant-report/{sample}.csv",
     log:
