@@ -60,4 +60,4 @@ use rule overview_table_html as generate_lineage_variant_report with:
         "logs/{date}/lineage-variant-report/{sample}.log",
     params:
         formatter=get_resource("lineage-variant-table-formatter.js"),
-        pin_until="VAF",
+        pin_until="Frequency",
