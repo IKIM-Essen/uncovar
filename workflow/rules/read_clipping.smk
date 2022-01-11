@@ -21,6 +21,19 @@ rule samtools_sort:
         "0.74.0/bio/samtools/sort"
 
 
+rule bed_to_bedpe:
+    input:
+        "resources/nCoV-2019.primer.bed",
+    output:
+        "resources/primer.bedpe",
+    log:
+        "logs/bed-to-bedpe.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/bed-to-bedpe.py"
+
+
 rule bamclipper:
     input:
         bam="results/{date}/read-sorted/{read_type}~position/{sample}.initial.bam",
