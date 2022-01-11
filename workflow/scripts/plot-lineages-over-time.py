@@ -39,13 +39,7 @@ def plot_lineages_over_time(sm_input, sm_output, dates, sm_output_table):
     df.sort_values(by=["lineage"])
     if len(df.index) > 10:
         pangolin_calls.loc[
-            ~df.head(10).isin(pangolin_calls["lineage"]), "lineage"
-        ] = "other occ."
-    else:
-        pangolin_calls.loc[
-            pangolin_calls["lineage_count"] < 0, "lineage"
-        ] = "other occ."
-
+            ~pangolin_calls["lineage"].isin(df.head(10).index), "lineage"] = "other occ."
     pangolin_calls.rename(columns={"lineage": "Lineage", "date": "Date"}, inplace=True)
 
     area_plot = (
