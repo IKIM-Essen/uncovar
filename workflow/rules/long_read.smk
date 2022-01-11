@@ -104,16 +104,19 @@ rule canu_correct:
         "logs/{date}/canu/assemble/{sample}.log",
     params:
         outdir=get_output_dir,
+        concurrency = lambda w, threads: int(threads/ 4) ,
         min_length=config["quality-criteria"]["ont"]["min-length-reads"],
+
         for_testing=lambda w, threads: get_if_testing(
             f"corThreads={threads} redThreads={threads} redMemory=6 oeaMemory=6"
         ),
     conda:
         "../envs/canu.yaml"
+    threads: 32
     shell:
         "( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&"
         " canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir}"
-        " genomeSize=30k corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap"
+        " genomeSize=30k corConcurrency={params.concurrency} corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap"
         " minOverlapLength=10 minReadLength={params.min_length} corMMapMerSize=10 corOutCoverage=50000"
         " corMinCoverage=0 maxInputCoverage=20000 {params.for_testing}) "
         " 2> {log}"
