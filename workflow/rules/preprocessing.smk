@@ -5,6 +5,7 @@
 
 
 if config["data-handling"]["use-data-handling"]:
+
     rule update_sample:
         input:
             "config/pep/samples.csv",
