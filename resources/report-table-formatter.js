@@ -1,5 +1,5 @@
 {
-  "Lineage" : function format(value) { // prettier-ignore
+  "Pango Lineage" : function format(value) { // prettier-ignore
     $(function () {
       $('[data-toggle="tooltip"]').tooltip();
     });
