@@ -2,7 +2,7 @@ import pandas as pd
 
 # Function to create a bedpe file from a bed file
 bed_list = []
-with open(snakemake.input[0]) as f:
+with open(snakemake.input.bed) as f:
     line = f.readlines()
     for name in line:
         bed_list.append(name.split())

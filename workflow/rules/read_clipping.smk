@@ -23,7 +23,7 @@ rule samtools_sort:
 
 rule bed_to_bedpe:
     input:
-        "resources/nCoV-2019.primer.bed",
+        bed=config["preprocessing"]["amplicon-primers"],
     output:
         "resources/primer.bedpe",
     log:
@@ -38,7 +38,7 @@ rule bamclipper:
     input:
         bam="results/{date}/read-sorted/{read_type}~position/{sample}.initial.bam",
         bai="results/{date}/read-sorted/{read_type}~position/{sample}.initial.bam.bai",
-        bed=config["preprocessing"]["amplicon-primers"],
+        bedpe="resources/primer.bedpe",
     output:
         temp(
             "results/{date}/read-clipping/softclipped/{read_type}/{sample}/{sample}.initial.primerclipped.bam"
@@ -46,7 +46,7 @@ rule bamclipper:
     params:
         output_dir=get_output_dir,
         cwd=lambda w: os.getcwd(),
-        bed_path=lambda w, input: os.path.join(os.getcwd(), input.bed),
+        bed_path=lambda w, input: os.path.join(os.getcwd(), input.bedpe),
         bam=lambda w, input: os.path.basename(input.bam),
     log:
         "logs/{date}/bamclipper/{read_type}/{sample}.log",
@@ -132,7 +132,7 @@ rule plot_primer_clipping:
         ),
     params:
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
-        bed=config["preprocessing"]["amplicon-primers"],
+        bedpe="resources/primer.bedpe",
     log:
         "logs/{date}/plot-primer-clipping.log",
     conda:
