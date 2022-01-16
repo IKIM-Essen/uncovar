@@ -142,6 +142,16 @@ mth:
     - V1176F
 
 ############################################
+#      Configuration for webinterface      #
+############################################
+
+webinterface:
+  push-data: True
+  url: https://apps.ikim.uk-essen.de/api/
+  project-id: 1
+  api-token: fcd36fca70e9ed370e50746b6b0d608357adb8c5
+
+############################################
 #      Configuration for benchmarking      #
 ############################################
 

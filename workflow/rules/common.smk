@@ -1582,6 +1582,14 @@ def get_input_by_mode(wildcard):
             ),
         ]
 
+    if config["webinterface"]["push-data"]:
+        path += [
+            expand(
+                "results/{date}/.indicators/webinterface/posted-all-data.json",
+                date=get_all_run_dates(),
+            )
+        ]
+
     return sum(paths, [])
 
 
