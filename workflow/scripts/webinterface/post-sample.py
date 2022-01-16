@@ -4,18 +4,18 @@ sys.stderr = open(snakemake.log[0], "w")
 
 import requests
 
-url=snakemake.params.url
+url = snakemake.params.url
 token = snakemake.params.token
 project_id = snakemake.params.project_id
-sample=snakemake.wildcards.sample
-date=snakemake.wildcards.date
+sample = snakemake.wildcards.sample
+date = snakemake.wildcards.date
 
 headers = {"Authorization": f"token {token}"}
 
-data={}
+data = {}
 data.update(project_id)
-data.update({"name" : sample})
-data.update({"date" : date})
+data.update({"name": sample})
+data.update({"date": date})
 
 print(f"Headers: {headers}", file=sys.stderr)
 print(f"Data: {data}", file=sys.stderr)
