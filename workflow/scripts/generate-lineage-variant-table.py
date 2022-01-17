@@ -93,7 +93,6 @@ lineage_df = (
     .reset_index(drop=True)
 )
 lineage_df = lineage_df.replace({1: "x", 0: ""})
-print(lineage_df)
 
 # calculate Jaccard coefficient for top 5 lineages and save row as df to append after sorting
 jaccard_coefficient = {}
