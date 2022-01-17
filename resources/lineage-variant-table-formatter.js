@@ -1,5 +1,5 @@
 {
-  Variant: function (signature) {
+  Mutations: function (signature) {
     // prettier-ignore
     // taken from https://github.com/hodcroftlab/covariants/blob/338e94f7af9a7a1871434cfbb62af3f8d92ea90f/web/src/components/Common/parseAminoacidMutation.ts#L20
     if(signature == "Lineage") {
@@ -137,7 +137,7 @@
       };
 
       if (value == "x") {
-        return "\u2705";
+        return `<span class="badge p-0 m-1"><span class="p-1 rounded" style="background:#24DC5B;">${"\u2713"}</span></span>`;
       } else {
         const match = /^(?<parent>.{3})\s(?<version>.+)\s?.*$/i.exec(value);
 
@@ -152,7 +152,8 @@
         return value;
       } else {
         var lighting = (0.9 - parseFloat(value) * 0.4) * 100;
-        value = value * 100;
+        value = parseFloat(value) * 100;
+        value = value.toFixed(2)
         return `<span class="badge p-0 m-1"><span class="p-1 rounded-left" style="background:hsl(138, 72%, ${lighting}%);">${value}</span><span class="p-1 rounded-right" style="background:hsl(138, 72%, ${lighting}%);">${"%"}</span></span>`;
       }
     }
