@@ -2,7 +2,7 @@ name: Tests
 
 on:
   push:
-    branches: 
+    branches:
       - master
   pull_request:
     branches:
@@ -17,22 +17,22 @@ jobs:
         with:
           workflows: "main.yml"
         env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   Formatting:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Formatting
-        uses: github/super-linter@v4.7.3
+        uses: github/super-linter@v4.8.5
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FILTER_REGEX_EXCLUDE: CHANGELOG.md
           VALIDATE_SNAKEMAKE_SNAKEFMT: true
           VALIDATE_PYTHON_BLACK: true
-
+          VALIDATE_MARKDOWN: true
 
   Linting:
     runs-on: ubuntu-latest
@@ -41,26 +41,166 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Lint workflow
-        uses: snakemake/snakemake-github-action@v1.18.0
+        uses: snakemake/snakemake-github-action@v1.24.0
         with:
           directory: .
           snakefile: workflow/Snakefile
           stagein: mamba install -n snakemake -c conda-forge peppy
           args: "--lint"
 
+  Pre-Commit:
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: pre-commit/action@v2.0.3
 
-  Testing:
+  Technology-Tests:
     runs-on: ubuntu-latest
     env:
       GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
     needs:
       - Formatting
       - Linting
+      - Pre-Commit
     strategy:
       matrix:
-        rule: [all, all -npr, benchmark_strain_calling, benchmark_assembly, benchmark_mixtures, benchmark_non_sars_cov_2, compare_assemblers, benchmark_reads]
+        rule: [all, all -npr]
+        technology: [all, illumina, ont, ion]
+        seq_method: [shotgun, amplicon]
     steps:
       - uses: actions/checkout@v2
+
+      # android - will release about 10 GB if you don't need Android
+      # dotnet  - will release about 20 GB if you don't need .NET
+      - name: Free up some disk sapce
+        run: |
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
+
+      - name: Prepare test data for all technologies
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'all' || matrix.rule == 'compare_assemblers')
+        run: |
+          if [[ "${{ matrix.seq_method }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
+          mkdir -p .tests/data
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz
+          curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR574/003/ERR5745913/ERR5745913.fastq.gz > .tests/data/ion_reads.fastq.gz
+          echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
+          echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,$AMPLICON,illumina >> .tests/config/pep/samples.csv
+          echo ont-test,data/ont_reads.fastq.gz,,2022-01-01,$AMPLICON,ont >> .tests/config/pep/samples.csv
+          echo ion-test,data/ion_reads.fastq.gz,,2022-01-01,$AMPLICON,ion >> .tests/config/pep/samples.csv
+
+      - name: Prepare test data for Illumina
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'illumina' || matrix.rule == 'compare_assemblers')
+        run: |
+          if [[ "${{ matrix.seq_method }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
+          mkdir -p .tests/data
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
+          echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
+          echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,$AMPLICON,illumina >> .tests/config/pep/samples.csv
+
+      - name: Prepare test data for Oxford Nanopore
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ont' || matrix.rule == 'compare_assemblers')
+        run: |
+          if [[ "${{ matrix.seq_method }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
+          mkdir -p .tests/data
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz
+          echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
+          echo ont-test,data/ont_reads.fastq.gz,2022-01-01,$AMPLICON,ont >> .tests/config/pep/samples.csv
+
+      - name: Prepare test data for Ion Torrent
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ion' || matrix.rule == 'compare_assemblers')
+        run: |
+          if [[ "${{ matrix.seq_method }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
+          mkdir -p .tests/data
+          curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR574/003/ERR5745913/ERR5745913.fastq.gz > .tests/data/ion_reads.fastq.gz
+          echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
+          echo ion-test,data/ion_reads.fastq.gz,2022-01-01,$AMPLICON,ion >> .tests/config/pep/samples.csv
+
+      - name: Use smaller reference files for testing
+        if: steps.test-resources.outputs.cache-hit != true
+        run: |
+          # mkdir -p .tests/resources/minikraken-8GB
+          # curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
+          mkdir -p .tests/resources/genomes
+          curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
+
+      - name: Simulate GISAID download
+        run: |
+          mkdir -p .tests/results/benchmarking/tables
+          echo -e "resources/genomes/B.1.1.7.fasta\nresources/genomes/B.1.351.fasta" > .tests/results/benchmarking/tables/strain-genomes.txt
+          mkdir -p .tests/resources/genomes
+          curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314997.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.1.7.fasta
+          curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314998.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.351.fasta
+
+      - name: Test rule ${{ matrix.rule }} on ${{ matrix.technology }} ${{ matrix.seq_method }} data
+        uses: snakemake/snakemake-github-action@v1.24.0
+        with:
+          directory: .tests
+          snakefile: workflow/Snakefile
+          args: "-pr --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
+
+      - name: Test report
+        uses: snakemake/snakemake-github-action@v1.24.0
+        if: startsWith(matrix.rule, 'all -npr') != true
+        with:
+          directory: .tests
+          snakefile: workflow/Snakefile
+          args: "${{ matrix.rule }} --report report.zip"
+
+      - name: Upload report
+        uses: actions/upload-artifact@v2
+        if: matrix.technology == 'all' && matrix.rule != 'all -npr'
+        with:
+          name: report-rule-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}
+          path: .tests/report.zip
+
+      - name: Upload logs
+        uses: actions/upload-artifact@v2
+        if: matrix.technology == 'all' && matrix.rule != 'all -npr'
+        with:
+          name: log-rule-${{ matrix.rule }}-technology-${{ matrix.technology }}
+          path: .tests/logs/
+
+      - name: Change permissions for caching
+        run: sudo chmod -R 755 .tests/.snakemake/conda
+
+      - name: Print disk space
+        run: sudo df -h
+
+  Benchmarks-Tests:
+    runs-on: ubuntu-latest
+    env:
+      GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
+    needs:
+      - Formatting
+      - Linting
+      - Pre-Commit
+    strategy:
+      matrix:
+        rule:
+          [
+            benchmark_strain_calling,
+            benchmark_assembly,
+            benchmark_mixtures,
+            benchmark_non_sars_cov_2,
+            benchmark_reads,
+            compare_assemblers,
+            generate_test_cases,
+          ]
+    steps:
+      - uses: actions/checkout@v2
+
+      # - name: Cache conda dependencies
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: |
+      #       .tests/.snakemake/conda
+      #     key: benchmarks-${{ runner.os }}-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}-${{ hashFiles('*.tests/.snakemake/conda/*.yaml') }}
 
       # TODO caches are currently completely misleading, as they lead to certain files becoming present on disk which might
       # then hide failures that would otherwise be seen.
@@ -70,7 +210,7 @@ jobs:
       #   run: |
       #     echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
       #   shell: bash
-      
+
       # - name: Cache resources
       #   id: test-resources
       #   uses: actions/cache@v2
@@ -143,18 +283,31 @@ jobs:
       #       ${{ runner.os }}-sars-cov-benchmark-dependencies-${{ steps.get-date.outputs.date }}-
       #       ${{ runner.os }}-sars-cov-benchmark-dependencies-
 
-      - name: Download test data
-        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') || matrix.rule == 'compare_assemblers')
+      - name: Prepare test data
+        if: matrix.rule == 'generate_test_cases'
         run: |
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
-      
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz
+          echo sample_name,fq1,fq2,date,is_amplicon_data,technology,test_case > .tests/config/pep/samples.csv
+          echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,1,illumina,case >> .tests/config/pep/samples.csv
+          echo ont-test,data/ont_reads.fastq.gz,,2022-01-01,1,ont,case >> .tests/config/pep/samples.csv
+
+      - name: Prepare test data
+        if: matrix.rule != 'generate_test_cases'
+        run: |
+          mkdir -p .tests/data
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
+          echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
+          echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,0,illumina >> .tests/config/pep/samples.csv
+
       - name: Use smaller reference files for testing
         if: steps.test-resources.outputs.cache-hit != true
         run: |
-          mkdir -p .tests/resources/minikraken-8GB
-          curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
+          # mkdir -p .tests/resources/minikraken-8GB
+          # curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
           mkdir -p .tests/resources/genomes
           curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
 
@@ -166,32 +319,31 @@ jobs:
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314997.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.1.7.fasta
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314998.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.351.fasta
 
-
       - name: Test rule ${{ matrix.rule }}
-        uses: snakemake/snakemake-github-action@v1.18.0
+        uses: snakemake/snakemake-github-action@v1.24.0
         with:
           directory: .tests
           snakefile: workflow/Snakefile
-          args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
+          args: "-pr --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
 
       - name: Test report
-        uses: snakemake/snakemake-github-action@v1.18.0
+        uses: snakemake/snakemake-github-action@v1.24.0
         if: startsWith(matrix.rule, 'all -npr') != true
         with:
           directory: .tests
           snakefile: workflow/Snakefile
           args: "${{ matrix.rule }} --report report.zip"
 
-      - name: Upload report
-        uses: actions/upload-artifact@v2
-        with:
-          name: report-${{ matrix.rule }}
-          path: .tests/report.zip
-          
+      # - name: Upload report
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: report-rule-${{ matrix.rule }}
+      #     path: .tests/report.zip
+
       - name: Upload logs
         uses: actions/upload-artifact@v2
         with:
-          name: log-${{ matrix.rule }}
+          name: log-rule-${{ matrix.rule }}
           path: .tests/logs/
 
       # - name: Unit test
@@ -199,7 +351,7 @@ jobs:
       # - name: Test workflow (singularity)
       #     args: "--use-conda --use-singularity --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba"
       # - name: Test input changes
-      #     args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba -R `snakemake --list-input-changes`"      
+      #     args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba -R `snakemake --list-input-changes`"
       # - name: Test code changes
       #     args: "--use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba -R `snakemake --list-code-changes`"
       # - name: Test params changes
@@ -223,7 +375,7 @@ jobs:
           cat .tests/results/benchmarking/assembly/pseudoassembly.csv
           if [[ $(tail -1 .tests/results/benchmarking/assembly/pseudoassembly.csv) < 0.95 ]]
           then
-            echo "Pseudoassembly bechmarking failed. There is at least one assembly where the contigs do not cover 95% of the original sequence (see above)."
+            echo "Pseudoassembly benchmarking failed. There is at least one assembly where the contigs do not cover 95% of the original sequence (see above)."
             exit 1
           else
             echo "Pseudoassembly was successful."
@@ -235,7 +387,7 @@ jobs:
           cat .tests/results/benchmarking/assembly/assembly.csv
           if [[ $(tail -1 .tests/results/benchmarking/assembly/assembly.csv) < 0.8 ]]
           then
-            echo "Assembly bechmarking failed. There is at least one assembly where the contigs do not cover 80% of the original sequence (see above)."
+            echo "Assembly benchmarking failed. There is at least one assembly where the contigs do not cover 80% of the original sequence (see above)."
             exit 1
           else
             echo "Assembly was successful."
@@ -258,8 +410,8 @@ jobs:
               echo "Workflow sucessfully identified samples as non-sars-cov-2 in all cases."
           fi
 
-      - name: Print disk space
-        run: sudo df -h
-
       - name: Change permissions for caching
         run: sudo chmod -R 755 .tests/.snakemake/conda
+
+      - name: Print disk space
+        run: sudo df -h

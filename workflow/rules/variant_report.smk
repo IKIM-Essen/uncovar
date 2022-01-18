@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -43,7 +43,9 @@ rule ucsc_vcf:
         bcfs=get_report_input(
             "results/{date}/filtered-calls/ref~main/{sample}.subclonal.{filter}.bcf"
         ),
-        strain_call="results/{date}/tables/strain-calls/{target}.strains.pangolin.csv",
+        strain_call=(
+            "results/{date}/tables/strain-calls/{target}.polished.strains.pangolin.csv"
+        ),
     output:
         report(
             "results/{date}/ucsc-vcfs/{target}.{filter}.vcf",

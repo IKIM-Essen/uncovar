@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -50,3 +50,16 @@ rule faidx:
         "logs/faidx/{prefix}.log",
     wrapper:
         "0.70.0/bio/samtools/faidx"
+
+
+rule gzip:
+    input:
+        "{prefix}.fastq",
+    output:
+        "{prefix}.fastq.gz",
+    log:
+        "logs/gzip/{prefix}.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "gzip --keep {input}"

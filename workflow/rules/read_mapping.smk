@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -81,7 +81,7 @@ rule samtools_calmd:
         aln=get_recal_input,
         ref=get_reference(),
     output:
-        "results/{date}/recal/ref~{reference}/{sample}.bam",
+        temp("results/{date}/recal/ref~{reference}/{sample}.bam"),
     log:
         "logs/{date}/samtools-calmd/ref~{reference}/{sample}.log",
     params:
