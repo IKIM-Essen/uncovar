@@ -19,6 +19,8 @@ rule post_report:
 
 
 rule post_sample:
+    input:
+        "results/{date}/.indicators/webinterface/posted-report.json",
     output:
         "results/{date}/.indicators/webinterface/posted-sample-{sample}.json",
     params:
