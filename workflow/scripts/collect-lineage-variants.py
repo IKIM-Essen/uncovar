@@ -8,7 +8,7 @@ sys.stderr = open(snakemake.log[0], "w")
 import gffutils
 import numpy as np
 import requests
-from dnachisel.biotools import get_backtranslation_table
+from dnachisel.biotools import get_backtranslation_table, translate
 from pysam import FastaFile, VariantFile, VariantHeader, VariantRecord
 from requests.models import ContentDecodingError
 
@@ -19,6 +19,7 @@ covariants_data = requests.get(
 translate_aa = get_backtranslation_table("Standard")
 gff = gffutils.create_db(snakemake.input.annotation, dbfn=":memory:")
 gene_start = {gene["gene_name"][0]: gene.start for gene in gff.features_of_type("gene")}
+gene_end = {gene["gene_name"][0]: gene.end for gene in gff.features_of_type("gene")}
 
 
 def aa_to_dna(aa_seq):
@@ -26,6 +27,11 @@ def aa_to_dna(aa_seq):
         "".join(combination)
         for combination in product(*[translate_aa[aa] for aa in aa_seq])
     )
+
+
+def codon_equivalence_class(dna_seq):
+    aa = translate(dna_seq)
+    return aa_to_dna(aa)
 
 
 class VariantType(Enum):
@@ -94,12 +100,21 @@ class NonSynonymousVariant(SynonymousVariant):
     def signature(self):
         return f"{self.gene}:{self.left}{self.pos}{self.right}"
 
+    def is_in_first_codon(self):
+        return self.pos == 1
+
+    def is_in_last_codon(self):
+        aa_len = gene_end[self.gene] - gene_start[self.gene] / 3
+        assert self.pos <= aa_len
+        return self.pos == aa_len
+
 
 with FastaFile(snakemake.input.reference) as infasta:
     assert infasta.nreferences == 1
     contig = infasta.references[0]
+    ref_len = infasta.lengths[0]
     header = VariantHeader()
-    header.add_line(f"##contig=<ID={contig},length={infasta.lengths[0]}")
+    header.add_line(f"##contig=<ID={contig},length={ref_len}")
     header.add_line(
         '##INFO=<ID=SIGNATURES,Number=.,Type=String,Description="Variant signature as obtained from covariants.org">'
     )
@@ -250,21 +265,61 @@ with FastaFile(snakemake.input.reference) as infasta:
         for variants, lineages in get_variants(
             known_non_synonymous_variants, VariantType.Ins
         ):
-            pos = variants[0].genome_pos() - 1
-            ref_allele = infasta.fetch(reference=contig, start=pos, end=pos + 1)
-            for ins_seq in aa_to_dna("".join(variant.right for variant in variants)):
-                alt_allele = ref_allele + ins_seq
-                write_record(pos, ref_allele, alt_allele, lineages, variants)
+            pos = variants[0].genome_pos()
+            assert not variants[
+                0
+            ].is_in_first_codon(), "unsupported insertion: is in first codon of protein"
+            assert not variants[
+                -1
+            ].is_in_last_codon(), "unsupported insertion: is in last codon of protein"
+
+            # METHOD: add an unchanged codon before and after the actual variant
+            ref_allele = infasta.fetch(reference=contig, start=pos - 3, end=pos + 3)
+            pre_codons = codon_equivalence_class(
+                infasta.fetch(reference=contig, start=pos - 3, end=pos)
+            )
+            post_codons = codon_equivalence_class(
+                infasta.fetch(reference=contig, start=pos, end=pos + 3)
+            )
+            for pre_codon, post_codon in product(pre_codons, post_codons):
+                for ins_seq in aa_to_dna(
+                    "".join(variant.right for variant in variants)
+                ):
+                    alt_allele = pre_codon + ins_seq + post_codon
+                    write_record(pos - 3, ref_allele, alt_allele, lineages, variants)
 
         for variants, lineages in get_variants(
             known_non_synonymous_variants, VariantType.Del
         ):
-            pos = variants[0].genome_pos() - 1
-            alt_allele = infasta.fetch(reference=contig, start=pos, end=pos + 1)
-            ref_allele = infasta.fetch(
-                reference=contig, start=pos, end=pos + len(variants) * 3 + 1
+            variant = variants[0]
+            pos = variants[0].genome_pos()
+            del_len = len(variants) * 3
+
+            assert not variants[
+                0
+            ].is_in_first_codon(), "unsupported deletion: is in first codon of protein"
+            assert not variants[
+                -1
+            ].is_in_last_codon(), "unsupported deletion: is in last codon of protein"
+
+            # METHOD: add an unchanged codon before and after the actual variant
+            # in order to capture ambiguity in the alignment
+            # before the potential deletion
+            pre_codons = codon_equivalence_class(
+                infasta.fetch(reference=contig, start=pos - 3, end=pos)
             )
-            write_record(pos, ref_allele, alt_allele, lineages, variants)
+            post_codons = codon_equivalence_class(
+                infasta.fetch(
+                    reference=contig, start=pos + del_len, end=pos + del_len + 3
+                )
+            )
+            # ref allele including the unchanged codons
+            ref_allele = infasta.fetch(
+                reference=contig, start=pos - 3, end=pos + del_len + 3
+            )
+            for pre_codon, post_codon in product(pre_codons, post_codons):
+                alt_allele = pre_codon + post_codon
+                write_record(pos - 3, ref_allele, alt_allele, lineages, variants)
 
         for variant, lineages in get_variants(
             known_non_synonymous_variants, VariantType.Subst, merge=False
