@@ -26,6 +26,14 @@ the analysed patient or environmental samples
 
 ## Section 2: Variant Call Details
 
+### Analysis of present VOC mutations and top 5 possible lineages per sample
+
+- **Mutations** found
+- **Probability** and **Frequency** both calculated via a-posteriori probability
+  and observed variant allele frequency (VAF) of each mutation
+- **Top 5 lineages** based on feature similarity per top lineage, calculated with
+  [Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index)
+
 ## Section 3: Sequencing Details
 
 ## Section 4: Sequences
