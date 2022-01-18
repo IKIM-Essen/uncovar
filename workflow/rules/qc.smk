@@ -44,7 +44,7 @@ rule multiqc:
     log:
         "logs/{date}/multiqc.log",
     wrapper:
-        "0.85.1/bio/multiqc"
+        "v0.86.0/bio/multiqc"
 
 
 rule multiqc_lab:
@@ -70,7 +70,7 @@ rule multiqc_lab:
     log:
         "logs/{date}/multiqc.log",
     wrapper:
-        "0.85.1/bio/multiqc"
+        "v0.86.0/bio/multiqc"
 
 
 rule samtools_flagstat:
