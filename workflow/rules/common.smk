@@ -1286,8 +1286,6 @@ def get_include_flag_for_date(wildcards):
             ):
                 if sample in sample_path:
                     allsamplelist.append(sample)
-                else:
-                    continue
         return [get_include_flag(sample) for sample in allsamplelist]
 
 
