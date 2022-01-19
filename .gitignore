@@ -21,7 +21,7 @@
 !workflow/envs/*
 !workflow/notebooks/*
 !workflow/report/*
-!workflow/rules/*
+!workflow/rules/**
 !workflow/scripts/**
 !workflow/schemas/*
 !.editorconfig

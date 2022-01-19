@@ -105,3 +105,7 @@ def get_test_cases(wildcards):
         0
     ].open() as f:
         return f.read().splitlines()
+
+
+def get_barcode_path(wildcards):
+    return pep.sample_table.loc[wildcards.sample]["barcode"]
