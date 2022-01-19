@@ -59,7 +59,7 @@ rule map_reads:
         sort_order="coordinate",
     threads: 8
     wrapper:
-        "0.80.2/bio/bwa/mem"
+        "v0.86.0/bio/bwa/mem"
 
 
 rule mark_duplicates:
