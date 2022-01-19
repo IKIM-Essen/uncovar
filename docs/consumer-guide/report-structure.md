@@ -20,7 +20,7 @@ The table consists of the following columns:
 - Trimmed Read: Number of reads after [adapter removal](https://www.ecseq.com/support/ngs/trimming-adapter-sequences-is-it-necessary).
 - Filtered Reads: Number of reads after removing sequences that could belong
   to the human host from which the sample was taken.
-- Best Quality: Indicates which of the assemblies performed produces the 
+- Best Quality: Indicates which of the assemblies performed produces the
   highest quality sequence.
   filtering**and**primer clipping\*\*
 - Largest Contig: The length of the largest sequences after
