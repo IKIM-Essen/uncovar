@@ -28,7 +28,6 @@ rule annotate_lineage_variants:
         "bcftools annotate -a {input.annotation} -c LINEAGES,SIGNATURES {input.calls} > {output} 2> {log}"
 
 
-# TODO add conda env and log file to this rule
 rule generate_lineage_variant_table:
     input:
         variant_file="results/{date}/lineage-variant-report/{sample}.bcf",
@@ -36,7 +35,7 @@ rule generate_lineage_variant_table:
     output:
         variant_table="results/{date}/lineage-variant-report/{sample}.csv",
     log:
-        "logs/{date}/{sample}-variant-table.log",
+        "logs/{date}/variant-table/{sample}.log",
     conda:
         "../envs/pysam.yaml"
     script:

@@ -122,11 +122,6 @@ with FastaFile(snakemake.input.reference) as infasta:
         '##INFO=<ID=LINEAGES,Number=.,Type=String,Description="Lineages having this variant">'
     )
 
-    # NonSynonymousVariant = namedtuple(
-    #     "NonSynonymousVariant", ["gene", "left", "pos", "right"]
-    # )
-    # synonymousVariant = namedtuple("SynonymousVariant", ["left", "pos", "right"])
-
     known_non_synonymous_variants = defaultdict(set)
     for lineage_entry in covariants_data["clusters"]:
         if (
