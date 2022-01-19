@@ -144,9 +144,12 @@
 
         var parent = match.groups?.parent;
         var version = match.groups?.version;
-
-        return `<span class="badge p-0 m-1 text-white"><span class="p-1 rounded-left" style="background:${variant_colors[parent].bg}; color:${variant_colors[parent].fg}">${parent}</span><span class="bg-secondary p-1 rounded-right">${version}</span></span>`;
-        // return this["variant helper"](value);
+        
+        if (parent in variant_colors){
+          return `<span class="badge p-0 m-1 text-white"><span class="p-1 rounded-left" style="background:${variant_colors[parent].bg}; color:${variant_colors[parent].fg}">${parent}</span><span class="bg-secondary p-1 rounded-right">${version}</span></span>`;
+        } else {
+          return `<span class="badge p-0 m-1 text-white"><span class="p-1 rounded-left" style="background:#000000"; color:#FFFFFF">${parent}</span><span class="bg-secondary p-1 rounded-right">${version}</span></span>`;
+        }
       }
     } else {
       if (value == "") {
