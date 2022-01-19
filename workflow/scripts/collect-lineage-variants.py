@@ -12,7 +12,6 @@ from dnachisel.biotools import get_backtranslation_table, translate
 from pysam import FastaFile, VariantFile, VariantHeader, VariantRecord
 from requests.models import ContentDecodingError
 
-# TODO: Credits to covariants.org
 covariants_data = requests.get(
     "https://raw.githubusercontent.com/hodcroftlab/covariants/master/web/data/clusters.json"
 ).json()
