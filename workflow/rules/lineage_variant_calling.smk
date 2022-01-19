@@ -16,8 +16,8 @@ rule annotate_lineage_variants:
     input:
         calls="results/{date}/calls/ref~main/{sample}.lineage-variants.bcf",
         index="results/{date}/calls/ref~main/{sample}.lineage-variants.bcf.csi",
-        annotation="resources/lineage-candidate-variants/all_sorted.bcf",
-        index2="resources/lineage-candidate-variants/all_sorted.bcf.csi",
+        annotation="resources/lineage-candidate-variants/all.sorted.bcf",
+        index2="resources/lineage-candidate-variants/all.sorted.bcf.csi",
     output:
         "results/{date}/lineage-variant-report/{sample}.bcf",
     log:

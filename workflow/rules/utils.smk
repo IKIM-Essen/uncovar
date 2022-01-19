@@ -45,7 +45,7 @@ rule bcf_sort:
     input:
         "{prefix}.bcf",
     output:
-        "{prefix}_sorted.bcf",
+        "{prefix}.sorted.bcf",
     log:
         "logs/bcf-sort/{prefix}.log",
     conda:
