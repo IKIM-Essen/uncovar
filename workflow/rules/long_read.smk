@@ -31,7 +31,8 @@ rule count_fastq_reads:
     shell:
         "echo $(( $(cat {input} | wc -l ) / 4)) > {output} 2> {log}"
 
-
+# Intermediate number of threads (4-8) achieve best speedup of a+btrimming.
+# For large files 8 threads help accelerate some, small files are processed faster with 4 threads.  
 rule porechop_adapter_barcode_trimming:
     input:
         get_fastqs,
@@ -41,11 +42,13 @@ rule porechop_adapter_barcode_trimming:
         "../envs/porechop.yaml"
     log:
         "logs/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.log",
-    threads: 5
+    threads: 8
     shell:
-        "porechop -i {input} -o {output} --threads {threads} -v 1 > {log} 2>&1"
+        "porechop -i {input} -o {output} -t {threads} -v 1 > {log} 2>&1"
 
-
+# Using a low number of threads (2-4) speed up primer-trimming significantly (>2x), even for large files,
+# presumably due to the much higher number of target-sequences for trimming as compared 
+# to barcode+adapter-trimming. However, using only one thread is again very slow.
 rule customize_primer_porechop:
     input:
         get_artic_primer,
@@ -73,9 +76,12 @@ rule porechop_primer_trimming:
         "../envs/primechop.yaml"
     log:
         "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
-    threads: 5
+    threads: 2
     shell:
-        "(porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 --threads {threads} -v 1) 2> {log}"
+        """
+        (porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) 2> {log}
+        rm workflow/report/replacement_notice.txt
+        """
 
 
 rule nanofilt:
@@ -94,7 +100,6 @@ rule nanofilt:
         "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 500 {input} > {output} 2> {log}"
 
 
-# correction removes PHRED score
 rule canu_correct:
     input:
         "results/{date}/trimmed/nanofilt/{sample}.fastq",
@@ -112,14 +117,33 @@ rule canu_correct:
         ),
     conda:
         "../envs/canu.yaml"
-    threads: 32
+    threads: 16
     shell:
-        "( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&"
-        " canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir}"
-        " genomeSize=30k corConcurrency={params.concurrency} corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap"
-        " minOverlapLength=10 minReadLength={params.min_length} corMMapMerSize=10 corOutCoverage=50000"
-        " corMinCoverage=0 maxInputCoverage=20000 {params.for_testing}) "
-        " 2> {log}"
+        # "( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&"
+        # " canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir}"
+        # " genomeSize=30k corConcurrency={params.concurrency} corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap"
+        # " minOverlapLength=10 minReadLength={params.min_length} corMMapMerSize=10 corOutCoverage=50000"
+        # " corMinCoverage=0 maxInputCoverage=20000 {params.for_testing}) "
+        # " 2> {log}"
+        """
+        ( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&"
+        canu -correct -nanopore {input} -p {wildcards.barcode} -d {output.out_dir} genomeSize=30k minOverlapLength=10 minReadLength=200 useGrid=false \
+        corMMapMerSize=10 corOutCoverage=50000 corMinCoverage=0 maxInputCoverage=20000 \
+        corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap \
+        corConcurrency={params.concurrency} \
+        cormhapConcurrency={params.concurrency} cormhapThreads={params.concurrency} \
+        cormmapConcurrency={params.concurrency} cormmapThreads={params.concurrency} \
+        obtmmapConcurrency={params.concurrency} obtmmapThreads={params.concurrency} \
+        utgmmapConcurrency={params.concurrency} utgmmapThreads={params.concurrency} \
+        redConcurrency={params.concurrency} redThreads={params.concurrency} \
+        ovbConcurrency={params.concurrency} \
+        ovsConcurrency={params.concurrency} \
+        oeaConcurrency={params.concurrency}
+        gzip -d results/{wildcards.barcode}_corr/{wildcards.barcode}.correctedReads.fasta.gz
+        )
+        2> {log}
+        """
+
 
 
 # rule medaka_consensus_reference:
