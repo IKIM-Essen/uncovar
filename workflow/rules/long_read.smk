@@ -119,12 +119,6 @@ rule canu_correct:
         "../envs/canu.yaml"
     threads: 16
     shell:
-        # "( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&"
-        # " canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir}"
-        # " genomeSize=30k corConcurrency={params.concurrency} corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap"
-        # " minOverlapLength=10 minReadLength={params.min_length} corMMapMerSize=10 corOutCoverage=50000"
-        # " corMinCoverage=0 maxInputCoverage=20000 {params.for_testing}) "
-        # " 2> {log}"
         """
         ( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&
         canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200 useGrid=false \
