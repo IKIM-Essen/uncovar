@@ -1272,10 +1272,21 @@ def get_include_flag(sample):
 
 
 def get_include_flag_for_date(wildcards):
-    return [
-        get_include_flag(sample)
-        for sample in get_assemblies_for_submission(wildcards, "accepted samples")
-    ]
+    if len(get_samples_for_date(wildcards.date)) == len(
+        get_assemblies_for_submission(wildcards, "accepted samples")
+    ):
+        return [
+            get_include_flag(sample) for sample in get_samples_for_date(wildcards.date)
+        ]
+    else:
+        allsamplelist = []
+        for sample in get_samples_for_date(wildcards.date):
+            for sample_path in get_assemblies_for_submission(
+                wildcards, "accepted samples"
+            ):
+                if sample in sample_path:
+                    allsamplelist.append(sample)
+        return [get_include_flag(sample) for sample in allsamplelist]
 
 
 def get_artic_primer(wildcards):
