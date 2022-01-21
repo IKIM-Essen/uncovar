@@ -121,7 +121,8 @@ rule canu_correct:
     shell:
         """
         ( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&
-        canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200 useGrid=false \
+        canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200 \
+        useGrid=false \
         corMMapMerSize=10 corOutCoverage=50000 corMinCoverage=0 maxInputCoverage=20000 \
         corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap \
         corConcurrency={params.concurrency} \
@@ -136,7 +137,6 @@ rule canu_correct:
         )
         2> {log}
         """
-        # gzip -d results/{wildcards.sample}_corr/{wildcards.sample}.correctedReads.fasta.gz
 
 
 # rule medaka_consensus_reference:
