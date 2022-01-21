@@ -80,7 +80,7 @@ rule porechop_primer_trimming:
     shell:
         """
         (porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) 2> {log}
-        rm workflow/report/replacement_notice.txt
+        rm results/.indicators/replacement_notice.txt
         """
 
 
@@ -126,8 +126,8 @@ rule canu_correct:
         # " corMinCoverage=0 maxInputCoverage=20000 {params.for_testing}) "
         # " 2> {log}"
         """
-        ( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&"
-        canu -correct -nanopore {input} -p {wildcards.barcode} -d {output.out_dir} genomeSize=30k minOverlapLength=10 minReadLength=200 useGrid=false \
+        ( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&
+        canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200 useGrid=false \
         corMMapMerSize=10 corOutCoverage=50000 corMinCoverage=0 maxInputCoverage=20000 \
         corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap \
         corConcurrency={params.concurrency} \
@@ -139,11 +139,10 @@ rule canu_correct:
         ovbConcurrency={params.concurrency} \
         ovsConcurrency={params.concurrency} \
         oeaConcurrency={params.concurrency}
-        gzip -d results/{wildcards.barcode}_corr/{wildcards.barcode}.correctedReads.fasta.gz
         )
         2> {log}
         """
-
+        # gzip -d results/{wildcards.sample}_corr/{wildcards.sample}.correctedReads.fasta.gz
 
 
 # rule medaka_consensus_reference:
@@ -171,7 +170,7 @@ rule bcftools_consensus_ont:
         "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"
 
 
-rule rename_conensus:
+rule rename_consensus:
     input:
         "results/{date}/consensus/bcftools/{sample}.fasta",
     output:
@@ -182,7 +181,7 @@ rule rename_conensus:
             caption="../report/assembly_consensus.rst",
         ),
     log:
-        "logs/{date}/rename-conensus-fasta/{sample}.log",
+        "logs/{date}/rename-consensus-fasta/{sample}.log",
     conda:
         "../envs/unix.yaml"
     shell:
