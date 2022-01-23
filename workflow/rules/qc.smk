@@ -38,19 +38,13 @@ rule multiqc:
     output:
         "results/{date}/qc/multiqc.html",
     params:
-        input_dirs=lambda w, input: set(path.dirname(fp) for fp in input),
-        output_dir=lambda w, output: path.dirname(output[0]),
-        output_name=lambda w, output: path.basename(output[0]),
         params=(
             "--config config/multiqc_config.yaml --title 'Results for data from {date}'"
         ),
     log:
         "logs/{date}/multiqc.log",
-    conda:
-        "../envs/multiqc.yaml"
-    shell:
-        "multiqc {params.params} --force -o {params.output_dir} "
-        "-n {params.output_name} {params.input_dirs} > {log} 2>&1"
+    wrapper:
+        "v0.86.0/bio/multiqc"
 
 
 rule multiqc_lab:
@@ -72,17 +66,11 @@ rule multiqc_lab:
             subcategory="1. Quality Control",
         ),
     params:
-        input_dirs=lambda w, input: set(path.dirname(fp) for fp in input),
-        output_dir=lambda w, output: path.dirname(output[0]),
-        output_name=lambda w, output: path.basename(output[0]),
         params="--config config/multiqc_config_lab.yaml --title 'Results for data from {date}'",
-    conda:
-        "../envs/multiqc.yaml"
     log:
         "logs/{date}/multiqc.log",
-    shell:
-        "multiqc {params.params} --force -o {params.output_dir} "
-        "-n {params.output_name} {params.input_dirs} > {log} 2>&1"
+    wrapper:
+        "v0.86.0/bio/multiqc"
 
 
 rule samtools_flagstat:
