@@ -40,6 +40,7 @@ This project wouldn't be possible without several open source libraries:
 | BEDTools       | www.doi.org/10.1093/bioinformatics/btq033         |
 | Biopython      | www.doi.org/10.1093/bioinformatics/btp163         |
 | bwa            | www.doi.org/10.1093/bioinformatics/btp324         |
+| Covariants     | www.github.com/hodcroftlab/covariants             |
 | delly          | www.doi.org/10.1093/bioinformatics/bts378         |
 | ensembl-vep    | www.doi.org/10.1186/s13059-016-0974-4             |
 | entrez-direct  | www.ncbi.nlm.nih.gov/books/NBK179288              |
