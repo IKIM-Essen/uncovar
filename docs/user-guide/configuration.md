@@ -79,4 +79,10 @@ removed by specifying `nimagen-easy-seq`. A short example:
 
 ### Customized Primer Removal
 
-The default primer file is a bed file from https://github.com/artic-network/artic-ncov2019/tree/master/primer_schemes/nCoV-2019/V3. This primer clipping can be customized. First, the custom primers must be saved in bed format. Next, the path to this file must be changed in the config. Go to the config folder and open config.yaml. In the "preprocessing" subcategory, change the path after "amplicon-primers" to the path where your primer file can be found.
+The default primer file is a bed file from
+<https://github.com/artic-network/artic-ncov2019/tree/master/primer_schemes/nCoV-2019/V3>.
+This primer clipping can be customized. First, the custom primers must be saved
+in bed format. Next, the path to this file must be changed in the config. Go to
+the config folder and open config.yaml. In the "preprocessing" subcategory,
+change the path after "amplicon-primers" to the path where your primer file
+can be found.
