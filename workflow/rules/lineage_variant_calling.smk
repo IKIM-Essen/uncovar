@@ -3,6 +3,7 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
+
 rule collect_lineage_candidate_variants:
     input:
         annotation="resources/annotation_known_variants.gff.gz",
