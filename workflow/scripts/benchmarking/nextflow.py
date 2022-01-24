@@ -43,8 +43,11 @@ for name, value in snakemake.params.items():
 log = snakemake.log_fmt_shell(stdout=False, stderr=True)
 args = " ".join(args)
 pipeline = snakemake.params.pipeline
+
 if "flags" in snakemake.params.keys():
     flags = snakemake.params.flags
-
-print(f"nextflow run {pipeline} {args} {flags} {log}")
-shell("nextflow run {pipeline} {args} {flags} {log}")
+    print(f"nextflow run {pipeline} {args} {flags} {log}")
+    shell("nextflow run {pipeline} {args} {flags} {log}")
+else:
+    print(f"nextflow run {pipeline} {args} {log}")
+    shell("nextflow run {pipeline} {args} {log}")

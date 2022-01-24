@@ -1,7 +1,7 @@
 # source: https://artic.network/ncov-2019/ncov2019-bioinformatics-sop.html
 rule artic_guppyplex:
     input:
-        get_fastq_pass_path,
+        get_fastq_pass_path_barcode,
     output:
         "results/benchmarking/artic/guppyplex/{sample}.fasta",
     log:
@@ -16,7 +16,7 @@ rule artic_guppyplex:
 
 rule artic_minion:
     input:
-        fast5=lambda wildcards: get_fast5_pass_path(wildcards),
+        fast5=lambda wildcards: get_fast5_pass_path_barcode(wildcards),
         fasta="results/benchmarking/artic/guppyplex/{sample}.fasta",
         repo="resources/benchmarking/artic/repo",
     output:
@@ -148,7 +148,7 @@ rule v_pipe_run:
 # source: https://github.com/replikation/poreCov
 rule poreCov_sample_sheet:
     input:
-        get_fastq_pass_path,
+        get_fastq_pass_path_barcode,
     output:
         "results/benchmarking/poreCov/{sample}/sample_names.csv",
     log:
@@ -165,7 +165,7 @@ rule poreCov_sample_sheet:
 
 rule poreCov:
     input:
-        fastq_pass=get_fastq_pass_path,
+        fastq_pass=get_fastq_pass_path_barcode,
         sample_names="results/benchmarking/poreCov/{sample}/sample_names.csv",
         # any --<argname> pipeline file arguments can be given here as <argname>=<path>
     output:
@@ -248,22 +248,24 @@ rule poreCov:
 #         outdir = lambda w: f"results/benchmarking/ncov2019_artic_nf/illumina/{w.sample}",
 #         prefix = lambda w: w.sample,
 
+
 # source: https://github.com/nf-core/viralrecon
-# rule nf_core_viralrecon_sample_sheet:
-#     input:
-#         script="resources/benchmarking/nf-core-viralrecon/fastq_dir_to_samplesheet.py",
-#         fastq_dir="data/fastq_pass",
-#     output:
-#         "results/benchmarking/nf-core-viralrecon/nanopore/samplesheet.csv",
-#     log:
-#         "logs/nf_core_viralrecon_sample_sheet.log"
-#     conda:
-#         "../../envs/python.yaml"
-#     shell:
-#         "./{input.script} {input.fastq_dir} {output}"
+rule nf_core_viralrecon_sample_sheet:
+    input:
+        script="resources/benchmarking/nf-core-viralrecon/fastq_dir_to_samplesheet.py",
+        fastq_dir="data/fastq_pass",
+    output:
+        "results/benchmarking/nf-core-viralrecon/nanopore/samplesheet.csv",
+    log:
+        "logs/nf_core_viralrecon_sample_sheet.log",
+    conda:
+        "../../envs/python.yaml"
+    shell:
+        "./{input.script} {input.fastq_dir} {output}"
+
 
 # TODO need seq summary
-# rule nf_core_viralrecon:
+# rule nf_core_viralrecon_illumina:
 #     input:
 #         input="results/benchmarking/nf-core-viralrecon/samplesheet.csv",
 #         # any --<argname> pipeline file arguments can be given here as <argname>=<path>
@@ -285,43 +287,46 @@ rule poreCov:
 #     script:
 #         "../../scripts/benchmarking/nextflow.py"
 
-# TODO need seq summary
-# use rule nf_core_viralrecon as nf_core_viralrecon_nanopore with:
-#     input:
-#         input="sampleeet.csv",
-#         sequencing_summary="",
-#         fastq_dir="",
-#         fast5_dir="",
-#         # any --<argname> pipeline file arguments can be given here as <argname>=<path>
-#     output:
-#         consensus="results/benchmarking/nf-core-viralrecon/nanopore",
-#     log:
-#         "logs/nf-core-nf_core_viralrecon_nanopore/{sample}.log"
-#     params:
-#         pipeline="nf-core/viralrecon",
-#         profile=["docker"],
-#         platform="nanopore",
-#         genome="'MN908947.3'",
-#         # any --<argname> pipeline arguments can be given here as <argname>=<value>
+
+rule nf_core_viralrecon_nanopore:
+    input:
+        sequencing_summary=lambda wildcards: get_seq_summary(wildcards),
+        fastq_dir=lambda wildcards: get_fastq_pass_path(wildcards),
+        fast5_dir=lambda wildcards: get_fast5_pass_path(wildcards),
+        # any --<argname> pipeline file arguments can be given here as <argname>=<path>
+    output:
+        "results/benchmarking/nf-core-viralrecon/nanopore/{sample}",
+    log:
+        "logs/nf-core-nf_core_viralrecon_nanopore/{sample}.log",
+    params:
+        pipeline="nf-core/viralrecon",
+        profile=["docker"],
+        platform="nanopore",
+        genome="'MN908947.3'",
+        primer_set_version=3,
+        # any --<argname> pipeline arguments can be given here as <argname>=<value>
+    handover: True
+    conda:
+        "../../envs/nextflow.yaml"
+    script:
+        "../../scripts/benchmarking/nextflow.py"
 
 
 # source: https://gitlab.com/RKIBioinformaticsPipelines/ncov_minipipe#3-usage
-rule CovPipe:
-    input:
-        input_dir=get_fastq_input_folder(ILLUMINA),
-        reference="resources/genomes/main.fasta",
-    output:
-        directory("results/benchmarking/CovPipe"),
-    log:
-        "logs/CovPipe.log",
-    conda:
-        "../../envs/covpipe.yaml"
-    shell:
-        "ncov_minipipe --reference {input.reference}"
-        "--input {input.input_dir} "
-        "-o {output}"
-
-
+# rule CovPipe:
+#     input:
+#         input_dir=get_fastq_input_folder(ILLUMINA),
+#         reference="resources/genomes/main.fasta",
+#     output:
+#         directory("results/benchmarking/CovPipe"),
+#     log:
+#         "logs/CovPipe.log",
+#     conda:
+#         "../../envs/covpipe.yaml"
+#     shell:
+#         "ncov_minipipe --reference {input.reference}"
+#         "--input {input.input_dir} "
+#         "-o {output}"
 # TODO Need s3 bucket
 # source: https://github.com/niemasd/ViReflow
 # rule ViReflow:
