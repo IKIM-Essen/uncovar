@@ -112,15 +112,12 @@ rule canu_correct:
     params:
         outdir=get_output_dir,
         # concurrency=lambda w, threads: int(threads / 4),
-        # The below solution for concurrency parameter would be safer imo.
-        # However, to stay in line with the previous strategy and avoid potential problems
-        # with memory, which are not adressed by the get_canu_concurrency func, I extended "for_testing".
-        # Unfortunately pre-commit insists on having it all in one line.
         concurrency=lambda w, threads: get_canu_concurrency(threads),
         min_length=config["quality-criteria"]["ont"]["min-length-reads"],
-        # for_testing=lambda w, threads: get_if_testing(
-        #     f"oeaConcurrency={threads} ovsConcurrency={threads} ovbConcurrency={threads} utgmmapThreads={threads} utgmmapConcurrency={threads} obtmmapThreads={threads} obtmmapConcurrency={threads} cormmapThreads={threads} cormmapConcurrency={threads} cormhapConcurrency={threads} cormhapThreads={threads} corConcurrency={threads} corThreads={threads} redConcurrency={threads} redThreads={threads} redMemory=6 oeaMemory=6"
-        # ),
+        for_testing=lambda w, threads: get_if_testing(
+            f"corThreads={threads} redMemory=6 oeaMemory=6"
+        ),
+        # redThreads={threads}
     conda:
         "../envs/canu.yaml"
     threads: 16
@@ -128,7 +125,7 @@ rule canu_correct:
         """
         ( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&
         canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200 \
-        useGrid=false \
+        useGrid=false {params.for_testing} \
         corMMapMerSize=10 corOutCoverage=50000 corMinCoverage=0 maxInputCoverage=20000 \
         corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap \
         corConcurrency={params.concurrency} \
