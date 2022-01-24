@@ -31,8 +31,9 @@ rule count_fastq_reads:
     shell:
         "echo $(( $(cat {input} | wc -l ) / 4)) > {output} 2> {log}"
 
+
 # Intermediate number of threads (4-8) achieve best speedup of a+btrimming.
-# For large files 8 threads help accelerate some, small files are processed faster with 4 threads.  
+# For large files 8 threads help accelerate some, small files are processed faster with 4 threads.
 rule porechop_adapter_barcode_trimming:
     input:
         get_fastqs,
@@ -46,8 +47,9 @@ rule porechop_adapter_barcode_trimming:
     shell:
         "porechop -i {input} -o {output} -t {threads} -v 1 > {log} 2>&1"
 
+
 # Using a low number of threads (2-4) speed up primer-trimming significantly (>2x), even for large files,
-# presumably due to the much higher number of target-sequences for trimming as compared 
+# presumably due to the much higher number of target-sequences for trimming as compared
 # to barcode+adapter-trimming. However, using only one thread is again very slow.
 rule customize_primer_porechop:
     input:
@@ -109,9 +111,8 @@ rule canu_correct:
         "logs/{date}/canu/assemble/{sample}.log",
     params:
         outdir=get_output_dir,
-        concurrency = lambda w, threads: int(threads/ 4) ,
+        concurrency=lambda w, threads: int(threads / 4),
         min_length=config["quality-criteria"]["ont"]["min-length-reads"],
-
         for_testing=lambda w, threads: get_if_testing(
             f"corThreads={threads} redThreads={threads} redMemory=6 oeaMemory=6"
         ),
