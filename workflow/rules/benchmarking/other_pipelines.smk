@@ -191,22 +191,22 @@ rule poreCov:
 
 
 # source: https://github.com/connor-lab/ncov2019-artic-nf
-rule ncov2019_artic_nf_illumina_data_prep:
-    input:
-        get_fastqs,
-    output:
-        d=directory("data/ref-data/{sample}"),
-        fq1=temp("data/ref-data/{sample}/{sample}_R1.fastq"),
-        fq2=temp("data/ref-data/{sample}/{sample}_R2.fastq"),
-    log:
-        "logs/ncov2019_artic_nf_illumina_data_prep/{sample}.log",
-    conda:
-        "../../envs/unix.yaml"
-    shell:
-        "(mkdir -p {output.d} &&"
-        " gzip -d {input[0]} -c > {output.fq1} &&"
-        " gzip -d {input[1]} -c > {output.fq2})"
-        " 2> {log}"
+# rule ncov2019_artic_nf_illumina_data_prep:
+#     input:
+#         get_fastqs,
+#     output:
+#         d=directory("data/ref-data/{sample}"),
+#         fq1=temp("data/ref-data/{sample}/{sample}_R1.fastq"),
+#         fq2=temp("data/ref-data/{sample}/{sample}_R2.fastq"),
+#     log:
+#         "logs/ncov2019_artic_nf_illumina_data_prep/{sample}.log",
+#     conda:
+#         "../../envs/unix.yaml"
+#     shell:
+#         "(mkdir -p {output.d} &&"
+#         " gzip -d {input[0]} -c > {output.fq1} &&"
+#         " gzip -d {input[1]} -c > {output.fq2})"
+#         " 2> {log}"
 
 
 # TODO need seq summary
@@ -322,27 +322,41 @@ rule CovPipe:
         "-o {output}"
 
 
+# TODO Need s3 bucket
 # source: https://github.com/niemasd/ViReflow
-rule ViReflow:
-    input:
-        fq=get_fastqs,
-        script="resources/benchmarking/ViReflow/ViReflow.py",
-        reference="resources/genomes/main.fasta",
-        gff="resources/annotation.gff.gz",
-        bed="resources/primers.bed",
-    output:
-        directory("results/benchmarking/ViReflow/{sample}"),
-    log:
-        "logs/ViReflow/{sample}.log",
-    threads: 8
-    conda:
-        "../../envs/python.yaml"
-    shell:
-        "./{input.script} --destination {output} --reference_fasta {input.reference} "
-        "--reference_gff {input.gff} --primer_bed {input.bed} --output {output} "
-        "--threads {threads} --optional_pangolin true  {input.fq[0]}"
-
-
+# rule ViReflow:
+#     input:
+#         fq=get_fastqs,
+#         script="resources/benchmarking/ViReflow/ViReflow.py",
+#         reference="resources/genomes/main.fasta",
+#         gff="resources/annotation.gff.gz",
+#         bed="resources/primers.bed",
+#     output:
+#         directory("results/benchmarking/ViReflow/{sample}"),
+#     log:
+#         "logs/ViReflow/{sample}.log",
+#     threads: 8
+#     conda:
+#         "../../envs/python.yaml"
+#     shell:
+#         "./{input.script} --destination {output} --reference_fasta {input.reference} "
+#         "--reference_gff {input.gff} --primer_bed {input.bed} --output {output} "
+#         "--threads {threads} --optional_pangolin true  {input.fq[0]}"
+# C-View is not installable or runable.
+# -> Needs sudo
+# -> paths to softwaredir and anaconda dir sometimes hardcoded
+# -> Was not able to start
+# rule C_VIEW_install:
+#     input:
+#         "resources/benchmarking/C-VIEW/install.sh",
+#     output:
+#         directory("resources/benchmarking/C-VIEW/softwaredir"),
+#     log:
+#         "logs/C_VIEW_install.log"
+#     conda:
+#         "../../envs/c-view.yaml"
+#     shell:
+#         "./{input} {output} $(which anaconda | sed 's/\/bin.*//g')"
 # What to compare when benchmarking UnCoVar to other pipelines?
 # -> de novo sequences, consensus sequences, variants calls, lineage (pangolin) calls of uncovar vs other pipeline.
 # How to compare de novo / consensus sequences?
