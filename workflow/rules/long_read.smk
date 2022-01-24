@@ -111,16 +111,16 @@ rule canu_correct:
         "logs/{date}/canu/assemble/{sample}.log",
     params:
         outdir=get_output_dir,
-        concurrency=lambda w, threads: int(threads / 4),
+        # concurrency=lambda w, threads: int(threads / 4),
         # The below solution for concurrency parameter would be safer imo.
         # However, to stay in line with the previous strategy and avoid potential problems
         # with memory, which are not adressed by the get_canu_concurrency func, I extended "for_testing".
         # Unfortunately pre-commit insists on having it all in one line.
-        # concurrency=lambda w, threads: get_canu_concurrency(threads),
+        concurrency=lambda w, threads: get_canu_concurrency(threads),
         min_length=config["quality-criteria"]["ont"]["min-length-reads"],
-        for_testing=lambda w, threads: get_if_testing(
-            f"oeaConcurrency={threads} ovsConcurrency={threads} ovbConcurrency={threads} utgmmapThreads={threads} utgmmapConcurrency={threads} obtmmapThreads={threads} obtmmapConcurrency={threads} cormmapThreads={threads} cormmapConcurrency={threads} cormhapConcurrency={threads} cormhapThreads={threads} corConcurrency={threads} corThreads={threads} redConcurrency={threads} redThreads={threads} redMemory=6 oeaMemory=6"
-        ),
+        # for_testing=lambda w, threads: get_if_testing(
+        #     f"oeaConcurrency={threads} ovsConcurrency={threads} ovbConcurrency={threads} utgmmapThreads={threads} utgmmapConcurrency={threads} obtmmapThreads={threads} obtmmapConcurrency={threads} cormmapThreads={threads} cormmapConcurrency={threads} cormhapConcurrency={threads} cormhapThreads={threads} corConcurrency={threads} corThreads={threads} redConcurrency={threads} redThreads={threads} redMemory=6 oeaMemory=6"
+        # ),
     conda:
         "../envs/canu.yaml"
     threads: 16
