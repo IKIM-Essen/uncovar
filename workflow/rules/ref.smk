@@ -48,6 +48,19 @@ rule get_genome_annotation:
         "zcat | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > {output}) 2> {log}"
 
 
+rule get_genome_annotation_for_known_variants:
+    output:
+        "resources/annotation_known_variants.gff.gz",
+    log:
+        "logs/get-annotation_known_variants.log",
+    conda:
+        "../envs/tabix.yaml"
+    shell:
+        # download, sort and bgzip gff (see https://www.ensembl.org/info/docs/tools/vep/script/vep_custom.html)
+        "(curl -sSL https://raw.githubusercontent.com/thomasbtf/nextclade/master/data/sars-cov-2/genemap.gff | "
+        "cat | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -t$'\t'  | bgzip -c > {output}) 2> {log}"
+
+
 rule get_problematic_sites:
     output:
         temp("resources/problematic-sites.vcf.gz"),  # always retrieve the latest VCF
