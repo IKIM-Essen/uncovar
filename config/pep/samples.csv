@@ -1,4 +1,5 @@
-sample_name,fq1,fq2,date,is_amplicon_data,technology,include_in_high_genome_summary
-SAMPLE_NAME_1,PATH/TO/fq1,PATH/TO/fq2,SEQUENCING_DATE,0,illumina,1 # Required information for a sample sequencing on the Illumina platform
-SAMPLE_NAME_2,PATH/TO/fq,,SEQUENCING_DATE,1,ont,0 # Required information for a sample sequencing on the Oxford Nanopore platform
-SAMPLE_NAME_3,PATH/TO/fq,,SEQUENCING_DATE,1,ion,0 # Required information for a sample sequencing on the Ion Torrent platform
+sample_name,fq1,fq2,date,is_amplicon_data,technology,fastq_pass,fast5_pass
+28998_ont,data/ref-data/28998_ont.fastq.gz,,2022-01-19,1,ont,data/fastq_pass/barcode01,data/fast5_pass/barcode01
+28998_illumina,data/ref-data/28998_R1_illumina.fastq.gz,data/ref-data/28998_R2_illumina.fastq.gz,2022-01-19,1,illumina,
+124256_ont,data/ref-data/124256_ont.fastq.gz,,2022-01-19,1,ont,data/fastq_pass/barcode23,
+124256_illumina,data/ref-data/124256_R1_illumina.fastq.gz,data/ref-data/124256_R2_illumina.fastq.gz,2022-01-19,1,illumina,

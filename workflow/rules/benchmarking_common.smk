@@ -107,5 +107,18 @@ def get_test_cases(wildcards):
         return f.read().splitlines()
 
 
-def get_barcode_path(wildcards):
-    return pep.sample_table.loc[wildcards.sample]["barcode"]
+def get_fastq_pass_path(wildcards):
+    return pep.sample_table.loc[wildcards.sample]["fastq_pass"]
+
+
+def get_fast5_pass_path(wildcards):
+    return pep.sample_table.loc[wildcards.sample]["fasta_pass"]
+
+
+def get_fastq_input_folder(tech):
+    dir_names = pep.sample_table.loc[
+        pep.sample_table["technology"] == tech, "fq1"
+    ].apply(lambda x: os.path.dirname(x))
+    dir_names = dir_names.unique()
+    assert len(dir_names) == 1, "Can not process files in different dirs."
+    return dir_names

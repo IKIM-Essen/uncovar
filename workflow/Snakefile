@@ -50,6 +50,7 @@ include: "rules/benchmarking.smk"
 include: "rules/preprocessing.smk"
 include: "rules/long_read.smk"
 include: "rules/benchmarking/other_pipelines.smk"
+include: "rules/benchmarking/ref.smk"
 
 
 rule save_latest_run:
