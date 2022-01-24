@@ -48,9 +48,6 @@ rule porechop_adapter_barcode_trimming:
         "porechop -i {input} -o {output} -t {threads} -v 1 > {log} 2>&1"
 
 
-# Using a low number of threads (2-4) speed up primer-trimming significantly (>2x), even for large files,
-# presumably due to the much higher number of target-sequences for trimming as compared
-# to barcode+adapter-trimming. However, using only one thread is again very slow.
 rule customize_primer_porechop:
     input:
         get_artic_primer,
@@ -66,6 +63,9 @@ rule customize_primer_porechop:
         "2> {log}"
 
 
+# Using a low number of threads (2-4) speed up primer-trimming significantly (>2x), even for large files,
+# presumably due to the much higher number of target-sequences for trimming as compared
+# to barcode+adapter-trimming. However, using only one thread is again very slow.
 rule porechop_primer_trimming:
     input:
         fastq_in=(
