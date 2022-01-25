@@ -1048,8 +1048,7 @@ def get_output_dir(wildcards, output):
 
 def get_canu_concurrency(threads):
     if threads > 3:
-        lambda w, threads: int(threads / 4)
-        return threads
+        return int(threads / 4)
     else:
         return threads
 

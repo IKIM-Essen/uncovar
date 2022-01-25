@@ -111,13 +111,11 @@ rule canu_correct:
         "logs/{date}/canu/assemble/{sample}.log",
     params:
         outdir=get_output_dir,
-        # concurrency=lambda w, threads: int(threads / 4),
         concurrency=lambda w, threads: get_canu_concurrency(threads),
         min_length=config["quality-criteria"]["ont"]["min-length-reads"],
         for_testing=lambda w, threads: get_if_testing(
             f"corThreads={threads} redMemory=6 oeaMemory=6"
         ),
-        # redThreads={threads}
     conda:
         "../envs/canu.yaml"
     threads: 16
