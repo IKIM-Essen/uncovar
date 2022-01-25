@@ -134,3 +134,26 @@ def get_fastq_input_folder(tech):
 
 def get_seq_summary(wildcards):
     return pep.sample_table.loc[wildcards.sample]["seq_summary"]
+
+
+def get_barcode_for_viralrecon_nanopore_sample(wildcards):
+    barcode = os.path.basename(os.path.normpath(get_fastq_pass_path_barcode(wildcards)))
+    barcode = barcode.replace("barcode0", "")
+    barcode = barcode.replace("barcode", "")
+    return f"sample,barcode\n{wildcards.sample},{barcode}"
+
+
+def get_barcode_for_viralrecon_illumina_sample(wildcards):
+    fq1, fq2 = get_fastqs(wildcards)
+    return f"sample,fastq_1,fastq_2\n{wildcards.sample},{fq1},{fq2}"
+
+
+def get_fastq_or_fast5(wildcards):
+    if wildcards.folder == "fastq_pass":
+        return get_fastq_pass_path_barcode(wildcards)
+    if wildcards.folder == "fast5_pass":
+        return get_fast5_pass_path_barcode(wildcards)
+
+
+def get_barcode(wildcards):
+    return os.path.basename(os.path.normpath(get_fastq_pass_path_barcode(wildcards)))

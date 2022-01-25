@@ -14,14 +14,14 @@ rule artic_guppyplex:
         " > {log} 2>&1"
 
 
-rule artic_minion:
+rule artic_minion_medaka:
     input:
         fast5=lambda wildcards: get_fast5_pass_path_barcode(wildcards),
         fasta="results/benchmarking/artic/guppyplex/{sample}.fasta",
         repo="resources/benchmarking/artic/repo",
     output:
-        vcf="results/benchmarking/artic/minion/{sample}/{sample}.merged.vcf",
-        consensus="results/benchmarking/artic/minion/{sample}/{sample}.consensus.fasta",
+        vcf="results/benchmarking/artic/minion/medaka/{sample}/{sample}.merged.vcf",
+        consensus="results/benchmarking/artic/minion/medaka/{sample}/{sample}.consensus.fasta",
     log:
         "logs/artic_minion/{sample}.log",
     threads: 16
@@ -38,6 +38,36 @@ rule artic_minion:
         " --normalise 200 --threads {threads}"
         " --scheme-directory {params.cwd}/{params.primer_schemes}"
         " --read-file {params.cwd}/{input.fasta}"
+        " nCoV-2019/V3 {wildcards.sample})"
+        " > {params.cwd}/{log} 2>&1"
+
+
+rule artic_minion_nanopolish:
+    input:
+        sequencing_summary=lambda wildcards: get_seq_summary(wildcards),
+        fast5=lambda wildcards: get_fast5_pass_path_barcode(wildcards),
+        fasta="results/benchmarking/artic/guppyplex/{sample}.fasta",
+        repo="resources/benchmarking/artic/repo",
+    output:
+        vcf="results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.merged.vcf",
+        consensus="results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.consensus.fasta",
+    log:
+        "logs/artic_minion/{sample}.log",
+    threads: 16
+    conda:
+        "../../envs/artic.yaml"
+    params:
+        primer_schemes=lambda w, input: os.path.join(input.repo, "primer_schemes"),
+        medaka_model=config["assembly"]["oxford nanopore"]["medaka_model"],
+        outdir=get_output_dir,
+        cwd=lambda w: os.getcwd(),
+    shell:
+        "(cd {params.outdir} &&"
+        " artic minion --normalise 200 --threads {threads}"
+        " --scheme-directory {params.cwd}/{params.primer_schemes}"
+        " --read-file {params.cwd}/{input.fasta}"
+        " --fast5-directory {params.cwd}/{input.fast5}"
+        " --sequencing-summary {params.cwd}/{input.sequencing_summary}"
         " nCoV-2019/V3 {wildcards.sample})"
         " > {params.cwd}/{log} 2>&1"
 
@@ -191,119 +221,178 @@ rule poreCov:
 
 
 # source: https://github.com/connor-lab/ncov2019-artic-nf
-# rule ncov2019_artic_nf_illumina_data_prep:
-#     input:
-#         get_fastqs,
-#     output:
-#         d=directory("data/ref-data/{sample}"),
-#         fq1=temp("data/ref-data/{sample}/{sample}_R1.fastq"),
-#         fq2=temp("data/ref-data/{sample}/{sample}_R2.fastq"),
-#     log:
-#         "logs/ncov2019_artic_nf_illumina_data_prep/{sample}.log",
-#     conda:
-#         "../../envs/unix.yaml"
-#     shell:
-#         "(mkdir -p {output.d} &&"
-#         " gzip -d {input[0]} -c > {output.fq1} &&"
-#         " gzip -d {input[1]} -c > {output.fq2})"
-#         " 2> {log}"
-
-
-# TODO need seq summary
-# rule ncov2019_artic_nf_illumina:
-#     input:
-#         directory="data/ref-data/{sample}",
-#         # any --<argname> pipeline file arguments can be given here as <argname>=<path>
-#     output:
-#         consensus="results/benchmarking/ncov2019_artic_nf/{sample}/{sample}.qc.csv",
-#     log:
-#         "logs/ncov2019_artic_nf/{sample}.log"
-#     threads: 8
-#     params:
-#         pipeline="connor-lab/ncov2019-artic-nf",
-#         profile=["conda"],
-#         flags="--illumina",
-#         outdir = lambda w: f"results/benchmarking/ncov2019_artic_nf/{w.sample}",
-#         prefix = lambda w: w.sample,
-#         # any --<argname> pipeline arguments can be given here as <argname>=<value>
-#     handover: True
-#     conda:
-#         "../../envs/nextflow.yaml"
-#     script:
-#         "../../scripts/benchmarking/nextflow.py"
-
-# TODO need seq summary
-# use rule ncov2019_artic_nf_illumina as bncov2019_artic_nf_ont with:
-#     input:
-#         basecalled_fastq=""
-#         fast5_pass=""
-#     output:
-#         consensus="results/benchmarking/ncov2019_artic_nf/nanopore/{sample}/{sample}.qc.csv",
-#     log:
-#         "logs/ncov2019_artic_nf/nanopore/{sample}.log"
-#     params:
-#         pipeline="connor-lab/ncov2019-artic-nf",
-#         profile=["conda"],
-#         flags="--illumina",
-#         outdir = lambda w: f"results/benchmarking/ncov2019_artic_nf/illumina/{w.sample}",
-#         prefix = lambda w: w.sample,
-
-
-# source: https://github.com/nf-core/viralrecon
-rule nf_core_viralrecon_sample_sheet:
+rule ncov2019_artic_nf_illumina_data_prep:
     input:
-        script="resources/benchmarking/nf-core-viralrecon/fastq_dir_to_samplesheet.py",
-        fastq_dir="data/fastq_pass",
+        get_fastqs,
     output:
-        "results/benchmarking/nf-core-viralrecon/nanopore/samplesheet.csv",
+        d=directory("resources/ref-data/{sample}"),
+        fq1=temp("resources/ref-data/{sample}/{sample}_R1.fastq"),
+        fq2=temp("resources/ref-data/{sample}/{sample}_R2.fastq"),
     log:
-        "logs/nf_core_viralrecon_sample_sheet.log",
+        "logs/ncov2019_artic_nf_illumina_data_prep/{sample}.log",
     conda:
-        "../../envs/python.yaml"
+        "../../envs/unix.yaml"
     shell:
-        "./{input.script} {input.fastq_dir} {output}"
+        "(mkdir -p {output.d} &&"
+        " gzip -d {input[0]} -c > {output.fq1} &&"
+        " gzip -d {input[1]} -c > {output.fq2})"
+        " 2> {log}"
 
 
-# TODO need seq summary
-# rule nf_core_viralrecon_illumina:
-#     input:
-#         input="results/benchmarking/nf-core-viralrecon/samplesheet.csv",
-#         # any --<argname> pipeline file arguments can be given here as <argname>=<path>
-#     output:
-#         consensus="results/benchmarking/nf-core-viralrecon/{sample}/{sample}.qc.csv",
-#     log:
-#         "logs/nf-core-viralrecon/{sample}.log"
-#     threads: 8
-#     params:
-#         pipeline="nf-core/viralrecon",
-#         profile=["docker"],
-#         platform="illumina",
-#         protocol="metagenomic",
-#         genome="'MN908947.3'",
-#         # any --<argname> pipeline arguments can be given here as <argname>=<value>
-#     handover: True
-#     conda:
-#         "../../envs/nextflow.yaml"
-#     script:
-#         "../../scripts/benchmarking/nextflow.py"
+# does not work --->
+# produces emtpy output
+rule ncov2019_artic_nf_illumina:
+    input:
+        directory="resources/ref-data/{sample}",
+        # any --<argname> pipeline file arguments can be given here as <argname>=<path>
+    output:
+        consensus="results/benchmarking/ncov2019_artic_nf/illumina/{sample}/{sample}.qc.csv",
+    log:
+        "logs/ncov2019_artic_nf/{sample}.log",
+    threads: 8
+    params:
+        pipeline="connor-lab/ncov2019-artic-nf",
+        revision="v1.3.0",
+        profile=["conda"],
+        flags="--illumina",
+        outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/illumina/{w.sample}",
+        prefix=lambda w: w.sample,
+        # any --<argname> pipeline arguments can be given here as <argname>=<value>
+    handover: True
+    conda:
+        "../../envs/nextflow.yaml"
+    script:
+        "../../scripts/benchmarking/nextflow.py"
+
+
+use rule ncov2019_artic_nf_illumina as bncov2019_artic_nf_nanopore_nanopolish with:
+    input:
+        basecalled_fastq=lambda wildcards: get_fastq_pass_path(wildcards),
+        fast5_pass=lambda wildcards: get_fast5_pass_path(wildcards),
+        sequencing_summary=lambda wildcards: get_seq_summary(wildcards),
+    output:
+        consensus="results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}/{sample}.qc.csv",
+    log:
+        "logs/ncov2019_artic_nf/nanopore/nanopolish/{sample}.log",
+    params:
+        pipeline="connor-lab/ncov2019-artic-nf",
+        revision="v1.3.0",
+        profile=["conda"],
+        flags="--nanopolish",
+        outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{w.sample}",
+        prefix=lambda w: w.sample,
+
+
+use rule ncov2019_artic_nf_illumina as bncov2019_artic_nf_nanopore_medaka with:
+    input:
+        basecalled_fastq=lambda wildcards: get_fastq_pass_path(wildcards),
+        fast5_pass=lambda wildcards: get_fast5_pass_path(wildcards),
+        sequencing_summary=lambda wildcards: get_seq_summary(wildcards),
+    output:
+        consensus="results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}/{sample}.qc.csv",
+    log:
+        "logs/ncov2019_artic_nf/nanopore/medaka/{sample}.log",
+    params:
+        pipeline="connor-lab/ncov2019-artic-nf",
+        revision="v1.3.0",
+        profile=["conda"],
+        flags="--medaka",
+        outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{w.sample}",
+        prefix=lambda w: w.sample,
+
+
+# <---
+
+
+# source: https://nf-co.re/viralrecon/2.2/usage#usage
+rule nf_core_viralrecon_illumina_sample_sheet:
+    output:
+        "results/benchmarking/nf-core-viralrecon/illumina/{sample}/sample_sheet.csv",
+    log:
+        "logs/nf_core_viralrecon_illumina_sample_sheet/{sample}.log",
+    conda:
+        "../../envs/unix.yaml"
+    params:
+        string=lambda w: get_barcode_for_viralrecon_illumina_sample(w),
+    shell:
+        "echo '{params.string}' > {output} 2> {log}"
+
+
+rule nf_core_viralrecon_illumina:
+    input:
+        input="results/benchmarking/nf-core-viralrecon/illumina/{sample}/sample_sheet.csv",
+        # any --<argname> pipeline file arguments can be given here as <argname>=<path>
+    output:
+        de_novo_assembly="results/benchmarking/nf-core-viralrecon/illumina/{sample}/assembly/spades/rnaviral/{sample}.contigs.fa",
+        pangolin="results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/pangolin/{sample}.pangolin.csv",
+        consensus="results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/consensus/{sample}.consensus.fa",
+        vcf="results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/{sample}.vcf.gz",
+    log:
+        "logs/nf-core-viralrecon/{sample}.log",
+    threads: 8
+    params:
+        pipeline="nf-core/viralrecon",
+        revision="2.2",
+        profile=["docker"],
+        platform="illumina",
+        protocol="metagenomic",
+        genome="'MN908947.3'",
+        outdir="results/benchmarking/nf-core-viralrecon/illumina/{sample}",
+        # any --<argname> pipeline arguments can be given here as <argname>=<value>
+    handover: True
+    conda:
+        "../../envs/nextflow.yaml"
+    script:
+        "../../scripts/benchmarking/nextflow.py"
+
+
+rule nf_core_viralrecon_nanopore_sample_sheet:
+    output:
+        "results/benchmarking/nf-core-viralrecon/nanopore/{sample}/sample_sheet.csv",
+    log:
+        "logs/nf_core_viralrecon_nanopore_sample_sheet/{sample}.log",
+    conda:
+        "../../envs/unix.yaml"
+    params:
+        string=lambda w: get_barcode_for_viralrecon_nanopore_sample(w),
+    shell:
+        "echo '{params.string}' > {output} 2> {log}"
+
+
+rule nf_core_viralrecon_nanopore_prepare_samples:
+    input:
+        get_fastq_or_fast5,
+    output:
+        directory("resources/benchmarking/data/nf-core-viralrecon/{sample}/{folder}"),
+    log:
+        "logs/nf_core_viralrecon_nanopore_prepare_samples/{sample}-{folder}.log",
+    conda:
+        "../../envs/unix.yaml"
+    params:
+        barcode=lambda w, output: os.path.join(output[0], get_barcode(w)),
+    shell:
+        "mkdir -p {params.barcode} && cp -r {input} {output}"
 
 
 rule nf_core_viralrecon_nanopore:
     input:
+        input="results/benchmarking/nf-core-viralrecon/nanopore/{sample}/sample_sheet.csv",
         sequencing_summary=lambda wildcards: get_seq_summary(wildcards),
-        fastq_dir=lambda wildcards: get_fastq_pass_path(wildcards),
-        fast5_dir=lambda wildcards: get_fast5_pass_path(wildcards),
+        fastq_dir="resources/benchmarking/data/nf-core-viralrecon/{sample}/fastq_pass",
+        fast5_dir="resources/benchmarking/data/nf-core-viralrecon/{sample}/fast5_pass",
         # any --<argname> pipeline file arguments can be given here as <argname>=<path>
     output:
-        "results/benchmarking/nf-core-viralrecon/nanopore/{sample}",
+        "results/benchmarking/nf-core-viralrecon/nanopore/{sample}/{sample}.csv",
     log:
         "logs/nf-core-nf_core_viralrecon_nanopore/{sample}.log",
     params:
         pipeline="nf-core/viralrecon",
+        revision="2.2",
         profile=["docker"],
         platform="nanopore",
         genome="'MN908947.3'",
         primer_set_version=3,
+        outdir="results/benchmarking/nf-core-viralrecon/nanopore/{sample}",
         # any --<argname> pipeline arguments can be given here as <argname>=<value>
     handover: True
     conda:
