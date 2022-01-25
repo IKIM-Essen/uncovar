@@ -1046,6 +1046,13 @@ def get_output_dir(wildcards, output):
     return os.path.dirname(output[0])
 
 
+def get_canu_concurrency(threads):
+    if threads > 3:
+        return int(threads / 4)
+    else:
+        return threads
+
+
 def expand_samples_by_func(paths, func, **kwargs):
     def inner(wildcards):
         return expand(
