@@ -3,6 +3,8 @@
 !.github/**
 !.tests
 !.tests/data
+!benchmarking
+!benchmarking/**
 !config
 !config/REAMDE.md
 !config/config.yaml

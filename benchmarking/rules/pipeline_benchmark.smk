@@ -1,10 +1,11 @@
-# include: "artic.smk"
-# include: "ncov2019_artic_nf.smk" # produces emtpy output
-# include: "nf_core_viralrecon.smk"
-# include: "porecov.smk"
-# include: "v_pipe.smk"
-# include: "covpipe.smk"
+include: "artic.smk"
+include: "ncov2019_artic_nf.smk"  # produces emtpy output
+include: "nf_core_viralrecon.smk"
+include: "porecov.smk"
+include: "v_pipe.smk"
+include: "covpipe.smk"
 include: "ref.smk"
+include: "common.smk"
 
 
 # TODO Need s3 bucket

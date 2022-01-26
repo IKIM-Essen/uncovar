@@ -9,7 +9,7 @@ rule ncov2019_artic_nf_illumina_data_prep:
     log:
         "logs/ncov2019_artic_nf_illumina_data_prep/{sample}.log",
     conda:
-        "../../envs/unix.yaml"
+        "../envs/unix.yaml"
     shell:
         "(mkdir -p {output.d} &&"
         " gzip -d {input[0]} -c > {output.fq1} &&"
@@ -34,9 +34,9 @@ rule ncov2019_artic_nf_illumina:
         prefix=lambda w: w.sample,
     handover: True
     conda:
-        "../../envs/nextflow.yaml"
+        "../envs/nextflow.yaml"
     script:
-        "../../scripts/benchmarking/nextflow.py"
+        "../scripts/nextflow.py"
 
 
 use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish with:

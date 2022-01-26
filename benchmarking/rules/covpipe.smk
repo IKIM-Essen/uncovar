@@ -6,7 +6,7 @@ rule CovPipe_prepare_samples:
     log:
         "logs/CovPipe_prepare_samples/{sample}.log",
     conda:
-        "../../envs/unix.yaml"
+        "../envs/unix.yaml"
     shell:
         "mkdir {output} && cp {input[0]} {output} && cp {input[1]} {output}"
 
@@ -17,7 +17,7 @@ rule CovPipe_prepare_adapter_file:
     log:
         "logs/CovPipe_prepare_adapter_file/{sample}.log",
     conda:
-        "../../envs/unix.yaml"
+        "../envs/unix.yaml"
     params:
         adapters=lambda w: get_adapters(w)
         .replace("--adapter_sequence ", ">adapter fwd\n")
@@ -41,7 +41,7 @@ rule CovPipe:
     log:
         "logs/CovPipe/{sample}-{covpipe_name}.log",
     conda:
-        "../../envs/covpipe.yaml"
+        "../envs/covpipe.yaml"
     params:
         out_dir="results/benchmarking/CovPipe/{sample}",
     shell:

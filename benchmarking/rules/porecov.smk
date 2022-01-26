@@ -7,7 +7,7 @@ rule poreCov_sample_sheet:
     log:
         "logs/poreCov_sample_sheet/{sample}.log",
     conda:
-        "../../envs/unix.yaml"
+        "../envs/unix.yaml"
     params:
         barcode=lambda w, input: os.path.basename(input[0]),
     shell:
@@ -36,6 +36,6 @@ rule poreCov:
         samples=lambda W, input: input.sample_names,
     handover: True
     conda:
-        "../../envs/nextflow.yaml"
+        "../envs/nextflow.yaml"
     script:
-        "../../scripts/benchmarking/nextflow.py"
+        "../scripts/nextflow.py"
