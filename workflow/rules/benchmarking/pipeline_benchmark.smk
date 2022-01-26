@@ -3,23 +3,8 @@
 # include: "nf_core_viralrecon.smk"
 # include: "porecov.smk"
 # include: "v_pipe.smk"
-
-
-# source: https://gitlab.com/RKIBioinformaticsPipelines/ncov_minipipe#3-usage
-rule CovPipe:
-    input:
-        input_dir=get_fastq_input_folder(ILLUMINA),
-        reference="resources/genomes/main.fasta",
-    output:
-        directory("results/benchmarking/CovPipe"),
-    log:
-        "logs/CovPipe.log",
-    conda:
-        "../../envs/covpipe.yaml"
-    shell:
-        "ncov_minipipe --reference {input.reference}"
-        "--input {input.input_dir} "
-        "-o {output}"
+# include: "covpipe.smk"
+include: "ref.smk"
 
 
 # TODO Need s3 bucket

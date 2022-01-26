@@ -3,7 +3,8 @@ channels:
   - conda-forge
   - default
 dependencies:
-  - python = 3.10
   - mamba = 0.19
+  - pangolin =3.1.17
+  - pip
   - pip:
       - covpipe==3.1.0
