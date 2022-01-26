@@ -32,8 +32,7 @@ rule count_fastq_reads:
         "echo $(( $(cat {input} | wc -l ) / 4)) > {output} 2> {log}"
 
 
-# Inte
-ediate number of threads (4-8) achieve best speedup of a+btrimming.
+# Intermediate number of threads (4-8) achieve best speedup of a+btrimming.
 # For large files 8 threads help accelerate some, small files are processed faster with 4 threads.
 rule porechop_adapter_barcode_trimming:
     input:
