@@ -3,14 +3,15 @@ rule artic_guppyplex:
     input:
         get_fastq_pass_path_barcode,
     output:
-        "results/benchmarking/artic/guppyplex/{sample}.fasta",
+        outdir=temp(directory("results/benchmarking/artic/guppyplex/{sample}/")),
+        fasta=temp("results/benchmarking/artic/guppyplex/{sample}/{sample}.fasta"),
     log:
         "logs/artic_guppyplex/{sample}.log",
     conda:
         "../envs/artic.yaml"
     shell:
         "artic guppyplex --min-length 400 --max-length 700"
-        " --directory {input} --output {output}"
+        " --directory {input} --output {output.fasta}"
         " > {log} 2>&1"
 
 
@@ -18,11 +19,17 @@ rule artic_minion_nanopolish:
     input:
         sequencing_summary=lambda wildcards: get_seq_summary(wildcards),
         fast5=lambda wildcards: get_fast5_pass_path_barcode(wildcards),
-        fasta="results/benchmarking/artic/guppyplex/{sample}.fasta",
+        fasta="results/benchmarking/artic/guppyplex/{sample}/{sample}.fasta",
         repo="resources/benchmarking/artic/repo",
+        guppy_dir="results/benchmarking/artic/guppyplex/{sample}/",
     output:
-        vcf="results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.merged.vcf",
-        consensus="results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.consensus.fasta",
+        outdir=temp(directory("results/benchmarking/artic/minion/nanopolish/{sample}/")),
+        vcf=temp(
+            "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.merged.vcf"
+        ),
+        consensus=temp(
+            "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.consensus.fasta"
+        ),
     log:
         "logs/artic_minion/nanopolish/{sample}.log",
     threads: 16
@@ -30,11 +37,9 @@ rule artic_minion_nanopolish:
         "../envs/artic.yaml"
     params:
         primer_schemes=lambda w, input: os.path.join(input.repo, "primer_schemes"),
-        medaka_model=config["assembly"]["oxford nanopore"]["medaka_model"],
-        outdir=get_output_dir,
         cwd=lambda w: os.getcwd(),
     shell:
-        "(cd {params.outdir} &&"
+        "(cd {output.outdir} &&"
         " artic minion --normalise 200 --threads {threads}"
         " --scheme-directory {params.cwd}/{params.primer_schemes}"
         " --read-file {params.cwd}/{input.fasta}"
@@ -47,11 +52,17 @@ rule artic_minion_nanopolish:
 rule artic_minion_medaka:
     input:
         fast5=lambda wildcards: get_fast5_pass_path_barcode(wildcards),
-        fasta="results/benchmarking/artic/guppyplex/{sample}.fasta",
+        fasta="results/benchmarking/artic/guppyplex/{sample}/{sample}.fasta",
         repo="resources/benchmarking/artic/repo",
+        guppy_dir="results/benchmarking/artic/guppyplex/{sample}/",
     output:
-        vcf="results/benchmarking/artic/minion/medaka/{sample}/{sample}.merged.vcf",
-        consensus="results/benchmarking/artic/minion/medaka/{sample}/{sample}.consensus.fasta",
+        outdir=temp(directory("results/benchmarking/artic/minion/medaka/{sample}/")),
+        vcf=temp(
+            "results/benchmarking/artic/minion/medaka/{sample}/{sample}.merged.vcf"
+        ),
+        consensus=temp(
+            "results/benchmarking/artic/minion/medaka/{sample}/{sample}.consensus.fasta"
+        ),
     log:
         "logs/artic_minion/medaka/{sample}.log",
     threads: 16
@@ -60,10 +71,9 @@ rule artic_minion_medaka:
     params:
         primer_schemes=lambda w, input: os.path.join(input.repo, "primer_schemes"),
         medaka_model=config["assembly"]["oxford nanopore"]["medaka_model"],
-        outdir=get_output_dir,
         cwd=lambda w: os.getcwd(),
     shell:
-        "(cd {params.outdir} &&"
+        "(cd {output.outdir} &&"
         " artic minion --medaka --medaka-model {params.medaka_model}"
         " --normalise 200 --threads {threads}"
         " --scheme-directory {params.cwd}/{params.primer_schemes}"

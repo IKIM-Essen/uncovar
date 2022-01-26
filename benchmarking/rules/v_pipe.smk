@@ -3,7 +3,7 @@ rule v_pipe_work_dir:
     input:
         "resources/benchmarking/v-pipe/repo",
     output:
-        touch("results/benchmarking/v-pipe/{sample}/.work-dir-created"),
+        temp(touch("results/benchmarking/v-pipe/{sample}/.work-dir-created")),
     log:
         "logs/v_pipe_work_dir/{sample}.log",
     conda:
@@ -24,9 +24,11 @@ rule v_pipe_setup_samples:
         workdir="results/benchmarking/v-pipe/{sample}/.work-dir-created",
         fastqs=get_fastqs,
     output:
-        expand(
-            "results/benchmarking/v-pipe/{{sample}}/work/samples/{{sample}}/20200102/raw_data/{{sample}}_R{read}.fastq",
-            read=[1, 2],
+        temp(
+            expand(
+                "results/benchmarking/v-pipe/{{sample}}/work/samples/{{sample}}/20200102/raw_data/{{sample}}_R{read}.fastq",
+                read=[1, 2],
+            )
         ),
     log:
         "logs/v_pipe_setup_samples/{sample}.log",
@@ -55,7 +57,7 @@ rule v_pipe_dry_run:
             read=[1, 2],
         ),
     output:
-        "results/benchmarking/v-pipe/{sample}/work/samples.tsv",
+        temp("results/benchmarking/v-pipe/{sample}/work/samples.tsv"),
     log:
         "logs/v_pipe_dry_run/{sample}.log",
     conda:
@@ -72,7 +74,7 @@ rule v_pipe_update_sample_sheet:
     input:
         "results/benchmarking/v-pipe/{sample}/work/samples.tsv",
     output:
-        touch("results/benchmarking/v-pipe/{sample}/.edited-sample"),
+        temp(touch("results/benchmarking/v-pipe/{sample}/.edited-sample")),
     log:
         "logs/v_pipe_update_sample_sheet/{sample}.log",
     conda:
@@ -85,8 +87,13 @@ rule v_pipe_run:
     input:
         "results/benchmarking/v-pipe/{sample}/.edited-sample",
     output:
-        vcf="results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
-        consensus="results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/references/ref_majority.fasta",
+        outdir=temp(directory("results/benchmarking/v-pipe/{sample}/")),
+        vcf=temp(
+            "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf"
+        ),
+        consensus=temp(
+            "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/references/ref_majority.fasta"
+        ),
     log:
         "logs/v_pipe_run/{sample}.log",
     conda:

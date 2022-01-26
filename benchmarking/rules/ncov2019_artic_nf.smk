@@ -3,9 +3,13 @@ rule ncov2019_artic_nf_illumina_data_prep:
     input:
         get_fastqs,
     output:
-        d=directory("resources/data/ncov2019-artic-nf/illumina/{sample}"),
-        fq1="resources/data/ncov2019-artic-nf/illumina/{sample}/{sample}_R1.fastq.gz",
-        fq2="resources/data/ncov2019-artic-nf/illumina/{sample}/{sample}_R2.fastq.gz",
+        d=temp(directory("resources/data/ncov2019-artic-nf/illumina/{sample}")),
+        fq1=temp(
+            "resources/data/ncov2019-artic-nf/illumina/{sample}/{sample}_R1.fastq.gz"
+        ),
+        fq2=temp(
+            "resources/data/ncov2019-artic-nf/illumina/{sample}/{sample}_R2.fastq.gz"
+        ),
     log:
         "logs/ncov2019_artic_nf_illumina_data_prep/{sample}.log",
     conda:
@@ -21,6 +25,9 @@ rule ncov2019_artic_nf_illumina:
     input:
         directory="resources/data/ncov2019-artic-nf/illumina/{sample}/",
     output:
+        outdir=temp(
+            directory("results/benchmarking/ncov2019_artic_nf/illumina/{sample}/")
+        ),
         consensus="results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_makeConsensus/{sample}.primertrimmed.consensus.fa",
         vcf="results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.tsv",
     log:
@@ -44,8 +51,10 @@ rule ncov2019_artic_nf_nanopore_data_prep:
     input:
         get_fastq_or_fast5,
     output:
-        directory(
-            "resources/benchmarking/data/ncov2019_artic_nf/nanopore/{sample}/{folder}/"
+        temp(
+            directory(
+                "resources/benchmarking/data/ncov2019_artic_nf/nanopore/{sample}/{folder}/"
+            )
         ),
     log:
         "logs/ncov2019_artic_nf_nanopore_data_prep/{sample}-{folder}.log",
@@ -63,8 +72,17 @@ use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish wit
         fast5_pass="resources/benchmarking/data/ncov2019_artic_nf/nanopore/{sample}/fast5_pass/",
         sequencing_summary=lambda wildcards: get_seq_summary(wildcards),
     output:
-        consensus="results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{sample}_{barcode}.consensus.fasta",
-        vcf="results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{sample}_{barcode}.merged.vcf",
+        outdir=temp(
+            directory(
+                "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}/"
+            )
+        ),
+        consensus=temp(
+            "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{sample}_{barcode}.consensus.fasta"
+        ),
+        vcf=temp(
+            "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{sample}_{barcode}.merged.vcf"
+        ),
     log:
         "logs/ncov2019_artic_nf/nanopore/nanopolish/{sample}-{barcode}.log",
     params:
@@ -79,8 +97,17 @@ use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish wit
 
 use rule ncov2019_artic_nf_nanopore_nanopolish as bncov2019_artic_nf_nanopore_medaka with:
     output:
-        consensus="results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.consensus.fasta",
-        vcf="results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.consensus.fasta",
+        outdir=temp(
+            directory(
+                "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}/"
+            )
+        ),
+        consensus=temp(
+            "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.consensus.fasta"
+        ),
+        vcf=temp(
+            "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.consensus.fasta"
+        ),
     log:
         "logs/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}.log",
     params:

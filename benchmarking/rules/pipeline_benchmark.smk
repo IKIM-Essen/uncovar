@@ -1,15 +1,29 @@
 include: "common.smk"
 include: "ref.smk"
 include: "artic.smk"
-include: "ncov2019_artic_nf.smk"
-include: "nf_core_viralrecon.smk"
-include: "porecov.smk"
-include: "v_pipe.smk"
-include: "covpipe.smk"
 
 
-# TODO Need s3 bucket
+# include: "ncov2019_artic_nf.smk"
+# include: "nf_core_viralrecon.smk"
+# include: "porecov.smk"
+# include: "v_pipe.smk"
+# include: "covpipe.smk"
+
+
+rule agg_vcf:
+    input:
+        lambda w: expand(
+            [
+                "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.merged.vcf",
+                "results/benchmarking/artic/minion/medaka/{sample}/{sample}.merged.vcf",
+            ],
+            sample=get_nanopore_samples(w),
+        ),
+
+
 # source: https://github.com/niemasd/ViReflow
+# ViReflow is not runable
+# -> needs s3 bucket
 # rule ViReflow:
 #     input:
 #         fq=get_fastqs,

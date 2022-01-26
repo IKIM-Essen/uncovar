@@ -2,25 +2,25 @@ def get_fastq_pass_path_barcode(wildcards):
     return pep.sample_table.loc[wildcards.sample]["fastq_pass"]
 
 
-def get_fastq_pass_path(wildcards):
-    return os.path.dirname(get_fastq_pass_path_barcode(wildcards))
+# def get_fastq_pass_path(wildcards):
+#     return os.path.dirname(get_fastq_pass_path_barcode(wildcards))
 
 
 def get_fast5_pass_path_barcode(wildcards):
     return pep.sample_table.loc[wildcards.sample]["fast5_pass"]
 
 
-def get_fast5_pass_path(wildcards):
-    return os.path.dirname(get_fast5_pass_path_barcode(wildcards))
+# def get_fast5_pass_path(wildcards):
+#     return os.path.dirname(get_fast5_pass_path_barcode(wildcards))
 
 
-def get_fastq_input_folder(tech):
-    dir_names = pep.sample_table.loc[
-        pep.sample_table["technology"] == tech, "fq1"
-    ].apply(lambda x: os.path.dirname(x))
-    dir_names = dir_names.unique()
-    assert len(dir_names) == 1, "Can not process files in different dirs."
-    return dir_names
+# def get_fastq_input_folder(tech):
+#     dir_names = pep.sample_table.loc[
+#         pep.sample_table["technology"] == tech, "fq1"
+#     ].apply(lambda x: os.path.dirname(x))
+#     dir_names = dir_names.unique()
+#     assert len(dir_names) == 1, "Can not process files in different dirs."
+#     return dir_names
 
 
 def get_seq_summary(wildcards):
@@ -48,3 +48,9 @@ def get_fastq_or_fast5(wildcards):
 
 def get_barcode(wildcards):
     return os.path.basename(os.path.normpath(get_fastq_pass_path_barcode(wildcards)))
+
+
+def get_nanopore_samples(wildcards):
+    return pep.sample_table.loc[
+        pep.sample_table["technology"] == "ont", "sample_name"
+    ].values

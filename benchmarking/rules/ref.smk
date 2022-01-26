@@ -4,7 +4,7 @@ rule download_artic_primer_schemes:
     log:
         "logs/download_artic_primer_schemes.log",
     conda:
-        "../../envs/git.yaml"
+        "../envs/git.yaml"
     shell:
         "git clone https://github.com/artic-network/artic-ncov2019.git {output} 2> {log}"
 
@@ -15,7 +15,7 @@ rule download_v_pipe:
     log:
         "logs/download_v_pipe.log",
     conda:
-        "../../envs/git.yaml"
+        "../envs/git.yaml"
     shell:
         "git clone --depth 1 --branch sars-cov2 https://github.com/cbg-ethz/V-pipe.git {output} 2> {log}"
 
@@ -26,7 +26,7 @@ rule download_viralrecon_script:
     log:
         "logs/download_viralrecon_script.log",
     conda:
-        "../../envs/unix.yaml"
+        "../envs/unix.yaml"
     shell:
         "(wget -L https://raw.githubusercontent.com/nf-core/viralrecon/master/bin/fastq_dir_to_samplesheet.py -O {output} &&"
         " chmod 755 {output})"
@@ -39,7 +39,7 @@ rule download_ViReflow:
     log:
         "logs/download_ViReflow.log",
     conda:
-        "../../envs/unix.yaml"
+        "../envs/unix.yaml"
     shell:
         "(wget 'https://raw.githubusercontent.com/niemasd/ViReflow/master/ViReflow.py' -O {output} &&"
         " chmod 755 {output})"
@@ -52,7 +52,7 @@ rule download_C_VIEW:
     log:
         "logs/download_C_VIEW.log",
     conda:
-        "../../envs/unix.yaml"
+        "../envs/unix.yaml"
     shell:
         "(wget 'https://raw.githubusercontent.com/ucsd-ccbb/C-VIEW/main/install.sh' -O {output} &&"
         " chmod 755 {output})"

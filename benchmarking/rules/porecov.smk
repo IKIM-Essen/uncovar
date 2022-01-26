@@ -3,7 +3,7 @@ rule poreCov_sample_sheet:
     input:
         get_fastq_pass_path_barcode,
     output:
-        "results/benchmarking/poreCov/{sample}/sample_names.csv",
+        temp("results/benchmarking/poreCov/{sample}/sample_names.csv"),
     log:
         "logs/poreCov_sample_sheet/{sample}.log",
     conda:
@@ -21,8 +21,13 @@ rule poreCov:
         fastq_pass=get_fastq_pass_path_barcode,
         sample_names="results/benchmarking/poreCov/{sample}/sample_names.csv",
     output:
-        consensus="results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta",
-        lineage_call="results/benchmarking/poreCov/28998_ont/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
+        outdir=temp(directory("results/benchmarking/poreCov/{sample}/")),
+        consensus=temp(
+            "results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta"
+        ),
+        lineage_call=temp(
+            "results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv"
+        ),
     log:
         "logs/poreCov/{sample}.log",
     threads: 8
