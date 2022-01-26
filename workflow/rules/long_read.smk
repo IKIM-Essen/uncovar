@@ -32,7 +32,8 @@ rule count_fastq_reads:
         "echo $(( $(cat {input} | wc -l ) / 4)) > {output} 2> {log}"
 
 
-# Intermediate number of threads (4-8) achieve best speedup of a+btrimming.
+# Inte
+ediate number of threads (4-8) achieve best speedup of a+btrimming.
 # For large files 8 threads help accelerate some, small files are processed faster with 4 threads.
 rule porechop_adapter_barcode_trimming:
     input:
@@ -80,10 +81,7 @@ rule porechop_primer_trimming:
         "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
     threads: 2
     shell:
-        """
-        (porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) 2> {log}
-        rm results/.indicators/replacement_notice.txt
-        """
+        "(porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) 2> {log}"
 
 
 rule nanofilt:
