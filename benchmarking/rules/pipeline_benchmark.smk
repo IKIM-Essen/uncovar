@@ -1,7 +1,7 @@
 include: "common.smk"
 include: "ref.smk"
 include: "artic.smk"
-include: "ncov2019_artic_nf.smk"  # produces emtpy output
+include: "ncov2019_artic_nf.smk"
 include: "nf_core_viralrecon.smk"
 include: "porecov.smk"
 include: "v_pipe.smk"
