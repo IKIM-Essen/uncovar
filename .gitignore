@@ -4,7 +4,10 @@
 !.tests
 !.tests/data
 !benchmarking
-!benchmarking/**
+!benchmarking/*
+!benchmarking/envs/*
+!benchmarking/rules/*
+!benchmarking/scripts/*
 !config
 !config/REAMDE.md
 !config/config.yaml
