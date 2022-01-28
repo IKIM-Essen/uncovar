@@ -1589,8 +1589,9 @@ def get_input_by_mode(wildcard):
 def check_bed_for_URL(bed_file):
     if "https" in bed_file:
         filename = bed_file.split("/")[-1]
-        urllib.request.urlretrieve(bed_file, "resources/" + filename)
-        return "resources/" + filename
+        filepath = "resources/{}".format(filename)
+        urllib.request.urlretrieve(bed_file, filepath)
+        return filepath
     else:
         return bed_file
 
