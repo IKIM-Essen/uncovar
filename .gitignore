@@ -16,6 +16,7 @@
 !publication/*
 !resources/
 !resources/custom-stylesheet.css
+!resources/lineage-variant-table-formatter.js
 !workflow
 !workflow/*
 !workflow/envs/*

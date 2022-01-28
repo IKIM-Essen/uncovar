@@ -32,6 +32,8 @@ rule count_fastq_reads:
         "echo $(( $(cat {input} | wc -l ) / 4)) > {output} 2> {log}"
 
 
+# Intermediate number of threads (4-8) achieve best speedup of a+btrimming.
+# For large files 8 threads help accelerate some, small files are processed faster with 4 threads.
 rule porechop_adapter_barcode_trimming:
     input:
         get_fastqs,
@@ -41,9 +43,9 @@ rule porechop_adapter_barcode_trimming:
         "../envs/porechop.yaml"
     log:
         "logs/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.log",
-    threads: 5
+    threads: 8
     shell:
-        "porechop -i {input} -o {output} --threads {threads} -v 1 > {log} 2>&1"
+        "porechop -i {input} -o {output} -t {threads} -v 1 > {log} 2>&1"
 
 
 rule customize_primer_porechop:
@@ -61,6 +63,9 @@ rule customize_primer_porechop:
         "2> {log}"
 
 
+# Using a low number of threads (2-4) speed up primer-trimming significantly (>2x), even for large files,
+# presumably due to the much higher number of target-sequences for trimming as compared
+# to barcode+adapter-trimming. However, using only one thread is again very slow.
 rule porechop_primer_trimming:
     input:
         fastq_in=(
@@ -73,9 +78,12 @@ rule porechop_primer_trimming:
         "../envs/primechop.yaml"
     log:
         "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
-    threads: 5
+    threads: 2
     shell:
-        "(porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 --threads {threads} -v 1) 2> {log}"
+        """
+        (porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) 2> {log}
+        rm results/.indicators/replacement_notice.txt
+        """
 
 
 rule nanofilt:
@@ -94,7 +102,6 @@ rule nanofilt:
         "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 500 {input} > {output} 2> {log}"
 
 
-# correction removes PHRED score
 rule canu_correct:
     input:
         "results/{date}/trimmed/nanofilt/{sample}.fastq",
@@ -104,20 +111,33 @@ rule canu_correct:
         "logs/{date}/canu/assemble/{sample}.log",
     params:
         outdir=get_output_dir,
+        concurrency=lambda w, threads: get_canu_concurrency(threads),
         min_length=config["quality-criteria"]["ont"]["min-length-reads"],
         for_testing=lambda w, threads: get_if_testing(
-            f"corThreads={threads} redThreads={threads} redMemory=6 oeaMemory=6"
+            f"corThreads={threads} redMemory=6 oeaMemory=6"
         ),
     conda:
         "../envs/canu.yaml"
-    threads: 6
+    threads: 16
     shell:
-        "( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&"
-        " canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir}"
-        " genomeSize=30k corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap"
-        " minOverlapLength=10 minReadLength={params.min_length} corMMapMerSize=10 corOutCoverage=50000"
-        " corMinCoverage=0 maxInputCoverage=20000 maxThreads={threads} {params.for_testing}) "
-        " 2> {log}"
+        """
+        ( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&
+        canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200 \
+        useGrid=false {params.for_testing} \
+        corMMapMerSize=10 corOutCoverage=50000 corMinCoverage=0 maxInputCoverage=20000 \
+        corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap \
+        corConcurrency={params.concurrency} \
+        cormhapConcurrency={params.concurrency} cormhapThreads={params.concurrency} \
+        cormmapConcurrency={params.concurrency} cormmapThreads={params.concurrency} \
+        obtmmapConcurrency={params.concurrency} obtmmapThreads={params.concurrency} \
+        utgmmapConcurrency={params.concurrency} utgmmapThreads={params.concurrency} \
+        redConcurrency={params.concurrency} redThreads={params.concurrency} \
+        ovbConcurrency={params.concurrency} \
+        ovsConcurrency={params.concurrency} \
+        oeaConcurrency={params.concurrency}
+        )
+        2> {log}
+        """
 
 
 # rule medaka_consensus_reference:
@@ -145,7 +165,7 @@ rule bcftools_consensus_ont:
         "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"
 
 
-rule rename_conensus:
+rule rename_consensus:
     input:
         "results/{date}/consensus/bcftools/{sample}.fasta",
     output:
@@ -156,7 +176,7 @@ rule rename_conensus:
             caption="../report/assembly_consensus.rst",
         ),
     log:
-        "logs/{date}/rename-conensus-fasta/{sample}.log",
+        "logs/{date}/rename-consensus-fasta/{sample}.log",
     conda:
         "../envs/unix.yaml"
     shell:

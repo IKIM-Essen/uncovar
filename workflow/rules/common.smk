@@ -1047,6 +1047,13 @@ def get_output_dir(wildcards, output):
     return os.path.dirname(output[0])
 
 
+def get_canu_concurrency(threads):
+    if threads > 3:
+        return int(threads / 4)
+    else:
+        return threads
+
+
 def expand_samples_by_func(paths, func, **kwargs):
     def inner(wildcards):
         return expand(
@@ -1273,10 +1280,21 @@ def get_include_flag(sample):
 
 
 def get_include_flag_for_date(wildcards):
-    return [
-        get_include_flag(sample)
-        for sample in get_assemblies_for_submission(wildcards, "accepted samples")
-    ]
+    if len(get_samples_for_date(wildcards.date)) == len(
+        get_assemblies_for_submission(wildcards, "accepted samples")
+    ):
+        return [
+            get_include_flag(sample) for sample in get_samples_for_date(wildcards.date)
+        ]
+    else:
+        allsamplelist = []
+        for sample in get_samples_for_date(wildcards.date):
+            for sample_path in get_assemblies_for_submission(
+                wildcards, "accepted samples"
+            ):
+                if sample in sample_path:
+                    allsamplelist.append(sample)
+        return [get_include_flag(sample) for sample in allsamplelist]
 
 
 def get_artic_primer(wildcards):
@@ -1479,6 +1497,13 @@ def get_samtools_sort_input(wildcards):
     raise NotImplementedError(f"Sorting for {wildcards.stage} not supported.")
 
 
+def get_candidate_variants(wildcards):
+    if wildcards.varrange == "lineage-variants":
+        return "resources/lineage-candidate-variants/all.sorted.bcf"
+    else:
+        return "results/{date}/candidate-calls/ref~{reference}/{sample}.{varrange}.bcf"
+
+
 def get_pangolin_input(wildcards):
     if wildcards.stage == "scaffold":
         return "results/{date}/contigs/ordered/{sample}.fasta"
@@ -1624,4 +1649,4 @@ wildcard_constraints:
     filter="|".join(
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
     ),
-    varrange="structural|small|homopolymer-medaka|homopolymer-longshot",
+    varrange="structural|small|homopolymer-medaka|homopolymer-longshot|lineage-variants",
