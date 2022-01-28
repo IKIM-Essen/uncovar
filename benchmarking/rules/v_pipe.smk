@@ -24,11 +24,9 @@ rule v_pipe_setup_samples:
         workdir="results/benchmarking/v-pipe/{sample}/.work-dir-created",
         fastqs=get_fastqs,
     output:
-        temp(
-            expand(
-                "results/benchmarking/v-pipe/{{sample}}/work/samples/{{sample}}/20200102/raw_data/{{sample}}_R{read}.fastq",
-                read=[1, 2],
-            )
+        expand(
+            "results/benchmarking/v-pipe/{{sample}}/work/samples/{{sample}}/20200102/raw_data/{{sample}}_R{read}.fastq",
+            read=[1, 2],
         ),
     log:
         "logs/v_pipe_setup_samples/{sample}.log",
@@ -57,13 +55,15 @@ rule v_pipe_dry_run:
             read=[1, 2],
         ),
     output:
-        temp("results/benchmarking/v-pipe/{sample}/work/samples.tsv"),
+        "results/benchmarking/v-pipe/{sample}/work/samples.tsv",
     log:
         "logs/v_pipe_dry_run/{sample}.log",
     conda:
         "../envs/v-pipe.yaml"
     params:
         workdir=lambda w: f"results/benchmarking/v-pipe/{w.sample}/work",
+    resources:
+        external_pipeline=1,
     shell:
         "(cd {params.workdir} &&"
         " ./vpipe --dryrun)"
@@ -87,13 +87,8 @@ rule v_pipe_run:
     input:
         "results/benchmarking/v-pipe/{sample}/.edited-sample",
     output:
-        outdir=temp(directory("results/benchmarking/v-pipe/{sample}/")),
-        vcf=temp(
-            "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf"
-        ),
-        consensus=temp(
-            "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/references/ref_majority.fasta"
-        ),
+        vcf="results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
+        consensus="results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/references/ref_majority.fasta",
     log:
         "logs/v_pipe_run/{sample}.log",
     conda:
@@ -101,6 +96,8 @@ rule v_pipe_run:
     params:
         workdir=lambda w, input: os.path.join(os.path.dirname(input[0]), "work"),
     threads: 8
+    resources:
+        external_pipeline=1,
     shell:
         "(cd {params.workdir} &&"
         " ./vpipe --cores {threads} -p -F)"

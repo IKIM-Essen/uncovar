@@ -7,18 +7,22 @@ import os
 
 from snakemake.shell import shell
 
+pipeline = snakemake.params.pipeline
 revision = snakemake.params.get("revision")
 profile = snakemake.params.get("profile", [])
-if isinstance(profile, str):
-    profile = [profile]
+flags = snakemake.params.get("flags", [])
 
 args = []
 
+
+if isinstance(profile, str):
+    profile = [profile]
+
 if revision:
     args += ["-revision", revision]
+
 if profile:
     args += ["-profile", ",".join(profile)]
-print(args)
 
 # TODO pass threads in case of single job
 # TODO limit parallelism in case of pipeline
@@ -40,14 +44,11 @@ for name, value in snakemake.params.items():
     ):
         add_parameter(name, value)
 
-log = snakemake.log_fmt_shell(stdout=False, stderr=True)
-args = " ".join(args)
-pipeline = snakemake.params.pipeline
+log = snakemake.log_fmt_shell(stdout=True, stderr=True)
 
-if "flags" in snakemake.params.keys():
-    flags = snakemake.params.flags
-    print(f"nextflow run {pipeline} {args} {flags} {log}")
-    shell("nextflow run {pipeline} {args} {flags} {log}")
-else:
-    print(f"nextflow run {pipeline} {args} {log}")
-    shell("nextflow run {pipeline} {args} {log}")
+args = " ".join(args)
+
+if flags:
+    args = " ".join([args, flags])
+
+shell("nextflow run {pipeline} {args} {log}")

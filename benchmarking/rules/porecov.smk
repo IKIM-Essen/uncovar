@@ -3,7 +3,7 @@ rule poreCov_sample_sheet:
     input:
         get_fastq_pass_path_barcode,
     output:
-        temp("results/benchmarking/poreCov/{sample}/sample_names.csv"),
+        "results/benchmarking/poreCov/sample-sheets/{sample}/sample_names.csv",
     log:
         "logs/poreCov_sample_sheet/{sample}.log",
     conda:
@@ -19,15 +19,12 @@ rule poreCov_sample_sheet:
 rule poreCov:
     input:
         fastq_pass=get_fastq_pass_path_barcode,
-        sample_names="results/benchmarking/poreCov/{sample}/sample_names.csv",
+        sample_names="results/benchmarking/poreCov/sample-sheets/{sample}/sample_names.csv",
     output:
-        outdir=temp(directory("results/benchmarking/poreCov/{sample}/")),
-        consensus=temp(
-            "results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta"
-        ),
-        lineage_call=temp(
-            "results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv"
-        ),
+        outdir=directory("results/benchmarking/poreCov/{sample}/"),
+        consensus="results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta",
+        lineage_call="results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
+        # varaints=""
     log:
         "logs/poreCov/{sample}.log",
     threads: 8
@@ -42,5 +39,7 @@ rule poreCov:
     handover: True
     conda:
         "../envs/nextflow.yaml"
+    resources:
+        external_pipeline=1,
     script:
         "../scripts/nextflow.py"

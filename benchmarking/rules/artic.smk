@@ -9,6 +9,8 @@ rule artic_guppyplex:
         "logs/artic_guppyplex/{sample}.log",
     conda:
         "../envs/artic.yaml"
+    resources:
+        external_pipeline=1,
     shell:
         "artic guppyplex --min-length 400 --max-length 700"
         " --directory {input} --output {output.fasta}"
@@ -38,6 +40,8 @@ rule artic_minion_nanopolish:
     params:
         primer_schemes=lambda w, input: os.path.join(input.repo, "primer_schemes"),
         cwd=lambda w: os.getcwd(),
+    resources:
+        external_pipeline=1,
     shell:
         "(cd {output.outdir} &&"
         " artic minion --normalise 200 --threads {threads}"
@@ -72,6 +76,8 @@ rule artic_minion_medaka:
         primer_schemes=lambda w, input: os.path.join(input.repo, "primer_schemes"),
         medaka_model=config["assembly"]["oxford nanopore"]["medaka_model"],
         cwd=lambda w: os.getcwd(),
+    resources:
+        external_pipeline=1,
     shell:
         "(cd {output.outdir} &&"
         " artic minion --medaka --medaka-model {params.medaka_model}"

@@ -57,3 +57,14 @@ rule download_C_VIEW:
         "(wget 'https://raw.githubusercontent.com/ucsd-ccbb/C-VIEW/main/install.sh' -O {output} &&"
         " chmod 755 {output})"
         " 2> {log}"
+
+
+rule download_SIGNAL:
+    output:
+        directory("resources/benchmarking/SIGNAL/repo"),
+    log:
+        "logs/download_SIGNAL.log",
+    conda:
+        "../envs/git.yaml"
+    shell:
+        "git clone --branch v1.4.4 https://github.com/jaleezyy/covid-19-signal {output} 2> {log}"

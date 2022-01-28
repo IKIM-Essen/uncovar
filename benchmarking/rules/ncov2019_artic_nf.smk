@@ -25,9 +25,7 @@ rule ncov2019_artic_nf_illumina:
     input:
         directory="resources/data/ncov2019-artic-nf/illumina/{sample}/",
     output:
-        outdir=temp(
-            directory("results/benchmarking/ncov2019_artic_nf/illumina/{sample}/")
-        ),
+        outdir=directory("results/benchmarking/ncov2019_artic_nf/illumina/{sample}/"),
         consensus="results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_makeConsensus/{sample}.primertrimmed.consensus.fa",
         vcf="results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.tsv",
     log:
@@ -43,6 +41,8 @@ rule ncov2019_artic_nf_illumina:
     handover: True
     conda:
         "../envs/nextflow.yaml"
+    resources:
+        external_pipeline=1,
     script:
         "../scripts/nextflow.py"
 
@@ -72,47 +72,35 @@ use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish wit
         fast5_pass="resources/benchmarking/data/ncov2019_artic_nf/nanopore/{sample}/fast5_pass/",
         sequencing_summary=lambda wildcards: get_seq_summary(wildcards),
     output:
-        outdir=temp(
-            directory(
-                "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}/"
-            )
+        outdir=directory(
+            "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}-{barcode}/"
         ),
-        consensus=temp(
-            "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{sample}_{barcode}.consensus.fasta"
-        ),
-        vcf=temp(
-            "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{sample}_{barcode}.merged.vcf"
-        ),
+        consensus="results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{sample}_{barcode}.consensus.fasta",
+        vcf="results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{sample}_{barcode}.merged.vcf",
     log:
         "logs/ncov2019_artic_nf/nanopore/nanopolish/{sample}-{barcode}.log",
     params:
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",
         flags="--nanopolish",
-        outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{w.sample}",
+        outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{w.sample}-{w.barcode}",
         prefix=lambda w: w.sample,
     conda:
         "../envs/nextflow_ncov2019_artic_nf_nanopore.yaml"
 
 
-use rule ncov2019_artic_nf_nanopore_nanopolish as bncov2019_artic_nf_nanopore_medaka with:
+use rule ncov2019_artic_nf_nanopore_nanopolish as ncov2019_artic_nf_nanopore_medaka with:
     output:
-        outdir=temp(
-            directory(
-                "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}/"
-            )
+        outdir=directory(
+            "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/"
         ),
-        consensus=temp(
-            "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.consensus.fasta"
-        ),
-        vcf=temp(
-            "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.consensus.fasta"
-        ),
+        consensus="results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.consensus.fasta",
+        vcf="results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.merged.vcf",
     log:
         "logs/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}.log",
     params:
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",
         flags="--medaka",
-        outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{w.sample}",
+        outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{w.sample}-{w.barcode}",
         prefix=lambda w: w.sample,

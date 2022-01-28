@@ -1,7 +1,9 @@
 # source: https://nf-co.re/viralrecon/2.2/usage#usage
 rule nf_core_viralrecon_illumina_sample_sheet:
     output:
-        "results/benchmarking/nf-core-viralrecon/illumina/{sample}/sample_sheet.csv",
+        temp(
+            "results/benchmarking/nf-core-viralrecon/illumina/{sample}/sample_sheet.csv"
+        ),
     log:
         "logs/nf_core_viralrecon_illumina_sample_sheet/{sample}.log",
     conda:
@@ -34,6 +36,8 @@ rule nf_core_viralrecon_illumina:
     handover: True
     conda:
         "../envs/nextflow.yaml"
+    resources:
+        external_pipeline=1,
     script:
         "../scripts/nextflow.py"
 

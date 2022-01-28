@@ -1,23 +1,61 @@
 include: "common.smk"
 include: "ref.smk"
 include: "artic.smk"
-
-
-# include: "ncov2019_artic_nf.smk"
-# include: "nf_core_viralrecon.smk"
-# include: "porecov.smk"
-# include: "v_pipe.smk"
-# include: "covpipe.smk"
+include: "covpipe.smk"
+include: "ncov2019_artic_nf.smk"
+include: "nf_core_viralrecon.smk"
+include: "porecov.smk"
+include: "signal.smk"
+include: "v_pipe.smk"
 
 
 rule agg_vcf:
     input:
-        lambda w: expand(
-            [
-                "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.merged.vcf",
-                "results/benchmarking/artic/minion/medaka/{sample}/{sample}.merged.vcf",
-            ],
+        nanopore_artic_nanopolish=lambda w: expand(
+            "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.merged.vcf",
             sample=get_nanopore_samples(w),
+        ),
+        nanopore_artic_medaka=lambda w: expand(
+            "results/benchmarking/artic/minion/medaka/{sample}/{sample}.merged.vcf",
+            sample=get_nanopore_samples(w),
+        ),
+        nanopore_ncov2019_artic_nf_nanopolish=lambda w: expand(
+            "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{sample}_{barcode}.merged.vcf",
+            zip,
+            sample=get_nanopore_samples(w),
+            barcode=get_barcodes(w),
+        ),
+        nanopore_ncov2019_artic_nf_medaka=lambda w: expand(
+            "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.merged.vcf",
+            zip,
+            sample=get_nanopore_samples(w),
+            barcode=get_barcodes(w),
+        ),
+        nanopore_nf_core_viralrecon_nanopolish=lambda w: expand(
+            "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/{sample}.merged.vcf",
+            sample=get_nanopore_samples(w),
+        ),
+        nanopore_nf_core_viralrecon_medaka=lambda w: expand(
+            "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/{sample}.merged.vcf",
+            sample=get_nanopore_samples(w),
+        ),
+        # illumina_covpipe= lambda w: expand(
+        #     "results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/consensuses_masked/{covpipe_name}.masked_consensus.fasta",
+        #     zip,
+        #     sample=get_illumina_samples(w),
+        #     covpipe_name=get_covpipe_names(w),
+        # )
+        illumina_ncov2019_artic_nf=lambda w: expand(
+            "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.tsv",
+            sample=get_illumina_samples(w),
+        ),
+        illumina_nf_core_viralrecon=lambda w: expand(
+            "results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/{sample}.vcf.gz",
+            sample=get_illumina_samples(w),
+        ),
+        illumina_v_pipe=lambda w: expand(
+            "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
+            sample=get_illumina_samples(w),
         ),
 
 
