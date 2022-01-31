@@ -26,7 +26,7 @@ rule ncov2019_artic_nf_illumina:
         vcf="results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.tsv",
     log:
         "logs/ncov2019_artic_nf/illumina/{sample}.log",
-    threads: 8
+    threads: 64
     params:
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",
@@ -36,7 +36,7 @@ rule ncov2019_artic_nf_illumina:
         outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/illumina/{w.sample}/",
         prefix=lambda w: w.sample,
     handover: True
-    threads: 8
+    threads: 64
     conda:
         "../envs/nextflow.yaml"
     resources:
@@ -93,7 +93,7 @@ use rule ncov2019_artic_nf_nanopore_nanopolish as ncov2019_artic_nf_nanopore_med
             "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/"
         ),
         consensus="results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.consensus.fasta",
-        vcf="results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.merged.vcf",
+        vcf="results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.merged.vcf.gz",
     log:
         "logs/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}.log",
     params:

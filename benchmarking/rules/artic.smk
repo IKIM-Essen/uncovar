@@ -30,7 +30,7 @@ rule artic_minion_nanopolish:
         consensus="results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.consensus.fasta",
     log:
         "logs/artic_minion/nanopolish/{sample}.log",
-    threads: 8
+    threads: 64
     conda:
         "../envs/artic.yaml"
     params:
@@ -61,7 +61,7 @@ rule artic_minion_medaka:
         consensus="results/benchmarking/artic/minion/medaka/{sample}/{sample}.consensus.fasta",
     log:
         "logs/artic_minion/medaka/{sample}.log",
-    threads: 8
+    threads: 64
     conda:
         "../envs/artic.yaml"
     params:

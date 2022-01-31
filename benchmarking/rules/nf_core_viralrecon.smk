@@ -22,7 +22,7 @@ rule nf_core_viralrecon_illumina:
         vcf="results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/{sample}.vcf.gz",
     log:
         "logs/nf-core-viralrecon/{sample}.log",
-    threads: 8
+    threads: 64
     params:
         pipeline="nf-core/viralrecon",
         revision="2.2",
@@ -33,7 +33,7 @@ rule nf_core_viralrecon_illumina:
         genome="'MN908947.3'",
         outdir="results/benchmarking/nf-core-viralrecon/illumina/{sample}",
     handover: True
-    threads: 8
+    threads: 64
     conda:
         "../envs/nextflow.yaml"
     resources:

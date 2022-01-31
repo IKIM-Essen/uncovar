@@ -95,7 +95,7 @@ rule v_pipe_run:
         "../envs/v-pipe.yaml"
     params:
         workdir=lambda w, input: os.path.join(os.path.dirname(input[0]), "work"),
-    threads: 8
+    threads: 64
     resources:
         external_pipeline=1,
     shell:

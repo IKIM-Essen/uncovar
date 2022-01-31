@@ -27,7 +27,6 @@ rule poreCov:
         # varaints=""
     log:
         "logs/poreCov/{sample}.log",
-    threads: 8
     params:
         pipeline="replikation/poreCov",
         revision="1.0.0",
@@ -38,7 +37,7 @@ rule poreCov:
         output=lambda w: f"results/benchmarking/poreCov/{w.sample}",
         samples=lambda W, input: input.sample_names,
     handover: True
-    threads: 8
+    threads: 64
     conda:
         "../envs/nextflow.yaml"
     resources:
