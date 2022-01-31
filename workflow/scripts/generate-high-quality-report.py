@@ -32,13 +32,15 @@ if snakemake.input.contigs == "resources/genomes/main.fasta":
 else:
     # Aggregating fasta files
     sequence_names = []
+    include_flag = []
 
     with open(snakemake.output.fasta, "w") as outfile:
         for file, include in zip(snakemake.input.contigs, snakemake.params.includeflag):
             with pysam.FastxFile(file) as infile:
                 for entry in infile:
                     sequence_names.append(entry.name)
-                    if bool(int(include)):
+                    include_flag.append(int(include[sequence_names].iloc[-1]))
+                    if bool(int(include[sequence_names].iloc[-1])):
                         print(f">{entry.name}", file=outfile)
                         print(entry.sequence, file=outfile)
 
@@ -52,7 +54,7 @@ else:
             "SAMPLE_TYPE": "s001",
             "PUBLICATION_STATUS": "N",
             "OWN_FASTA_ID": sequence_names,
-            "include": snakemake.params.includeflag,
+            "include": include_flag,
         }
     )
 
