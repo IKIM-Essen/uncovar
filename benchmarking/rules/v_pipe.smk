@@ -3,7 +3,7 @@ rule v_pipe_work_dir:
     input:
         "resources/benchmarking/v-pipe/repo",
     output:
-        temp(touch("results/benchmarking/v-pipe/{sample}/.work-dir-created")),
+        touch("results/benchmarking/v-pipe/{sample}/.work-dir-created"),
     log:
         "logs/v_pipe_work_dir/{sample}.log",
     conda:
@@ -74,7 +74,7 @@ rule v_pipe_update_sample_sheet:
     input:
         "results/benchmarking/v-pipe/{sample}/work/samples.tsv",
     output:
-        temp(touch("results/benchmarking/v-pipe/{sample}/.edited-sample")),
+        touch("results/benchmarking/v-pipe/{sample}/.edited-sample"),
     log:
         "logs/v_pipe_update_sample_sheet/{sample}.log",
     conda:

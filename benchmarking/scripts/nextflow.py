@@ -9,6 +9,7 @@ from snakemake.shell import shell
 
 pipeline = snakemake.params.pipeline
 revision = snakemake.params.get("revision")
+qs = snakemake.params.get("qs", [])
 profile = snakemake.params.get("profile", [])
 flags = snakemake.params.get("flags", [])
 
@@ -17,6 +18,9 @@ args = []
 
 if isinstance(profile, str):
     profile = [profile]
+
+if qs:
+    args += ["-qs", str(qs)]
 
 if revision:
     args += ["-revision", revision]
@@ -41,6 +45,7 @@ for name, value in snakemake.params.items():
         and name != "revision"
         and name != "profile"
         and name != "flags"
+        and name != "qs"
     ):
         add_parameter(name, value)
 

@@ -31,15 +31,18 @@ rule poreCov:
     params:
         pipeline="replikation/poreCov",
         revision="1.0.0",
+        qs=lambda w, threads: threads,
         profile=["local", "docker"],
         flags="--update",
         cores=lambda w, threads: threads,
         output=lambda w: f"results/benchmarking/poreCov/{w.sample}",
         samples=lambda W, input: input.sample_names,
     handover: True
+    threads: 8
     conda:
         "../envs/nextflow.yaml"
     resources:
         external_pipeline=1,
+        nextflow=1,
     script:
         "../scripts/nextflow.py"

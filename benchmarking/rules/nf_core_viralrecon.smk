@@ -1,9 +1,7 @@
 # source: https://nf-co.re/viralrecon/2.2/usage#usage
 rule nf_core_viralrecon_illumina_sample_sheet:
     output:
-        temp(
-            "results/benchmarking/nf-core-viralrecon/illumina/{sample}/sample_sheet.csv"
-        ),
+        "results/benchmarking/nf-core-viralrecon/illumina/{sample}/sample_sheet.csv",
     log:
         "logs/nf_core_viralrecon_illumina_sample_sheet/{sample}.log",
     conda:
@@ -28,16 +26,19 @@ rule nf_core_viralrecon_illumina:
     params:
         pipeline="nf-core/viralrecon",
         revision="2.2",
+        qs=lambda w, threads: threads,
         profile=["docker"],
         platform="illumina",
         protocol="metagenomic",
         genome="'MN908947.3'",
         outdir="results/benchmarking/nf-core-viralrecon/illumina/{sample}",
     handover: True
+    threads: 8
     conda:
         "../envs/nextflow.yaml"
     resources:
         external_pipeline=1,
+        nextflow=1,
     script:
         "../scripts/nextflow.py"
 
@@ -88,6 +89,7 @@ use rule nf_core_viralrecon_illumina as nf_core_viralrecon_nanopore_nanopolish w
     params:
         pipeline="nf-core/viralrecon",
         revision="2.2",
+        qs=lambda w, threads: threads,
         profile=["docker"],
         platform="nanopore",
         genome="'MN908947.3'",
@@ -105,6 +107,7 @@ use rule nf_core_viralrecon_nanopore_nanopolish as nf_core_viralrecon_nanopore_m
     params:
         pipeline="nf-core/viralrecon",
         revision="2.2",
+        qs=lambda w, threads: threads,
         profile=["docker"],
         platform="nanopore",
         genome="'MN908947.3'",

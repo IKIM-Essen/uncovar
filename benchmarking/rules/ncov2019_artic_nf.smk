@@ -3,13 +3,9 @@ rule ncov2019_artic_nf_illumina_data_prep:
     input:
         get_fastqs,
     output:
-        d=temp(directory("resources/data/ncov2019-artic-nf/illumina/{sample}")),
-        fq1=temp(
-            "resources/data/ncov2019-artic-nf/illumina/{sample}/{sample}_R1.fastq.gz"
-        ),
-        fq2=temp(
-            "resources/data/ncov2019-artic-nf/illumina/{sample}/{sample}_R2.fastq.gz"
-        ),
+        d=directory("resources/benchmarking/data/ncov2019_artic_nf/illumina/{sample}/"),
+        fq1="resources/benchmarking/data/ncov2019_artic_nf/illumina/{sample}/{sample}_R1.fastq.gz",
+        fq2="resources/benchmarking/data/ncov2019_artic_nf/illumina/{sample}/{sample}_R2.fastq.gz",
     log:
         "logs/ncov2019_artic_nf_illumina_data_prep/{sample}.log",
     conda:
@@ -23,7 +19,7 @@ rule ncov2019_artic_nf_illumina_data_prep:
 
 rule ncov2019_artic_nf_illumina:
     input:
-        directory="resources/data/ncov2019-artic-nf/illumina/{sample}/",
+        directory="resources/benchmarking/data/ncov2019_artic_nf/illumina/{sample}/",
     output:
         outdir=directory("results/benchmarking/ncov2019_artic_nf/illumina/{sample}/"),
         consensus="results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_makeConsensus/{sample}.primertrimmed.consensus.fa",
@@ -34,15 +30,18 @@ rule ncov2019_artic_nf_illumina:
     params:
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",
+        qs=lambda w, threads: threads,
         profile=["conda"],
         flags="--illumina",
-        outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/illumina/{w.sample}",
+        outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/illumina/{w.sample}/",
         prefix=lambda w: w.sample,
     handover: True
+    threads: 8
     conda:
         "../envs/nextflow.yaml"
     resources:
         external_pipeline=1,
+        nextflow=1,
     script:
         "../scripts/nextflow.py"
 
@@ -51,10 +50,8 @@ rule ncov2019_artic_nf_nanopore_data_prep:
     input:
         get_fastq_or_fast5,
     output:
-        temp(
-            directory(
-                "resources/benchmarking/data/ncov2019_artic_nf/nanopore/{sample}/{folder}/"
-            )
+        directory(
+            "resources/benchmarking/data/ncov2019_artic_nf/nanopore/{sample}/{folder}/"
         ),
     log:
         "logs/ncov2019_artic_nf_nanopore_data_prep/{sample}-{folder}.log",
@@ -82,6 +79,7 @@ use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish wit
     params:
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",
+        qs=lambda w, threads: threads,
         flags="--nanopolish",
         outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{w.sample}-{w.barcode}",
         prefix=lambda w: w.sample,
@@ -101,6 +99,7 @@ use rule ncov2019_artic_nf_nanopore_nanopolish as ncov2019_artic_nf_nanopore_med
     params:
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",
+        qs=lambda w, threads: threads,
         flags="--medaka",
         outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{w.sample}-{w.barcode}",
         prefix=lambda w: w.sample,
