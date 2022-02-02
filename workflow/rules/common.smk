@@ -7,6 +7,7 @@ from pathlib import Path
 import pandas as pd
 import re
 import random
+import urllib.request
 from snakemake.utils import validate
 
 
@@ -1608,6 +1609,16 @@ def get_input_by_mode(wildcard):
         ]
 
     return sum(paths, [])
+
+
+def check_bed_for_URL(bed_file):
+    if "https" in bed_file:
+        filename = bed_file.split("/")[-1]
+        filepath = "resources/{}".format(filename)
+        urllib.request.urlretrieve(bed_file, filepath)
+        return filepath
+    else:
+        return bed_file
 
 
 def get_pangolin_for_report(wildcards):
