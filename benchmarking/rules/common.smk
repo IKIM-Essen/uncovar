@@ -64,6 +64,10 @@ def get_covpipe_names(wildcards):
     return [sample.replace("_", "__") for sample in get_illumina_samples(wildcards)]
 
 
+def get_covpipe_name_for_sample(wildcards):
+    return wildcards.sample.replace("_", "__")
+
+
 def get_nanopore_samples(wildcards):
     return pep.sample_table.loc[
         pep.sample_table["technology"] == "ont", "sample_name"
@@ -74,3 +78,42 @@ def get_illumina_samples(wildcards):
     return pep.sample_table.loc[
         pep.sample_table["technology"] == "illumina", "sample_name"
     ].values
+
+
+def get_date_for_sample(wildcards):
+    return pep.sample_table.loc[wildcards.sample]["date"]
+
+
+def get_vcf_of_pipeline(pipeline, wildcards):
+    if pipeline == "artic-medaka":
+        return "results/benchmarking/artic/minion/medaka/{sample}/{sample}.merged.vcf"
+    elif pipeline == "artic-nanopolish":
+        return (
+            "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.merged.vcf"
+        )
+    elif pipeline == "ncov2019-artic-nf":
+        return "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.tsv"
+    elif pipeline == "ncov2019-artic-nf-medaka":
+        return "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{{sample}}_{barcode}.merged.vcf".format(
+            barcode=get_barcode(wildcards)
+        )
+    elif pipeline == "ncov2019-artic-nf-nanopolish":
+        return "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{{sample}}_{barcode}.merged.vcf".format(
+            barcode=get_barcode(wildcards)
+        )
+    elif pipeline == "nf-core-viralrecon":
+        return "results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/{sample}.vcf.gz"
+    elif pipeline == "nf-core-viralrecon-nanopolish":
+        return "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/{sample}.merged.vcf"
+    elif pipeline == "nf-core-viralrecon-medaka":
+        return "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/{sample}.merged.vcf"
+    elif pipeline == "covpipe":
+        return "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/intermediate_data/04_variant_calling/{covpipe_name}/{covpipe_name}.vcf".format(
+            covpipe_name=get_covpipe_name_for_sample(wildcards)
+        )
+    elif pipeline == "v-pipe":
+        return "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf"
+    elif pipeline == "uncovar":
+        return "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.bcf".format(
+            date=get_date_for_sample(wildcards)
+        )

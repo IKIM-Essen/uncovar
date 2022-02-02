@@ -9,13 +9,26 @@ include: "porecov.smk"
 include: "v_pipe.smk"
 
 
-# rule extract_vcf:
+rule extract_vcf:
+    input:
+        "results/benchmarking/{infix}.vcf.gz",
+    output:
+        "results/benchmarking/{infix}.vcf",
+    log:
+        "logs/extract_vcf/{infix}.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "bgzip k {input}"
+
+
+# rule compress_vcf:
 #     input:
-#         "results/benchmarking/{infix}.vcf.gz",
-#     output:
 #         "results/benchmarking/{infix}.vcf",
+#     output:
+#         "results/benchmarking/{infix}.vcf.gz",
 #     log:
-#         "logs/extract_vcf/{infix}.log"
+#         "logs/compress_vcf/{infix}.log"
 #     conda:
 #         "../envs/unix.yaml"
 #     shell:
@@ -33,7 +46,7 @@ rule agg_vcf:
             sample=get_nanopore_samples(w),
         ),
         nanopore_ncov2019_artic_nf_medaka=lambda w: expand(
-            "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.merged.vcf.gz",
+            "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.merged.vcf",
             zip,
             sample=get_nanopore_samples(w),
             barcode=get_barcodes(w),
@@ -63,7 +76,7 @@ rule agg_vcf:
             sample=get_illumina_samples(w),
         ),
         illumina_nf_core_viralrecon=lambda w: expand(
-            "results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/{sample}.vcf.gz",
+            "results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/{sample}.vcf",
             sample=get_illumina_samples(w),
         ),
         illumina_v_pipe=lambda w: expand(
@@ -72,6 +85,37 @@ rule agg_vcf:
         ),
 
 
+rule compare_vc_of_pipelines:
+    input:
+        fist_pipeline=lambda w: get_vcf_of_pipeline(w.pipeline_one, w),
+        second_pipeline=lambda w: get_vcf_of_pipeline(w.pipeline_two, w),
+        other="results/2022-01-19/filtered-calls/ref~main/28998_illumina.subclonal.high+moderate-impact.bcf.csi",
+    output:
+        "results/benchmarking/tables/vc-comparison-{sample}~{pipeline_one}-vs-{pipeline_two}.tsv",
+    log:
+        "logs/compare_vc_of_pipelines/sample-{sample}~{pipeline_one}-vs-{pipeline_two}.log",
+    params:
+        fist_pipeline=lambda w: f"{w.pipeline_one}",
+        second_pipeline=lambda w: f"{w.pipeline_two}",
+    conda:
+        "../envs/vcftools.yaml"
+    shell:
+        "bcftools stats {input.fist_pipeline} {input.second_pipeline} > {output}"
+
+
+rule aggregrate_vc_comparisons:
+    input:
+        "results/benchmarking/tables/vc-comparison-28998_illumina~uncovar-vs-nf-core-viralrecon.tsv",
+
+
+# output:
+#     "",
+# log:
+#     "logs/aggregrate_vc_comparisons.log"
+# conda:
+#     "../envs/python.yaml"
+# script:
+#     "../scripts/aggregrate_vc_comparisons.py"
 # source: https://github.com/niemasd/ViReflow
 # ViReflow is not runable
 # -> needs s3 bucket
