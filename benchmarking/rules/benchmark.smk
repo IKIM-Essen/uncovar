@@ -8,6 +8,7 @@ include: "workflows/porecov.smk"
 # include: "workflows/signal.smk"
 include: "workflows/v_pipe.smk"
 include: "sanger.smk"
+include: "vcf_benchmark"
 
 
 rule agg_vcf:
