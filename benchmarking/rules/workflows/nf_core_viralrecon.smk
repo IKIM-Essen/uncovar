@@ -5,7 +5,7 @@ rule nf_core_viralrecon_illumina_sample_sheet:
     log:
         "logs/nf_core_viralrecon_illumina_sample_sheet/{sample}.log",
     conda:
-        "../envs/unix.yaml"
+        "../../envs/unix.yaml"
     params:
         string=lambda w: get_barcode_for_viralrecon_illumina_sample(w),
     shell:
@@ -35,12 +35,12 @@ rule nf_core_viralrecon_illumina:
     handover: True
     threads: 16
     conda:
-        "../envs/nextflow.yaml"
+        "../../envs/nextflow.yaml"
     resources:
         external_pipeline=1,
         nextflow=1,
     script:
-        "../scripts/nextflow.py"
+        "../../scripts/nextflow.py"
 
 
 rule nf_core_viralrecon_nanopore_sample_sheet:
@@ -49,7 +49,7 @@ rule nf_core_viralrecon_nanopore_sample_sheet:
     log:
         "logs/nf_core_viralrecon_nanopore_sample_sheet/{sample}.log",
     conda:
-        "../envs/unix.yaml"
+        "../../envs/unix.yaml"
     params:
         string=lambda w: get_barcode_for_viralrecon_nanopore_sample(w),
     shell:
@@ -64,7 +64,7 @@ rule nf_core_viralrecon_nanopore_prepare_samples:
     log:
         "logs/nf_core_viralrecon_nanopore_prepare_samples/{sample}-{folder}.log",
     conda:
-        "../envs/unix.yaml"
+        "../../envs/unix.yaml"
     params:
         barcode=lambda w, output: os.path.join(output[0], get_barcode(w)),
         mv_or_uncompress=lambda w, output: f" && cd {output[0]}/{get_barcode(w)} && gunzip *.gz"

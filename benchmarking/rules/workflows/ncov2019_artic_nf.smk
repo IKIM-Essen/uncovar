@@ -9,7 +9,7 @@ rule ncov2019_artic_nf_illumina_data_prep:
     log:
         "logs/ncov2019_artic_nf_illumina_data_prep/{sample}.log",
     conda:
-        "../envs/unix.yaml"
+        "../../envs/unix.yaml"
     shell:
         "(mkdir -p {output.d} &&"
         " cp {input[0]} {output.fq1} &&"
@@ -38,12 +38,12 @@ rule ncov2019_artic_nf_illumina:
     handover: True
     threads: 16
     conda:
-        "../envs/nextflow.yaml"
+        "../../envs/nextflow.yaml"
     resources:
         external_pipeline=1,
         nextflow=1,
     script:
-        "../scripts/nextflow.py"
+        "../../scripts/nextflow.py"
 
 
 rule ncov2019_artic_nf_nanopore_data_prep:
@@ -56,7 +56,7 @@ rule ncov2019_artic_nf_nanopore_data_prep:
     log:
         "logs/ncov2019_artic_nf_nanopore_data_prep/{sample}-{folder}.log",
     conda:
-        "../envs/unix.yaml"
+        "../../envs/unix.yaml"
     params:
         barcode=lambda w, output: os.path.join(output[0], get_barcode(w)),
     shell:
@@ -84,7 +84,7 @@ use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish wit
         outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{w.sample}-{w.barcode}",
         prefix=lambda w: w.sample,
     conda:
-        "../envs/nextflow_ncov2019_artic_nf_nanopore.yaml"
+        "../../envs/nextflow_ncov2019_artic_nf_nanopore.yaml"
 
 
 use rule ncov2019_artic_nf_nanopore_nanopolish as ncov2019_artic_nf_nanopore_medaka with:

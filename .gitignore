@@ -6,7 +6,7 @@
 !benchmarking
 !benchmarking/*
 !benchmarking/envs/*
-!benchmarking/rules/*
+!benchmarking/rules/**
 !benchmarking/scripts/*
 !config
 !config/REAMDE.md

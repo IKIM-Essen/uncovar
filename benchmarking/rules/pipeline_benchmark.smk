@@ -1,39 +1,13 @@
 include: "common.smk"
 include: "ref.smk"
-include: "artic.smk"
-include: "covpipe.smk"
-include: "ncov2019_artic_nf.smk"
-include: "nf_core_viralrecon.smk"
-include: "porecov.smk"
-# include: "signal.smk"
-include: "v_pipe.smk"
+include: "workflows/artic.smk"
+include: "workflows/covpipe.smk"
+include: "workflows/ncov2019_artic_nf.smk"
+include: "workflows/nf_core_viralrecon.smk"
+include: "workflows/porecov.smk"
+# include: "workflows/signal.smk"
+include: "workflows/v_pipe.smk"
 include: "sanger.smk"
-
-
-# rule extract_vcf:
-#     input:
-#         "results/benchmarking/{infix}.vcf.gz",
-#     output:
-#         "results/benchmarking/{infix}.vcf",
-#     log:
-#         "logs/extract_vcf/{infix}.log",
-#     conda:
-#         "../envs/unix.yaml"
-#     shell:
-#         "bgzip k {input}"
-
-
-# rule compress_vcf:
-#     input:
-#         "results/benchmarking/{infix}.vcf",
-#     output:
-#         "results/benchmarking/{infix}.vcf.gz",
-#     log:
-#         "logs/compress_vcf/{infix}.log"
-#     conda:
-#         "../envs/unix.yaml"
-#     shell:
-#         "gzip -dk {input}"
 
 
 rule agg_vcf:
@@ -84,46 +58,6 @@ rule agg_vcf:
             "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
             sample=get_illumina_samples(w),
         ),
-
-
-rule compare_vc_of_pipelines:
-    input:
-        fist_pipeline=lambda w: get_vcf_of_pipeline(w.pipeline_one, w),
-        second_pipeline=lambda w: get_vcf_of_pipeline(w.pipeline_two, w),
-        other="results/2022-01-19/filtered-calls/ref~main/28998_illumina.subclonal.high+moderate-impact.bcf.csi",
-    output:
-        "results/benchmarking/tables/vc-comparison-{sample}~{pipeline_one}-vs-{pipeline_two}.tsv",
-    log:
-        "logs/compare_vc_of_pipelines/sample-{sample}~{pipeline_one}-vs-{pipeline_two}.log",
-    params:
-        fist_pipeline=lambda w: f"{w.pipeline_one}",
-        second_pipeline=lambda w: f"{w.pipeline_two}",
-    conda:
-        "../envs/vcftools.yaml"
-    shell:
-        "bcftools stats {input.fist_pipeline} {input.second_pipeline} > {output}"
-
-
-rule aggregrate_vc_comparisons:
-    input:
-        "results/benchmarking/tables/vc-comparison-28998_illumina~uncovar-vs-nf-core-viralrecon.tsv",
-
-
-# rule preprocess_variants:
-#     input:
-#         ##vcf/bcf
-#         variants=lambda w: get_vcf_of_pipeline(w.pipeline, w)
-#     output:
-#         "results/benchmarking/happy/normalized/{pipeline}/{sample}.bcf"
-#     params:
-#         ## path to reference genome
-#         genome="resources/genomes/main.fasta",
-#         ## parameters such as -L to left-align variants
-#         extra="-L"
-#     log: "logs/happy/preprocess/{pipeline}/{sample}.log"
-#     threads: 2
-#     wrapper:
-#         "v1.0.0/bio/hap.py/pre.py"
 
 
 rule benchmark_variants:

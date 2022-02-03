@@ -7,7 +7,7 @@ rule poreCov_sample_sheet:
     log:
         "logs/poreCov_sample_sheet/{sample}.log",
     conda:
-        "../envs/unix.yaml"
+        "../../envs/unix.yaml"
     params:
         barcode=lambda w, input: os.path.basename(input[0]),
     shell:
@@ -39,9 +39,9 @@ rule poreCov:
     handover: True
     threads: 16
     conda:
-        "../envs/nextflow.yaml"
+        "../../envs/nextflow.yaml"
     resources:
         external_pipeline=1,
         nextflow=1,
     script:
-        "../scripts/nextflow.py"
+        "../../scripts/nextflow.py"

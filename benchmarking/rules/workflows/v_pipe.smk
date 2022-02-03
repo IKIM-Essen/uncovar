@@ -7,7 +7,7 @@ rule v_pipe_work_dir:
     log:
         "logs/v_pipe_work_dir/{sample}.log",
     conda:
-        "../envs/v-pipe.yaml"
+        "../../envs/v-pipe.yaml"
     params:
         v_pipe_copy="results/benchmarking/v-pipe/{sample}/",
         work_dir_path="results/benchmarking/v-pipe/{sample}/work",
@@ -31,7 +31,7 @@ rule v_pipe_setup_samples:
     log:
         "logs/v_pipe_setup_samples/{sample}.log",
     conda:
-        "../envs/v-pipe.yaml"
+        "../../envs/v-pipe.yaml"
     params:
         fq_dir=lambda w, input: os.path.join(
             os.path.dirname(input.workdir),
@@ -59,7 +59,7 @@ rule v_pipe_dry_run:
     log:
         "logs/v_pipe_dry_run/{sample}.log",
     conda:
-        "../envs/v-pipe.yaml"
+        "../../envs/v-pipe.yaml"
     params:
         workdir=lambda w: f"results/benchmarking/v-pipe/{w.sample}/work",
     resources:
@@ -78,7 +78,7 @@ rule v_pipe_update_sample_sheet:
     log:
         "logs/v_pipe_update_sample_sheet/{sample}.log",
     conda:
-        "../envs/v-pipe.yaml"
+        "../../envs/v-pipe.yaml"
     shell:
         "sed -i 's/$/\t150/' {input} 2> {log}"
 
@@ -92,7 +92,7 @@ rule v_pipe_run:
     log:
         "logs/v_pipe_run/{sample}.log",
     conda:
-        "../envs/v-pipe.yaml"
+        "../../envs/v-pipe.yaml"
     params:
         workdir=lambda w, input: os.path.join(os.path.dirname(input[0]), "work"),
     threads: 16
