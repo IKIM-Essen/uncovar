@@ -50,7 +50,7 @@ rule normalize_calls:
         "v1.0.0/bio/bcftools/norm"
 
 
-rule agg:
+rule agg_normalize_calls:
     input:
         lambda w: expand(
             "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
@@ -116,6 +116,20 @@ rule benchmark_variants:
         "logs/happy/{workflow_A}-vs-{workflow_B}/{sample}.log",
     wrapper:
         "v1.0.0/bio/hap.py/hap.py"
+
+
+rule agg_happy:
+    input:
+        lambda w: expand(
+            "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.runinfo.json",
+            workflow=PIPELINES["nanopore"],
+            sample=get_nanopore_samples(w),
+        ),
+        lambda w: expand(
+            "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.runinfo.json",
+            workflow=PIPELINES["illumina"],
+            sample=get_illumina_samples(w),
+        ),
 
 
 # rule benchmark_variants:

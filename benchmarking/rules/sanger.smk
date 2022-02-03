@@ -38,7 +38,7 @@ rule freebayes_sanger:
         # should run, e.g. all regions that show coverage
         #regions="path/to/region-file.bed"
     output:
-        "results/benchmarking/sanger/variant-calls/{sample}.bcf",  # either .vcf or .bcf
+        "results/benchmarking/sanger/variant-calls/{sample}.vcf",  # either .vcf or .bcf
     log:
         "logs/freebayes/{sample}.log",
     params:
