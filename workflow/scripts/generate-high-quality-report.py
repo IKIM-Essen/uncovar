@@ -33,14 +33,17 @@ else:
     # Aggregating fasta files
     sequence_names = []
     include_flag = []
+    sample_dict = {}
+    for sample in snakemake.params.includeflag:
+        sample_dict.update(sample)
 
     with open(snakemake.output.fasta, "w") as outfile:
-        for file, include in zip(snakemake.input.contigs, snakemake.params.includeflag):
+        for file in snakemake.input.contigs:
             with pysam.FastxFile(file) as infile:
                 for entry in infile:
                     sequence_names.append(entry.name)
-                    include_flag.append(int(include[sequence_names].iloc[-1]))
-                    if bool(int(include[sequence_names].iloc[-1])):
+                    include_flag.append(int(sample_dict.get(entry.name)))
+                    if bool(int(sample_dict.get(entry.name))):
                         print(f">{entry.name}", file=outfile)
                         print(entry.sequence, file=outfile)
 
