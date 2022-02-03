@@ -49,7 +49,7 @@ include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
 include: "rules/preprocessing.smk"
 include: "rules/long_read.smk"
-include: "../benchmarking/rules/pipeline_benchmark.smk"
+include: "../benchmarking/rules/benchmarking.smk"
 
 
 rule save_latest_run:

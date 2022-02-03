@@ -1,0 +1,8 @@
+channels:
+  - bioconda
+  - conda-forge
+  - default
+dependencies:
+  - bedtools = 2.30.0
+  - bcftools = 1.14
+  - snakemake-wrapper-utils=0.2

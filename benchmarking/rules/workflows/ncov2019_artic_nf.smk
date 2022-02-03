@@ -46,6 +46,19 @@ rule ncov2019_artic_nf_illumina:
         "../../scripts/nextflow.py"
 
 
+rule ncov2019_artic_nf_rename_illumina_vcf:
+    input:
+        "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.tsv",
+    output:
+        "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.vcf",
+    log:
+        "logs/ncov2019_artic_nf/rename/{sample}.log",
+    conda:
+        "../../envs/unix.yaml"
+    shell:
+        "cp {input} {output}"
+
+
 rule ncov2019_artic_nf_nanopore_data_prep:
     input:
         get_fastq_or_fast5,
@@ -103,3 +116,16 @@ use rule ncov2019_artic_nf_nanopore_nanopolish as ncov2019_artic_nf_nanopore_med
         flags="--medaka",
         outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{w.sample}-{w.barcode}",
         prefix=lambda w: w.sample,
+
+
+rule ncov2019_artic_nf_extract_vcf_gz:
+    input:
+        "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.merged.vcf.gz",
+    output:
+        "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}_{barcode}.vcf",
+    log:
+        "logs/ncov2019_artic_nf_extract_vcf_gz/{sample}-{barcode}.log",
+    conda:
+        "../../envs/unix.yaml"
+    shell:
+        "gzip -dk -c {input} > {output}"

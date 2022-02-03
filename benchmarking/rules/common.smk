@@ -91,7 +91,7 @@ def get_date_for_sample(wildcards):
     return pep.sample_table.loc[wildcards.sample]["date"]
 
 
-def get_vcf_of_pipeline(pipeline, wildcards):
+def get_vcf_of_workflow(pipeline, wildcards):
     if pipeline == "artic-medaka":
         return "results/benchmarking/artic/minion/medaka/{sample}/{sample}.merged.vcf"
     elif pipeline == "artic-nanopolish":
@@ -99,9 +99,9 @@ def get_vcf_of_pipeline(pipeline, wildcards):
             "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.merged.vcf"
         )
     elif pipeline == "ncov2019-artic-nf":
-        return "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.tsv"
+        return "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.vcf"
     elif pipeline == "ncov2019-artic-nf-medaka":
-        return "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{{sample}}_{barcode}.merged.vcf.gz".format(
+        return "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}_{barcode}.vcf".format(
             barcode=get_barcode(wildcards)
         )
     elif pipeline == "ncov2019-artic-nf-nanopolish":
@@ -109,7 +109,7 @@ def get_vcf_of_pipeline(pipeline, wildcards):
             barcode=get_barcode(wildcards)
         )
     elif pipeline == "nf-core-viralrecon":
-        return "results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/{sample}.vcf.gz"
+        return "results/benchmarking/nf-core-viralrecon/illumina/{sample}/{sample}.vcf"
     elif pipeline == "nf-core-viralrecon-nanopolish":
         return "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/{sample}.merged.vcf"
     elif pipeline == "nf-core-viralrecon-medaka":

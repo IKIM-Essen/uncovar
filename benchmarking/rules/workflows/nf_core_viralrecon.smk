@@ -43,6 +43,19 @@ rule nf_core_viralrecon_illumina:
         "../../scripts/nextflow.py"
 
 
+rule nf_core_viralrecon_illumina_extract_vcf_gz:
+    input:
+        "results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/{sample}.vcf.gz",
+    output:
+        "results/benchmarking/nf-core-viralrecon/illumina/{sample}/{sample}.vcf",
+    log:
+        "logs/nf_core_viralrecon_illumina_extract_vcf_gz/{sample}.log",
+    conda:
+        "../../envs/unix.yaml"
+    shell:
+        "gzip -dk -c {input} > {output}"
+
+
 rule nf_core_viralrecon_nanopore_sample_sheet:
     output:
         "results/benchmarking/nf-core-viralrecon/nanopore/sample-sheets/{sample}/sample_sheet.csv",

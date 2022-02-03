@@ -8,7 +8,7 @@ include: "workflows/porecov.smk"
 # include: "workflows/signal.smk"
 include: "workflows/v_pipe.smk"
 include: "sanger.smk"
-include: "vcf_benchmark"
+include: "variant_benchmarking.smk"
 
 
 rule agg_vcf:
@@ -57,53 +57,6 @@ rule agg_vcf:
         ),
         illumina_v_pipe=lambda w: expand(
             "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
-            sample=get_illumina_samples(w),
-        ),
-
-
-rule benchmark_variants:
-    input:
-        truth=lambda w: get_vcf_of_pipeline(w.pipeline_1, w),  # sanger vcf
-        query=lambda w: get_vcf_of_pipeline(w.pipeline_2, w),  # variant calls
-        truth_regions="results/benchmarking/sanger/aligned/{sample}.bed",  # sanger bed
-        genome="resources/genomes/main.fasta",
-        genome_index="resources/genomes/main.fasta.fai",
-    output:
-        multiext(
-            "results/benchmarking/happy/happy/truth~{pipeline_1}-vs-{pipeline_2}/{sample}/{sample}",
-            ".runinfo.json",
-            ".vcf.gz",
-            ".summary.csv",
-            ".extended.csv",
-            ".metrics.json.gz",
-            ".roc.all.csv.gz",
-            ".roc.Locations.INDEL.csv.gz",
-            ".roc.Locations.INDEL.PASS.csv.gz",
-            ".roc.Locations.SNP.csv.gz",
-            ".roc.tsv",
-        ),
-    params:
-        engine="vcfeval",
-        prefix=lambda wc, input, output: output[0].split(".")[0],
-        ## parameters such as -L to left-align variants
-        extra="--verbose",
-    log:
-        "logs/happy/truth~{pipeline_1}-vs-{pipeline_2}/{sample}.log",
-    threads: 2
-    wrapper:
-        "v1.0.0/bio/hap.py/hap.py"
-
-
-rule agg_happy:
-    input:
-        lambda w: expand(
-            "results/benchmarking/happy/happy/truth~sanger-vs-{pipeline}/{sample}/{sample}.runinfo.json",
-            pipeline=PIPELINES["nanopore"],
-            sample=get_nanopore_samples(w),
-        ),
-        lambda w: expand(
-            "results/benchmarking/happy/happy/truth~sanger-vs-{pipeline}/{sample}/{sample}.runinfo.json",
-            pipeline=PIPELINES["illumina"],
             sample=get_illumina_samples(w),
         ),
 

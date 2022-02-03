@@ -17,6 +17,23 @@ rule artic_guppyplex:
         " > {log} 2>&1"
 
 
+rule artic_prepare_references:
+    input:
+        repo="resources/benchmarking/artic/repo",
+    output:
+        touch("resources/benchmarking/artic/repo/.updated-reference"),
+    log:
+        "logs artic_prepare_references.log",
+    params:
+        primer_schemes=lambda w, input: os.path.join(
+            input.repo, "primer_schemes", "nCoV-2019", "V3"
+        ),
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "cp s"
+
+
 rule artic_minion_nanopolish:
     input:
         sequencing_summary=lambda wildcards: get_seq_summary(wildcards),

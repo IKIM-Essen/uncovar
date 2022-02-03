@@ -23,7 +23,7 @@ rule bamtobed:
     log:
         "logs/bamtobed/{sample}.log",
     conda:
-        "../envs/bedtools.yaml"
+        "../envs/tools.yaml"
     shell:
         "bamToBed -i {input} > {output} 2> {log}"
 
