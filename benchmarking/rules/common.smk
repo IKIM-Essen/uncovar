@@ -1,28 +1,35 @@
+# PIPELINES = {
+#     "nanopore": ["uncovar"],
+#     "illumina": ["uncovar"]
+# }
+PIPELINES = {
+    "nanopore": [
+        "artic-medaka",
+        "artic-nanopolish",
+        "ncov2019-artic-nf-medaka",
+        "ncov2019-artic-nf-nanopolish",
+        "nf-core-viralrecon-nanopolish",
+        "nf-core-viralrecon-medaka",
+        "uncovar",
+    ],
+    "illumina": [
+        "ncov2019-artic-nf",
+        "nf-core-viralrecon",
+        "v-pipe",
+        "covpipe",
+        "uncovar",
+    ],
+}
+
+
 def get_fastq_pass_path_barcode(wildcards, sample=None):
     if sample is not None:
         return pep.sample_table.loc[sample]["fastq_pass"]
     return pep.sample_table.loc[wildcards.sample]["fastq_pass"]
 
 
-# def get_fastq_pass_path(wildcards):
-#     return os.path.dirname(get_fastq_pass_path_barcode(wildcards))
-
-
 def get_fast5_pass_path_barcode(wildcards):
     return pep.sample_table.loc[wildcards.sample]["fast5_pass"]
-
-
-# def get_fast5_pass_path(wildcards):
-#     return os.path.dirname(get_fast5_pass_path_barcode(wildcards))
-
-
-# def get_fastq_input_folder(tech):
-#     dir_names = pep.sample_table.loc[
-#         pep.sample_table["technology"] == tech, "fq1"
-#     ].apply(lambda x: os.path.dirname(x))
-#     dir_names = dir_names.unique()
-#     assert len(dir_names) == 1, "Can not process files in different dirs."
-#     return dir_names
 
 
 def get_seq_summary(wildcards):
@@ -94,7 +101,7 @@ def get_vcf_of_pipeline(pipeline, wildcards):
     elif pipeline == "ncov2019-artic-nf":
         return "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.tsv"
     elif pipeline == "ncov2019-artic-nf-medaka":
-        return "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{{sample}}_{barcode}.merged.vcf".format(
+        return "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{{sample}}_{barcode}.merged.vcf.gz".format(
             barcode=get_barcode(wildcards)
         )
     elif pipeline == "ncov2019-artic-nf-nanopolish":
@@ -117,3 +124,9 @@ def get_vcf_of_pipeline(pipeline, wildcards):
         return "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.bcf".format(
             date=get_date_for_sample(wildcards)
         )
+    elif pipeline == "sanger":
+        return "results/benchmarking/sanger/variant-calls/{sample}.bcf"
+
+
+def get_sanger_files_for_sample(wildcards):
+    return pep.sample_table.loc[wildcards.sample]["sanger"].split(";")

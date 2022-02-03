@@ -26,7 +26,7 @@ rule ncov2019_artic_nf_illumina:
         vcf="results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.tsv",
     log:
         "logs/ncov2019_artic_nf/illumina/{sample}.log",
-    threads: 64
+    threads: 16
     params:
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",
@@ -36,7 +36,7 @@ rule ncov2019_artic_nf_illumina:
         outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/illumina/{w.sample}/",
         prefix=lambda w: w.sample,
     handover: True
-    threads: 64
+    threads: 16
     conda:
         "../envs/nextflow.yaml"
     resources:

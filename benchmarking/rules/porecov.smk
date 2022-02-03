@@ -37,7 +37,7 @@ rule poreCov:
         output=lambda w: f"results/benchmarking/poreCov/{w.sample}",
         samples=lambda W, input: input.sample_names,
     handover: True
-    threads: 64
+    threads: 16
     conda:
         "../envs/nextflow.yaml"
     resources:
