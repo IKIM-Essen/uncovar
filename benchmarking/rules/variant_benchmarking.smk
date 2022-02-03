@@ -1,39 +1,41 @@
-# rule rename_contig:
-#     input:
-#         lambda w: get_vcf_of_workflow(w.workflow, w)
-#     output:
-#         "results/benchmarking/variant-calls/renamed/{workflow}/{sample}.vcf",
-#     log:
-#         "logs/rename_contig/{workflow}/{sample}.log"
-#     params:
-#         search_string = "MN908947.3",
-#         replace_string = "NC_045512.2",
-#     conda:
-#         "../envs/unix.yaml"
-#     shell:
-#         "sed 's/{params.search_string}/{params.replace_string}/' {input} > {output} 2> {log}"
+# TODO check if the pipelines can run on other refernce genome
+rule rename_contig:
+    input:
+        lambda w: get_vcf_of_workflow(w.workflow, w),
+    output:
+        "results/benchmarking/variant-calls/renamed/{workflow}/{sample}.vcf",
+    log:
+        "logs/rename_contig/{workflow}/{sample}.log",
+    params:
+        search_string="MN908947.3",
+        replace_string="NC_045512.2",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "sed 's/{params.search_string}/{params.replace_string}/' {input} > {output} 2> {log}"
 
-# rule check_contig_flag:
-#     input:
-#         "results/benchmarking/variant-calls/renamed/{workflow}/{sample}.vcf",
-#     output:
-#         "results/benchmarking/variant-calls/contig-checked/{workflow}/{sample}.vcf",
-#     log:
-#         "logs/check_contig_flag/{workflow}/{sample}.log"
-#     params:
-#         search_string="##contig=<ID=NC_045512.2>",
-#         add_string="##contig=<ID=NC_045512.2> #manuelly added"
-#     conda:
-#         "../envs/unix.yaml"
-#     shell:
-#         "if ! grep -Fxq "{params.search_string}" {input}; "
-#         "then sed '2i {params.add_string}' > {output}; "
-#         "else cp {input} {output}; fi"
+
+rule check_contig_flag:
+    input:
+        "results/benchmarking/variant-calls/renamed/{workflow}/{sample}.vcf",
+    output:
+        "results/benchmarking/variant-calls/contig-checked/{workflow}/{sample}.vcf",
+    log:
+        "logs/check_contig_flag/{workflow}/{sample}.log",
+    params:
+        search_string="##contig=<ID=NC_045512.2>",
+        add_string="##contig=<ID=NC_045512.2>",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "if ! grep -Fxq '{params.search_string}' {input}; "
+        "then sed '2i {params.add_string}' {input} > {output}; "
+        "else cp {input} {output}; fi"
 
 
 rule normalize_calls:
     input:
-        lambda w: get_vcf_of_workflow(w.workflow, w),
+        "results/benchmarking/variant-calls/contig-checked/{workflow}/{sample}.vcf",
         genome="resources/genomes/main.fasta",
         genome_index="resources/genomes/main.fasta.fai",
     output:

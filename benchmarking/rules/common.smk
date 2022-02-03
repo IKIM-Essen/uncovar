@@ -121,7 +121,7 @@ def get_vcf_of_workflow(pipeline, wildcards):
     elif pipeline == "v-pipe":
         return "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf"
     elif pipeline == "uncovar":
-        return "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.bcf".format(
+        return "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.vcf".format(
             date=get_date_for_sample(wildcards)
         )
     elif pipeline == "sanger":
