@@ -102,3 +102,16 @@ rule v_pipe_run:
         "(cd {params.workdir} &&"
         " ./vpipe --cores {threads} -p -F)"
         " > {log} 2>&1"
+
+
+rule v_pipe_fix_vcf:
+    input:
+        "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
+    output:
+        "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/fixed-vcf/snvs.vcf",
+    log:
+        "logs/v_pipe_fix_vcf/{sample}.log",
+    conda:
+        "../../envs/python.yaml"
+    script:
+        "../../scripts/v_pipe_fix_vcf.py"

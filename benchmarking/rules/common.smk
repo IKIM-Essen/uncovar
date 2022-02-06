@@ -1,22 +1,22 @@
-PIPELINES = {"nanopore": ["uncovar"], "illumina": ["uncovar"]}
-# PIPELINES = {
-#     "nanopore": [
-#         "artic-medaka",
-#         "artic-nanopolish",
-#         "ncov2019-artic-nf-medaka",
-#         "ncov2019-artic-nf-nanopolish",
-#         "nf-core-viralrecon-nanopolish",
-#         "nf-core-viralrecon-medaka",
-#         "uncovar",
-#     ],
-#     "illumina": [
-#         "ncov2019-artic-nf",
-#         "nf-core-viralrecon",
-#         "v-pipe",
-#         "covpipe",
-#         "uncovar",
-#     ],
-# }
+# PIPELINES = {"nanopore": ["uncovar"], "illumina": ["uncovar"]}
+PIPELINES = {
+    "nanopore": [
+        "artic-medaka",
+        "artic-nanopolish",
+        "ncov2019-artic-nf-medaka",
+        "ncov2019-artic-nf-nanopolish",
+        "nf-core-viralrecon-nanopolish",
+        "nf-core-viralrecon-medaka",
+        "uncovar",
+    ],
+    "illumina": [
+        "ncov2019-artic-nf",
+        "nf-core-viralrecon",
+        "v-pipe",
+        "covpipe",
+        "uncovar",
+    ],
+}
 
 
 def get_fastq_pass_path_barcode(wildcards, sample=None):
@@ -116,7 +116,7 @@ def get_vcf_of_workflow(pipeline, wildcards):
             covpipe_name=get_covpipe_name_for_sample(wildcards)
         )
     elif pipeline == "v-pipe":
-        return "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf"
+        return "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/fixed-vcf/snvs.vcf"
     elif pipeline == "uncovar":
         return "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.vcf".format(
             date=get_date_for_sample(wildcards)
