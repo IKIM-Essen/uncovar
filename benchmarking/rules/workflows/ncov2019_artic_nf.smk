@@ -46,17 +46,17 @@ rule ncov2019_artic_nf_illumina:
         "../../scripts/nextflow.py"
 
 
-rule ncov2019_artic_nf_rename_illumina_vcf:
+rule ncov2019_artic_nf_illumina_fix_vcf:
     input:
         "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.tsv",
     output:
         "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.vcf",
     log:
-        "logs/ncov2019_artic_nf/rename/{sample}.log",
+        "logs/ncov2019_artic_nf_illumina_fix_vcf/{sample}.log",
     conda:
-        "../../envs/unix.yaml"
-    shell:
-        "cp {input} {output}"
+        "../../envs/python.yaml"
+    script:
+        "../../scripts/ncov2019_artic_nf_illumina_fix_vcf.py"
 
 
 rule ncov2019_artic_nf_nanopore_data_prep:
