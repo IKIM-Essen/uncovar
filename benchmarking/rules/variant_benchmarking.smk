@@ -53,7 +53,7 @@ rule normalize_calls:
 rule stratify:
     input:
         variants="results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
-        regions="results/benchmarking/sanger/aligned/{sample}.bed",
+        regions="results/benchmarking/sanger/aligned/{sample}.bed",  # we only have sanger as truth
     output:
         "results/benchmarking/variant-calls/stratified/{workflow}/{sample}.vcf.gz",
     log:
@@ -106,11 +106,11 @@ rule benchmark_variants:
 
 rule agg_normalize_calls:
     input:
-        lambda w: expand(
-            "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
-            workflow=PIPELINES["nanopore"],
-            sample=get_nanopore_samples(w),
-        ),
+        # lambda w: expand(
+        #     "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
+        #     workflow=PIPELINES["nanopore"],
+        #     sample=get_nanopore_samples(w),
+        # ),
         lambda w: expand(
             "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
             workflow=PIPELINES["illumina"],
@@ -120,11 +120,11 @@ rule agg_normalize_calls:
 
 rule agg_happy:
     input:
-        lambda w: expand(
-            "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.runinfo.json",
-            workflow=PIPELINES["nanopore"],
-            sample=get_nanopore_samples(w),
-        ),
+        # lambda w: expand(
+        #     "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.runinfo.json",
+        #     workflow=PIPELINES["nanopore"],
+        #     sample=get_nanopore_samples(w),
+        # ),
         lambda w: expand(
             "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.runinfo.json",
             workflow=PIPELINES["illumina"],
