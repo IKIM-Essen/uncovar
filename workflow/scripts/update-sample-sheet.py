@@ -1,16 +1,15 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
-from os import path, getcwd, listdir
-from shutil import move, copy2
-from datetime import date, datetime
-from os import mkdir
-from ruamel import yaml  # conda install -c conda-forge ruamel.yaml
 import os
+from datetime import date, datetime
+from os import getcwd, listdir, mkdir, path
+from shutil import copy2, move
 
 import pandas as pd
+from ruamel import yaml  # conda install -c conda-forge ruamel.yaml
 
 # define location of sample sheet and workflow configx
 SAMPLE_SHEET = snakemake.input[0]  # "config/pep/samples.csv"
@@ -43,11 +42,12 @@ def update_sample_sheet(SAMPLE_SHEET, verbose=True, dry_run=False):
     if dry_run:
         print("DRY RUN - FILES ARE NOT MOVED")
 
+    # TODO Check if the cwd is the root of this repo
     # check if current working directory is the snakemake workflow
-    if not getcwd().endswith("snakemake-workflow-sars-cov2"):
-        raise Exception(
-            "Please change your working directory to 'snakemake-workflow-sars-cov2'"
-        )
+    # if not getcwd().endswith("snakemake-workflow-sars-cov2"):
+    #     raise Exception(
+    #         "Please change your working directory to 'snakemake-workflow-sars-cov2'"
+    #     )
 
     today = date.today().strftime("%Y-%m-%d")
 
@@ -107,6 +107,7 @@ def update_sample_sheet(SAMPLE_SHEET, verbose=True, dry_run=False):
             print("\tIn total: {}".format(i))
 
     files_to_copy = [f for f in incoming_files if f not in data_files]
+
     ##################################
     ######### update the csv #########
     ##################################
@@ -151,6 +152,15 @@ def update_sample_sheet(SAMPLE_SHEET, verbose=True, dry_run=False):
         new_files_df.columns = ["fq1", "fq2"]
         new_files_df["date"] = today
         new_files_df["is_amplicon_data"] = 1
+        new_files_df.loc[
+            new_files_df.index.str.contains("No-RKI", case=False),
+            ["include_in_high_genome_summary"],
+        ] = "0"
+        new_files_df.loc[
+            ~new_files_df.index.str.contains("No-RKI", case=False),
+            ["include_in_high_genome_summary"],
+        ] = "1"
+        print(new_files_df)
 
         new_sample_sheet = (
             pd.read_csv(SAMPLE_SHEET, index_col="sample_name")
@@ -163,7 +173,7 @@ def update_sample_sheet(SAMPLE_SHEET, verbose=True, dry_run=False):
         new_sample_sheet.drop("NAME", inplace=True, errors="ignore")
 
         # check for duplicates
-        # TODO: Generalize for more than two samples
+        # TODO Generalize for more than two samples
         new_sample_sheet.index = new_sample_sheet.index.where(
             ~new_sample_sheet.index.duplicated(),
             new_sample_sheet.index.astype("str") + "_2",

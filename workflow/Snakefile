@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -21,7 +21,7 @@ report: "report/workflow.rst"
 container: "docker://condaforge/mambaforge"
 
 
-containerized: "quay.io/uncovar/uncovar#0.3.0"
+containerized: "quay.io/uncovar/uncovar#0.12.0"
 
 
 if config["strain-calling"]["use-gisaid"]:
@@ -31,6 +31,7 @@ if config["strain-calling"]["use-gisaid"]:
 
 
 include: "rules/common.smk"
+include: "rules/benchmarking_common.smk"
 include: "rules/utils.smk"
 include: "rules/ref.smk"
 include: "rules/qc.smk"
@@ -48,12 +49,14 @@ include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
 include: "rules/preprocessing.smk"
 include: "../publication/sanger_alignments.smk"
+include: "rules/long_read.smk"
+include: "rules/lineage_variant_calling.smk"
 
 
 rule save_latest_run:
     input:
         expand(
-            "results/archive-indicator/{latest_run}.archived",
+            "results/.indicators/{latest_run}.archived",
             latest_run=get_latest_run_date(),
         ),
     output:
@@ -78,66 +81,11 @@ rule save_latest_run:
 
 checkpoint all:
     input:
-        expand(
-            "results/{date}/qc/multiqc.html",
-            date=get_all_run_dates(),
-        ),
-        expand("results/reports/{date}.zip", date=get_all_run_dates()),
-        expand(
-            "results/{date}/tables/assembly_comparison.tsv", date=get_all_run_dates()
-        ),
-        expand("results/rki/{date}_uk-essen_rki.fasta", date=get_all_run_dates()),
-        expand(
-            "results/{date}/plots/all.strains.pangolin.svg",
-            date=get_all_run_dates(),
-        ),
-        expand(
-            "results/{date}/plots/all.{mode}-strain.strains.kallisto.svg",
-            date=get_all_run_dates(),
-            mode=["major", "any"],
-        ),
-        expand(
-            "results/{date}/contigs/polished/{sample}.fasta",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
-        ),
-        expand(
-            "results/{date}/tables/strain-calls/{sample}.strains.pangolin.csv",
-            zip,
-            date=get_dates(),
-            sample=get_samples(),
-        ),
-        zip_expand(
-            "results/{zip1}/plots/strain-calls/{zip2}.strains.{{exp}}.svg",
-            zip_wildcard_1=get_dates(),
-            zip_wildcard_2=get_samples(),
-            expand_wildcard=["kallisto"],
-        ),
-        zip_expand(
-            "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.bcf",
-            zip_wildcard_1=get_dates(),
-            zip_wildcard_2=get_samples(),
-            expand_wildcard=config["variant-calling"]["filters"],
-        ),
-        zip_expand(
-            "results/{zip1}/vcf-report/{zip2}.{{exp}}",
-            zip_wildcard_1=get_dates() + get_all_run_dates(),
-            zip_wildcard_2=get_samples() + ["all"] * len(get_all_run_dates()),
-            expand_wildcard=config["variant-calling"]["filters"],
-        ),
-        expand(
-            "results/{date}/virologist/qc_report.csv",
-            date=get_all_run_dates(),
-        ),
-        expand(
-            "results/{date}/qc_data/",
-            date=get_all_run_dates(),
-        ),
+        get_input_by_mode,
     output:
         touch(
             expand(
-                "results/archive-indicator/{latest_run}.archived",
+                "results/.indicators/{latest_run}.archived",
                 latest_run=get_latest_run_date(),
             )
         ),
@@ -198,3 +146,8 @@ rule benchmark_mixtures:
 rule benchmark_reads:
     input:
         "results/benchmarking/plots/aggregated_read_calls.svg",
+
+
+rule generate_test_cases:
+    input:
+        get_test_cases,

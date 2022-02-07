@@ -1,12 +1,13 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
 import re
-import pysam
-import numpy as np
 import sys
+
+import numpy as np
+import pysam
 
 sys.stderr = open(snakemake.log[0], "w")
 
@@ -65,7 +66,11 @@ with pysam.FastaFile(snakemake.input.fasta) as infasta, pysam.VariantFile(
 
         last_pos = rec_pos - 1
 
-        dp_sample = record.samples[0]["DP"][0]
+        try:
+            dp_sample = record.samples[0]["DP"][0]
+        except TypeError:
+            dp_sample = record.samples[0]["DP"]
+
         if dp_sample is None:
             dp_sample = 0
 

@@ -4,20 +4,19 @@ on:
   push:
     branches:
       - master
-      
+
 jobs:
   release-please:
     runs-on: ubuntu-latest
     env:
       GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
     steps:
-    
-      - uses: GoogleCloudPlatform/release-please-action@v2
+      - uses: GoogleCloudPlatform/release-please-action@v3
         id: release
         with:
           release-type: simple
           token: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: Check if PR is created
         id: pr_created
         run: |
@@ -46,7 +45,7 @@ jobs:
 
       - name: Both debug print
         run: |
-          echo ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }} 
+          echo ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }}
 
       - name: Space
         run: |
@@ -59,10 +58,10 @@ jobs:
         with:
           root-reserve-mb: 512
           swap-size-mb: 1024
-          remove-dotnet: 'true'
-          remove-haskell: 'true'
-          remove-android: 'true'
- 
+          remove-dotnet: "true"
+          remove-haskell: "true"
+          remove-android: "true"
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -74,7 +73,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Checkout release PR locally
-        if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }} 
+        if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }}
         run: |
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
@@ -82,24 +81,24 @@ jobs:
           git pull origin pull/${{ steps.release.outputs.pr }}/head
 
       - name: Export version as environment variable
-        if: ${{ steps.pr_created.outputs.pr == 'true' || steps.release.outputs.release_created != 'true' }} 
+        if: ${{ steps.pr_created.outputs.pr == 'true' || steps.release.outputs.release_created != 'true' }}
         run: |
           echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
           echo "Version: ${{ env.VERSION }}"
           echo ${{ steps.release.outputs.tag_name }}
-      
+
       - name: Switch to release PR on origin
-        if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }} 
+        if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }}
         run: |
           git checkout release-v${{ env.VERSION }}
 
       - name: Change containerized tag
-        if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }} 
+        if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }}
         run: |
           sed -i "/containerized/c\containerized: \"quay.io/uncovar/uncovar#${{ env.VERSION }}\"" workflow/Snakefile
 
       - name: Push changed containerized tag
-        if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }} 
+        if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }}
         run: |
           git add workflow/Snakefile
           git commit -m "Changed containerized tag to ${{ env.VERSION }}"
@@ -111,7 +110,7 @@ jobs:
         with:
           directory: .
           snakefile: workflow/Snakefile
-          task: 'containerize'
+          task: "containerize"
 
       - name: Debug print
         run: |
@@ -128,7 +127,7 @@ jobs:
 
       - name: Login to Quay Registry
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v1
         with:
           registry: quay.io
           username: uncovar+robot

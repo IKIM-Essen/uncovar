@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -46,6 +46,19 @@ rule get_genome_annotation:
         # download, sort and bgzip gff (see https://www.ensembl.org/info/docs/tools/vep/script/vep_custom.html)
         "(curl -sSL ftp://ftp.ensemblgenomes.org/pub/viruses/gff3/sars_cov_2/Sars_cov_2.ASM985889v3.101.gff3.gz | "
         "zcat | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > {output}) 2> {log}"
+
+
+rule get_genome_annotation_for_known_variants:
+    output:
+        "resources/annotation_known_variants.gff.gz",
+    log:
+        "logs/get-annotation_known_variants.log",
+    conda:
+        "../envs/tabix.yaml"
+    shell:
+        # download, sort and bgzip gff (see https://www.ensembl.org/info/docs/tools/vep/script/vep_custom.html)
+        "(curl -sSL https://raw.githubusercontent.com/thomasbtf/nextclade/master/data/sars-cov-2/genemap.gff | "
+        "cat | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -t$'\t'  | bgzip -c > {output}) 2> {log}"
 
 
 rule get_problematic_sites:

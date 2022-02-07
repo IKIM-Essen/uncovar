@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -7,12 +7,18 @@
 rule vcf_to_fasta:
     input:
         bcf="results/{date}/calls/ref~main/{sample}.bcf",
+        csi="results/{date}/calls/ref~main/{sample}.bcf.csi",
         bam="results/{date}/recal/ref~main/{sample}.bam",
         bai="results/{date}/recal/ref~main/{sample}.bam.bai",
         fasta="resources/genomes/main.fasta",
         fai="resources/genomes/main.fasta.fai",
     output:
-        "results/{date}/contigs/pseudoassembled/{sample}.fasta",
+        report(
+            "results/{date}/contigs/pseudoassembled/{sample}.fasta",
+            category="4. Sequences",
+            subcategory="2. Pseudo Assembled Sequences",
+            caption="../report/assembly_pesudo.rst",
+        ),
     params:
         min_prob_apply=config["assembly"]["min-variant-prob"],
         min_coverage=get_min_coverage,
@@ -29,7 +35,7 @@ rule compare_assemblies:
         assembly="results/{date}/contigs/polished/{sample}.fasta",
         pseudoassembly="results/{date}/contigs/pseudoassembled/{sample}.fasta",
     output:
-        "results/{date}/aligned/assemblies/{sample}.bam",
+        temp("results/{date}/aligned/assemblies/{sample}.bam"),
     log:
         "logs/{date}/aligned/assemblies/{sample}log",
     conda:

@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -13,9 +13,10 @@ MIXTURE_PREFIX = snakemake.params.get("prefix", "")
 MIXTURE_PART_INDICATOR = snakemake.params.get("separator", "")
 MIXTURE_PERCENTAGE_INDICATOR = snakemake.params.get("percentage", "")
 
-import pandas as pd
-import altair as alt
 import re
+
+import altair as alt
+import pandas as pd
 
 
 def regex_per_line(content, pattern):

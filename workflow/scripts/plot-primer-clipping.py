@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -7,13 +7,13 @@ import sys
 
 sys.stderr = open(snakemake.log[0], "w")
 
+import altair as alt
 import pandas as pd
 import pysam
 from intervaltree import IntervalTree
-import altair as alt
 
 # read primer bedpe to df
-PRIMER = pd.read_csv(snakemake.params.get("bed", ""), delimiter="\t", header=None)
+PRIMER = pd.read_csv(snakemake.params.get("bedpe", ""), delimiter="\t", header=None)
 PRIMER.drop(PRIMER.columns[[0, 3]], axis=1, inplace=True)
 PRIMER.columns = ["p1_start", "p1_end", "p2_start", "p2_end"]
 

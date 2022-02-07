@@ -1,4 +1,4 @@
-# Copyright 2021 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -96,6 +96,8 @@ rule test_benchmark_results:
         true_accessions=get_strain_accessions,
     log:
         "logs/test-benchmark-results.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
@@ -124,6 +126,8 @@ rule summarize_assembly_results:
         "results/benchmarking/assembly/{assembly_type}.csv",
     log:
         "logs/summarize-assembly-results/{assembly_type}/assembly-results.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/pysam.yaml"
     notebook:
@@ -149,10 +153,13 @@ rule test_non_cov2:
 rule report_non_cov2:
     input:
         summary="results/benchmarking/non-sars-cov-2.csv",
-        call_plots=expand(
-            "results/benchmarking/plots/strain-calls/non-cov2-{accession}.strains.{caller}.svg",
+        call_plots_kallisto=expand(
+            "results/benchmarking/plots/strain-calls/non-cov2-{accession}.strains.kallisto.svg",
             accession=get_non_cov2_accessions(),
-            caller=["pangolin", "kallisto"],
+        ),
+        call_plots_pangolin=expand(
+            "results/benchmarking/plots/strain-calls/non-cov2-{accession}.polished.strains.pangolin.svg",
+            accession=get_non_cov2_accessions(),
         ),
     output:
         report(
@@ -223,7 +230,7 @@ rule assembly_comparison_trinity:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        temp("results/{date}/assembly/{sample}/trinity/{sample}.contigs.fasta"),
+        temp("results/{date}/assembly/{sample}/trinity-pe/{sample}.contigs.fasta"),
     log:
         "logs/{date}/trinity/{sample}.log",
     params:
@@ -242,7 +249,7 @@ rule assembly_comparison_velvet:
         fastq1=lambda wildcards: get_reads_after_qc(wildcards, read="1"),
         fastq2=lambda wildcards: get_reads_after_qc(wildcards, read="2"),
     output:
-        temp("results/{date}/assembly/{sample}/velvet/{sample}.contigs.fasta"),
+        temp("results/{date}/assembly/{sample}/velvet-pe/{sample}.contigs.fasta"),
     log:
         "logs/{date}/velvet/{sample}.log",
     params:
@@ -261,7 +268,9 @@ rule assembly_comparison_velvet:
 
 rule order_contigs_assembly_comparison:
     input:
-        contigs="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
+        contigs=(
+            "results/{date}/assembly/{sample}/{assembler}-pe/{sample}.contigs.fasta"
+        ),
         reference="resources/genomes/main.fasta",
     output:
         temp(
@@ -294,7 +303,7 @@ use rule filter_chr0 as filter_chr0_assembly_comparison with:
 use rule align_contigs as align_contigs_assembly_comparison with:
     input:
         target="resources/genomes/main.fasta",
-        query="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
+        query="results/{date}/assembly/{sample}/{assembler}-pe/{sample}.contigs.fasta",
     output:
         "results/{date}/assembly/{sample}/{assembler}/main_{sample}.bam",
     log:
@@ -303,7 +312,7 @@ use rule align_contigs as align_contigs_assembly_comparison with:
 
 use rule quast as quast_assembly_comparison with:
     input:
-        fasta="results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.fasta",
+        fasta="results/{date}/assembly/{sample}/{assembler}-pe/{sample}.contigs.fasta",
         bam="results/{date}/assembly/{sample}/{assembler}/main_{sample}.bam",
         reference="resources/genomes/main.fasta",
     output:
@@ -316,7 +325,7 @@ use rule quast as quast_assembly_comparison with:
 rule plot_assemblies:
     input:
         initial=get_samples_for_assembler_comparison(
-            "results/{zip1}/assembly/{zip2}/{{exp}}/{zip2}.contigs.fasta"
+            "results/{zip1}/assembly/{zip2}/{{exp}}-pe/{zip2}.contigs.fasta"
         ),
         final=get_samples_for_assembler_comparison(
             "results/{zip1}/assembly/{zip2}/{{exp}}/{zip2}.contigs.ordered.filtered.fasta",
@@ -412,7 +421,7 @@ rule collect_lineage_calls_of_various_stages:
             state_indi=READ_STATE_INDICATOR,
         ),
         pangolin=expand(
-            "results/benchmarking/tables/strain-calls/{prefix}{{lineage}}{number_indi}{{number}}{length_indi}{{length}}{state_indi}{state}.strains.pangolin.csv",
+            "results/benchmarking/tables/strain-calls/{prefix}{{lineage}}{number_indi}{{number}}{length_indi}{{length}}{state_indi}{state}.polished.strains.pangolin.csv",
             prefix=READ_TEST_PREFIX,
             number_indi=READ_NUMBER_INDICATOR,
             length_indi=READ_LENGTH_INDICATOR,
@@ -479,6 +488,8 @@ rule plot_read_call:
         "results/benchmarking/plots/aggregated_read_calls.svg",
     log:
         "logs/plot_read_call.log",
+    resources:
+        notebooks=1,
     conda:
         "../envs/python.yaml"
     notebook:
@@ -496,3 +507,113 @@ rule get_publication_plots:
         ),
         "results/benchmarking/plots/assembler-comparison.svg",
         "results/benchmarking/plots/assembler-comparison_genome_fraction.svg",
+
+
+rule indentify_test_case_variants:
+    input:
+        illumina_bcf=get_test_cases_variant_calls(ILLUMINA),
+        illumina_csi=get_test_cases_variant_calls(ILLUMINA, ".csi"),
+        ont_bcf=get_test_cases_variant_calls(ONT),
+        ont_csi=get_test_cases_variant_calls(ONT, ".csi"),
+    output:
+        "results/benchmarking/tables/test-cases/{test_case}/found-variants.tsv",
+    log:
+        "logs/test_cases/{test_case}.log",
+    conda:
+        "../envs/pysam.yaml"
+    script:
+        "../scripts/benchmarking/compare-vcf.py"
+
+
+rule aggregate_test_case_variants:
+    input:
+        lambda wildcards: expand(
+            "results/benchmarking/tables/test-cases/{test_case}/found-variants.tsv",
+            test_case=get_all_test_cases_names(wildcards),
+        ),
+    output:
+        "results/benchmarking/tables/test-cases/found-variants.tsv",
+    log:
+        "logs/aggregate_test_case_variants.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/benchmarking/aggregate-test-case-variants.py"
+
+
+rule filter_test_case_variants:
+    input:
+        "results/benchmarking/tables/test-cases/found-variants.tsv",
+    output:
+        different_probs="results/benchmarking/tables/test-cases/different-prob-calls.tsv",
+        illumina_only="results/benchmarking/tables/test-cases/illumina-only-calls.tsv",
+        ont_only="results/benchmarking/tables/test-cases/ont-only-calls.tsv",
+    log:
+        "logs/filter_test_case_variants.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/benchmarking/filter-test-case-variants.py"
+
+
+checkpoint get_test_case_variant_paths:
+    input:
+        "results/benchmarking/tables/test-cases/different-prob-calls.tsv",
+    output:
+        overview="results/testcases/different-probs-overview.tsv",
+        paths="results/benchmarking/tables/test-cases/aggregated-variants.tsv",
+    params:
+        illumina=ILLUMINA,
+        ont=ONT,
+        illumina_varrange=ILLUMINA_VARRANGE,
+        ont_varrange=ONT_VARRANGE,
+        sample_table=pep.sample_table.to_dict(),
+    log:
+        "logs/get_test_case_variant_paths.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/benchmarking/get-test-case-variant-paths.py"
+
+
+checkpoint check_presence_of_test_case_variant_in_call:
+    input:
+        bcfs=get_aggregated_test_case_variants("bcf"),
+        csi=get_aggregated_test_case_variants("csi"),
+    output:
+        "results/benchmarking/tables/test-cases/presence-test-case-varaints.tsv",
+    params:
+        variants=get_aggregated_test_case_variants("variants"),
+        poses=get_aggregated_test_case_variants("poses"),
+        test_cases=get_aggregated_test_case_variants("test-case-paths"),
+    log:
+        "logs/check_presence_of_test_case_variant.log",
+    conda:
+        "../envs/pysam.yaml"
+    script:
+        "../scripts/benchmarking/check-presence-of-test-case-variant-in-call.py"
+
+
+rule varlociraptor_test_case:
+    input:
+        obs="results/{date}/observations/ref~{reference}/{sample}.{varrange}.bcf",
+        scenario="results/{date}/scenarios/{sample}.yaml",
+    output:
+        bcf=temp(
+            "results/{date}/call-test-cases/ref~{reference}/{sample}.{varrange}.chrom~{chrom}.pos~{pos}.bcf"
+        ),
+        testcase=directory(
+            "results/testcases/{sample}@{chrom}:{pos}-from:{date}-ref:{reference}-varrange:{varrange}."
+        ),
+    params:
+        biases=get_varlociraptor_bias_flags,
+    log:
+        "logs/{date}/varlociraptor/call/ref~{reference}/chrom~{chrom}.pos~{pos}.{sample}.{varrange}.log",
+    conda:
+        "../envs/varlociraptor.yaml"
+    shell:
+        "varlociraptor call variants "
+        "--testcase-prefix {output.testcase} "
+        "--testcase-locus {wildcards.chrom}:{wildcards.pos} "
+        "{params.biases} generic --obs {wildcards.sample}={input.obs} "
+        "--scenario {input.scenario} > {output.bcf} 2> {log}"
