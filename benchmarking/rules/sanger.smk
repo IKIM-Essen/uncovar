@@ -30,13 +30,13 @@ rule bamtobed:
 
 rule freebayes_sanger:
     input:
+        # optional BED file specifying chromosomal regions on which freebayes
+        # should run, e.g. all regions that show coverage
+        #regions="path/to/region-file.bed"
         ref="resources/genomes/main.fasta",
         fai="resources/genomes/main.fasta.fai",
         samples="results/benchmarking/sanger/aligned/{sample}.bam",
         indexes="results/benchmarking/sanger/aligned/{sample}.bam.bai",
-        # optional BED file specifying chromosomal regions on which freebayes
-        # should run, e.g. all regions that show coverage
-        #regions="path/to/region-file.bed"
     output:
         "results/benchmarking/sanger/variant-calls/{sample}.vcf",  # either .vcf or .bcf
     log:
