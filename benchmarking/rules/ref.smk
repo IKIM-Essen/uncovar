@@ -68,3 +68,17 @@ rule download_SIGNAL:
         "../envs/git.yaml"
     shell:
         "git clone --branch v1.4.4 https://github.com/jaleezyy/covid-19-signal {output} 2> {log}"
+
+
+rule snakelines_download:
+    output:
+        repo=directory("resources/benchmarking/snakelines/repo"),
+        config="resources/benchmarking/snakelines/repo/example/covseq/covseq.yaml",
+        snakeline="resources/benchmarking/snakelines/repo/snakelines.snake",
+    log:
+        "logs/snakelines_download.log",
+    conda:
+        "../../envs/git.yaml"
+    shell:
+        "if [ -d '{output.repo}' ]; then rm -Rf {output.repo}; fi &&"
+        "git clone https://github.com/thomasbtf/snakelines.git {output.repo} 2> {log}"
