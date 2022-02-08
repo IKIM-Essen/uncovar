@@ -61,13 +61,17 @@ rule download_C_VIEW:
 
 rule download_SIGNAL:
     output:
-        directory("resources/benchmarking/SIGNAL/repo"),
+        repo=directory("resources/benchmarking/SIGNAL/repo"),
+        snakefile="resources/benchmarking/SIGNAL/repo/Snakefile",
+        config="resources/benchmarking/SIGNAL/repo/config.yaml",
+        script_dir=directory("resources/benchmarking/SIGNAL/repo/scripts"),
     log:
         "logs/download_SIGNAL.log",
     conda:
         "../envs/git.yaml"
     shell:
-        "git clone --branch v1.4.4 https://github.com/jaleezyy/covid-19-signal {output} 2> {log}"
+        "if [ -d '{output.repo}' ]; then rm -Rf {output.repo}; fi &&"
+        "git clone --branch v1.4.4 https://github.com/jaleezyy/covid-19-signal {output.repo} 2> {log}"
 
 
 rule snakelines_download:

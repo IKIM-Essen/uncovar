@@ -1,0 +1,8 @@
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - snakemake == 6.15.3
+  - mamba == 0.20.0
+  - kraken2 == 2.1.2
