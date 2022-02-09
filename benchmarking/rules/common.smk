@@ -1,4 +1,4 @@
-# PIPELINES = {"nanopore": ["uncovar"], "illumina": ["signal"]}
+# PIPELINES = {"nanopore": ["uncovar"], "illumina": ["uncovar", "covpipe"]}
 PIPELINES = {
     "nanopore": [
         "artic-medaka",
@@ -15,7 +15,7 @@ PIPELINES = {
         "v-pipe",
         "havoc",
         "covpipe",
-        "signal",
+        # "signal",
         "snakelines",
         "uncovar",
     ],

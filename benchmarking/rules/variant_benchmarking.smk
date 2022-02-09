@@ -33,9 +33,22 @@ rule check_contig_flag:
         "else cp {input} {output}; fi"
 
 
-rule normalize_calls:
+rule check_genotype:
     input:
         "results/benchmarking/variant-calls/contig-checked/{workflow}/{sample}.vcf",
+    output:
+        "results/benchmarking/variant-calls/genotyped/{workflow}/{sample}.vcf",
+    log:
+        "logs/check_genotype/{workflow}/{sample}.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/check_genotype.py"
+
+
+rule normalize_calls:
+    input:
+        "results/benchmarking/variant-calls/genotyped/{workflow}/{sample}.vcf",
         genome="resources/genomes/main.fasta",
         genome_index="resources/genomes/main.fasta.fai",
     output:
@@ -120,15 +133,15 @@ rule agg_normalize_calls:
 
 rule agg_happy:
     input:
-        # lambda w: expand(
-        #     "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.runinfo.json",
-        #     workflow=PIPELINES["nanopore"],
-        #     sample=get_nanopore_samples(w),
-        # ),
+        lambda w: expand(
+            "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.runinfo.json",
+            workflow=PIPELINES["nanopore"],
+            sample=get_nanopore_samples(w),
+        ),
         lambda w: expand(
             "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.runinfo.json",
             workflow=PIPELINES["illumina"],
-            sample=get_illumina_samples(w),
+            sample=get_illumina_samples(w)[0],
         ),
 
 

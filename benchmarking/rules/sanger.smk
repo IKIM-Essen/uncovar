@@ -42,8 +42,7 @@ rule freebayes_sanger:
     log:
         "logs/freebayes/{sample}.log",
     params:
-        # TODO: GT 1 or 1/1
-        extra="--min-alternate-count 1 --ploidy 2 --pooled-continuous",  # optional parameters
+        extra="--min-alternate-count 1 --ploidy 2",  # optional parameters
         chunksize=100000,  # reference genome chunk size for parallelization (default: 100000)
         normalize=False,  # optional flag to use bcftools norm to normalize indels (Valid params are -a, -f, -m, -D or -d)
     threads: 2
