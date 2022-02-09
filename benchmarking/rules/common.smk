@@ -150,3 +150,23 @@ def get_vcf_of_workflow(pipeline, wildcards):
 
 def get_sanger_files_for_sample(wildcards):
     return pep.sample_table.loc[wildcards.sample]["sanger"].split(";")
+
+
+def get_benchmark_path(path):
+    def inner(wildcards):
+        return expand(
+            path,
+            workflow=PIPELINES["nanopore"],
+            sample=get_nanopore_samples(wildcards),
+        ) + expand(
+            path,
+            workflow=PIPELINES["illumina"],
+            sample=get_illumina_samples(wildcards),
+        )
+
+    return inner
+
+
+def get_happy(wildcards):
+    with checkpoints.filter_vcf.get().output.accepted_vcfs.open() as f:
+        return f.read().splitlines()

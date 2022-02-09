@@ -63,18 +63,18 @@ rule normalize_calls:
         "v1.0.0/bio/bcftools/norm"
 
 
-rule stratify:
-    input:
-        variants="results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
-        regions="results/benchmarking/sanger/aligned/{sample}.bed",  # we only have sanger as truth
-    output:
-        "results/benchmarking/variant-calls/stratified/{workflow}/{sample}.vcf.gz",
-    log:
-        "logs/stratify-truth/{workflow}/{sample}.log",
-    conda:
-        "../envs/tools.yaml"
-    shell:
-        "bedtools intersect -b {input.regions} -a <(bcftools view {input.variants}) -wa -f 1.0 -header | bcftools view -Oz > {output} 2> {log}"
+# rule stratify:
+#     input:
+#         variants="results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
+#         regions="results/benchmarking/sanger/aligned/{sample}.bed",  # we only have sanger as truth
+#     output:
+#         "results/benchmarking/variant-calls/stratified/{workflow}/{sample}.vcf.gz",
+#     log:
+#         "logs/stratify-truth/{workflow}/{sample}.log",
+#     conda:
+#         "../envs/tools.yaml"
+#     shell:
+#         "bedtools intersect -b {input.regions} -a <(bcftools view {input.variants}) -wa -f 1.0 -header | bcftools view -Oz > {output} 2> {log}"
 
 
 rule bcftools_index:
@@ -86,6 +86,40 @@ rule bcftools_index:
         "logs/bcftools-index/{infix}.log",
     wrapper:
         "v1.0.0/bio/bcftools/index"
+
+
+rule check_number_of_vc_records:
+    input:
+        "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
+        "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz.csi",
+    output:
+        "results/benchmarking/variant-calls/vc-records/{workflow}/{sample}.txt",
+    log:
+        "logs/check_number_of_vc_records/{workflow}/{sample}.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/check_number_of_vc_records.py"
+
+
+checkpoint filter_vcf:
+    input:
+        no_of_records=get_benchmark_path(
+            "results/benchmarking/variant-calls/vc-records/{workflow}/{sample}.txt"
+        ),
+    output:
+        accepted_vcfs=temp("results/benchmarking/variant-calls/accepted_vcfs.txt"),
+        empty_vcfs=temp("results/benchmarking/variant-calls/empty-vcfs.txt"),
+    log:
+        "logs/filter_vcf.log",
+    conda:
+        "../envs/python.yaml"
+    params:
+        happy_paths=get_benchmark_path(
+            "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.runinfo.json"
+        ),
+    script:
+        "../scripts/filter_vcf.py"
 
 
 rule benchmark_variants:
@@ -117,32 +151,9 @@ rule benchmark_variants:
         "v1.0.0/bio/hap.py/hap.py"
 
 
-rule agg_normalize_calls:
+rule agg:
     input:
-        lambda w: expand(
-            "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
-            workflow=PIPELINES["nanopore"],
-            sample=get_nanopore_samples(w),
-        ),
-        lambda w: expand(
-            "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
-            workflow=PIPELINES["illumina"],
-            sample=get_illumina_samples(w),
-        ),
-
-
-rule agg_happy:
-    input:
-        lambda w: expand(
-            "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.runinfo.json",
-            workflow=PIPELINES["nanopore"],
-            sample=get_nanopore_samples(w),
-        ),
-        lambda w: expand(
-            "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.runinfo.json",
-            workflow=PIPELINES["illumina"],
-            sample=get_illumina_samples(w)[0],
-        ),
+        get_happy,
 
 
 # rule benchmark_variants:
