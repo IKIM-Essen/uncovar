@@ -108,7 +108,7 @@ checkpoint filter_vcf:
             "results/benchmarking/variant-calls/vc-records/{workflow}/{sample}.txt"
         ),
     output:
-        accepted_vcfs=temp("results/benchmarking/variant-calls/accepted_vcfs.txt"),
+        accepted_vcfs=temp("results/benchmarking/variant-calls/accepted-vcfs.txt"),
         empty_vcfs=temp("results/benchmarking/variant-calls/empty-vcfs.txt"),
     log:
         "logs/filter_vcf.log",
