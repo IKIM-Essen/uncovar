@@ -106,11 +106,11 @@ rule benchmark_variants:
 
 rule agg_normalize_calls:
     input:
-        # lambda w: expand(
-        #     "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
-        #     workflow=PIPELINES["nanopore"],
-        #     sample=get_nanopore_samples(w),
-        # ),
+        lambda w: expand(
+            "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
+            workflow=PIPELINES["nanopore"],
+            sample=get_nanopore_samples(w),
+        ),
         lambda w: expand(
             "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
             workflow=PIPELINES["illumina"],

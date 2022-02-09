@@ -86,7 +86,7 @@ rule nf_core_viralrecon_nanopore_prepare_samples:
         else "",
     shell:
         "(mkdir -p {params.barcode} &&"
-        " ln -sr {input} {output}{params.mv_or_uncompress})"
+        " cp -r {input} {output}{params.mv_or_uncompress})"
         "2>{log}"
 
 

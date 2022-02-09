@@ -74,9 +74,7 @@ rule ncov2019_artic_nf_nanopore_data_prep:
     params:
         barcode=lambda w, output: os.path.join(output[0], get_barcode(w)),
     shell:
-        "(mkdir -p {params.barcode} &&"
-        " ln -sr {input} {output})"
-        "2>{log}"
+        "mkdir -p {params.barcode} && cp -r {input} {output}"
 
 
 use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish with:
@@ -95,7 +93,7 @@ use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish wit
     conda:
         "../../envs/nextflow_ncov2019_artic_nf_nanopore.yaml"
     benchmark:
-        "benchmarks/ncov2019_artic_nf_nanopolish/{sample}.benchmark.txt"
+        "benchmarks/ncov2019_artic_nf_nanopolish/{sample}~{barcode}.benchmark.txt"
     params:
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",
@@ -115,7 +113,7 @@ use rule ncov2019_artic_nf_nanopore_nanopolish as ncov2019_artic_nf_nanopore_med
     log:
         "logs/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}.log",
     benchmark:
-        "benchmarks/ncov2019_artic_nf_medaka/{sample}.benchmark.txt"
+        "benchmarks/ncov2019_artic_nf_medaka/{sample}~{barcode}.benchmark.txt"
     params:
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",

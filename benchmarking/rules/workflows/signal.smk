@@ -94,7 +94,7 @@ rule SIGNAL_bwa_index:
     log:
         "logs/SIGNAL_bwa_index.log",
     benchmark:
-        "benchmarks/signal_preprocessing/{sample}.benchmark.txt"
+        "benchmarks/signal_preprocessing/benchmark.txt"
     params:
         algorithm="bwtsw -b 500000000",
     wrapper:

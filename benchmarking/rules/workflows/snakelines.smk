@@ -29,10 +29,10 @@ rule snakelines_prepare_data:
     conda:
         "../../envs/unix.yaml"
     shell:
-        "(ln -se {input.samples[0]} {output.fq1} &&"
-        " ln -se {input.samples[1]} {output.fq2} &&"
-        " ln -se {input.reference} {output.reference} &&"
-        " ln -se {input.primers} {output.primers})"
+        "(ln -sr {input.samples[0]} {output.fq1} &&"
+        " ln -sr {input.samples[1]} {output.fq2} &&"
+        " ln -sr {input.reference} {output.reference} &&"
+        " ln -sr {input.primers} {output.primers})"
         "2> {log}"
 
 
@@ -71,7 +71,6 @@ rule snakeline:
         config="resources/benchmarking/snakelines/repo/example/covseq/covseq.yaml",
         snakefile="resources/benchmarking/snakelines/repo/snakelines.snake",
     output:
-        outdir=directory("results/benchmarking/snakelines/{sample}"),
         vcf="results/benchmarking/snakelines/{sample}/variant/sars_cov_2-wgs/original/{sample}.vcf",
         consensus="results/benchmarking/snakelines/{sample}/report/public/01-example/{sample}/consensus-sars_cov_2-wgs.fa",
         pangolin="results/benchmarking/snakelines/{sample}/report/public/01-example/{sample}/lineage_report-sars_cov_2-wgs.csv",

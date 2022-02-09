@@ -82,7 +82,7 @@ rule snakelines_download:
     log:
         "logs/snakelines_download.log",
     conda:
-        "../../envs/git.yaml"
+        "../envs/git.yaml"
     shell:
         "if [ -d '{output.repo}' ]; then rm -Rf {output.repo}; fi &&"
         "git clone https://github.com/thomasbtf/snakelines.git {output.repo} 2> {log}"

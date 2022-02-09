@@ -47,7 +47,7 @@ rule CovPipe:
     conda:
         "../../envs/covpipe.yaml"
     benchmark:
-        "benchmarks/covpipe/{sample}.benchmark.txt"
+        "benchmarks/covpipe/{sample}~{covpipe_name}.benchmark.txt"
     resources:
         external_pipeline=1,
     shell:

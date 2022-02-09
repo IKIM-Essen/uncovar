@@ -50,7 +50,7 @@ rule HaVoc:
         script="resources/benchmarking/havoc/HAVoC.sh",
         fq1="results/benchmarking/havoc/{sample}/data/{sample}_R1.fastq.gz",
         fq2="results/benchmarking/havoc/{sample}/data/{sample}_R2.fastq.gz",
-        ref="resources/benchmarking/havoc/ref.fasta",
+        ref="resources/benchmarking/havoc/ref.fa",
         adapters="resources/benchmarking/havoc/NexteraPE-PE.fa",
     output:
         consensus="results/benchmarking/havoc/{sample}/data/{havoc_name}/{havoc_name}_consensus.fa",
@@ -61,7 +61,7 @@ rule HaVoc:
     conda:
         "../../envs/havoc.yaml"
     benchmark:
-        "benchmarks/havoc/{sample}.benchmark.txt"
+        "benchmarks/havoc/{sample}~{havoc_name}.benchmark.txt"
     threads: 8
     params:
         fastq_dir=lambda w, input: os.path.dirname(input.fq1),
