@@ -26,6 +26,14 @@ rule poreCov:
         lineage_call="results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
     log:
         "logs/poreCov/{sample}.log",
+    conda:
+        "../../envs/nextflow.yaml"
+    benchmark:
+        "benchmarks/porecov/{sample}.benchmark.txt"
+    threads: 16
+    resources:
+        external_pipeline=1,
+        nextflow=1,
     params:
         pipeline="replikation/poreCov",
         revision="1.0.0",
@@ -36,11 +44,5 @@ rule poreCov:
         output=lambda w: f"results/benchmarking/poreCov/{w.sample}",
         samples=lambda W, input: input.sample_names,
     handover: True
-    threads: 16
-    conda:
-        "../../envs/nextflow.yaml"
-    resources:
-        external_pipeline=1,
-        nextflow=1,
     script:
         "../../scripts/nextflow.py"

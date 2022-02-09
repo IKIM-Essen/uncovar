@@ -1,25 +1,25 @@
-PIPELINES = {"nanopore": ["uncovar"], "illumina": ["signal"]}
-# PIPELINES = {
-#     "nanopore": [
-#         "artic-medaka",
-#         "artic-nanopolish",
-#         "ncov2019-artic-nf-medaka",
-#         "ncov2019-artic-nf-nanopolish",
-#         "nf-core-viralrecon-nanopolish",
-#         "nf-core-viralrecon-medaka",
-#         "uncovar",
-#     ],
-#     "illumina": [
-#         "ncov2019-artic-nf",
-#         "nf-core-viralrecon",
-#         "v-pipe",
-#         "havoc",
-#         "covpipe",
-#         "signal",
-#         "snakelines",
-#         "uncovar",
-#     ],
-# }
+# PIPELINES = {"nanopore": ["uncovar"], "illumina": ["signal"]}
+PIPELINES = {
+    "nanopore": [
+        "artic-medaka",
+        "artic-nanopolish",
+        "ncov2019-artic-nf-medaka",
+        "ncov2019-artic-nf-nanopolish",
+        "nf-core-viralrecon-nanopolish",
+        "nf-core-viralrecon-medaka",
+        "uncovar",
+    ],
+    "illumina": [
+        "ncov2019-artic-nf",
+        "nf-core-viralrecon",
+        "v-pipe",
+        "havoc",
+        "covpipe",
+        "signal",
+        "snakelines",
+        "uncovar",
+    ],
+}
 
 
 def get_fastq_pass_path_barcode(wildcards, sample=None):

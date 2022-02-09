@@ -22,7 +22,14 @@ rule nf_core_viralrecon_illumina:
         vcf="results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/{sample}.vcf.gz",
     log:
         "logs/nf-core-viralrecon/{sample}.log",
+    conda:
+        "../../envs/nextflow.yaml"
+    benchmark:
+        "benchmarks/nf_core_viralrecon_illumina/{sample}.benchmark.txt"
     threads: 16
+    resources:
+        external_pipeline=1,
+        nextflow=1,
     params:
         pipeline="nf-core/viralrecon",
         revision="2.2",
@@ -33,12 +40,6 @@ rule nf_core_viralrecon_illumina:
         genome="'MN908947.3'",
         outdir="results/benchmarking/nf-core-viralrecon/illumina/{sample}",
     handover: True
-    threads: 16
-    conda:
-        "../../envs/nextflow.yaml"
-    resources:
-        external_pipeline=1,
-        nextflow=1,
     script:
         "../../scripts/nextflow.py"
 
@@ -101,6 +102,8 @@ use rule nf_core_viralrecon_illumina as nf_core_viralrecon_nanopore_nanopolish w
         vcf="results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/{sample}.merged.vcf",
     log:
         "logs/nf-core-nf_core_viralrecon_nanopore/nanopolish/{sample}.log",
+    benchmark:
+        "benchmarks/nf_core_viralrecon_nanopolish/{sample}.benchmark.txt"
     params:
         pipeline="nf-core/viralrecon",
         revision="2.2",
@@ -119,6 +122,8 @@ use rule nf_core_viralrecon_nanopore_nanopolish as nf_core_viralrecon_nanopore_m
         vcf="results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/{sample}.merged.vcf",
     log:
         "logs/nf-core-nf_core_viralrecon_nanopore/medaka/{sample}.log",
+    benchmark:
+        "benchmarks/nf_core_viralrecon_medaka/{sample}.benchmark.txt"
     params:
         pipeline="nf-core/viralrecon",
         revision="2.2",

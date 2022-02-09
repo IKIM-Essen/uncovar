@@ -93,6 +93,8 @@ rule SIGNAL_bwa_index:
         ),
     log:
         "logs/SIGNAL_bwa_index.log",
+    benchmark:
+        "benchmarks/signal_preprocessing/{sample}.benchmark.txt"
     params:
         algorithm="bwtsw -b 500000000",
     wrapper:
@@ -257,13 +259,15 @@ rule SIGNAL:
         vcf="results/benchmarking/SIGNAL/{sample}/results_dir/{sample}/freebayes/{sample}.variants.norm.vcf",
     log:
         "logs/SIGNAL/{sample}.log",
+    conda:
+        "../../envs/signal.yaml"
+    benchmark:
+        "benchmarks/signal/{sample}.benchmark.txt"
+    threads: 16
     params:
         out_dir=lambda w, input: os.path.dirname(input.config),
         config=lambda w, input: os.path.basename(input.config),
         cwd=os.getcwd(),
-    threads: 16
-    conda:
-        "../../envs/signal.yaml"
     shell:
         "(cd {params.out_dir} && "
         " snakemake -kp --use-conda "

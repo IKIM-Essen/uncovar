@@ -58,13 +58,15 @@ rule HaVoc:
         vcf="results/benchmarking/havoc/{sample}/data/{havoc_name}/{havoc_name}_indel.vcf",
     log:
         "logs/HaVoc/{sample}-{havoc_name}.log",
+    conda:
+        "../../envs/havoc.yaml"
+    benchmark:
+        "benchmarks/havoc/{sample}.benchmark.txt"
+    threads: 8
     params:
         fastq_dir=lambda w, input: os.path.dirname(input.fq1),
         out_dir=lambda w, input: os.path.dirname(os.path.dirname(input.fq1)),
         cwd=os.getcwd(),
-    threads: 8
-    conda:
-        "../../envs/havoc.yaml"
     shell:
         "(cd {params.out_dir} &&"
         " bash {params.cwd}/{input.script} {params.cwd}/{params.fastq_dir}) > {log} 2>&1"

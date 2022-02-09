@@ -9,6 +9,8 @@ rule artic_guppyplex:
         "logs/artic_guppyplex/{sample}.log",
     conda:
         "../../envs/artic.yaml"
+    benchmark:
+        "benchmarks/artic_guppyplex/{sample}.benchmark.txt"
     resources:
         external_pipeline=1,
     shell:
@@ -30,9 +32,11 @@ rule artic_minion_nanopolish:
         consensus="results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.consensus.fasta",
     log:
         "logs/artic_minion/nanopolish/{sample}.log",
-    threads: 16
     conda:
         "../../envs/artic.yaml"
+    benchmark:
+        "benchmarks/artic_nanopolish/{sample}.benchmark.txt"
+    threads: 16
     params:
         primer_schemes=lambda w, input: os.path.join(input.repo, "primer_schemes"),
         cwd=lambda w: os.getcwd(),
@@ -61,9 +65,11 @@ rule artic_minion_medaka:
         consensus="results/benchmarking/artic/minion/medaka/{sample}/{sample}.consensus.fasta",
     log:
         "logs/artic_minion/medaka/{sample}.log",
-    threads: 16
     conda:
         "../../envs/artic.yaml"
+    benchmark:
+        "benchmarks/artic_medaka/{sample}.benchmark.txt"
+    threads: 16
     params:
         primer_schemes=lambda w, input: os.path.join(input.repo, "primer_schemes"),
         medaka_model=config["assembly"]["oxford nanopore"]["medaka_model"],

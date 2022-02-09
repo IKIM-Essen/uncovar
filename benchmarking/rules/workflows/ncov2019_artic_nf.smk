@@ -26,7 +26,14 @@ rule ncov2019_artic_nf_illumina:
         vcf="results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.tsv",
     log:
         "logs/ncov2019_artic_nf/illumina/{sample}.log",
+    conda:
+        "../../envs/nextflow.yaml"
+    benchmark:
+        "benchmarks/ncov2019_artic_nf_illumina/{sample}.benchmark.txt"
     threads: 16
+    resources:
+        external_pipeline=1,
+        nextflow=1,
     params:
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",
@@ -36,12 +43,6 @@ rule ncov2019_artic_nf_illumina:
         outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/illumina/{w.sample}/",
         prefix=lambda w: w.sample,
     handover: True
-    threads: 16
-    conda:
-        "../../envs/nextflow.yaml"
-    resources:
-        external_pipeline=1,
-        nextflow=1,
     script:
         "../../scripts/nextflow.py"
 
@@ -91,6 +92,10 @@ use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish wit
         vcf="results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{sample}_{barcode}.merged.vcf",
     log:
         "logs/ncov2019_artic_nf/nanopore/nanopolish/{sample}-{barcode}.log",
+    conda:
+        "../../envs/nextflow_ncov2019_artic_nf_nanopore.yaml"
+    benchmark:
+        "benchmarks/ncov2019_artic_nf_nanopolish/{sample}.benchmark.txt"
     params:
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",
@@ -98,8 +103,6 @@ use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish wit
         flags="--nanopolish",
         outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{w.sample}-{w.barcode}",
         prefix=lambda w: w.sample,
-    conda:
-        "../../envs/nextflow_ncov2019_artic_nf_nanopore.yaml"
 
 
 use rule ncov2019_artic_nf_nanopore_nanopolish as ncov2019_artic_nf_nanopore_medaka with:
@@ -111,6 +114,8 @@ use rule ncov2019_artic_nf_nanopore_nanopolish as ncov2019_artic_nf_nanopore_med
         vcf="results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.merged.vcf.gz",
     log:
         "logs/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}.log",
+    benchmark:
+        "benchmarks/ncov2019_artic_nf_medaka/{sample}.benchmark.txt"
     params:
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",

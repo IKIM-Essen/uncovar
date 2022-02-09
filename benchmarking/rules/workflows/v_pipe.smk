@@ -93,11 +93,13 @@ rule v_pipe_run:
         "logs/v_pipe_run/{sample}.log",
     conda:
         "../../envs/v-pipe.yaml"
-    params:
-        workdir=lambda w, input: os.path.join(os.path.dirname(input[0]), "work"),
+    benchmark:
+        "benchmarks/v_pipe/{sample}.benchmark.txt"
     threads: 16
     resources:
         external_pipeline=1,
+    params:
+        workdir=lambda w, input: os.path.join(os.path.dirname(input[0]), "work"),
     shell:
         "(cd {params.workdir} &&"
         " ./vpipe --cores {threads} -p -F)"

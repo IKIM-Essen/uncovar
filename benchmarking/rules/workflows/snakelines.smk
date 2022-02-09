@@ -33,7 +33,7 @@ rule snakelines_prepare_data:
         " ln -se {input.samples[1]} {output.fq2} &&"
         " ln -se {input.reference} {output.reference} &&"
         " ln -se {input.primers} {output.primers})"
-        " 2> {log}"
+        "2> {log}"
 
 
 rule snakeline_unzip_hg38:
@@ -46,7 +46,7 @@ rule snakeline_unzip_hg38:
     conda:
         "../../envs/unix.yaml"
     shell:
-        "gzip -dk {input}  2> {log}"
+        "gzip -dk {input} 2> {log}"
 
 
 rule snakelines_prepare_hg38:
@@ -77,12 +77,14 @@ rule snakeline:
         pangolin="results/benchmarking/snakelines/{sample}/report/public/01-example/{sample}/lineage_report-sars_cov_2-wgs.csv",
     log:
         "logs/snakeline/{sample}.log",
+    conda:
+        "../../envs/snakelines.yaml"
+    benchmark:
+        "benchmarks/snakeline/{sample}.benchmark.txt"
+    threads: 8
     params:
         outdir=lambda w: f"results/benchmarking/snakelines/{w.sample}",
         cwd=lambda w: os.getcwd(),
-    threads: 8
-    conda:
-        "../../envs/snakelines.yaml"
     shell:
         "(cd {params.outdir} && "
         " snakemake --snakefile {params.cwd}/{input.snakefile}"
