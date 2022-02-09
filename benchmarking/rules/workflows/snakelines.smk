@@ -29,10 +29,11 @@ rule snakelines_prepare_data:
     conda:
         "../../envs/unix.yaml"
     shell:
-        "(cp {input.samples[0]} {output.fq1} &&"
-        " cp {input.samples[1]} {output.fq2} &&"
-        " cp {input.reference} {output.reference} &&"
-        " cp {input.primers} {output.primers}) 2> {log}"
+        "(ln -se {input.samples[0]} {output.fq1} &&"
+        " ln -se {input.samples[1]} {output.fq2} &&"
+        " ln -se {input.reference} {output.reference} &&"
+        " ln -se {input.primers} {output.primers})"
+        " 2> {log}"
 
 
 rule snakeline_unzip_hg38:

@@ -84,7 +84,9 @@ rule nf_core_viralrecon_nanopore_prepare_samples:
         if w.folder == "fastq_pass"
         else "",
     shell:
-        "mkdir -p {params.barcode} && cp -r {input} {output}{params.mv_or_uncompress}"
+        "(mkdir -p {params.barcode} &&"
+        " ln -sr {input} {output}{params.mv_or_uncompress})"
+        "2>{log}"
 
 
 use rule nf_core_viralrecon_illumina as nf_core_viralrecon_nanopore_nanopolish with:

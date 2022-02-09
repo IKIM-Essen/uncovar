@@ -9,7 +9,10 @@ rule CovPipe_prepare_samples:
     conda:
         "../../envs/unix.yaml"
     shell:
-        "mkdir {output} && cp {input[0]} {output} && cp {input[1]} {output}"
+        "(mkdir {output} &&"
+        " ln -sr {input[0]} {output} &&"
+        " ln -sr {input[1]} {output})"
+        "2>{log}"
 
 
 rule CovPipe_prepare_adapter_file:
@@ -39,12 +42,14 @@ rule CovPipe:
         consensuses_iupac="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/consensuses_iupac/{covpipe_name}.iupac_consensus.fasta",
         vcf="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/intermediate_data/04_variant_calling/{covpipe_name}/{covpipe_name}.vcf",
         pangolin="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/intermediate_data/06_lineages/all_samples.lineage.txt",
-    resources:
-        external_pipeline=1,
     log:
         "logs/CovPipe/{sample}-{covpipe_name}.log",
     conda:
         "../../envs/covpipe.yaml"
+    benchmark:
+        "benchmarks/covpipe/{sample}.benchmark.txt"
+    resources:
+        external_pipeline=1,
     shell:
         "(ncov_minipipe"
         " --reference {input.reference}"

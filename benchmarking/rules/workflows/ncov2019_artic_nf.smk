@@ -12,9 +12,9 @@ rule ncov2019_artic_nf_illumina_data_prep:
         "../../envs/unix.yaml"
     shell:
         "(mkdir -p {output.d} &&"
-        " cp {input[0]} {output.fq1} &&"
-        " cp {input[1]} {output.fq2})"
-        " 2> {log}"
+        " ln -sr {input[0]} {output.fq1} &&"
+        " ln -sr {input[1]} {output.fq2})"
+        "2> {log}"
 
 
 rule ncov2019_artic_nf_illumina:
@@ -73,7 +73,9 @@ rule ncov2019_artic_nf_nanopore_data_prep:
     params:
         barcode=lambda w, output: os.path.join(output[0], get_barcode(w)),
     shell:
-        "mkdir -p {params.barcode} && cp -r {input} {output}"
+        "(mkdir -p {params.barcode} &&"
+        " ln -sr {input} {output})"
+        "2>{log}"
 
 
 use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish with:

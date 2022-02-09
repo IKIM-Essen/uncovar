@@ -12,7 +12,7 @@ rule v_pipe_work_dir:
         v_pipe_copy="results/benchmarking/v-pipe/{sample}/",
         work_dir_path="results/benchmarking/v-pipe/{sample}/work",
     shell:
-        "(cp -r {input}/* {params.v_pipe_copy} &&"
+        "(ln -sr {input}/* {params.v_pipe_copy} &&"
         " mkdir -p {params.work_dir_path} &&"
         " cd {params.work_dir_path} &&"
         " ../init_project.sh)"
