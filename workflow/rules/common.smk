@@ -1272,11 +1272,11 @@ def get_include_flag(sample):
     try:
         samples = pep.sample_table
         samples.dropna(subset=["include_in_high_genome_summary"], inplace=True)
-        return samples.loc[sample]["include_in_high_genome_summary"]
+        return {sample: samples.loc[sample]["include_in_high_genome_summary"]}
     # if there is no include_in_high_genome_summary in the
     # samples.csvdefined, always include the sample
     except KeyError:
-        return 1
+        return {sample: "1"}
 
 
 def get_include_flag_for_date(wildcards):
