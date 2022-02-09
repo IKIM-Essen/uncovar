@@ -99,62 +99,64 @@ rule SIGNAL_bwa_index:
         "v1.1.0/bio/bwa/index"
 
 
-# https://github.com/DerrickWood/kraken2/issues/518
-rule SIGNAL_fix_kraken:
+# we are using the minikraken 8-GB DB, as the ftp option of kraken2 is
+# currently borken. See; # https://github.com/DerrickWood/kraken2/issues/518
+rule SIGNAL_link_minikraken2:
     input:
-        "",
-    output:
-        "",
-    log:
-        "logs/SIGNAL_fix_kraken.log",
-    conda:
-        "../envs/.yaml"
-    shell:
-        ""
-
-
-rule SINGAL_kraken2_tax:
+        "resources/minikraken-8GB",
     output:
         directory("resources/benchmarking/SIGNAL/resources/Kraken2/db"),
     log:
-        "logs/SINGAL_kraken2_tax.log",
-    threads: 1
+        "logs/SIGNAL_minikraken2.log",
     conda:
-        "../../envs/signal.yaml"
+        "../../envs/unix.yaml"
     shell:
-        "kraken2-build --download-taxonomy --db {output} --threads {threads} --use-ftp 2>{log}"
+        "ln -sr {input} {output}"
 
 
-rule SINGAL_kraken2_lib:
-    input:
-        "resources/benchmarking/SIGNAL/resources/Kraken2/db",
-    output:
-        touch("resources/benchmarking/SIGNAL/resources/Kraken2/.tax"),
-    log:
-        "logs/SINGAL_kraken2_lib.log",
-    threads: 1
-    conda:
-        "../../envs/signal.yaml"
-    shell:
-        "kraken2-build --download-library viral --db {input} --threads {threads} --use-ftp 2>{log}"
+# TODO: Use the "orignal" SIGNAL kraken2 database, when kraken2 is fixed,
+# rule SINGAL_kraken2_tax:
+#     output:
+#         directory("resources/benchmarking/SIGNAL/resources/Kraken2/db"),
+#     log:
+#         "logs/SINGAL_kraken2_tax.log",
+#     threads: 1
+#     conda:
+#         "../../envs/signal.yaml"
+#     shell:
+#         "kraken2-build --download-taxonomy --db {output} --threads {threads} --use-ftp 2>{log}"
 
 
-rule SINGAL_kraken2_build:
-    input:
-        "resources/benchmarking/SIGNAL/resources/Kraken2/db",
-        "resources/benchmarking/SIGNAL/resources/Kraken2/.tax",
-    output:
-        touch("resources/benchmarking/SIGNAL/resources/Kraken2/.build"),
-    log:
-        "logs/SINGAL_kraken2_build.log",
-    threads: 32
-    conda:
-        "../../envs/signal.yaml"
-    shell:
-        " (kraken2-build --build --threads {threads} --db {input[0]} &&"
-        " kraken2-build --clean --threads {threads} --db {input[0]})"
-        "2>{log}"
-        # "kraken2-build --standard --db {output} --threads {threads}  "
+# rule SINGAL_kraken2_lib:
+#     input:
+#         "resources/benchmarking/SIGNAL/resources/Kraken2/db",
+#     output:
+#         touch("resources/benchmarking/SIGNAL/resources/Kraken2/.tax"),
+#     log:
+#         "logs/SINGAL_kraken2_lib.log",
+#     threads: 1
+#     conda:
+#         "../../envs/signal.yaml"
+#     shell:
+#         "kraken2-build --download-library viral --db {input} --threads {threads} --use-ftp 2>{log}"
+
+
+# rule SINGAL_kraken2_build:
+#     input:
+#         "resources/benchmarking/SIGNAL/resources/Kraken2/db",
+#         "resources/benchmarking/SIGNAL/resources/Kraken2/.tax",
+#     output:
+#         touch("resources/benchmarking/SIGNAL/resources/Kraken2/.build"),
+#     log:
+#         "logs/SINGAL_kraken2_build.log",
+#     threads: 32
+#     conda:
+#         "../../envs/signal.yaml"
+#     shell:
+#         " (kraken2-build --build --threads {threads} --db {input[0]} &&"
+#         " kraken2-build --clean --threads {threads} --db {input[0]})"
+#         "2>{log}"
+#         # "kraken2-build --standard --db {output} --threads {threads}  "
 
 
 rule SIGNAL_configure_config:
@@ -248,7 +250,11 @@ rule SIGNAL:
         sample_table="results/benchmarking/SIGNAL/{sample}/sample_table.csv",
         script="results/benchmarking/SIGNAL/{sample}/scripts",
     output:
-        directory("results/benchmarking/SIGNAL/{sample}/results_dira"),
+        pangolin="results/benchmarking/SIGNAL/{sample}/results_dir/lineage_assignments.tsv",
+        consensus="results/benchmarking/SIGNAL/{sample}/results_dir/all_genomes.fa",
+        freebayes_pangolin="results/benchmarking/SIGNAL/{sample}/results_dir/freebayes_lineage_assignments.tsv",
+        freebayes_consensus="results/benchmarking/SIGNAL/{sample}/results_dir/all_freebayes_genomes.fa",
+        vcf="results/benchmarking/SIGNAL/{sample}/results_dir/{sample}/freebayes/{sample}.variants.norm.vcf",
     log:
         "logs/SIGNAL/{sample}.log",
     params:
@@ -266,4 +272,4 @@ rule SIGNAL:
         " --rerun-incomplete"
         " --cores={threads}"
         " --conda-prefix=$PWD/.snakemake/conda all)"
-        "2>{log}"
+        "> {log} 2>&1"

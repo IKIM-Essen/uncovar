@@ -1,4 +1,4 @@
-PIPELINES = {"nanopore": ["uncovar"], "illumina": ["uncovar"]}
+PIPELINES = {"nanopore": ["uncovar"], "illumina": ["signal"]}
 # PIPELINES = {
 #     "nanopore": [
 #         "artic-medaka",
@@ -15,6 +15,7 @@ PIPELINES = {"nanopore": ["uncovar"], "illumina": ["uncovar"]}
 #         "v-pipe",
 #         "havoc",
 #         "covpipe",
+#         "signal",
 #         "snakelines",
 #         "uncovar",
 #     ],
@@ -131,6 +132,9 @@ def get_vcf_of_workflow(pipeline, wildcards):
 
     elif pipeline == "v-pipe":
         return "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/fixed-vcf/snvs.vcf"
+
+    elif pipeline == "signal":
+        return "results/benchmarking/SIGNAL/{sample}/results_dir/{sample}/freebayes/{sample}.variants.norm.vcf"
 
     elif pipeline == "snakelines":
         return "results/benchmarking/snakelines/{sample}/variant/sars_cov_2-wgs/original/{sample}.vcf"
