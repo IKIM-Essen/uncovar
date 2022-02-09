@@ -42,8 +42,9 @@ else:
             with pysam.FastxFile(file) as infile:
                 for entry in infile:
                     sequence_names.append(entry.name)
-                    include_flag.append(int(sample_dict.get(entry.name)))
-                    if bool(int(sample_dict.get(entry.name))):
+                    to_include = int(sample_dict.get(entry.name))
+                    include_flag.append(to_include)
+                    if to_include:
                         print(f">{entry.name}", file=outfile)
                         print(entry.sequence, file=outfile)
 
