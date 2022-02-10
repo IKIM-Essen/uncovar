@@ -15,7 +15,7 @@ PIPELINES = {
         # "v-pipe",
         "havoc",
         "covpipe",
-        "signal",
+        # "signal",
         "snakelines",
         "uncovar",
     ],

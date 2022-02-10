@@ -268,6 +268,8 @@ rule SIGNAL:
         out_dir=lambda w, input: os.path.dirname(input.config),
         config=lambda w, input: os.path.basename(input.config),
         cwd=os.getcwd(),
+    resources:
+        signal=1,
     shell:
         "(cd {params.out_dir} && "
         " snakemake -kp --use-conda "

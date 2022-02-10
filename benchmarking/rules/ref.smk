@@ -65,6 +65,7 @@ rule download_SIGNAL:
         snakefile="resources/benchmarking/SIGNAL/repo/Snakefile",
         config="resources/benchmarking/SIGNAL/repo/config.yaml",
         script_dir=directory("resources/benchmarking/SIGNAL/repo/scripts"),
+        update="resources/benchmarking/SIGNAL/repo/scripts/assign_lineages.py",
     log:
         "logs/download_SIGNAL.log",
     conda:

@@ -27,5 +27,6 @@ for happy_path, meta, platform in zip(
     happy_outputs.append(happy)
 
 happy_outputs = pd.concat(happy_outputs, ignore_index=True)
+happy_outputs = happy_outputs[happy_outputs["Filter"] != "ALL"]
 
 happy_outputs.to_csv(snakemake.output[0], sep="\t")
