@@ -63,18 +63,18 @@ rule normalize_calls:
         "v1.0.0/bio/bcftools/norm"
 
 
-# rule stratify:
-#     input:
-#         variants="results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
-#         regions="results/benchmarking/sanger/aligned/{sample}.bed",  # we only have sanger as truth
-#     output:
-#         "results/benchmarking/variant-calls/stratified/{workflow}/{sample}.vcf.gz",
-#     log:
-#         "logs/stratify-truth/{workflow}/{sample}.log",
-#     conda:
-#         "../envs/tools.yaml"
-#     shell:
-#         "bedtools intersect -b {input.regions} -a <(bcftools view {input.variants}) -wa -f 1.0 -header | bcftools view -Oz > {output} 2> {log}"
+rule stratify:
+    input:
+        variants="results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
+        regions="results/benchmarking/sanger/aligned/{sample}.bed",  # we only have sanger as truth
+    output:
+        "results/benchmarking/variant-calls/stratified/{workflow}/{sample}.vcf.gz",
+    log:
+        "logs/stratify-truth/{workflow}/{sample}.log",
+    conda:
+        "../envs/tools.yaml"
+    shell:
+        "bedtools intersect -b {input.regions} -a <(bcftools view {input.variants}) -wa -f 1.0 -header | bcftools view -Oz > {output} 2> {log}"
 
 
 rule bcftools_index:
@@ -88,31 +88,16 @@ rule bcftools_index:
         "v1.0.0/bio/bcftools/index"
 
 
-rule check_number_of_vc_records:
-    input:
-        "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
-        "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz.csi",
-    output:
-        "results/benchmarking/variant-calls/vc-records/{workflow}/{sample}.txt",
-    log:
-        "logs/check_number_of_vc_records/{workflow}/{sample}.log",
-    conda:
-        "../envs/python.yaml"
-    script:
-        "../scripts/check_number_of_vc_records.py"
-
-
 rule benchmark_variants:
     input:
-        truth="results/benchmarking/variant-calls/normalized-variants/{workflow_A}/{sample}.vcf.gz",
-        truth_idx="results/benchmarking/variant-calls/normalized-variants/{workflow_A}/{sample}.vcf.gz.csi",
-        truth_regions="results/benchmarking/{workflow_A}/aligned/{sample}.bed",
-        query="results/benchmarking/variant-calls/normalized-variants/{workflow_B}/{sample}.vcf.gz",
+        truth="results/benchmarking/variant-calls/{source}/{workflow_A}/{sample}.vcf.gz",
+        truth_idx="results/benchmarking/variant-calls/{source}/{workflow_A}/{sample}.vcf.gz.csi",
+        query="results/benchmarking/variant-calls/{source}/{workflow_B}/{sample}.vcf.gz",
         genome="resources/genomes/main.fasta",
         genome_index="resources/genomes/main.fasta.fai",
     output:
         multiext(
-            "results/benchmarking/happy/{workflow_A}-vs-{workflow_B}/{sample}/report",
+            "results/benchmarking/happy/{source}/{workflow_A}-vs-{workflow_B}/{sample}/report",
             ".runinfo.json",
             ".vcf.gz",
             ".summary.csv",
@@ -127,7 +112,7 @@ rule benchmark_variants:
         prefix=lambda w, input, output: output[0].split(".")[0],
         engine="vcfeval",
     log:
-        "logs/happy/{workflow_A}-vs-{workflow_B}/{sample}.log",
+        "logs/happy/{source}/{workflow_A}-vs-{workflow_B}/{sample}.log",
     wrapper:
         "v1.0.0/bio/hap.py/hap.py"
 
@@ -135,12 +120,12 @@ rule benchmark_variants:
 rule agg_happy:
     input:
         get_benchmark_path(
-            "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.summary.csv"
+            "results/benchmarking/happy/{{source}}/sanger-vs-{workflow}/{sample}/report.summary.csv"
         ),
     output:
-        "results/benchmarking/workflow-comparison.tsv",
+        "results/benchmarking/workflow-comparison.{source}.tsv",
     log:
-        "logs/agg_happy.log",
+        "logs/agg_happy/{source}.log",
     conda:
         "../envs/python.yaml"
     params:
@@ -150,23 +135,22 @@ rule agg_happy:
         "../scripts/agg_happy.py"
 
 
-# rule plot_plot_precision_recall:
-#     input:
-#         happy=get_happy_paths_for_accepted_vcfs,
-#         accepted_vcfs="results/benchmarking/variant-calls/accepted-vcfs.txt"
-#     output:
-#         plot="results/benchmarking/workflow-comparison.svg",
-#         data="results/benchmarking/workflow-comparison.tsv"
-#     log:
-#         "logs/plot_plot_precision_recall.log",
-#     conda:
-#         "../envs/python.yaml"
-#     script:
-#         "../scripts/plot_plot_precision_recall.py"
-
-
 rule agg:
     input:
-        get_benchmark_path(
-            "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.summary.csv"
+        expand(
+            "results/benchmarking/workflow-comparison.{source}.tsv",
+            source=["stratified", "normalized-variants"],
         ),
+
+
+rule plot_plot_precision_recall:
+    input:
+        "results/benchmarking/workflow-comparison.stratified.tsv",
+    output:
+        plot="results/benchmarking/workflow-comparison.svg",
+    log:
+        "logs/plot_plot_precision_recall.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot_plot_precision_recall.py"
