@@ -12,10 +12,10 @@ PIPELINES = {
     "illumina": [
         "ncov2019-artic-nf",
         "nf-core-viralrecon",
-        "v-pipe",
+        # "v-pipe",
         "havoc",
         "covpipe",
-        # "signal",
+        "signal",
         "snakelines",
         "uncovar",
     ],
@@ -145,28 +145,39 @@ def get_vcf_of_workflow(pipeline, wildcards):
         )
 
     elif pipeline == "sanger":
-        return "results/benchmarking/sanger/variant-calls/{sample}.vcf"
+        return "results/benchmarking/sanger/fixed-genotype/{sample}.vcf"
 
 
 def get_sanger_files_for_sample(wildcards):
     return pep.sample_table.loc[wildcards.sample]["sanger"].split(";")
 
 
+def get_benchmark_paths_by_tech(path, tech, samples):
+    return expand(
+        path,
+        workflow=PIPELINES[tech],
+        sample=samples,
+    )
+
+
 def get_benchmark_path(path):
     def inner(wildcards):
-        return expand(
-            path,
-            workflow=PIPELINES["nanopore"],
-            sample=get_nanopore_samples(wildcards),
-        ) + expand(
-            path,
-            workflow=PIPELINES["illumina"],
-            sample=get_illumina_samples(wildcards),
+        return get_benchmark_paths_by_tech(
+            path, "nanopore", get_nanopore_samples(wildcards)
+        ) + get_benchmark_paths_by_tech(
+            path, "illumina", get_illumina_samples(wildcards)
         )
 
     return inner
 
 
-def get_happy(wildcards):
-    with checkpoints.filter_vcf.get().output.accepted_vcfs.open() as f:
-        return f.read().splitlines()
+def get_benchmark_platforms(wildcards):
+    return ["nanopore"] * len(
+        get_benchmark_paths_by_tech(
+            "{workflow},{sample}", "nanopore", get_nanopore_samples(wildcards)
+        )
+    ) + ["illumina"] * len(
+        get_benchmark_paths_by_tech(
+            "{workflow},{sample}", "illumina", get_illumina_samples(wildcards)
+        )
+    )

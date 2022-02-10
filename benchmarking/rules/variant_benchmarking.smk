@@ -102,30 +102,11 @@ rule check_number_of_vc_records:
         "../scripts/check_number_of_vc_records.py"
 
 
-checkpoint filter_vcf:
-    input:
-        no_of_records=get_benchmark_path(
-            "results/benchmarking/variant-calls/vc-records/{workflow}/{sample}.txt"
-        ),
-    output:
-        accepted_vcfs=temp("results/benchmarking/variant-calls/accepted-vcfs.txt"),
-        empty_vcfs=temp("results/benchmarking/variant-calls/empty-vcfs.txt"),
-    log:
-        "logs/filter_vcf.log",
-    conda:
-        "../envs/python.yaml"
-    params:
-        happy_paths=get_benchmark_path(
-            "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.runinfo.json"
-        ),
-    script:
-        "../scripts/filter_vcf.py"
-
-
 rule benchmark_variants:
     input:
         truth="results/benchmarking/variant-calls/normalized-variants/{workflow_A}/{sample}.vcf.gz",
         truth_idx="results/benchmarking/variant-calls/normalized-variants/{workflow_A}/{sample}.vcf.gz.csi",
+        truth_regions="results/benchmarking/{workflow_A}/aligned/{sample}.bed",
         query="results/benchmarking/variant-calls/normalized-variants/{workflow_B}/{sample}.vcf.gz",
         genome="resources/genomes/main.fasta",
         genome_index="resources/genomes/main.fasta.fai",
@@ -138,10 +119,10 @@ rule benchmark_variants:
             ".extended.csv",
             ".metrics.json.gz",
             ".roc.all.csv.gz",
-            ".roc.Locations.INDEL.csv.gz",
-            ".roc.Locations.INDEL.PASS.csv.gz",
             ".roc.Locations.SNP.csv.gz",
         ),
+        # ".roc.Locations.INDEL.csv.gz",
+        # ".roc.Locations.INDEL.PASS.csv.gz",
     params:
         prefix=lambda w, input, output: output[0].split(".")[0],
         engine="vcfeval",
@@ -151,6 +132,41 @@ rule benchmark_variants:
         "v1.0.0/bio/hap.py/hap.py"
 
 
+rule agg_happy:
+    input:
+        get_benchmark_path(
+            "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.summary.csv"
+        ),
+    output:
+        "results/benchmarking/workflow-comparison.tsv",
+    log:
+        "logs/agg_happy.log",
+    conda:
+        "../envs/python.yaml"
+    params:
+        metadata=get_benchmark_path("{workflow},{sample}"),
+        platforms=get_benchmark_platforms,
+    script:
+        "../scripts/agg_happy.py"
+
+
+# rule plot_plot_precision_recall:
+#     input:
+#         happy=get_happy_paths_for_accepted_vcfs,
+#         accepted_vcfs="results/benchmarking/variant-calls/accepted-vcfs.txt"
+#     output:
+#         plot="results/benchmarking/workflow-comparison.svg",
+#         data="results/benchmarking/workflow-comparison.tsv"
+#     log:
+#         "logs/plot_plot_precision_recall.log",
+#     conda:
+#         "../envs/python.yaml"
+#     script:
+#         "../scripts/plot_plot_precision_recall.py"
+
+
 rule agg:
     input:
-        get_happy,
+        get_benchmark_path(
+            "results/benchmarking/happy/sanger-vs-{workflow}/{sample}/report.summary.csv"
+        ),

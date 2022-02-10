@@ -48,3 +48,16 @@ rule freebayes_sanger:
     threads: 2
     wrapper:
         "v1.0.0/bio/freebayes"
+
+
+rule sanger_fix_genotype:
+    input:
+        "results/benchmarking/sanger/variant-calls/{sample}.vcf",
+    output:
+        "results/benchmarking/sanger/fixed-genotype/{sample}.vcf",
+    log:
+        "logs/sanger_fix_genotype/{sample}.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/sanger_fix_genotype.py"

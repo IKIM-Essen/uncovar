@@ -43,8 +43,8 @@ with pysam.VariantFile(snakemake.input[0]) as in_vcf:
                     new_record = out_vcf.new_record()
                     record = copy_record(record, new_record)
 
-                for sample in record.samples.keys():
-                    print(f"Add GT tag to sample {sample}.", file=sys.stderr)
-                    record.samples[sample]["GT"] = (0, 1)
+            for sample in record.samples.keys():
+                print(f"Add GT tag to sample {sample}.", file=sys.stderr)
+                record.samples[sample]["GT"] = (0, 1)
 
             out_vcf.write(record)
