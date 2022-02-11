@@ -47,12 +47,17 @@ include: "rules/variant_filtration.smk"
 include: "rules/variant_report.smk"
 include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
+
+
 if config["data-handling"]["use-data-handling"]:
+
     include: "rules/preprocessing.smk"
+
+
 include: "rules/long_read.smk"
 
 
-if config["data-handling"]["use-data-handling"]:
+if config["data-handling"]["archive-data"]:
 
     rule save_latest_run:
         input:

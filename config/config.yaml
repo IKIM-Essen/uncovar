@@ -13,10 +13,13 @@ human-genome-download-path:
 
 data-handling:
   # flag for using the following data-handling structure
-  # True: data-handling structure is used as shown down here
+  # True: data-handling structure is used as shown below
   # False: only the sample sheet needs to be updated (manually)
-  #        no data archiving is taking place
   use-data-handling: True
+  # flag for archiving data
+  # True: data is archived in path defined below
+  # False: data is not archived
+  archive-data: True
   # path of incoming data, which is moved to the
   # data directory by the preprocessing script
   incoming: ../incoming/
