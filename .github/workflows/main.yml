@@ -78,7 +78,6 @@ jobs:
         run: |
           sudo rm -rf /usr/local/lib/android
           sudo rm -rf /usr/share/dotnet
-
       - name: Prepare test data for all technologies
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'all' || matrix.rule == 'compare_assemblers')
         run: |
@@ -92,7 +91,6 @@ jobs:
           echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,$AMPLICON,illumina >> .tests/config/pep/samples.csv
           echo ont-test,data/ont_reads.fastq.gz,,2022-01-01,$AMPLICON,ont >> .tests/config/pep/samples.csv
           echo ion-test,data/ion_reads.fastq.gz,,2022-01-01,$AMPLICON,ion >> .tests/config/pep/samples.csv
-
       - name: Prepare test data for Illumina
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'illumina' || matrix.rule == 'compare_assemblers')
         run: |
@@ -102,7 +100,6 @@ jobs:
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
           echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
           echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,$AMPLICON,illumina >> .tests/config/pep/samples.csv
-
       - name: Prepare test data for Oxford Nanopore
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ont' || matrix.rule == 'compare_assemblers')
         run: |
@@ -111,7 +108,6 @@ jobs:
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz
           echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
           echo ont-test,data/ont_reads.fastq.gz,2022-01-01,$AMPLICON,ont >> .tests/config/pep/samples.csv
-
       - name: Prepare test data for Ion Torrent
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ion' || matrix.rule == 'compare_assemblers')
         run: |
@@ -120,7 +116,6 @@ jobs:
           curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR574/003/ERR5745913/ERR5745913.fastq.gz > .tests/data/ion_reads.fastq.gz
           echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
           echo ion-test,data/ion_reads.fastq.gz,2022-01-01,$AMPLICON,ion >> .tests/config/pep/samples.csv
-
       - name: Use smaller reference files for testing
         if: steps.test-resources.outputs.cache-hit != true
         run: |
@@ -128,7 +123,6 @@ jobs:
           # curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
           mkdir -p .tests/resources/genomes
           curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
-
       - name: Simulate GISAID download
         run: |
           mkdir -p .tests/results/benchmarking/tables
@@ -136,7 +130,6 @@ jobs:
           mkdir -p .tests/resources/genomes
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314997.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.1.7.fasta
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314998.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.351.fasta
-
       - name: Test rule ${{ matrix.rule }} on ${{ matrix.technology }} ${{ matrix.seq_method }} data
         uses: snakemake/snakemake-github-action@v1.24.0
         with:
@@ -293,7 +286,6 @@ jobs:
           echo sample_name,fq1,fq2,date,is_amplicon_data,technology,test_case > .tests/config/pep/samples.csv
           echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,1,illumina,case >> .tests/config/pep/samples.csv
           echo ont-test,data/ont_reads.fastq.gz,,2022-01-01,1,ont,case >> .tests/config/pep/samples.csv
-
       - name: Prepare test data
         if: matrix.rule != 'generate_test_cases'
         run: |
@@ -302,7 +294,6 @@ jobs:
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
           echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
           echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,0,illumina >> .tests/config/pep/samples.csv
-
       - name: Use smaller reference files for testing
         if: steps.test-resources.outputs.cache-hit != true
         run: |
@@ -310,7 +301,6 @@ jobs:
           # curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
           mkdir -p .tests/resources/genomes
           curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
-
       - name: Simulate GISAID download
         run: |
           mkdir -p .tests/results/benchmarking/tables
@@ -318,7 +308,6 @@ jobs:
           mkdir -p .tests/resources/genomes
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314997.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.1.7.fasta
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314998.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.351.fasta
-
       - name: Test rule ${{ matrix.rule }}
         uses: snakemake/snakemake-github-action@v1.24.0
         with:
@@ -368,7 +357,6 @@ jobs:
           else
             echo "Strain calling was successful in all cases."
           fi
-
       - name: Check pseudoassembly benchmark
         if: matrix.rule == 'benchmark_assembly'
         run: |
@@ -380,7 +368,6 @@ jobs:
           else
             echo "Pseudoassembly was successful."
           fi
-
       - name: Check assembly benchmark
         if: matrix.rule == 'benchmark_assembly'
         run: |
@@ -392,12 +379,10 @@ jobs:
           else
             echo "Assembly was successful."
           fi
-
       - name: Print non-sars-cov-2 kallisto calls
         if: matrix.rule == 'benchmark_non_sars_cov_2'
         run: |
           cat .tests/results/benchmarking/tables/strain-calls/non-cov2-*.strains.kallisto.tsv
-
       - name: Test non-sars-cov-2 coronaviruses
         if: matrix.rule == 'benchmark_non_sars_cov_2'
         run: |
@@ -409,7 +394,6 @@ jobs:
           else
               echo "Workflow sucessfully identified samples as non-sars-cov-2 in all cases."
           fi
-
       - name: Change permissions for caching
         run: sudo chmod -R 755 .tests/.snakemake/conda
 
