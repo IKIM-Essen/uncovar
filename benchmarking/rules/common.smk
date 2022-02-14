@@ -89,9 +89,9 @@ PIPELINES = {
         #     "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.vcf",
         # },
         "v-pipe": {
-            "outdir": "results/benchmarking/v-pipe/{sample}/work",
-            "vcf": "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
-            "consensus": "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/references/ref_majority.fasta",
+            "outdir": "results/benchmarking/v-pipe/.delted-dir/{sample}.log",
+            "vcf": "results/benchmarking/v-pipe/fixed-vcf/{sample}.vcf",
+            "consensus": "results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/references/ref_majority.fasta",
         },
         "sanger": {
             "outdir": [],

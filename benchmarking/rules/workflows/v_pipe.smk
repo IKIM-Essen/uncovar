@@ -1,31 +1,46 @@
 # source: https://cbg-ethz.github.io/V-pipe/tutorial/sars-cov2/
-rule v_pipe_work_dir:
-    input:
-        "resources/benchmarking/v-pipe/repo",
+
+
+rule download_v_pipe:
     output:
-        touch("results/benchmarking/v-pipe/{sample}/.work-dir-created"),
+        snakefile="resources/benchmarking/v-pipe/vpipe.snake",
+        ini="resources/benchmarking/v-pipe/init_project.sh",
     log:
-        "logs/v_pipe_work_dir/{sample}.log",
+        "logs/download_v_pipe.log",
     conda:
-        "../../envs/v-pipe.yaml"
+        "../../envs/git.yaml"
     params:
-        v_pipe_copy="results/benchmarking/v-pipe/{sample}/",
-        work_dir_path="results/benchmarking/v-pipe/{sample}/work",
+        repo=lambda w, output: os.path.dirname(output[0]),
     shell:
-        "(cp r {input}/* {params.v_pipe_copy} &&"
-        " mkdir -p {params.work_dir_path} &&"
-        " cd {params.work_dir_path} &&"
-        " ../init_project.sh)"
-        " > {log} 2>&1"
+        "if [ -d '{params.repo}' ]; then rm -Rf {params.repo}; fi &&"
+        "git clone --depth 1 --branch sars-cov2 https://github.com/thomasbtf/V-pipe.git {params.repo} 2> {log}"
+
+
+rule v_pipe_init_project:
+    input:
+        "resources/benchmarking/v-pipe/init_project.sh",
+    output:
+        "results/benchmarking/v-pipe/{sample}/vpipe",
+    log:
+        "logs/v_pipe_init_project/{sample}.log",
+    conda:
+        "../../envs/unix.yaml"
+    params:
+        init_path=lambda w, input: os.path.join(os.getcwd(), input[0]),
+        sample_dir=lambda w, output: os.path.dirname(output[0]),
+    shell:
+        "(mkdir -p {params.sample_dir} &&"
+        " cd {params.sample_dir} &&"
+        " bash {params.init_path})"
+        "> {log} 2<&1"
 
 
 rule v_pipe_setup_samples:
     input:
-        workdir="results/benchmarking/v-pipe/{sample}/.work-dir-created",
         fastqs=get_fastqs,
     output:
-        expand(
-            "results/benchmarking/v-pipe/{{sample}}/work/samples/{{sample}}/20200102/raw_data/{{sample}}_R{read}.fastq",
+        fqs=expand(
+            "results/benchmarking/v-pipe/{{sample}}/samples/{{sample}}/20200102/raw_data/{{sample}}_R{read}.fastq",
             read=[1, 2],
         ),
     log:
@@ -33,49 +48,43 @@ rule v_pipe_setup_samples:
     conda:
         "../../envs/v-pipe.yaml"
     params:
-        fq_dir=lambda w, input: os.path.join(
-            os.path.dirname(input.workdir),
-            "work",
-            "samples",
-            w.sample,
-            "20200102",
-            "raw_data",
-        ),
+        fq_dir=lambda w, output: os.path.dirname(output[0]),
     shell:
         "(mkdir -p {params.fq_dir} &&"
-        " gzip -dk {input.fastqs[0]} -c > {output[0]} &&"
-        " gzip -dk {input.fastqs[1]} -c > {output[1]})"
+        " gzip -dk {input.fastqs[0]} -c > {output.fqs[0]} &&"
+        " gzip -dk {input.fastqs[1]} -c > {output.fqs[1]})"
         " 2> {log}"
 
 
 rule v_pipe_dry_run:
     input:
-        expand(
-            "results/benchmarking/v-pipe/{{sample}}/work/samples/{{sample}}/20200102/raw_data/{{sample}}_R{read}.fastq",
+        fastqs=expand(
+            "results/benchmarking/v-pipe/{{sample}}/samples/{{sample}}/20200102/raw_data/{{sample}}_R{read}.fastq",
             read=[1, 2],
         ),
+        vpipe="results/benchmarking/v-pipe/{sample}/vpipe",
     output:
-        outdir=temp(directory("results/benchmarking/v-pipe/{sample}/work")),
-        sample_sheet="results/benchmarking/v-pipe/{sample}/work/samples.tsv",
+        sample_sheet="results/benchmarking/v-pipe/{sample}/samples.tsv",
     log:
         "logs/v_pipe_dry_run/{sample}.log",
     conda:
         "../../envs/v-pipe.yaml"
     params:
-        workdir=lambda w: f"results/benchmarking/v-pipe/{w.sample}/work",
+        workdir=lambda w, input: os.path.dirname(input.vpipe),
     resources:
         external_pipeline=1,
+        v_pipe=1,
     shell:
         "(cd {params.workdir} &&"
-        " ./vpipe --dryrun)"
-        " > {log} 2>&1"
+        " ./vpipe --dryrun --nolock)"
+        "> {log} 2>&1"
 
 
 rule v_pipe_update_sample_sheet:
     input:
-        "results/benchmarking/v-pipe/{sample}/work/samples.tsv",
+        "results/benchmarking/v-pipe/{sample}/samples.tsv",
     output:
-        touch("results/benchmarking/v-pipe/{sample}/.edited-sample"),
+        touch("results/benchmarking/v-pipe/.edited-sample/{sample}.log"),
     log:
         "logs/v_pipe_update_sample_sheet/{sample}.log",
     conda:
@@ -86,11 +95,11 @@ rule v_pipe_update_sample_sheet:
 
 rule v_pipe_run:
     input:
-        "results/benchmarking/v-pipe/{sample}/.edited-sample",
-        "results/benchmarking/v-pipe/{sample}/work",
+        updated_sample_sheet="results/benchmarking/v-pipe/.edited-sample/{sample}.log",
+        vpipe="results/benchmarking/v-pipe/{sample}/vpipe",
     output:
-        vcf="results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
-        consensus="results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/references/ref_majority.fasta",
+        vcf="results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
+        consensus="results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/references/ref_majority.fasta",
     log:
         "logs/v_pipe_run/{sample}.log",
     conda:
@@ -100,22 +109,38 @@ rule v_pipe_run:
     threads: 4
     resources:
         external_pipeline=1,
+        v_pipe=1,
     params:
-        workdir=lambda w, input: os.path.join(os.path.dirname(input[0]), "work"),
+        workdir=lambda w, input: os.path.dirname(input.vpipe),
     shell:
         "(cd {params.workdir} &&"
-        " ./vpipe --cores {threads} -p -F)"
-        " > {log} 2>&1"
+        " ./vpipe --cores {threads} -p -F --nolock)"
+        "> {log} 2>&1"
 
 
 rule v_pipe_fix_vcf:
     input:
-        "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
+        "results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
     output:
-        "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/fixed-vcf/snvs.vcf",
+        "results/benchmarking/v-pipe/fixed-vcf/{sample}.vcf",
     log:
         "logs/v_pipe_fix_vcf/{sample}.log",
     conda:
         "../../envs/python.yaml"
     script:
         "../../scripts/v_pipe_fix_vcf.py"
+
+
+rule v_pipe_rmv_dir:
+    input:
+        "results/benchmarking/v-pipe/fixed-vcf/{sample}.vcf",
+    output:
+        touch("results/benchmarking/v-pipe/.delted-dir/{sample}.log"),
+    log:
+        "logs/v_pipe_rmv_dir/{sample}.log",
+    conda:
+        "../../envs/unix.yaml"
+    params:
+        outdir="results/benchmarking/v-pipe/{sample}",
+    shell:
+        "rm -rf {params.outdir} 2> {log}"

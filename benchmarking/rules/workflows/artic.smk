@@ -1,4 +1,15 @@
 # source: https://artic.network/ncov-2019/ncov2019-bioinformatics-sop.html
+rule download_artic_primer_schemes:
+    output:
+        directory("resources/benchmarking/artic/repo"),
+    log:
+        "logs/download_artic_primer_schemes.log",
+    conda:
+        "../envs/git.yaml"
+    shell:
+        "git clone https://github.com/artic-network/artic-ncov2019.git {output} 2> {log}"
+
+
 rule artic_guppyplex:
     input:
         get_fastq_pass_path_barcode,

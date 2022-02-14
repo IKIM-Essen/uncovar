@@ -1,3 +1,19 @@
+rule download_SIGNAL:
+    output:
+        repo=directory("resources/benchmarking/SIGNAL/repo"),
+        snakefile="resources/benchmarking/SIGNAL/repo/Snakefile",
+        config="resources/benchmarking/SIGNAL/repo/config.yaml",
+        script_dir=directory("resources/benchmarking/SIGNAL/repo/scripts"),
+        update="resources/benchmarking/SIGNAL/repo/scripts/assign_lineages.py",
+    log:
+        "logs/download_SIGNAL.log",
+    conda:
+        "../envs/git.yaml"
+    shell:
+        "if [ -d '{output.repo}' ]; then rm -Rf {output.repo}; fi &&"
+        "git clone --branch v1.4.4 https://github.com/jaleezyy/covid-19-signal {output.repo} 2> {log}"
+
+
 rule SIGNAL_prepare_adapter_file:
     output:
         "resources/benchmarking/SIGNAL/resources/NexteraPE-PE.fa",

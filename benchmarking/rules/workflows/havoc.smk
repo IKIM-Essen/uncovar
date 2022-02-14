@@ -1,4 +1,13 @@
 # source: https://bitbucket.org/auto_cov_pipeline/havoc/src/master/
+rule download_HAVoC:
+    output:
+        script="resources/benchmarking/havoc/HAVoC.sh",
+    log:
+        "logs/download_HAVoC.log",
+    conda:
+        "../envs/git.yaml"
+    shell:
+        "wget 'https://bitbucket.org/auto_cov_pipeline/havoc/raw/e1b9b2be490a4b51085e0ee5c1b21cf7a2a95b1c/HAVoC.sh' -O {output} 2> {log}"
 
 
 rule HaVoc_prepare_ref:

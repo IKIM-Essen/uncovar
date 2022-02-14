@@ -1,4 +1,17 @@
 # source: https://nf-co.re/viralrecon/2.2/usage#usage
+rule download_viralrecon_script:
+    output:
+        "resources/benchmarking/nf-core-viralrecon/fastq_dir_to_samplesheet.py",
+    log:
+        "logs/download_viralrecon_script.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "(wget -L https://raw.githubusercontent.com/nf-core/viralrecon/master/bin/fastq_dir_to_samplesheet.py -O {output} &&"
+        " chmod 755 {output})"
+        " > {log} 2>&1"
+
+
 rule nf_core_viralrecon_illumina_sample_sheet:
     output:
         "results/benchmarking/nf-core-viralrecon/illumina/{sample}/sample_sheet.csv",
