@@ -73,7 +73,7 @@ rule v_pipe_dry_run:
         workdir=lambda w, input: os.path.dirname(input.vpipe),
     resources:
         external_pipeline=1,
-        v_pipe=1,
+        vpipe=1,
     shell:
         "(cd {params.workdir} &&"
         " ./vpipe --dryrun --nolock)"
@@ -109,7 +109,7 @@ rule v_pipe_run:
     threads: 4
     resources:
         external_pipeline=1,
-        v_pipe=1,
+        vpipe=1,
     params:
         workdir=lambda w, input: os.path.dirname(input.vpipe),
     shell:

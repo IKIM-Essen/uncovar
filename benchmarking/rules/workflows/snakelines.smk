@@ -99,6 +99,8 @@ rule snakeline:
     benchmark:
         "benchmarks/snakeline/{sample}.benchmark.txt"
     threads: 4
+    resources:
+        snakeline=1,
     params:
         outdir=lambda w: f"results/benchmarking/snakelines/{w.sample}",
         cwd=lambda w: os.getcwd(),
