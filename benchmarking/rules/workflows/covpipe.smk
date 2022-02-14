@@ -38,10 +38,10 @@ rule CovPipe:
         primer="resources/primer.bedpe",
     output:
         out_dir=temp(directory("results/benchmarking/CovPipe/{sample}-{covpipe_name}/")),
-        consensuses_masked="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/consensuses_masked/{covpipe_name}.masked_consensus.fasta",
-        consensuses_iupac="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/consensuses_iupac/{covpipe_name}.iupac_consensus.fasta",
-        vcf="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/intermediate_data/04_variant_calling/{covpipe_name}/{covpipe_name}.vcf",
-        pangolin="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/intermediate_data/06_lineages/all_samples.lineage.txt",
+        consensuses_masked="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/consensuses_masked/{sample}_.masked_consensus.fasta",
+        consensuses_iupac="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/consensuses_iupac/{sample}_.iupac_consensus.fasta",
+        vcf="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/intermediate_data/04_variant_calling/{sample}_/{sample}_.vcf",
+        pangolin="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/intermediate_data/06_lineages/{sample}_/{sample}_.lineage.txt",
     log:
         "logs/CovPipe/{sample}-{covpipe_name}.log",
     conda:
@@ -57,7 +57,7 @@ rule CovPipe:
         " --adapter {input.adapter}"
         " --primer {input.primer}"
         " --pangolin $(which pangolin | sed 's/\/bin.*//g')"
-        " -o {output.out_dir})"
+        " -o results/benchmarking/CovPipe/{wildcards.sample}-{wildcards.covpipe_name})"
         " > {log} 2>&1"
 
 

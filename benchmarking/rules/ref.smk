@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 rule download_ViReflow:
     output:
         "resources/benchmarking/ViReflow/ViReflow.py",
