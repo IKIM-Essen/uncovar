@@ -3,7 +3,7 @@ rule artic_guppyplex:
     input:
         get_fastq_pass_path_barcode,
     output:
-        outdir=directory("results/benchmarking/artic/guppyplex/{sample}/"),
+        outdir=temp(directory("results/benchmarking/artic/guppyplex/{sample}/")),
         fasta="results/benchmarking/artic/guppyplex/{sample}/{sample}.fasta",
     log:
         "logs/artic_guppyplex/{sample}.log",
@@ -27,7 +27,7 @@ rule artic_minion_nanopolish:
         repo="resources/benchmarking/artic/repo",
         guppy_dir="results/benchmarking/artic/guppyplex/{sample}/",
     output:
-        outdir=directory("results/benchmarking/artic/minion/nanopolish/{sample}/"),
+        outdir=temp(directory("results/benchmarking/artic/minion/nanopolish/{sample}/")),
         vcf="results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.merged.vcf",
         consensus="results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.consensus.fasta",
     log:
@@ -36,7 +36,7 @@ rule artic_minion_nanopolish:
         "../../envs/artic.yaml"
     benchmark:
         "benchmarks/artic_nanopolish/{sample}.benchmark.txt"
-    threads: 16
+    threads: 4
     params:
         primer_schemes=lambda w, input: os.path.join(input.repo, "primer_schemes"),
         cwd=lambda w: os.getcwd(),
@@ -60,7 +60,7 @@ rule artic_minion_medaka:
         repo="resources/benchmarking/artic/repo",
         guppy_dir="results/benchmarking/artic/guppyplex/{sample}/",
     output:
-        outdir=directory("results/benchmarking/artic/minion/medaka/{sample}/"),
+        outdir=temp(directory("results/benchmarking/artic/minion/medaka/{sample}/")),
         vcf="results/benchmarking/artic/minion/medaka/{sample}/{sample}.merged.vcf",
         consensus="results/benchmarking/artic/minion/medaka/{sample}/{sample}.consensus.fasta",
     log:
@@ -69,7 +69,7 @@ rule artic_minion_medaka:
         "../../envs/artic.yaml"
     benchmark:
         "benchmarks/artic_medaka/{sample}.benchmark.txt"
-    threads: 16
+    threads: 4
     params:
         primer_schemes=lambda w, input: os.path.join(input.repo, "primer_schemes"),
         medaka_model=config["assembly"]["oxford nanopore"]["medaka_model"],

@@ -62,7 +62,7 @@ rule SIGNAL_unzip_composite_reference:
     conda:
         "../../envs/unix.yaml"
     shell:
-        "gunzip {input} 2> {log}"
+        "gunzip -dk {input} 2> {log}"
 
 
 rule SIGNAL_composite_reference:
@@ -122,7 +122,6 @@ rule SIGNAL_link_minikraken2:
 #         directory("resources/benchmarking/SIGNAL/resources/Kraken2/db"),
 #     log:
 #         "logs/SINGAL_kraken2_tax.log",
-#     threads: 1
 #     conda:
 #         "../../envs/signal.yaml"
 #     shell:
@@ -136,7 +135,6 @@ rule SIGNAL_link_minikraken2:
 #         touch("resources/benchmarking/SIGNAL/resources/Kraken2/.tax"),
 #     log:
 #         "logs/SINGAL_kraken2_lib.log",
-#     threads: 1
 #     conda:
 #         "../../envs/signal.yaml"
 #     shell:
@@ -252,6 +250,7 @@ rule SIGNAL:
         sample_table="results/benchmarking/SIGNAL/{sample}/sample_table.csv",
         script="results/benchmarking/SIGNAL/{sample}/scripts",
     output:
+        outdir=temp(directory("results/benchmarking/SIGNAL/{sample}/results_dir")),
         pangolin="results/benchmarking/SIGNAL/{sample}/results_dir/lineage_assignments.tsv",
         consensus="results/benchmarking/SIGNAL/{sample}/results_dir/all_genomes.fa",
         freebayes_pangolin="results/benchmarking/SIGNAL/{sample}/results_dir/freebayes_lineage_assignments.tsv",
@@ -263,7 +262,7 @@ rule SIGNAL:
         "../../envs/signal.yaml"
     benchmark:
         "benchmarks/signal/{sample}.benchmark.txt"
-    threads: 16
+    threads: 4
     params:
         out_dir=lambda w, input: os.path.dirname(input.config),
         config=lambda w, input: os.path.basename(input.config),

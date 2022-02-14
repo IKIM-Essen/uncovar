@@ -1,24 +1,103 @@
 # PIPELINES = {"nanopore": ["uncovar"], "illumina": ["uncovar", "covpipe"]}
 PIPELINES = {
-    "nanopore": [
-        "artic-medaka",
-        "artic-nanopolish",
-        "ncov2019-artic-nf-medaka",
-        "ncov2019-artic-nf-nanopolish",
-        "nf-core-viralrecon-nanopolish",
-        "nf-core-viralrecon-medaka",
-        "uncovar",
-    ],
-    "illumina": [
-        "ncov2019-artic-nf",
-        "nf-core-viralrecon",
-        # "v-pipe",
-        "havoc",
-        "covpipe",
-        # "signal",
-        "snakelines",
-        "uncovar",
-    ],
+    "nanopore": {
+        "artic-medaka": {
+            "outdir": "results/benchmarking/artic/minion/medaka/{sample}/",
+            "vcf": "results/benchmarking/artic/minion/medaka/{sample}/{sample}.merged.vcf",
+            "consensus": "results/benchmarking/artic/minion/medaka/{sample}/{sample}.consensus.fasta",
+        },
+        "artic-nanopolish": {
+            "outdir": "results/benchmarking/artic/minion/nanopolish/{sample}/",
+            "vcf": "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.merged.vcf",
+            "consensus": "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.consensus.fasta",
+        },
+        "ncov2019-artic-nf-medaka": {
+            "outdir": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/",
+            "vcf": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}_{barcode}.vcf",
+            "consensus": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{{sample}}_{barcode}.consensus.fasta",
+        },
+        "ncov2019-artic-nf-nanopolish": {
+            "outdir": "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/",
+            "vcf": "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{{sample}}_{barcode}.merged.vcf",
+            "consensus": "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{{sample}}_{barcode}.consensus.fasta",
+        },
+        "nf-core-viralrecon-nanopolish": {
+            "outdir": "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}",
+            "vcf": "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/{sample}.merged.vcf",
+            "consensus": "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/{sample}.consensus.fasta",
+            "pangolin": "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/pangolin/{sample}.pangolin.csv",
+        },
+        "nf-core-viralrecon-medaka": {
+            "outdir": "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/",
+            "vcf": "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/{sample}.merged.vcf",
+            "consensus": "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/{sample}.consensus.fasta",
+            "pangolin": "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/pangolin/{sample}.pangolin.csv",
+        },
+        # "poreCov": {
+        #     "outdir": "results/benchmarking/poreCov/{sample}/",
+        #     "consensus": "results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta",
+        #     "lineage_call": "results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
+        # },
+        # "uncovar": {
+        #     "outdir": [],
+        #     "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.vcf",
+        # },
+        "sanger": {
+            "outdir": [],
+            "vcf": "results/benchmarking/sanger/fixed-genotype/{sample}.vcf",
+        },
+    },
+    "illumina": {
+        "covpipe": {
+            "outdir": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/",
+            "vcf": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/intermediate_data/04_variant_calling/{covpipe_name}/{covpipe_name}.vcf",
+            "consensus": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/consensuses_masked/{covpipe_name}.masked_consensus.fasta",
+            "pangolin": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/intermediate_data/06_lineages/all_samples.lineage.txt",
+        },
+        "havoc": {
+            "outdir": "results/benchmarking/havoc/{{sample}}/data/{havoc_name}/",
+            "vcf": "results/benchmarking/havoc/{sample}/{sample}.fixed.vcf",
+            "consensus": "results/benchmarking/havoc/{{sample}}/data/{havoc_name}/{havoc_name}_consensus.fa",
+            "pangolin": "results/benchmarking/havoc/{{sample}}/data/{havoc_name}/{havoc_name}_pangolin_lineage.csv",
+        },
+        "ncov2019-artic-nf": {
+            "outdir": "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/",
+            "vcf": "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.vcf",
+            "consensus": "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_makeConsensus/{sample}.primertrimmed.consensus.fa",
+        },
+        "nf-core-viralrecon": {
+            "outdir": "results/benchmarking/nf-core-viralrecon/illumina/{sample}",
+            "vcf": "results/benchmarking/nf-core-viralrecon/illumina/{sample}.vcf",
+            "consensus": "results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/consensus/{sample}.consensus.fa",
+            "pangolin": "results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/pangolin/{sample}.pangolin.csv",
+            "de_novo_assembly": "results/benchmarking/nf-core-viralrecon/illumina/{sample}/assembly/spades/rnaviral/{sample}.contigs.fa",
+        },
+        "signal": {
+            "outdir": "results/benchmarking/SIGNAL/{sample}/results_dir",
+            "vcf": "results/benchmarking/SIGNAL/{sample}/results_dir/{sample}/freebayes/{sample}.variants.norm.vcf",
+            "consensus": "results/benchmarking/SIGNAL/{sample}/results_dir/all_freebayes_genomes.fa",
+            "pangolin": "results/benchmarking/SIGNAL/{sample}/results_dir/freebayes_lineage_assignments.tsv",
+        },
+        "snakelines": {
+            "outdir": "results/benchmarking/snakelines/{sample}/",
+            "vcf": "results/benchmarking/snakelines/{sample}/variant/sars_cov_2-wgs/original/{sample}.vcf",
+            "consensus": "results/benchmarking/snakelines/{sample}/report/public/01-example/{sample}/consensus-sars_cov_2-wgs.fa",
+            "pangolin": "results/benchmarking/snakelines/{sample}/report/public/01-example/{sample}/lineage_report-sars_cov_2-wgs.csv",
+        },
+        # "uncovar": {
+        #     "outdir": [],
+        #     "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.vcf",
+        # },
+        "v-pipe": {
+            "outdir": "results/benchmarking/v-pipe/{sample}/work",
+            "vcf": "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
+            "consensus": "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/references/ref_majority.fasta",
+        },
+        "sanger": {
+            "outdir": [],
+            "vcf": "results/benchmarking/sanger/fixed-genotype/{sample}.vcf",
+        },
+    },
 }
 
 
@@ -91,61 +170,26 @@ def get_date_for_sample(wildcards):
     return pep.sample_table.loc[wildcards.sample]["date"]
 
 
-def get_vcf_of_workflow(pipeline, wildcards):
-    if pipeline == "artic-medaka":
-        return "results/benchmarking/artic/minion/medaka/{sample}/{sample}.merged.vcf"
+def get_output_from_pipline(key):
+    def inner(wildcards):
+        try:
+            path = PIPELINES["illumina"][wildcards.workflow][key]
+        except KeyError:
+            path = PIPELINES["nanopore"][wildcards.workflow][key]
 
-    elif pipeline == "artic-nanopolish":
-        return (
-            "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.merged.vcf"
-        )
+        if "{barcode}" in path:
+            path = path.format(barcode=get_barcode(wildcards))
 
-    elif pipeline == "ncov2019-artic-nf":
-        return "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.vcf"
+        if "{covpipe_name}" in path:
+            path = path.format(covpipe_name=get_covpipe_name_for_sample(wildcards))
 
-    elif pipeline == "ncov2019-artic-nf-medaka":
-        return "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}_{barcode}.vcf".format(
-            barcode=get_barcode(wildcards)
-        )
+        if "{date}" in path:
+            path = path.format(date=get_date_for_sample(wildcards))
+        if "{havoc_name}" in path:
+            path = path.format(havoc_name=wildcards.sample.split("_")[0])
+        return path
 
-    elif pipeline == "ncov2019-artic-nf-nanopolish":
-        return "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{{sample}}_{barcode}.merged.vcf".format(
-            barcode=get_barcode(wildcards)
-        )
-
-    elif pipeline == "nf-core-viralrecon":
-        return "results/benchmarking/nf-core-viralrecon/illumina/{sample}/{sample}.vcf"
-
-    elif pipeline == "nf-core-viralrecon-nanopolish":
-        return "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/{sample}.merged.vcf"
-
-    elif pipeline == "nf-core-viralrecon-medaka":
-        return "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/{sample}.merged.vcf"
-
-    elif pipeline == "covpipe":
-        return "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/intermediate_data/04_variant_calling/{covpipe_name}/{covpipe_name}.vcf".format(
-            covpipe_name=get_covpipe_name_for_sample(wildcards)
-        )
-
-    elif pipeline == "havoc":
-        return ("results/benchmarking/havoc/{sample}/{sample}.fixed.vcf",)
-
-    elif pipeline == "v-pipe":
-        return "results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/fixed-vcf/snvs.vcf"
-
-    elif pipeline == "signal":
-        return "results/benchmarking/SIGNAL/{sample}/results_dir/{sample}/freebayes/{sample}.variants.norm.vcf"
-
-    elif pipeline == "snakelines":
-        return "results/benchmarking/snakelines/{sample}/variant/sars_cov_2-wgs/original/{sample}.vcf"
-
-    elif pipeline == "uncovar":
-        return "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.vcf".format(
-            date=get_date_for_sample(wildcards)
-        )
-
-    elif pipeline == "sanger":
-        return "results/benchmarking/sanger/fixed-genotype/{sample}.vcf"
+    return inner
 
 
 def get_sanger_files_for_sample(wildcards):
@@ -155,7 +199,7 @@ def get_sanger_files_for_sample(wildcards):
 def get_benchmark_paths_by_tech(path, tech, samples):
     return expand(
         path,
-        workflow=PIPELINES[tech],
+        workflow=PIPELINES[tech].keys(),
         sample=samples,
     )
 

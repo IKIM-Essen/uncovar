@@ -21,7 +21,7 @@ rule poreCov:
         fastq_pass=get_fastq_pass_path_barcode,
         sample_names="results/benchmarking/poreCov/sample-sheets/{sample}/sample_names.csv",
     output:  # varaints="" #TODO
-        outdir=directory("results/benchmarking/poreCov/{sample}/"),
+        outdir=temp(directory("results/benchmarking/poreCov/{sample}/")),
         consensus="results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta",
         lineage_call="results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
     log:
@@ -30,7 +30,7 @@ rule poreCov:
         "../../envs/nextflow.yaml"
     benchmark:
         "benchmarks/porecov/{sample}.benchmark.txt"
-    threads: 16
+    threads: 4
     resources:
         external_pipeline=1,
         nextflow=1,

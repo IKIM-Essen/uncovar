@@ -20,6 +20,7 @@ rule snakelines_prepare_data:
         samples=get_fastqs,
         reference="resources/genomes/main.fasta",
     output:
+        outdir=temp(directory("results/benchmarking/snakelines/{sample}/")),
         fq1="results/benchmarking/snakelines/{sample}/reads/original/{sample}_R1.fastq.gz",
         fq2="results/benchmarking/snakelines/{sample}/reads/original/{sample}_R2.fastq.gz",
         reference="results/benchmarking/snakelines/{sample}/reference/sars_cov_2/sars_cov_2.fa",
@@ -80,7 +81,7 @@ rule snakeline:
         "../../envs/snakelines.yaml"
     benchmark:
         "benchmarks/snakeline/{sample}.benchmark.txt"
-    threads: 8
+    threads: 4
     params:
         outdir=lambda w: f"results/benchmarking/snakelines/{w.sample}",
         cwd=lambda w: os.getcwd(),

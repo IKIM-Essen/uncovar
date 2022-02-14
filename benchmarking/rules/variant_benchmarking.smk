@@ -1,7 +1,7 @@
-# TODO check if the pipelines can run on other refernce genome
 rule rename_contig:
     input:
-        lambda w: get_vcf_of_workflow(w.workflow, w),
+        vcf=get_output_from_pipline("vcf"),
+        outdir=get_output_from_pipline("outdir"),
     output:
         "results/benchmarking/variant-calls/renamed/{workflow}/{sample}.vcf",
     log:
@@ -12,7 +12,7 @@ rule rename_contig:
     conda:
         "../envs/unix.yaml"
     shell:
-        "sed 's/{params.search_string}/{params.replace_string}/' {input} > {output} 2> {log}"
+        "sed 's/{params.search_string}/{params.replace_string}/' {input.vcf} > {output} 2> {log}"
 
 
 rule check_contig_flag:

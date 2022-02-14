@@ -37,7 +37,7 @@ rule CovPipe:
         adapter="resources/benchmarking/data/CovPipe/adapters/{sample}/adapters.fasta",
         primer="resources/primer.bedpe",
     output:
-        out_dir=directory("results/benchmarking/CovPipe/{sample}-{covpipe_name}/"),
+        out_dir=temp(directory("results/benchmarking/CovPipe/{sample}-{covpipe_name}/")),
         consensuses_masked="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/consensuses_masked/{covpipe_name}.masked_consensus.fasta",
         consensuses_iupac="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/consensuses_iupac/{covpipe_name}.iupac_consensus.fasta",
         vcf="results/benchmarking/CovPipe/{sample}-{covpipe_name}/results/intermediate_data/04_variant_calling/{covpipe_name}/{covpipe_name}.vcf",

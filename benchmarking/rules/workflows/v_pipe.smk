@@ -12,7 +12,7 @@ rule v_pipe_work_dir:
         v_pipe_copy="results/benchmarking/v-pipe/{sample}/",
         work_dir_path="results/benchmarking/v-pipe/{sample}/work",
     shell:
-        "(ln -sr {input}/* {params.v_pipe_copy} &&"
+        "(cp r {input}/* {params.v_pipe_copy} &&"
         " mkdir -p {params.work_dir_path} &&"
         " cd {params.work_dir_path} &&"
         " ../init_project.sh)"
@@ -43,8 +43,8 @@ rule v_pipe_setup_samples:
         ),
     shell:
         "(mkdir -p {params.fq_dir} &&"
-        " gzip -d {input.fastqs[0]} -c > {output[0]} &&"
-        " gzip -d {input.fastqs[1]} -c > {output[1]})"
+        " gzip -dk {input.fastqs[0]} -c > {output[0]} &&"
+        " gzip -dk {input.fastqs[1]} -c > {output[1]})"
         " 2> {log}"
 
 
@@ -55,7 +55,8 @@ rule v_pipe_dry_run:
             read=[1, 2],
         ),
     output:
-        "results/benchmarking/v-pipe/{sample}/work/samples.tsv",
+        outdir=temp(directory("results/benchmarking/v-pipe/{sample}/work")),
+        sample_sheet="results/benchmarking/v-pipe/{sample}/work/samples.tsv",
     log:
         "logs/v_pipe_dry_run/{sample}.log",
     conda:
@@ -86,6 +87,7 @@ rule v_pipe_update_sample_sheet:
 rule v_pipe_run:
     input:
         "results/benchmarking/v-pipe/{sample}/.edited-sample",
+        "results/benchmarking/v-pipe/{sample}/work",
     output:
         vcf="results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
         consensus="results/benchmarking/v-pipe/{sample}/work/samples/{sample}/20200102/references/ref_majority.fasta",
@@ -95,7 +97,7 @@ rule v_pipe_run:
         "../../envs/v-pipe.yaml"
     benchmark:
         "benchmarks/v_pipe/{sample}.benchmark.txt"
-    threads: 16
+    threads: 4
     resources:
         external_pipeline=1,
     params:

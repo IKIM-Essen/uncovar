@@ -21,7 +21,9 @@ rule ncov2019_artic_nf_illumina:
     input:
         directory="resources/benchmarking/data/ncov2019_artic_nf/illumina/{sample}/",
     output:
-        outdir=directory("results/benchmarking/ncov2019_artic_nf/illumina/{sample}/"),
+        outdir=temp(
+            directory("results/benchmarking/ncov2019_artic_nf/illumina/{sample}/")
+        ),
         consensus="results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_makeConsensus/{sample}.primertrimmed.consensus.fa",
         vcf="results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.tsv",
     log:
@@ -30,7 +32,7 @@ rule ncov2019_artic_nf_illumina:
         "../../envs/nextflow.yaml"
     benchmark:
         "benchmarks/ncov2019_artic_nf_illumina/{sample}.benchmark.txt"
-    threads: 16
+    threads: 4
     resources:
         external_pipeline=1,
         nextflow=1,
@@ -83,8 +85,10 @@ use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish wit
         fast5_pass="resources/benchmarking/data/ncov2019_artic_nf/nanopore/{sample}/fast5_pass/",
         sequencing_summary=lambda wildcards: get_seq_summary(wildcards),
     output:
-        outdir=directory(
-            "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}-{barcode}/"
+        outdir=temp(
+            directory(
+                "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}-{barcode}/"
+            )
         ),
         consensus="results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{sample}_{barcode}.consensus.fasta",
         vcf="results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{sample}_{barcode}.merged.vcf",
@@ -105,8 +109,10 @@ use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish wit
 
 use rule ncov2019_artic_nf_nanopore_nanopolish as ncov2019_artic_nf_nanopore_medaka with:
     output:
-        outdir=directory(
-            "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/"
+        outdir=temp(
+            directory(
+                "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/"
+            )
         ),
         consensus="results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.consensus.fasta",
         vcf="results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{sample}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{sample}_{barcode}.merged.vcf.gz",

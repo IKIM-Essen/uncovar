@@ -53,6 +53,9 @@ rule HaVoc:
         ref="resources/benchmarking/havoc/ref.fa",
         adapters="resources/benchmarking/havoc/NexteraPE-PE.fa",
     output:
+        out_dir=temp(
+            directory("results/benchmarking/havoc/{sample}/data/{havoc_name}/")
+        ),
         consensus="results/benchmarking/havoc/{sample}/data/{havoc_name}/{havoc_name}_consensus.fa",
         pangolin="results/benchmarking/havoc/{sample}/data/{havoc_name}/{havoc_name}_pangolin_lineage.csv",
         vcf="results/benchmarking/havoc/{sample}/data/{havoc_name}/{havoc_name}_indel.vcf",
@@ -62,7 +65,7 @@ rule HaVoc:
         "../../envs/havoc.yaml"
     benchmark:
         "benchmarks/havoc/{sample}~{havoc_name}.benchmark.txt"
-    threads: 8
+    threads: 4
     params:
         fastq_dir=lambda w, input: os.path.dirname(input.fq1),
         out_dir=lambda w, input: os.path.dirname(os.path.dirname(input.fq1)),

@@ -16,6 +16,9 @@ rule nf_core_viralrecon_illumina:
     input:
         input="results/benchmarking/nf-core-viralrecon/illumina/{sample}/sample_sheet.csv",
     output:
+        outdir=temp(
+            directory("results/benchmarking/nf-core-viralrecon/illumina/{sample}")
+        ),
         de_novo_assembly="results/benchmarking/nf-core-viralrecon/illumina/{sample}/assembly/spades/rnaviral/{sample}.contigs.fa",
         pangolin="results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/pangolin/{sample}.pangolin.csv",
         consensus="results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/consensus/{sample}.consensus.fa",
@@ -26,7 +29,7 @@ rule nf_core_viralrecon_illumina:
         "../../envs/nextflow.yaml"
     benchmark:
         "benchmarks/nf_core_viralrecon_illumina/{sample}.benchmark.txt"
-    threads: 16
+    threads: 4
     resources:
         external_pipeline=1,
         nextflow=1,
@@ -48,7 +51,7 @@ rule nf_core_viralrecon_illumina_extract_vcf_gz:
     input:
         "results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/{sample}.vcf.gz",
     output:
-        "results/benchmarking/nf-core-viralrecon/illumina/{sample}/{sample}.vcf",
+        "results/benchmarking/nf-core-viralrecon/illumina/{sample}.vcf",
     log:
         "logs/nf_core_viralrecon_illumina_extract_vcf_gz/{sample}.log",
     conda:
@@ -81,7 +84,7 @@ rule nf_core_viralrecon_nanopore_prepare_samples:
         "../../envs/unix.yaml"
     params:
         barcode=lambda w, output: os.path.join(output[0], get_barcode(w)),
-        mv_or_uncompress=lambda w, output: f" && cd {output[0]}/{get_barcode(w)} && gunzip *.gz"
+        mv_or_uncompress=lambda w, output: f" && cd {output[0]}/{get_barcode(w)} && gunzip -dk *.gz"
         if w.folder == "fastq_pass"
         else "",
     shell:
@@ -97,6 +100,11 @@ use rule nf_core_viralrecon_illumina as nf_core_viralrecon_nanopore_nanopolish w
         fastq_dir="resources/benchmarking/data/nf-core-viralrecon/{sample}/fastq_pass/",
         fast5_dir="resources/benchmarking/data/nf-core-viralrecon/{sample}/fast5_pass/",
     output:
+        outdir=temp(
+            directory(
+                "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}"
+            )
+        ),
         consensus="results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/{sample}.consensus.fasta",
         pangolin="results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/pangolin/{sample}.pangolin.csv",
         vcf="results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/{sample}.merged.vcf",
@@ -117,6 +125,11 @@ use rule nf_core_viralrecon_illumina as nf_core_viralrecon_nanopore_nanopolish w
 
 use rule nf_core_viralrecon_nanopore_nanopolish as nf_core_viralrecon_nanopore_medaka with:
     output:
+        outdir=temp(
+            directory(
+                "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/"
+            )
+        ),
         consensus="results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/{sample}.consensus.fasta",
         pangolin="results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/pangolin/{sample}.pangolin.csv",
         vcf="results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/{sample}.merged.vcf",
