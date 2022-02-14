@@ -24,11 +24,21 @@ human-genome-download-path:
   - ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.28_GRCh38.p13/GCA_000001405.28_GRCh38.p13_genomic.fna.gz
 
 data-handling:
-  # path of incoming data
+  # flag for using the following data-handling structure
+  # True: data-handling structure is used as shown below
+  # False: only the sample sheet needs to be updated (manually)
+  use-data-handling: True
+  # flag for archiving data
+  # True: data is archived in path defined below
+  # False: data is not archived
+  archive-data: True
+  # path of incoming data, which is moved to the
+  # data directory by the preprocessing script
   incoming: ../incoming/
-  # path to store data in the workflow
+  # path to store data within the workflow
   data: data/
-  # path to archive data from incoming to
+  # path to archive data from incoming and
+  # the results from the latest run to
   archive: ../archive/
 
 quality-criteria:
