@@ -41,6 +41,19 @@ rule bcf_index:
         "bcftools index {input} 2> {log}"
 
 
+rule bcf_sort:
+    input:
+        "{prefix}.bcf",
+    output:
+        "{prefix}.sorted.bcf",
+    log:
+        "logs/bcf-sort/{prefix}.log",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        "bcftools sort -O b {input} -o {output} 2> {log}"
+
+
 rule faidx:
     input:
         "{prefix}.fasta",

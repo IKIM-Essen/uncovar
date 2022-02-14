@@ -55,6 +55,7 @@ if config["data-handling"]["use-data-handling"]:
 
 
 include: "rules/long_read.smk"
+include: "rules/lineage_variant_calling.smk"
 
 
 if config["data-handling"]["archive-data"]:

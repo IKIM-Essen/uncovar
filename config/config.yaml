@@ -60,8 +60,8 @@ preprocessing:
   # https://github.com/artic-network/artic-ncov2019/tree/master/primer_schemes/nCoV-2019/V4
   # for more information
   artic-primer-version: 3
-  # path to amplicon primers in bedpe format for hard-clipping on paired end files (illumina)
-  amplicon-primers: "resources/primer.bedpe"
+  # path to amplicon primers in bed format for hard-clipping on paired end files (illumina) or url to file that should be downloaded
+  amplicon-primers: "resources/nCoV-2019.primer.bed"
   # GenBank accession of reference sequence of the amplicon primers
   amplicon-reference: "MN908947"
 
