@@ -7,7 +7,7 @@ rule download_artic_primer_schemes:
     conda:
         "../envs/git.yaml"
     shell:
-        "git clone https://github.com/artic-network/artic-ncov2019.git {output} 2> {log}"
+        "git clone https://github.com/thomasbtf/artic-ncov2019/tree/master {output} 2> {log}"
 
 
 rule artic_guppyplex:
@@ -66,7 +66,6 @@ rule artic_minion_nanopolish:
 
 rule artic_minion_medaka:
     input:
-        fast5=lambda wildcards: get_fast5_pass_path_barcode(wildcards),
         fasta="results/benchmarking/artic/guppyplex/{sample}/{sample}.fasta",
         repo="resources/benchmarking/artic/repo",
         guppy_dir="results/benchmarking/artic/guppyplex/{sample}/",
@@ -82,16 +81,20 @@ rule artic_minion_medaka:
         "benchmarks/artic_medaka/{sample}.benchmark.txt"
     threads: 4
     params:
-        primer_schemes=lambda w, input: os.path.join(input.repo, "primer_schemes"),
+        primer_schemes=lambda w, input: os.path.join(
+            os.getcwd(), input.repo, "primer_schemes"
+        ),
+        read_file=lambda w, input: os.path.join(os.getcwd(), input.fasta),
         medaka_model=config["assembly"]["oxford nanopore"]["medaka_model"],
         cwd=lambda w: os.getcwd(),
+        outdir=temp(directory("results/benchmarking/artic/minion/medaka/{sample}/")),
     resources:
         external_pipeline=1,
     shell:
-        "(cd {output.outdir} &&"
+        "(mkdir -p {params.outdir} && cd {params.outdir} &&"
         " artic minion --medaka --medaka-model {params.medaka_model}"
         " --normalise 200 --threads {threads}"
-        " --scheme-directory {params.cwd}/{params.primer_schemes}"
-        " --read-file {params.cwd}/{input.fasta}"
+        " --scheme-directory {params.primer_schemes}"
+        " --read-file {params.read_file}"
         " nCoV-2019/V3 {wildcards.sample})"
-        " > {params.cwd}/{log} 2>&1"
+        "> {params.cwd}/{log} 2>&1"
