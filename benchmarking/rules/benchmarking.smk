@@ -16,6 +16,7 @@ include: "variant_benchmarking.smk"
 rule save_workflow_output:
     input:
         get_workflow_output,
+        get_output_from_pipline("outdir"),
     output:
         "results/benchmarking/{key}/{tech}/{workflow}/{sample}.fasta",
     log:
@@ -23,7 +24,7 @@ rule save_workflow_output:
     conda:
         "../envs/unix.yaml"
     shell:
-        "cp {input} {output} 2> {log}"
+        "cp {input[0]} {output} 2> {log}"
 
 
 rule save_all_workflow_outputs:
