@@ -33,7 +33,7 @@ PIPELINES = {
             "consensus": "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/{sample}.consensus.fasta",
             "pangolin": "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/pangolin/{sample}.pangolin.csv",
         },
-        # "poreCov": {
+        # "poreCov": { # no vcf output
         #     "outdir": "results/benchmarking/poreCov/{sample}/",
         #     "consensus": "results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta",
         #     "lineage_call": "results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
@@ -50,9 +50,9 @@ PIPELINES = {
     "illumina": {
         "covpipe": {
             "outdir": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/",
-            "vcf": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/intermediate_data/04_variant_calling/{covpipe_name}/{covpipe_name}.vcf",
-            "consensus": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/consensuses_masked/{covpipe_name}.masked_consensus.fasta",
-            "pangolin": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/intermediate_data/06_lineages/all_samples.lineage.txt",
+            "vcf": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/intermediate_data/04_variant_calling/{{sample}}_/{{sample}}_.vcf",
+            "consensus": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/consensuses_masked/{{sample}}_.masked_consensus.fasta",
+            "pangolin": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/intermediate_data/06_lineages/{{sample}}_/{{sample}}_.lineage.txt",
         },
         "havoc": {
             "outdir": "results/benchmarking/havoc/{{sample}}/data/{havoc_name}/",
@@ -72,12 +72,12 @@ PIPELINES = {
             "pangolin": "results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/pangolin/{sample}.pangolin.csv",
             "de_novo_assembly": "results/benchmarking/nf-core-viralrecon/illumina/{sample}/assembly/spades/rnaviral/{sample}.contigs.fa",
         },
-        "signal": {
-            "outdir": "results/benchmarking/SIGNAL/{sample}/results_dir",
-            "vcf": "results/benchmarking/SIGNAL/{sample}/results_dir/{sample}/freebayes/{sample}.variants.norm.vcf",
-            "consensus": "results/benchmarking/SIGNAL/{sample}/results_dir/all_freebayes_genomes.fa",
-            "pangolin": "results/benchmarking/SIGNAL/{sample}/results_dir/freebayes_lineage_assignments.tsv",
-        },
+        # "signal": { # failes bc of pangolin update, which uses GiTHub API, which is rate limitet to 60 requests
+        #     "outdir": "results/benchmarking/SIGNAL/{sample}/results_dir",
+        #     "vcf": "results/benchmarking/SIGNAL/{sample}/results_dir/{sample}/freebayes/{sample}.variants.norm.vcf",
+        #     "consensus": "results/benchmarking/SIGNAL/{sample}/results_dir/all_freebayes_genomes.fa",
+        #     "pangolin": "results/benchmarking/SIGNAL/{sample}/results_dir/freebayes_lineage_assignments.tsv",
+        # },
         "snakelines": {
             "outdir": "results/benchmarking/snakelines/{sample}/",
             "vcf": "results/benchmarking/snakelines/{sample}/variant/sars_cov_2-wgs/original/{sample}.vcf",

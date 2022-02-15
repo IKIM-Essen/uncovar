@@ -94,8 +94,8 @@ rule HaVoc_fix_vcf:
     log:
         "logs/HaVoc_fix_vcf/{sample}.log",
     params:
-        search_string=lambda w: w.sample.split("_")[0],
-        replace_string="NC_045512.2",
+        search_string=lambda w: f"{w.sample.split('_')[0]}\t",
+        replace_string="NC_045512.2\t",
     conda:
         "../../envs/unix.yaml"
     shell:
