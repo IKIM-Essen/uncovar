@@ -21,9 +21,11 @@ rule nanoQC:
 
 rule nanofilt:
     input:
-        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
-    output:
+        # get_reads_by_stage,
         get_fastqs,
+    output:
+        "results/{date}/filtered/nanofilt/{sample}.fastq",
+        # "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
         # temp("results/{date}/trimmed/nanofilt/{sample}.fastq"),
     log:
         "logs/{date}/nanofilt/{sample}.log",
@@ -33,7 +35,7 @@ rule nanofilt:
     conda:
         "../envs/nanofilt.yaml"
     shell:
-        "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 800 {input} > {output} 2> {log}" # --maxlength 700
+        "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 800 {input} > {output} 2> {log}"  # --maxlength 700
 
 
 # rule count_fastq_reads:
@@ -48,34 +50,36 @@ rule nanofilt:
 #     shell:
 #         "echo $(( $(cat {input} | wc -l ) / 4)) > {output} 2> {log}"
 
+
 rule minimap_to_reference:
     input:
-        reads=get_fastqs,
+        reads="results/{date}/filtered/nanofilt/{sample}.fastq",
         reference="resources/genomes/main.fasta",
     output:
-        "results/{date}/minimappings/{sample}.paf"
+        "results/{date}/minimappings/{sample}.paf",
     conda:
         "../envs/minimap2.yaml"
     shell:
-        "minimap2 -x map-ont {reference} {reads} -o {output}"
+        "minimap2 -x map-ont {input.reference} {input.reads} -o {output}"
 
 
 rule cap_cov_amp:
     input:
-        primer=get_artic_primer,
+        primer="/home/simon/uncovar/.tests/resources/nCoV-2019.primer.bed",
         mappings="results/{date}/minimappings/{sample}.paf",
-        reads=get_fastqs,
+        reads="results/{date}/filtered/nanofilt/{sample}.fastq",
+        # reads=get_fastqs,
     output:
-        "results/{date}/normalize_reads/{sample}_cap.fasta"
+        "results/{date}/normalize_reads/{sample}_cap.fasta",
     script:
         "../scripts/amp_covcap_sampler.py"
-    
+
 
 # Intermediate number of threads (4-8) achieve best speedup of a+btrimming.
 # For large files 8 threads help accelerate some, small files are processed faster with 4 threads.
 rule porechop_adapter_barcode_trimming:
     input:
-        "results/{date}/normalize_reads/{sample}_cap.fasta"
+        "results/{date}/normalize_reads/{sample}_cap.fasta",
     output:
         temp("results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta"),
     conda:
@@ -144,7 +148,7 @@ rule porechop_primer_trimming:
 rule canu_correct:
     input:
         # "results/{date}/trimmed/nanofilt/{sample}.fasta",
-        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta"
+        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta",
     output:
         "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
     log:

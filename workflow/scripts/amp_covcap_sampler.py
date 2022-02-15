@@ -2,7 +2,22 @@ import random
 
 
 class Mapping:
-    def __init__(self, qname, qlen, qstart, qend, samestrand, tname, tlen, tstart, tend, matches, total_bp, qual, kwattr):
+    def __init__(
+        self,
+        qname,
+        qlen,
+        qstart,
+        qend,
+        samestrand,
+        tname,
+        tlen,
+        tstart,
+        tend,
+        matches,
+        total_bp,
+        qual,
+        kwattr,
+    ):
         self.qname = qname
         self.qlen = int(qlen)
         self.qstart = int(qstart)
@@ -17,7 +32,7 @@ class Mapping:
         self.qual = int(qual)
         self.kwattr = kwattr
         self.gen_kw_attr()
- 
+
     def gen_kw_attr(self):
         kwattr_dict = {kw.split(":")[0]: kw.split(":")[-1] for kw in self.kwattr}
         for key in kwattr_dict:
@@ -34,7 +49,6 @@ class Primer:
         self.strand = strand
         self.type = "primary"
         self.amp_no, self.pos = self.get_name_infos()
-        
 
     def get_name_infos(self):
         ls = self.name.split("_")
@@ -42,7 +56,7 @@ class Primer:
             self.type = "alt"
             self.alt_name = ls[3]
         return ls[1], ls[2]
-        
+
 
 class Amp:
     def __init__(self, amp_no, primers):
@@ -51,14 +65,12 @@ class Amp:
         self.start = min([primer.start for primer in primers])
         self.end = max([primer.end for primer in primers])
         self.reads = list()
-        
 
     def random_sample(self, cutoff):
         if len(self.reads) > cutoff:
             self.selected = random.choices(self.reads, k=cutoff)
         else:
             self.selected = self.reads
-            
 
 
 def create_primer_objs(primer_bed):
@@ -78,7 +90,7 @@ def generate_amps(primers):
         amps.append(ao)
     return sorted(amps, key=lambda x: x.name)
 
-        
+
 def create_read_mappings(mm2_paf):
     with open(mm2_paf, "r") as paf:
         mappings = list()
@@ -93,33 +105,35 @@ def create_read_mappings(mm2_paf):
 def bin_mappings(amp_bins, mappings):
     binned = list()
     na = list()
-    while len(mappings) > 0:
-        if mappings[0].tend <= amp_bins[0].end + 5:
-            if mappings[0].tstart >= amp_bins[0].start - 5:
-                amp_bins[0].reads.append(mappings[0].qname)
-                mappings.pop(0)
+    while len(amp_bins) > 0:
+        if len(mappings) > 0:
+            if mappings[0].tend <= amp_bins[0].end + 5:
+                if mappings[0].tstart >= amp_bins[0].start - 5:
+                    amp_bins[0].reads.append(mappings[0].qname)
+                    mappings.pop(0)
+                else:
+                    na.append(mappings[0].qname)
+                    mappings.pop(0)
             else:
-                na.append(mappings[0].qname)
-                mappings.pop(0)
-        else:
-            binned.append(amp_bins[0])
-            amp_bins.pop(0)
+                binned.append(amp_bins[0])
+                amp_bins.pop(0)
 
     for bin in binned:
-        bin.random_sample(10)
+        bin.random_sample(200)
         print(bin.name, len(bin.reads), "selected:", len(bin.selected))
     print("na", len(na))
 
     return binned
 
+
 def write_capped_reads(binned, reads, out):
-    all_picks = ["@"+ name for amp in binned for name in amp.selected]
+    all_picks = ["@" + name for amp in binned for name in amp.selected]
     print(all_picks)
     with open(reads, "r") as fq, open(out, "w") as fa:
         for line in fq:
             if line.startswith("@"):
                 readname = line.split(" ")[0]
-                print(readname)
+                # print(readname)
                 if readname in all_picks:
                     readname = readname.replace("@", ">")
                     fa.write(readname + "\n")
@@ -129,19 +143,18 @@ def write_capped_reads(binned, reads, out):
 if __name__ == "__main__":
     import sys
 
-    mm2_paf = sys.argv[1]
-    primer_bed = sys.argv[2]
-    reads = sys.argv[3]
-    out = sys.argv[3] + "_capped"
+    # mm2_paf = sys.argv[1]
+    # primer_bed = sys.argv[2]
+    # reads = sys.argv[3]
+    # out = reads + "_capped"
 
-    # primer_bed = snakemake.output[0]
-    # mm2_paf = snakemake.input[1]
-    # reads = snakemake.input[2]
-
+    primer_bed = snakemake.input[0]
+    mm2_paf = snakemake.input[1]
+    reads = snakemake.input[2]
+    out = snakemake.output[0]
 
     primers = create_primer_objs(primer_bed)
     amps = generate_amps(primers)
     mappings = create_read_mappings(mm2_paf)
     binned = bin_mappings(amps, mappings)
     write_capped_reads(binned, reads, out)
-        
