@@ -202,23 +202,29 @@ def get_sanger_files_for_sample(wildcards):
     return pep.sample_table.loc[wildcards.sample]["sanger"].split(";")
 
 
-def get_benchmark_paths_by_tech(path, tech, samples):
+def get_benchmark_paths_by_tech(path, tech, samples, remove=None):
+
+    workflows = list(PIPELINES[tech].keys())
+
+    if remove in workflows:
+        workflows.remove(remove)
+
     return expand(
         path,
-        workflow=PIPELINES[tech].keys(),
+        workflow=workflows,
         sample=samples,
     )
 
 
-def get_benchmark_path(path):
-    def inner(wildcards):
+def get_benchmark_path(path, remove=None):
+    def inner_get_benchmark_path(wildcards):
         return get_benchmark_paths_by_tech(
-            path, "nanopore", get_nanopore_samples(wildcards)
+            path, "nanopore", get_nanopore_samples(wildcards), remove
         ) + get_benchmark_paths_by_tech(
-            path, "illumina", get_illumina_samples(wildcards)
+            path, "illumina", get_illumina_samples(wildcards), remove
         )
 
-    return inner
+    return inner_get_benchmark_path
 
 
 def get_benchmark_platforms(wildcards):
