@@ -13,6 +13,26 @@ include: "sanger.smk"
 include: "variant_benchmarking.smk"
 
 
+rule save_workflow_output:
+    input:
+        get_workflow_output,
+    output:
+        "results/benchmarking/{key}/{tech}/{workflow}/{sample}.fasta",
+    log:
+        "logs/save/{key}/{tech}/{workflow}/{sample}.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "cp {input} {output} 2> {log}"
+
+
+rule save_all_workflow_outputs:
+    input:
+        get_all_outputs,
+    output:
+        touch("results/benchmarking/.saved"),
+
+
 # output:
 #     "",
 # log:

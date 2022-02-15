@@ -170,6 +170,22 @@ def get_date_for_sample(wildcards):
     return pep.sample_table.loc[wildcards.sample]["date"]
 
 
+def check_path_for_workflow_wildcard(path, wildcards):
+    if "{barcode}" in path:
+        path = path.format(barcode=get_barcode(wildcards))
+
+    if "{covpipe_name}" in path:
+        path = path.format(covpipe_name=get_covpipe_name_for_sample(wildcards))
+
+    if "{date}" in path:
+        path = path.format(date=get_date_for_sample(wildcards))
+
+    if "{havoc_name}" in path:
+        path = path.format(havoc_name=wildcards.sample.split("_")[0])
+
+    return path
+
+
 def get_output_from_pipline(key):
     def inner(wildcards):
         try:
@@ -177,17 +193,7 @@ def get_output_from_pipline(key):
         except KeyError:
             path = PIPELINES["nanopore"][wildcards.workflow][key]
 
-        if "{barcode}" in path:
-            path = path.format(barcode=get_barcode(wildcards))
-
-        if "{covpipe_name}" in path:
-            path = path.format(covpipe_name=get_covpipe_name_for_sample(wildcards))
-
-        if "{date}" in path:
-            path = path.format(date=get_date_for_sample(wildcards))
-        if "{havoc_name}" in path:
-            path = path.format(havoc_name=wildcards.sample.split("_")[0])
-        return path
+        return check_path_for_workflow_wildcard(path, wildcards)
 
     return inner
 
@@ -225,3 +231,30 @@ def get_benchmark_platforms(wildcards):
             "{workflow},{sample}", "illumina", get_illumina_samples(wildcards)
         )
     )
+
+
+def get_workflow_output(wildcards):
+    path = PIPELINES[wildcards.tech][wildcards.workflow][wildcards.key]
+    return check_path_for_workflow_wildcard(path, wildcards)
+
+
+def get_all_outputs(wildcards):
+    path = "results/benchmarking/{key}/{tech}/{workflow}/{sample}.fasta"
+
+    paths = []
+    for tech, tech_dict in PIPELINES.items():
+        for workflow, workflow_dict in tech_dict.items():
+            for key, _dict_path in workflow_dict.items():
+                if key != "outdir":
+                    if tech == "illumina":
+                        samples = get_illumina_samples(wildcards)
+                    if tech == "nanopore":
+                        samples = get_nanopore_samples(wildcards)
+
+                    for sample in samples:
+                        paths.append(
+                            path.format(
+                                key=key, tech=tech, workflow=workflow, sample=sample
+                            )
+                        )
+    return paths
