@@ -91,7 +91,7 @@ def create_read_mappings(mm2_paf):
 
 
 def bin_mappings(amp_bins, mappings):
-    done = list()
+    binned = list()
     na = list()
     while len(mappings) > 0:
         if mappings[0].tend <= amp_bins[0].end + 5:
@@ -102,13 +102,28 @@ def bin_mappings(amp_bins, mappings):
                 na.append(mappings[0].qname)
                 mappings.pop(0)
         else:
-            done.append(amp_bins[0])
+            binned.append(amp_bins[0])
             amp_bins.pop(0)
 
-    for bin in done:
+    for bin in binned:
         bin.random_sample(10)
         print(bin.name, len(bin.reads), "selected:", len(bin.selected))
     print("na", len(na))
+
+    return binned
+
+def write_capped_reads(binned, reads, out):
+    all_picks = ["@"+ name for amp in binned for name in amp.selected]
+    print(all_picks)
+    with open(reads, "r") as fq, open(out, "w") as fa:
+        for line in fq:
+            if line.startswith("@"):
+                readname = line.split(" ")[0]
+                print(readname)
+                if readname in all_picks:
+                    readname = readname.replace("@", ">")
+                    fa.write(readname + "\n")
+                    fa.write(next(fq))
 
 
 if __name__ == "__main__":
@@ -116,9 +131,17 @@ if __name__ == "__main__":
 
     mm2_paf = sys.argv[1]
     primer_bed = sys.argv[2]
+    reads = sys.argv[3]
+    out = sys.argv[3] + "_capped"
+
+    # primer_bed = snakemake.output[0]
+    # mm2_paf = snakemake.input[1]
+    # reads = snakemake.input[2]
+
 
     primers = create_primer_objs(primer_bed)
     amps = generate_amps(primers)
     mappings = create_read_mappings(mm2_paf)
-    bin_mappings(amps, mappings)
+    binned = bin_mappings(amps, mappings)
+    write_capped_reads(binned, reads, out)
         
