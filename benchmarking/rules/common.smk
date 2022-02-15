@@ -11,16 +11,16 @@ PIPELINES = {
             "vcf": "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.merged.vcf",
             "consensus": "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.consensus.fasta",
         },
-        "ncov2019-artic-nf-medaka": {
-            "outdir": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/",
-            "vcf": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}_{barcode}.vcf",
-            "consensus": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{{sample}}_{barcode}.consensus.fasta",
-        },
-        "ncov2019-artic-nf-nanopolish": {
-            "outdir": "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/",
-            "vcf": "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{{sample}}_{barcode}.merged.vcf",
-            "consensus": "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{{sample}}_{barcode}.consensus.fasta",
-        },
+        # "ncov2019-artic-nf-medaka": { # muscel is borken
+        #     "outdir": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/",
+        #     "vcf": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}_{barcode}.vcf",
+        #     "consensus": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{{sample}}_{barcode}.consensus.fasta",
+        # },
+        # "ncov2019-artic-nf-nanopolish": { # muscel is borken
+        #     "outdir": "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/",
+        #     "vcf": "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{{sample}}_{barcode}.merged.vcf",
+        #     "consensus": "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{{sample}}_{barcode}.consensus.fasta",
+        # },
         "nf-core-viralrecon-nanopolish": {
             "outdir": "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}",
             "vcf": "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/{sample}.merged.vcf",

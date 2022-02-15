@@ -14,7 +14,7 @@ rule download_viralrecon_script:
 
 rule nf_core_viralrecon_illumina_sample_sheet:
     output:
-        "results/benchmarking/nf-core-viralrecon/illumina/{sample}/sample_sheet.csv",
+        "results/benchmarking/nf-core-viralrecon/illumina/sample-sheets/{sample}.csv",
     log:
         "logs/nf_core_viralrecon_illumina_sample_sheet/{sample}.log",
     conda:
@@ -27,7 +27,7 @@ rule nf_core_viralrecon_illumina_sample_sheet:
 
 rule nf_core_viralrecon_illumina:
     input:
-        input="results/benchmarking/nf-core-viralrecon/illumina/{sample}/sample_sheet.csv",
+        input="results/benchmarking/nf-core-viralrecon/illumina/sample-sheets/{sample}.csv",
     output:
         outdir=temp(
             directory("results/benchmarking/nf-core-viralrecon/illumina/{sample}")
