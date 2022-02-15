@@ -38,10 +38,10 @@ PIPELINES = {
         #     "consensus": "results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta",
         #     "lineage_call": "results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
         # },
-        # "uncovar": {
-        #     "outdir": [],
-        #     "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.vcf",
-        # },
+        "uncovar": {
+            "outdir": [],
+            "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.vcf",
+        },
         "sanger": {
             "outdir": [],
             "vcf": "results/benchmarking/sanger/fixed-genotype/{sample}.vcf",
@@ -84,10 +84,10 @@ PIPELINES = {
             "consensus": "results/benchmarking/snakelines/{sample}/report/public/01-example/{sample}/consensus-sars_cov_2-wgs.fa",
             "pangolin": "results/benchmarking/snakelines/{sample}/report/public/01-example/{sample}/lineage_report-sars_cov_2-wgs.csv",
         },
-        # "uncovar": {
-        #     "outdir": [],
-        #     "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.vcf",
-        # },
+        "uncovar": {
+            "outdir": [],
+            "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.vcf",
+        },
         "v-pipe": {
             "outdir": "results/benchmarking/v-pipe/.delted-dir/{sample}.log",
             "vcf": "results/benchmarking/v-pipe/fixed-vcf/{sample}.vcf",

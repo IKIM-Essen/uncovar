@@ -6,6 +6,6 @@ rule uncovar_bcf_2_vcf:
     log:
         "logs/uncovar_bcf_2_vcf/{date}/{sample}.log",
     conda:
-        "../envs/tools.yaml"
+        "../../envs/tools.yaml"
     shell:
         "bcftools view {input} > {output}"
