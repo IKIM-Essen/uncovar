@@ -19,17 +19,55 @@ rule nanoQC:
         "nanoQC {input} -o {params.outdir} > {log} 2>&1"
 
 
-rule count_fastq_reads:
+rule nanofilt:
     input:
-        get_reads_by_stage,
+        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
     output:
-        temp("results/{date}/tables/fastq-read-counts/{stage}~{sample}.txt"),
+        get_fastqs,
+        # temp("results/{date}/trimmed/nanofilt/{sample}.fastq"),
     log:
-        "logs/{date}/count_reads/{stage}~{sample}.log",
+        "logs/{date}/nanofilt/{sample}.log",
+    params:
+        min_length=config["quality-criteria"]["ont"]["min-length-reads"],
+        min_PHRED=config["quality-criteria"]["ont"]["min-PHRED"],
     conda:
-        "../envs/unix.yaml"
+        "../envs/nanofilt.yaml"
     shell:
-        "echo $(( $(cat {input} | wc -l ) / 4)) > {output} 2> {log}"
+        "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 700 {input} > {output} 2> {log}"
+
+
+# rule count_fastq_reads:
+#     input:
+#         get_reads_by_stage,
+#     output:
+#         temp("results/{date}/tables/fastq-read-counts/{stage}~{sample}.txt"),
+#     log:
+#         "logs/{date}/count_reads/{stage}~{sample}.log",
+#     conda:
+#         "../envs/unix.yaml"
+#     shell:
+#         "echo $(( $(cat {input} | wc -l ) / 4)) > {output} 2> {log}"
+
+rule minimap_to_reference:
+    input:
+        reads=get_fastqs,
+        reference="resources/genomes/main.fasta",
+    output:
+        "results/{date}/minimappings/{sample}.paf"
+    conda:
+        "../envs/minimap2.yaml"
+    shell:
+        "minimap2 -x map-ont {reference} {reads} -o {output}"
+
+
+rule amp_based_binning_downsampling:
+    input:
+        reads=get_fastqs,
+        mappings="results/{date}/minimappings/{sample}.paf"
+    output:
+        "results/{date}/normalize_reads/{sample}_ds.fastq"
+    
+    
 
 
 # Intermediate number of threads (4-8) achieve best speedup of a+btrimming.
@@ -86,20 +124,20 @@ rule porechop_primer_trimming:
         """
 
 
-rule nanofilt:
-    input:
-        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
-    output:
-        temp("results/{date}/trimmed/nanofilt/{sample}.fastq"),
-    log:
-        "logs/{date}/nanofilt/{sample}.log",
-    params:
-        min_length=config["quality-criteria"]["ont"]["min-length-reads"],
-        min_PHRED=config["quality-criteria"]["ont"]["min-PHRED"],
-    conda:
-        "../envs/nanofilt.yaml"
-    shell:
-        "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 500 {input} > {output} 2> {log}"
+# rule nanofilt:
+#     input:
+#         "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
+#     output:
+#         temp("results/{date}/trimmed/nanofilt/{sample}.fastq"),
+#     log:
+#         "logs/{date}/nanofilt/{sample}.log",
+#     params:
+#         min_length=config["quality-criteria"]["ont"]["min-length-reads"],
+#         min_PHRED=config["quality-criteria"]["ont"]["min-PHRED"],
+#     conda:
+#         "../envs/nanofilt.yaml"
+#     shell:
+#         "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 500 {input} > {output} 2> {log}"
 
 
 rule canu_correct:
