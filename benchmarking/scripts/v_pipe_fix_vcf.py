@@ -1,4 +1,5 @@
 import sys
+from pydoc import describe
 
 sys.stderr = open(snakemake.log[0], "w")
 
@@ -24,6 +25,15 @@ with pysam.VariantFile(snakemake.input[0]) as in_vcf:
     header.info.add(
         id="SVLEN", number="1", type="Integer", description="Length of deletion"
     )
+
+    if "END" not in header.info.keys():
+        header.info.add(
+            id="END",
+            number="1",
+            type="Integer",
+            description="End position of the variant described in this record",
+        )
+
     with pysam.VariantFile(snakemake.output[0], "w", header=header) as out_vcf:
         for record in in_vcf.fetch():
             if record.alts == ("-",):
