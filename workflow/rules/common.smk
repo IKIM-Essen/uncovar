@@ -1407,11 +1407,11 @@ def get_reads_by_stage(wildcards):
     if wildcards.stage == "raw":
         return get_fastqs(wildcards)
     elif wildcards.stage == "trimmed":
-        return "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"
+        return "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta"
     elif wildcards.stage == "clipped":
-        return "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"
+        return "results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta"
     elif wildcards.stage == "filtered":
-        return "results/{date}/trimmed/nanofilt/{sample}.fastq"
+        return "results/{date}/trimmed/nanofilt/{sample}.fasta"
 
 
 def get_polished_sequence(wildcards):

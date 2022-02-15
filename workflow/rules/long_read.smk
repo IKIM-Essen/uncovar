@@ -33,7 +33,7 @@ rule nanofilt:
     conda:
         "../envs/nanofilt.yaml"
     shell:
-        "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 700 {input} > {output} 2> {log}"
+        "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 800 {input} > {output} 2> {log}" # --maxlength 700
 
 
 # rule count_fastq_reads:
@@ -60,23 +60,24 @@ rule minimap_to_reference:
         "minimap2 -x map-ont {reference} {reads} -o {output}"
 
 
-rule amp_based_binning_downsampling:
+rule cap_cov_amp:
     input:
+        primer=get_artic_primer,
+        mappings="results/{date}/minimappings/{sample}.paf",
         reads=get_fastqs,
-        mappings="results/{date}/minimappings/{sample}.paf"
     output:
-        "results/{date}/normalize_reads/{sample}_ds.fastq"
+        "results/{date}/normalize_reads/{sample}_cap.fasta"
+    script:
+        "../scripts/amp_covcap_sampler.py"
     
-    
-
 
 # Intermediate number of threads (4-8) achieve best speedup of a+btrimming.
 # For large files 8 threads help accelerate some, small files are processed faster with 4 threads.
 rule porechop_adapter_barcode_trimming:
     input:
-        get_fastqs,
+        "results/{date}/normalize_reads/{sample}_cap.fasta"
     output:
-        temp("results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"),
+        temp("results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta"),
     conda:
         "../envs/porechop.yaml"
     log:
@@ -107,11 +108,11 @@ rule customize_primer_porechop:
 rule porechop_primer_trimming:
     input:
         fastq_in=(
-            "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"
+            "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta"
         ),
         repl_flag="results/.indicators/replacement_notice.txt",
     output:
-        temp("results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"),
+        temp("results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta"),
     conda:
         "../envs/primechop.yaml"
     log:
@@ -126,9 +127,9 @@ rule porechop_primer_trimming:
 
 # rule nanofilt:
 #     input:
-#         "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
+#         "results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta",
 #     output:
-#         temp("results/{date}/trimmed/nanofilt/{sample}.fastq"),
+#         temp("results/{date}/trimmed/nanofilt/{sample}.fasta"),
 #     log:
 #         "logs/{date}/nanofilt/{sample}.log",
 #     params:
@@ -142,7 +143,8 @@ rule porechop_primer_trimming:
 
 rule canu_correct:
     input:
-        "results/{date}/trimmed/nanofilt/{sample}.fastq",
+        # "results/{date}/trimmed/nanofilt/{sample}.fasta",
+        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta"
     output:
         "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
     log:
