@@ -106,7 +106,7 @@ rule benchmark_variants:
             ".roc.all.csv.gz",
             ".roc.Locations.SNP.csv.gz",
         ),
-        # ".roc.Locations.INDEL.csv.gz",
+        # ".roc.Locations.INDEL.csv.gz", # bc of empty vcfs files
         # ".roc.Locations.INDEL.PASS.csv.gz",
     params:
         prefix=lambda w, input, output: output[0].split(".")[0],
