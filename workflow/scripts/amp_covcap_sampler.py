@@ -128,12 +128,10 @@ def bin_mappings(amp_bins, mappings):
 
 def write_capped_reads(binned, reads, out):
     all_picks = ["@" + name for amp in binned for name in amp.selected]
-    print(all_picks)
     with open(reads, "r") as fq, open(out, "w") as fa:
         for line in fq:
             if line.startswith("@"):
                 readname = line.split(" ")[0]
-                # print(readname)
                 if readname in all_picks:
                     readname = readname.replace("@", ">")
                     fa.write(readname + "\n")

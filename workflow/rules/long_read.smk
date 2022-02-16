@@ -38,22 +38,22 @@ rule nanofilt:
         "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 800 {input} > {output} 2> {log}"  # --maxlength 700
 
 
-# rule count_fastq_reads:
-#     input:
-#         get_reads_by_stage,
-#     output:
-#         temp("results/{date}/tables/fastq-read-counts/{stage}~{sample}.txt"),
-#     log:
-#         "logs/{date}/count_reads/{stage}~{sample}.log",
-#     conda:
-#         "../envs/unix.yaml"
-#     shell:
-#         "echo $(( $(cat {input} | wc -l ) / 4)) > {output} 2> {log}"
+rule convert2fasta:
+    input:
+        "results/{date}/filtered/nanofilt/{sample}.fastq",
+        # "results/{barcode}/trim-filt/{barcode}_tf.fastq"
+    output:
+        "results/{date}/filtered/nanofilt/{sample}.fasta",
+    conda:
+        "../envs/seqtk.yaml"
+    shell:
+        "seqtk seq -A  {input} > {output}"
 
 
 rule minimap_to_reference:
     input:
-        reads="results/{date}/filtered/nanofilt/{sample}.fastq",
+        # reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        reads="results/{date}/filtered/nanofilt/{sample}.fasta",
         reference="resources/genomes/main.fasta",
     output:
         "results/{date}/minimappings/{sample}.paf",
@@ -73,6 +73,122 @@ rule cap_cov_amp:
         "results/{date}/normalize_reads/{sample}_cap.fasta",
     script:
         "../scripts/amp_covcap_sampler.py"
+
+
+# rule canu_correct:
+#     input:
+#         "results/{date}/normalize_reads/{sample}_cap.fasta",
+#         # "results/{date}/filtered/nanofilt/{sample}.fasta",
+#         # "results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta",
+#     output:
+#         "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+#     log:
+#         "logs/{date}/canu/correct/{sample}.log",
+#     params:
+#         outdir=get_output_dir,
+#         concurrency=lambda w, threads: get_canu_concurrency(threads),
+#         # min_length=config["quality-criteria"]["ont"]["min-length-reads"],
+#         # for_testing=lambda w, threads: get_if_testing(
+#         #     f"corThreads={threads} redMemory=6 oeaMemory=6"
+#         # ),
+#     conda:
+#         "../envs/canu.yaml"
+#     threads: 64
+#     shell:
+#         """
+#         canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200 \
+#         useGrid=false\
+#         corMMapMerSize=10 corOutCoverage=50000 corMinCoverage=0 maxInputCoverage=20000 \
+#         corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap \
+#         corConcurrency={params.concurrency} \
+#         cormhapConcurrency={params.concurrency} cormhapThreads={params.concurrency} \
+#         cormmapConcurrency={params.concurrency} cormmapThreads={params.concurrency} \
+#         obtmmapConcurrency={params.concurrency} obtmmapThreads={params.concurrency} \
+#         utgmmapConcurrency={params.concurrency} utgmmapThreads={params.concurrency} \
+#         redConcurrency={params.concurrency} redThreads={params.concurrency} \
+#         ovbConcurrency={params.concurrency} \
+#         ovsConcurrency={params.concurrency} \
+#         oeaConcurrency={params.concurrency}
+#         2> {log}
+#         """
+
+
+rule canu_correct:
+    input:
+        "results/{date}/normalize_reads/{sample}_cap.fasta",
+        # "results/{date}/filtered/nanofilt/{sample}.fasta",
+        # "results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta",
+    output:
+        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+    log:
+        "logs/{date}/canu/correct/{sample}.log",
+    params:
+        outdir=get_output_dir,
+        concurrency=lambda w, threads: get_canu_concurrency(threads),
+        min_length=config["quality-criteria"]["ont"]["min-length-reads"],
+        for_testing=lambda w, threads: get_if_testing(
+            f"corThreads={threads} redMemory=6 oeaMemory=6"
+        ),
+    conda:
+        "../envs/canu.yaml"
+    threads: 16
+    shell:
+        """
+        ( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&
+        canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200 \
+        useGrid=false {params.for_testing} \
+        corMMapMerSize=10 corOutCoverage=50000 corMinCoverage=0 maxInputCoverage=20000 \
+        corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap \
+        corConcurrency={params.concurrency} \
+        cormhapConcurrency={params.concurrency} cormhapThreads={params.concurrency} \
+        cormmapConcurrency={params.concurrency} cormmapThreads={params.concurrency} \
+        obtmmapConcurrency={params.concurrency} obtmmapThreads={params.concurrency} \
+        utgmmapConcurrency={params.concurrency} utgmmapThreads={params.concurrency} \
+        redConcurrency={params.concurrency} redThreads={params.concurrency} \
+        ovbConcurrency={params.concurrency} \
+        ovsConcurrency={params.concurrency} \
+        oeaConcurrency={params.concurrency}
+        )
+        2> {log}
+        """
+
+
+# rule count_fastq_reads:
+#     input:
+#         get_reads_by_stage,
+#     output:
+#         temp("results/{date}/tables/fastq-read-counts/{stage}~{sample}.txt"),
+#     log:
+#         "logs/{date}/count_reads/{stage}~{sample}.log",
+#     conda:
+#         "../envs/unix.yaml"
+#     shell:
+#         "echo $(( $(cat {input} | wc -l ) / 4)) > {output} 2> {log}"
+
+
+# rule minimap_to_reference:
+#     input:
+#         reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+#         # reads="results/{date}/filtered/nanofilt/{sample}.fastq",
+#         reference="resources/genomes/main.fasta",
+#     output:
+#         "results/{date}/minimappings/{sample}.paf",
+#     conda:
+#         "../envs/minimap2.yaml"
+#     shell:
+#         "minimap2 -x map-ont {input.reference} {input.reads} -o {output}"
+
+
+# rule cap_cov_amp:
+#     input:
+#         primer="/home/simon/uncovar/.tests/resources/nCoV-2019.primer.bed",
+#         mappings="results/{date}/minimappings/{sample}.paf",
+#         reads="results/{date}/filtered/nanofilt/{sample}.fastq",
+#         # reads=get_fastqs,
+#     output:
+#         "results/{date}/normalize_reads/{sample}_cap.fasta",
+#     script:
+#         "../scripts/amp_covcap_sampler.py"
 
 
 # Intermediate number of threads (4-8) achieve best speedup of a+btrimming.
@@ -116,7 +232,7 @@ rule porechop_primer_trimming:
         ),
         repl_flag="results/.indicators/replacement_notice.txt",
     output:
-        temp("results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta"),
+        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta",
     conda:
         "../envs/primechop.yaml"
     log:
@@ -145,52 +261,54 @@ rule porechop_primer_trimming:
 #         "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 500 {input} > {output} 2> {log}"
 
 
-rule canu_correct:
-    input:
-        # "results/{date}/trimmed/nanofilt/{sample}.fasta",
-        "results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta",
-    output:
-        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
-    log:
-        "logs/{date}/canu/assemble/{sample}.log",
-    params:
-        outdir=get_output_dir,
-        concurrency=lambda w, threads: get_canu_concurrency(threads),
-        min_length=config["quality-criteria"]["ont"]["min-length-reads"],
-        for_testing=lambda w, threads: get_if_testing(
-            f"corThreads={threads} redMemory=6 oeaMemory=6"
-        ),
-    conda:
-        "../envs/canu.yaml"
-    threads: 16
-    shell:
-        """
-        ( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&
-        canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200 \
-        useGrid=false {params.for_testing} \
-        corMMapMerSize=10 corOutCoverage=50000 corMinCoverage=0 maxInputCoverage=20000 \
-        corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap \
-        corConcurrency={params.concurrency} \
-        cormhapConcurrency={params.concurrency} cormhapThreads={params.concurrency} \
-        cormmapConcurrency={params.concurrency} cormmapThreads={params.concurrency} \
-        obtmmapConcurrency={params.concurrency} obtmmapThreads={params.concurrency} \
-        utgmmapConcurrency={params.concurrency} utgmmapThreads={params.concurrency} \
-        redConcurrency={params.concurrency} redThreads={params.concurrency} \
-        ovbConcurrency={params.concurrency} \
-        ovsConcurrency={params.concurrency} \
-        oeaConcurrency={params.concurrency}
-        )
-        2> {log}
-        """
+# rule canu_correct:
+#     input:
+#         # "results/{date}/trimmed/nanofilt/{sample}.fasta",
+#         "results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta",
+#     output:
+#         "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+#     log:
+#         "logs/{date}/canu/assemble/{sample}.log",
+#     params:
+#         outdir=get_output_dir,
+#         concurrency=lambda w, threads: get_canu_concurrency(threads),
+#         min_length=config["quality-criteria"]["ont"]["min-length-reads"],
+#         for_testing=lambda w, threads: get_if_testing(
+#             f"corThreads={threads} redMemory=6 oeaMemory=6"
+#         ),
+#     conda:
+#         "../envs/canu.yaml"
+#     threads: 16
+#     shell:
+#         """
+#         ( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&
+#         canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200 \
+#         useGrid=false {params.for_testing} \
+#         corMMapMerSize=10 corOutCoverage=50000 corMinCoverage=0 maxInputCoverage=20000 \
+#         corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap \
+#         corConcurrency={params.concurrency} \
+#         cormhapConcurrency={params.concurrency} cormhapThreads={params.concurrency} \
+#         cormmapConcurrency={params.concurrency} cormmapThreads={params.concurrency} \
+#         obtmmapConcurrency={params.concurrency} obtmmapThreads={params.concurrency} \
+#         utgmmapConcurrency={params.concurrency} utgmmapThreads={params.concurrency} \
+#         redConcurrency={params.concurrency} redThreads={params.concurrency} \
+#         ovbConcurrency={params.concurrency} \
+#         ovsConcurrency={params.concurrency} \
+#         oeaConcurrency={params.concurrency}
+#         )
+#         2> {log}
+#         """
 
 
 # rule medaka_consensus_reference:
 use rule assembly_polishing_ont as medaka_consensus_reference with:
     input:
-        fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        # Don´t ever use corrected reads as input for medaka, it is supposed to polish with rwa-reads!
+        # fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        fasta="results/{date}/filtered/nanofilt/{sample}.fasta",
         reference="resources/genomes/main.fasta",
     output:
-        temp("results/{date}/consensus/medaka/{sample}/{sample}.fasta"),
+        "results/{date}/consensus/medaka/{sample}/{sample}.fasta",
 
 
 # polish consensus
@@ -200,7 +318,7 @@ rule bcftools_consensus_ont:
         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf",  # clonal vs. subclonal?
         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf.csi",
     output:
-        temp("results/{date}/consensus/bcftools/{sample}.fasta"),
+        "results/{date}/consensus/bcftools/{sample}.fasta",
     log:
         "logs/{date}/bcftools-consensus-ont/{sample}.log",
     conda:
