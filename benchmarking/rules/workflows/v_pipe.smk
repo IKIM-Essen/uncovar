@@ -124,6 +124,11 @@ rule v_pipe_run:
             )
         ),
         out_dir_6=temp(directory("results/benchmarking/v-pipe/{sample}/variants")),
+        out_dir_7=temp(
+            directory(
+                "results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/visualization"
+            )
+        ),
     log:
         "logs/v_pipe_run/{sample}.log",
     conda:
