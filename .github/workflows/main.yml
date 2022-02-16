@@ -113,7 +113,7 @@ jobs:
         run: |
           if [[ "${{ matrix.seq_method }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
           mkdir -p .tests/data
-          curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR574/003/ERR5745913/ERR5745913.fastq.gz > .tests/data/ion_reads.fastq.gz
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ERR5745913.fastq.gz > .tests/data/ion_reads.fastq.gz
           echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
           echo ion-test,data/ion_reads.fastq.gz,2022-01-01,$AMPLICON,ion >> .tests/config/pep/samples.csv
       - name: Use smaller reference files for testing
