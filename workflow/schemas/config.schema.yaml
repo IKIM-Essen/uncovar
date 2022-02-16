@@ -21,6 +21,9 @@ properties:
     description: download path of human genome reference
   data-handling:
     properties:
+      use-data-handling:
+        type: boolean
+        description: flag whether to use data reorganization and archiving or not
       incoming:
         type: string
         description: path of incoming data, which is moved to the data directory by the preprocessing script
