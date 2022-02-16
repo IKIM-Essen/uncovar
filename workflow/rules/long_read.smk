@@ -49,13 +49,13 @@ rule porechop_adapter_barcode_trimming:
 
 
 rule customize_primer_porechop:
-    input:
-        get_artic_primer,
-    output:
-        "results/.indicators/replacement_notice.txt",
-    conda:
-        "../envs/primechop.yaml"
-    log:
+     input:
+         get_artic_primer,
+     output:
+         temp("results/.indicators/replacement_notice.txt"),
+     conda:
+         "../envs/primechop.yaml"
+     log:
         "logs/customize_primer_porechop.log",
     shell:
         "(cp {input} $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py && "
@@ -77,13 +77,13 @@ rule porechop_primer_trimming:
     conda:
         "../envs/primechop.yaml"
     log:
-        "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
-    threads: 2
-    shell:
-        "(porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) 2> {log}"
+         "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
+     threads: 2
+     shell:
+         "(porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) 2> {log}"
 
 
-rule nanofilt:
+ rule nanofilt:
     input:
         "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
     output:
@@ -101,12 +101,14 @@ rule nanofilt:
 
 rule canu_correct:
     input:
-        "results/{date}/trimmed/nanofilt/{sample}.fastq",
-    output:
-        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
-    log:
-        "logs/{date}/canu/assemble/{sample}.log",
-    params:
+         "results/{date}/trimmed/nanofilt/{sample}.fastq",
+     output:
+         "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+         temp(directory("results/{date}/corrected/{sample}/correction")),
+         temp(directory("results/{date}/corrected/{sample}/{sample}.seqStore")),
+     log:
+         "logs/{date}/canu/assemble/{sample}.log",
+     params:
         outdir=get_output_dir,
         concurrency=lambda w, threads: get_canu_concurrency(threads),
         min_length=config["quality-criteria"]["ont"]["min-length-reads"],
