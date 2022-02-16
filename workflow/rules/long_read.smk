@@ -121,21 +121,24 @@ rule canu_correct:
         "../envs/canu.yaml"
     threads: 16
     shell:
-        "( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&"
-        " canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200"
-        " useGrid=false {params.for_testing}"
-        " corMMapMerSize=10 corOutCoverage=50000 corMinCoverage=0 maxInputCoverage=20000"
-        " corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap"
-        " corConcurrency={params.concurrency}"
-        " cormhapConcurrency={params.concurrency} cormhapThreads={params.concurrency}"
-        " cormmapConcurrency={params.concurrency} cormmapThreads={params.concurrency}"
-        " obtmmapConcurrency={params.concurrency} obtmmapThreads={params.concurrency}"
-        " utgmmapConcurrency={params.concurrency} utgmmapThreads={params.concurrency}"
-        " redConcurrency={params.concurrency} redThreads={params.concurrency}"
-        " ovbConcurrency={params.concurrency}"
-        " ovsConcurrency={params.concurrency}"
-        " oeaConcurrency={params.concurrency})"
-        "> {log} 2>&1"
+        """
+        ( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&
+        canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200 \
+        useGrid=false {params.for_testing} \
+        corMMapMerSize=10 corOutCoverage=50000 corMinCoverage=0 maxInputCoverage=20000 \
+        corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap \
+        corConcurrency={params.concurrency} \
+        cormhapConcurrency={params.concurrency} cormhapThreads={params.concurrency} \
+        cormmapConcurrency={params.concurrency} cormmapThreads={params.concurrency} \
+        obtmmapConcurrency={params.concurrency} obtmmapThreads={params.concurrency} \
+        utgmmapConcurrency={params.concurrency} utgmmapThreads={params.concurrency} \
+        redConcurrency={params.concurrency} redThreads={params.concurrency} \
+        ovbConcurrency={params.concurrency} \
+        ovsConcurrency={params.concurrency} \
+        oeaConcurrency={params.concurrency}
+        )
+        > {log} 2>&1
+        """
 
 
 # rule medaka_consensus_reference:
