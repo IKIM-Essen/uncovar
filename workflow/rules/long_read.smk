@@ -49,13 +49,13 @@ rule porechop_adapter_barcode_trimming:
 
 
 rule customize_primer_porechop:
-     input:
+    input:
          get_artic_primer,
-     output:
+    output:
          temp("results/.indicators/replacement_notice.txt"),
-     conda:
+    conda:
          "../envs/primechop.yaml"
-     log:
+    log:
         "logs/customize_primer_porechop.log",
     shell:
         "(cp {input} $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py && "
@@ -102,13 +102,13 @@ rule porechop_primer_trimming:
 rule canu_correct:
     input:
          "results/{date}/trimmed/nanofilt/{sample}.fastq",
-     output:
+    output:
          "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
          temp(directory("results/{date}/corrected/{sample}/correction")),
          temp(directory("results/{date}/corrected/{sample}/{sample}.seqStore")),
-     log:
+    log:
          "logs/{date}/canu/assemble/{sample}.log",
-     params:
+    params:
         outdir=get_output_dir,
         concurrency=lambda w, threads: get_canu_concurrency(threads),
         min_length=config["quality-criteria"]["ont"]["min-length-reads"],
