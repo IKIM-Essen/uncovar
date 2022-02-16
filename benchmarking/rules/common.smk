@@ -89,7 +89,10 @@ PIPELINES = {
             "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.vcf",
         },
         "v-pipe": {
-            "outdir": "results/benchmarking/v-pipe/.delted-dir/{sample}.log",
+            "outdir": [
+                "results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/variants",
+                "results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/references",
+            ],
             "vcf": "results/benchmarking/v-pipe/fixed-vcf/{sample}.vcf",
             "consensus": "results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/references/ref_majority.fasta",
         },
@@ -245,7 +248,7 @@ def get_workflow_output(wildcards):
 
 
 def get_all_outputs(wildcards):
-    path = "results/benchmarking/{key}/{tech}/{workflow}/{sample}.fasta"
+    path = "results/benchmarking/backups/{key}/{tech}/{workflow}/{sample}.fasta"
 
     paths = []
     for tech, tech_dict in PIPELINES.items():

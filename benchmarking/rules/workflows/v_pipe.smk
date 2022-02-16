@@ -39,29 +39,27 @@ rule v_pipe_setup_samples:
     input:
         fastqs=get_fastqs,
     output:
-        fqs=expand(
-            "results/benchmarking/v-pipe/{{sample}}/samples/{{sample}}/20200102/raw_data/{{sample}}_R{read}.fastq",
-            read=[1, 2],
-        ),
+        touch("results/benchmarking/v-pipe/.copied-sample/{sample}.log"),
     log:
         "logs/v_pipe_setup_samples/{sample}.log",
     conda:
         "../../envs/v-pipe.yaml"
     params:
-        fq_dir=lambda w, output: os.path.dirname(output[0]),
+        fq_dir="results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/raw_data/",
+        fqs=expand(
+            "results/benchmarking/v-pipe/{{sample}}/samples/{{sample}}/20200102/raw_data/{{sample}}_R{read}.fastq",
+            read=[1, 2],
+        ),
     shell:
         "(mkdir -p {params.fq_dir} &&"
-        " gzip -dk {input.fastqs[0]} -c > {output.fqs[0]} &&"
-        " gzip -dk {input.fastqs[1]} -c > {output.fqs[1]})"
+        " gzip -dk {input.fastqs[0]} -c > {params.fqs[0]} &&"
+        " gzip -dk {input.fastqs[1]} -c > {params.fqs[1]})"
         " 2> {log}"
 
 
 rule v_pipe_dry_run:
     input:
-        fastqs=expand(
-            "results/benchmarking/v-pipe/{{sample}}/samples/{{sample}}/20200102/raw_data/{{sample}}_R{read}.fastq",
-            read=[1, 2],
-        ),
+        fastqs_copied="results/benchmarking/v-pipe/.copied-sample/{sample}.log",
         vpipe="results/benchmarking/v-pipe/{sample}/vpipe",
     output:
         sample_sheet="results/benchmarking/v-pipe/{sample}/samples.tsv",
@@ -70,7 +68,7 @@ rule v_pipe_dry_run:
     conda:
         "../../envs/v-pipe.yaml"
     params:
-        workdir=lambda w, input: os.path.dirname(input.vpipe),
+        workdir="results/benchmarking/v-pipe/{sample}",
     resources:
         external_pipeline=1,
         vpipe=1,
@@ -100,6 +98,32 @@ rule v_pipe_run:
     output:
         vcf="results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/variants/SNVs/snvs.vcf",
         consensus="results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/references/ref_majority.fasta",
+        out_dir_1=temp(
+            directory(
+                "results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/alignments"
+            )
+        ),
+        out_dir_2=temp(
+            directory(
+                "results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/extracted_data"
+            )
+        ),
+        out_dir_3=temp(
+            directory(
+                "results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/preprocessed_data"
+            )
+        ),
+        out_dir_4=temp(
+            directory(
+                "results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/references"
+            )
+        ),
+        out_dir_5=temp(
+            directory(
+                "results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/variants"
+            )
+        ),
+        out_dir_6=temp(directory("results/benchmarking/v-pipe/{sample}/variants")),
     log:
         "logs/v_pipe_run/{sample}.log",
     conda:
@@ -129,18 +153,3 @@ rule v_pipe_fix_vcf:
         "../../envs/python.yaml"
     script:
         "../../scripts/v_pipe_fix_vcf.py"
-
-
-rule v_pipe_rmv_dir:
-    input:
-        "results/benchmarking/v-pipe/fixed-vcf/{sample}.vcf",
-    output:
-        touch("results/benchmarking/v-pipe/.delted-dir/{sample}.log"),
-    log:
-        "logs/v_pipe_rmv_dir/{sample}.log",
-    conda:
-        "../../envs/unix.yaml"
-    params:
-        outdir="results/benchmarking/v-pipe/{sample}",
-    shell:
-        "rm -rf {params.outdir} 2> {log}"

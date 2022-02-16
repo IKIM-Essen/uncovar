@@ -19,7 +19,7 @@ rule save_workflow_output:
         get_workflow_output,
         get_output_from_pipline("outdir"),
     output:
-        "results/benchmarking/{key}/{tech}/{workflow}/{sample}.fasta",
+        "results/benchmarking/backups/{key}/{tech}/{workflow}/{sample}.fasta",
     log:
         "logs/save/{key}/{tech}/{workflow}/{sample}.log",
     conda:
