@@ -80,7 +80,7 @@ rule porechop_primer_trimming:
         "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
     threads: 2
     shell:
-        "(porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) 2> {log}"
+        "(porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) > {log} 2>&1"
 
 
 rule nanofilt:
