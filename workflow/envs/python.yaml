@@ -3,14 +3,13 @@ channels:
   - bioconda
   - anaconda
 dependencies:
-  - python =3.8
   - pandas =1.2
   - jupyter =1.0
   - altair =4.1
   - altair_saver =0.5
   - biopython =1.78
-  - pysam =0.16.0
+  - pysam =0.16
   - bcftools =1.10
-  - intervaltree =3.0.2
-  - ruamel.yaml =0.17.16
-  - jsonschema=3.2.0
+  - intervaltree =3.0
+  - ruamel.yaml =0.17
+  - jsonschema =3.2
