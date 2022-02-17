@@ -23,7 +23,7 @@ jobs:
       - name: Check if PR is created
         id: pr_created
         run: |
-          export PRNUMBER=$( ${{ steps.release.outputs.pr }} | jq -r '.number' )
+          export PRNUMBER=$( echo '${{ steps.release.outputs.pr }}' | jq -r '.number' )
           if [ "$PRNUMBER" -eq "$PRNUMBER" ] 2>/dev/null; then
             echo "::set-output name=pr::$(echo true)"
           else
