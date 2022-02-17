@@ -52,7 +52,7 @@ rule customize_primer_porechop:
     input:
         get_artic_primer,
     output:
-        "results/.indicators/replacement_notice.txt",
+        temp("results/.indicators/replacement_notice.txt"),
     conda:
         "../envs/primechop.yaml"
     log:
@@ -104,6 +104,8 @@ rule canu_correct:
         "results/{date}/trimmed/nanofilt/{sample}.fastq",
     output:
         "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        temp(directory("results/{date}/corrected/{sample}/correction")),
+        temp(directory("results/{date}/corrected/{sample}/{sample}.seqStore")),
     log:
         "logs/{date}/canu/assemble/{sample}.log",
     params:
