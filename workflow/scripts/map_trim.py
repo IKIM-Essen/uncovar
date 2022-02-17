@@ -1,5 +1,39 @@
-import random
-from collections import Counter, defaultdict
+# import gzip
+from collections import defaultdict
+
+
+class Read:
+    def __init__(self, header, seq):
+        self.header = header
+        self.name = self.header.split(">")[1]
+        self.seq = seq
+        # self.prim_clipped_seq = ""
+
+    def clip_primers(self, fwp_boundary, revp_boundary, mapping):
+        qlen, qstart, qend = mapping.qlen, mapping.qstart, mapping.qend
+        tstart, tend = mapping.tstart, mapping.tend
+
+        clip_left = 0
+        if tstart <= fwp_boundary:
+            add_clip = fwp_boundary - tstart
+            clip_left = qstart + add_clip
+        else:
+            ldiff = tstart - fwp_boundary
+            if qstart >= ldiff:
+                clip_left = qstart - ldiff
+
+        clip_right = qlen
+        if tend >= revp_boundary:
+            sub_clip = tend - revp_boundary
+            clip_right = qend - sub_clip
+        else:
+            rdiff = revp_boundary - tend
+            if qlen - qend >= rdiff:
+                clip_right = qend + rdiff
+
+        self.seq = self.seq[clip_left:clip_right]
+        print(clip_left, qlen - clip_right)
+        return clip_left, qlen - clip_right
 
 
 class Mapping:
@@ -72,14 +106,33 @@ class Amp:
         self.revp_boundary = min(
             [prim for prim in primers if prim.pos == "RIGHT"], key=lambda x: x.start
         ).start
-        self.read_names = list()
-        self.reads = list()
+        # self.read_names = list()
+        self.mappings = dict()
+        self.reads = dict()
 
-    def random_sample(self, cutoff):
-        if len(self.read_names) > cutoff:
-            self.selected = random.choices(self.read_names, k=cutoff)
-        else:
-            self.selected = self.read_names
+    def primer_clipping_all(self):
+        clip_ct_left = 0
+        clip_ct_right = 0
+        for read in self.reads:
+            try:
+                mapping = self.mappings[read]
+                left, right = self.reads[read].clip_primers(
+                    self.fwp_boundary, self.revp_boundary, mapping
+                )
+                clip_ct_left += left
+                clip_ct_right += right
+            except KeyError as e:
+                print(f"KeyError in primer_clipping_all: {e}")
+        return clip_ct_left, clip_ct_right
+
+
+def create_primer_objs(primer_bed):
+    with open(primer_bed, "r") as bed:
+        primers = list()
+        for line in bed:
+            prim = Primer(*line.strip().split("\t"))
+            primers.append(prim)
+    return sorted(primers, key=lambda x: x.end)
 
 
 def create_primer_objs(primer_bed):
@@ -96,7 +149,6 @@ def generate_amps(primers):
     amps = list()
     for num in amp_nums:
         ao = Amp(num, [primer for primer in primers if primer.amp_no == num])
-        print(ao.name, ao.max_len)
         amps.append(ao)
     return sorted(amps, key=lambda x: x.name)
 
@@ -104,7 +156,7 @@ def generate_amps(primers):
 def filter_read_mappings(mappings):
     mappings = [m for m in mappings if 300 < m.qlen < 600]
     mappings = [m for m in mappings if m.qual == 60]
-    # mappings = [m for m in mappings if m.tp == "P"]
+    mappings = [m for m in mappings if m.tp == "P"]
     return mappings
 
 
@@ -128,17 +180,18 @@ def create_read_mappings(mm2_paf):
         incl_max = filter_read_mappings(incl_max)
         mono_mappings.extend(incl_max)
         mappings = mono_mappings
-    return sorted(mappings, key=lambda x: x.tend)
+    return sorted(mappings, key=lambda x: (x.tend, x.tstart))
 
 
 def bin_mappings(amp_bins, mappings):
     binned = list()
     na = list()
+    # print(amp_bins)
     while len(amp_bins) > 0:
         if len(mappings) > 0:
             if mappings[0].tend <= amp_bins[0].end + 5:
                 if mappings[0].tstart >= amp_bins[0].start - 5:
-                    amp_bins[0].read_names.append(mappings[0].qname)
+                    amp_bins[0].mappings[mappings[0].qname] = mappings[0]
                     mappings.pop(0)
                 else:
                     na.append(mappings[0].qname)
@@ -149,30 +202,50 @@ def bin_mappings(amp_bins, mappings):
         else:
             break
 
-    for bin in binned:
-        bin.random_sample(200)
-        print(bin.name, len(bin.read_names), "selected:", len(bin.selected))
-    print("na", len(na))
+    # for bin in binned:
+    #     print(bin.name, "reads:", len(bin.reads))
+    # print("na", len(na))
 
     return binned
 
 
-def write_capped_reads(binned, reads, fa_out, js_out):
-    # print("Writing json")
-    # bins_dct = {amp.name:amp.read_names for amp in binned}
-    # with open(js_out, "w") as js:
-    #     json.dump(bins_dct, js)
+def load_reads(read_fasta, amp_bins):
 
-    print("Writing fasta")
-    all_picks = ["@" + name for amp in binned for name in amp.selected]
-    with open(reads, "r") as fq, open(fa_out, "w") as fa:
-        for line in fq:
-            if line.startswith("@"):
-                readname = line.split(" ")[0]
-                if readname in all_picks:
-                    readname = readname.replace("@", ">")
-                    fa.write(readname + "\n")
-                    fa.write(next(fq))
+    reads = dict()
+    with open(read_fasta, "r") as rfa:
+        for line in rfa:
+            if line.startswith(">"):
+                # print(line)
+                header = line.strip().split(" ")[0]
+                seq = next(rfa)
+                read = Read(header, seq.strip())
+                reads[read.name] = read
+
+    # print(reads)
+
+    for amp in amp_bins:
+        print("amp.mappings", len(amp.mappings))
+        amp.reads = {k: v for k, v in reads.items() if k in amp.mappings}
+        print("amp.reads", len(amp.reads))
+        # print(amp.reads)
+
+    return amp_bins
+
+
+def clip_and_write_out(amp_bins, clipped_out):
+    with open(clipped_out, "w") as out:
+        clip_ct = {"left": 0, "right": 0}
+        for amp in amp_bins:
+            left, right = amp.primer_clipping_all()
+            clip_ct["left"] += left
+            clip_ct["right"] += right
+            for read in amp.reads:
+                out.write(amp.reads[read].header + "\n")
+                out.write(amp.reads[read].seq + "\n")
+    print(
+        f"{clip_ct['left']} bases were clipped from the left/start of reads and "
+        f"{clip_ct['right']} bases were clipped from the right/end of reads"
+    )
 
 
 if __name__ == "__main__":
@@ -181,17 +254,15 @@ if __name__ == "__main__":
     mm2_paf = sys.argv[1]
     primer_bed = sys.argv[2]
     reads = sys.argv[3]
-    fa_out = reads + "_capped"
-    js_out = reads + "_capped.json"
+    clipped_out = reads + "_primer_clipped"
 
     # primer_bed = snakemake.input[0]
     # mm2_paf = snakemake.input[1]
     # reads = snakemake.input[2]
-    # fa_out = snakemake.output[0]
-    # js_out = snakemake.output[1]
 
     primers = create_primer_objs(primer_bed)
     amps = generate_amps(primers)
     mappings = create_read_mappings(mm2_paf)
-    binned = bin_mappings(amps, mappings)
-    write_capped_reads(binned, reads, fa_out, js_out)
+    amps_bin_maps = bin_mappings(amps, mappings)
+    amps_bin_reads = load_reads(reads, amps_bin_maps)
+    clip_and_write_out(amps_bin_reads, clipped_out)
