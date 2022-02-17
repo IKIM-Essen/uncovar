@@ -1697,3 +1697,7 @@ wildcard_constraints:
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
     ),
     varrange="structural|small|homopolymer-medaka|homopolymer-longshot|lineage-variants",
+
+
+def get_sanger_files_for_sample(wildcards):
+    return pep.sample_table.loc[wildcards.sample]["sanger_files"].split(";")
