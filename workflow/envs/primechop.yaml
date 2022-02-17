@@ -3,3 +3,4 @@ channels:
   - conda-forge
 dependencies:
   - porechop =0.2
+  - python =3.9

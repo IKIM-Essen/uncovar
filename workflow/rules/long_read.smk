@@ -58,8 +58,8 @@ rule customize_primer_porechop:
     log:
         "logs/customize_primer_porechop.log",
     shell:
-        "(cp {input} $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py && "
-        'echo "replaced adpaters in adapter.py file in $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py with ARTICv3 primers" > {output}) '
+        "(cp {input} $CONDA_PREFIX/lib/python3.9/site-packages/porechop/adapters.py && "
+        'echo "replaced adpaters in adapter.py file in $CONDA_PREFIX/lib/python3.9/site-packages/porechop/adapters.py with ARTICv3 primers" > {output}) '
         "2> {log}"
 
 
