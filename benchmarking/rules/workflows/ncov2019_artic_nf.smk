@@ -44,6 +44,7 @@ rule ncov2019_artic_nf_illumina:
         flags="--illumina",
         outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/illumina/{w.sample}/",
         prefix=lambda w: w.sample,
+        cleanup=True,
     handover: True
     script:
         "../../scripts/nextflow.py"
@@ -105,6 +106,7 @@ use rule ncov2019_artic_nf_illumina as ncov2019_artic_nf_nanopore_nanopolish wit
         flags="--nanopolish",
         outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{w.sample}-{w.barcode}",
         prefix=lambda w: w.sample,
+        cleanup=True,
 
 
 use rule ncov2019_artic_nf_nanopore_nanopolish as ncov2019_artic_nf_nanopore_medaka with:

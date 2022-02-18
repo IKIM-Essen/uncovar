@@ -43,6 +43,7 @@ rule poreCov:
         cores=lambda w, threads: threads,
         output=lambda w: f"results/benchmarking/poreCov/{w.sample}",
         samples=lambda W, input: input.sample_names,
+        cleanup=True,
     handover: True
     script:
         "../../scripts/nextflow.py"

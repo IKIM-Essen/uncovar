@@ -14,6 +14,7 @@ include: "sanger.smk"
 include: "variant_benchmarking.smk"
 
 
+# TODO: change file type
 rule save_workflow_output:
     input:
         get_workflow_output,

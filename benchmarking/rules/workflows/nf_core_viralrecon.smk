@@ -55,6 +55,7 @@ rule nf_core_viralrecon_illumina:
         protocol="metagenomic",
         genome="'MN908947.3'",
         outdir="results/benchmarking/nf-core-viralrecon/illumina/{sample}",
+        cleanup=True,
     handover: True
     script:
         "../../scripts/nextflow.py"
