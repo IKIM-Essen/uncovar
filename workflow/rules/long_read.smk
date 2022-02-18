@@ -71,7 +71,6 @@ rule cap_cov_amp:
         reads="results/{date}/filtered/nanofilt/{sample}.fastq",
     output:
         "results/{date}/normalize_reads/{sample}_cap.fasta",
-        "results/{date}/normalize_reads/{sample}_cap.json",
     script:
         "../scripts/amp_covcap_sampler.py"
 
@@ -140,24 +139,27 @@ rule map_for_trimming:
         reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
         reference="resources/genomes/main.fasta",
     output:
-        "results/{date}/minimappings/trimming/{sample}_trim.paf",
+        alignments="results/{date}/minimappings/trimming/{sample}_trim.paf",
+        dcreads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
     conda:
         "../envs/minimap2.yaml"
     shell:
-        "minimap2 -x map-ont {input.reference} {input.reads} -o {output} --secondary=no"
+        """
+        minimap2 -x map-ont {input.reference} {input.reads} -o {output.alignments} --secondary=no &&
+        gzip -d {input.reads}
+        """
 
 
-rule trim_primers:
+rule trim_primers_corrected:
     input:
         # reads=get_fastqs,
         primer="/home/simon/uncovar/.tests/resources/nCoV-2019.primer.bed",
-        mappings="results/{date}/minimappings/trimming/{sample}.paf",
-        reads="results/{date}/filtered/nanofilt/{sample}.fastq",
+        mappings="results/{date}/minimappings/trimming/{sample}_trim.paf",
+        reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
     output:
-        "results/{date}/normalize_reads/{sample}_cap.fasta",
-        "results/{date}/normalize_reads/{sample}_cap.json",
+        "results/{date}/corrected/{sample}/{sample}.correctedReads.primerclip.fasta",
     script:
-        "../scripts/amp_covcap_sampler.py"
+        "../scripts/map_trim.py"
 
 
 # rule customize_primer_porechop:
@@ -178,23 +180,23 @@ rule trim_primers:
 # Using a low number of threads (2-4) speed up primer-trimming significantly (>2x), even for large files,
 # presumably due to the much higher number of target-sequences for trimming as compared
 # to barcode+adapter-trimming. However, using only one thread is again very slow.
-rule porechop_primer_trimming:
-    input:
-        # fastq_in="results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta",
-        fastq_in="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
-        repl_flag="results/.indicators/replacement_notice.txt",
-    output:
-        "results/{date}/trimmed/porechop/primer_clipped/{sample}.corr.abpclip.fasta",
-    conda:
-        "../envs/primechop.yaml"
-    log:
-        "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
-    threads: 2
-    shell:
-        """
-        (porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) 2> {log}
-        rm results/.indicators/replacement_notice.txt
-        """
+# rule porechop_primer_trimming:
+#     input:
+#         # fastq_in="results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta",
+#         fastq_in="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+#         repl_flag="results/.indicators/replacement_notice.txt",
+#     output:
+#         "results/{date}/trimmed/porechop/primer_clipped/{sample}.corr.abpclip.fasta",
+#     conda:
+#         "../envs/primechop.yaml"
+#     log:
+#         "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
+#     threads: 2
+#     shell:
+#         """
+#         (porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) 2> {log}
+#         rm results/.indicators/replacement_notice.txt
+#         """
 
 
 # rule count_fastq_reads:

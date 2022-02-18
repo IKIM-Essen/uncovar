@@ -1,4 +1,7 @@
-# import gzip
+# Copyright 2022 Simon Magin.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed except according to those terms.
+
 from collections import defaultdict
 
 
@@ -10,7 +13,8 @@ class Read:
         # self.prim_clipped_seq = ""
 
     def clip_primers(self, fwp_boundary, revp_boundary, mapping):
-        qlen, qstart, qend = mapping.qlen, mapping.qstart, mapping.qend
+        qlen, samestrand = mapping.qlen, mapping.samestrand
+        qstart, qend = mapping.qstart, mapping.qend
         tstart, tend = mapping.tstart, mapping.tend
 
         clip_left = 0
@@ -31,8 +35,11 @@ class Read:
             if qlen - qend >= rdiff:
                 clip_right = qend + rdiff
 
+        if not samestrand:
+            clip_left, clip_right = clip_right, clip_left
+
         self.seq = self.seq[clip_left:clip_right]
-        print(clip_left, qlen - clip_right)
+        # print(clip_left, qlen - clip_right)
         return clip_left, qlen - clip_right
 
 
@@ -251,14 +258,15 @@ def clip_and_write_out(amp_bins, clipped_out):
 if __name__ == "__main__":
     import sys
 
-    mm2_paf = sys.argv[1]
-    primer_bed = sys.argv[2]
-    reads = sys.argv[3]
-    clipped_out = reads + "_primer_clipped"
+    # mm2_paf = sys.argv[1]
+    # primer_bed = sys.argv[2]
+    # reads = sys.argv[3]
+    # clipped_out = reads + "_primer_clipped"
 
-    # primer_bed = snakemake.input[0]
-    # mm2_paf = snakemake.input[1]
-    # reads = snakemake.input[2]
+    primer_bed = snakemake.input[0]
+    mm2_paf = snakemake.input[1]
+    reads = snakemake.input[2]
+    clipped_out = snakemake.output[0]
 
     primers = create_primer_objs(primer_bed)
     amps = generate_amps(primers)

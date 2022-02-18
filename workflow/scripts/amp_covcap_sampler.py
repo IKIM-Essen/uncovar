@@ -1,3 +1,7 @@
+# Copyright 2022 Simon Magin.
+# Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+# This file may not be copied, modified, or distributed except according to those terms.
+
 import random
 from collections import Counter, defaultdict
 
@@ -157,7 +161,7 @@ def bin_mappings(amp_bins, mappings):
     return binned
 
 
-def write_capped_reads(binned, reads, fa_out, js_out):
+def write_capped_reads(binned, reads, fa_out):
     # print("Writing json")
     # bins_dct = {amp.name:amp.read_names for amp in binned}
     # with open(js_out, "w") as js:
@@ -178,20 +182,19 @@ def write_capped_reads(binned, reads, fa_out, js_out):
 if __name__ == "__main__":
     import sys
 
-    mm2_paf = sys.argv[1]
-    primer_bed = sys.argv[2]
-    reads = sys.argv[3]
-    fa_out = reads + "_capped"
-    js_out = reads + "_capped.json"
+    # mm2_paf = sys.argv[1]
+    # primer_bed = sys.argv[2]
+    # reads = sys.argv[3]
+    # fa_out = reads + "_capped"
+    # js_out = reads + "_capped.json"
 
-    # primer_bed = snakemake.input[0]
-    # mm2_paf = snakemake.input[1]
-    # reads = snakemake.input[2]
-    # fa_out = snakemake.output[0]
-    # js_out = snakemake.output[1]
+    primer_bed = snakemake.input[0]
+    mm2_paf = snakemake.input[1]
+    reads = snakemake.input[2]
+    fa_out = snakemake.output[0]
 
     primers = create_primer_objs(primer_bed)
     amps = generate_amps(primers)
     mappings = create_read_mappings(mm2_paf)
     binned = bin_mappings(amps, mappings)
-    write_capped_reads(binned, reads, fa_out, js_out)
+    write_capped_reads(binned, reads, fa_out)
