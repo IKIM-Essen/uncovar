@@ -17,29 +17,46 @@ class Read:
         qstart, qend = mapping.qstart, mapping.qend
         tstart, tend = mapping.tstart, mapping.tend
 
-        clip_left = 0
-        if tstart <= fwp_boundary:
-            add_clip = fwp_boundary - tstart
-            clip_left = qstart + add_clip
-        else:
-            ldiff = tstart - fwp_boundary
-            if qstart >= ldiff:
-                clip_left = qstart - ldiff
+        if samestrand:
+            clip_left = 0
+            if tstart <= fwp_boundary:
+                add_clip = fwp_boundary - tstart
+                clip_left = qstart + add_clip
+            else:
+                ldiff = tstart - fwp_boundary
+                if qstart >= ldiff:
+                    clip_left = qstart - ldiff
 
-        clip_right = qlen
-        if tend >= revp_boundary:
-            sub_clip = tend - revp_boundary
-            clip_right = qend - sub_clip
-        else:
-            rdiff = revp_boundary - tend
-            if qlen - qend >= rdiff:
-                clip_right = qend + rdiff
+            clip_right = qlen
+            if tend >= revp_boundary:
+                sub_clip = tend - revp_boundary
+                clip_right = qend - sub_clip
+            else:
+                rdiff = revp_boundary - tend
+                if qlen - qend >= rdiff:
+                    clip_right = qend + rdiff
 
-        if not samestrand:
-            clip_left, clip_right = clip_right, clip_left
+        else:
+            clip_right = qlen
+            if tstart <= fwp_boundary:
+                add_clip = fwp_boundary - tstart
+                clip_right = qend - add_clip
+            else:
+                rdiff = tstart - fwp_boundary
+                if qlen - qend >= rdiff:
+                    clip_right = qend + rdiff
+
+            clip_left = 0
+            if tend >= revp_boundary:
+                sub_clip = tend - revp_boundary
+                clip_left = qstart + sub_clip
+            else:
+                ldiff = revp_boundary - tend
+                if qstart >= ldiff:
+                    clip_left = qstart - ldiff
 
         self.seq = self.seq[clip_left:clip_right]
-        # print(clip_left, qlen - clip_right)
+
         return clip_left, qlen - clip_right
 
 
@@ -64,7 +81,7 @@ class Mapping:
         self.qlen = int(qlen)
         self.qstart = int(qstart)
         self.qend = int(qend)
-        self.samestrand = samestrand
+        self.samestrand = self.eval_strand(samestrand)
         self.tname = tname
         self.tlen = int(tlen)
         self.tstart = int(tstart)
@@ -79,6 +96,12 @@ class Mapping:
         kwattr_dict = {kw.split(":")[0]: kw.split(":")[-1] for kw in self.kwattr}
         for key in kwattr_dict:
             self.__dict__[key] = kwattr_dict[key]
+
+    def eval_strand(self, strand_info):
+        if strand_info == "+":
+            return True
+        else:
+            return False
 
 
 class Primer:
@@ -193,7 +216,6 @@ def create_read_mappings(mm2_paf):
 def bin_mappings(amp_bins, mappings):
     binned = list()
     na = list()
-    # print(amp_bins)
     while len(amp_bins) > 0:
         if len(mappings) > 0:
             if mappings[0].tend <= amp_bins[0].end + 5:
@@ -208,11 +230,6 @@ def bin_mappings(amp_bins, mappings):
                 amp_bins.pop(0)
         else:
             break
-
-    # for bin in binned:
-    #     print(bin.name, "reads:", len(bin.reads))
-    # print("na", len(na))
-
     return binned
 
 
@@ -228,13 +245,10 @@ def load_reads(read_fasta, amp_bins):
                 read = Read(header, seq.strip())
                 reads[read.name] = read
 
-    # print(reads)
-
     for amp in amp_bins:
         print("amp.mappings", len(amp.mappings))
         amp.reads = {k: v for k, v in reads.items() if k in amp.mappings}
         print("amp.reads", len(amp.reads))
-        # print(amp.reads)
 
     return amp_bins
 
@@ -250,8 +264,8 @@ def clip_and_write_out(amp_bins, clipped_out):
                 out.write(amp.reads[read].header + "\n")
                 out.write(amp.reads[read].seq + "\n")
     print(
-        f"{clip_ct['left']} bases were clipped from the left/start of reads and "
-        f"{clip_ct['right']} bases were clipped from the right/end of reads"
+        f"{clip_ct['left']} bases were clipped from the fw/left-primer side of reads and "
+        f"{clip_ct['right']} bases were clipped from the rev/right-primer side of reads"
     )
 
 
