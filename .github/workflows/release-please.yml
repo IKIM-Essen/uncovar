@@ -95,7 +95,7 @@ jobs:
       - name: Switch to release PR on origin
         if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }}
         run: |
-          git checkout release-v${{ env.VERSION }}
+          git checkout release-please--branches--master
 
       - name: Change containerized tag
         if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }}
