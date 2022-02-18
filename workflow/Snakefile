@@ -47,36 +47,44 @@ include: "rules/variant_filtration.smk"
 include: "rules/variant_report.smk"
 include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
-include: "rules/preprocessing.smk"
+
+
+if config["data-handling"]["use-data-handling"]:
+
+    include: "rules/preprocessing.smk"
+
+
 include: "rules/long_read.smk"
 include: "../benchmarking/rules/benchmarking.smk"
 include: "rules/lineage_variant_calling.smk"
 
 
-rule save_latest_run:
-    input:
-        expand(
-            "results/.indicators/{latest_run}.archived",
-            latest_run=get_latest_run_date(),
-        ),
-    output:
-        expand(
-            "".join(
-                (
-                    config["data-handling"]["archive"],
-                    "{latest_run}/results_{latest_run}.tar.gz",
-                )
+if config["data-handling"]["archive-data"]:
+
+    rule save_latest_run:
+        input:
+            expand(
+                "results/.indicators/{latest_run}.archived",
+                latest_run=get_latest_run_date(),
             ),
+        output:
+            expand(
+                "".join(
+                    (
+                        config["data-handling"]["archive"],
+                        "{latest_run}/results_{latest_run}.tar.gz",
+                    )
+                ),
+                latest_run=get_latest_run_date(),
+            ),
+        params:
             latest_run=get_latest_run_date(),
-        ),
-    params:
-        latest_run=get_latest_run_date(),
-    log:
-        expand("logs/save-run/{latest_run}.log", latest_run=get_latest_run_date()),
-    conda:
-        "envs/unix.yaml"
-    shell:
-        "tar -zcvf {output} results/{params.latest_run} 2> {log} 2>&1"
+        log:
+            expand("logs/save-run/{latest_run}.log", latest_run=get_latest_run_date()),
+        conda:
+            "envs/unix.yaml"
+        shell:
+            "tar -zcvf {output} results/{params.latest_run} 2> {log} 2>&1"
 
 
 checkpoint all:

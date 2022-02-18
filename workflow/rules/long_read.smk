@@ -52,7 +52,7 @@ rule customize_primer_porechop:
     input:
         get_artic_primer,
     output:
-        "results/.indicators/replacement_notice.txt",
+        temp("results/.indicators/replacement_notice.txt"),
     conda:
         "../envs/primechop.yaml"
     log:
@@ -80,10 +80,7 @@ rule porechop_primer_trimming:
         "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
     threads: 2
     shell:
-        """
-        (porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) 2> {log}
-        rm results/.indicators/replacement_notice.txt
-        """
+        "(porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) > {log} 2>&1"
 
 
 rule nanofilt:
@@ -107,6 +104,8 @@ rule canu_correct:
         "results/{date}/trimmed/nanofilt/{sample}.fastq",
     output:
         "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        temp(directory("results/{date}/corrected/{sample}/correction")),
+        temp(directory("results/{date}/corrected/{sample}/{sample}.seqStore")),
     log:
         "logs/{date}/canu/assemble/{sample}.log",
     params:
@@ -120,24 +119,21 @@ rule canu_correct:
         "../envs/canu.yaml"
     threads: 16
     shell:
-        """
-        ( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&
-        canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200 \
-        useGrid=false {params.for_testing} \
-        corMMapMerSize=10 corOutCoverage=50000 corMinCoverage=0 maxInputCoverage=20000 \
-        corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap \
-        corConcurrency={params.concurrency} \
-        cormhapConcurrency={params.concurrency} cormhapThreads={params.concurrency} \
-        cormmapConcurrency={params.concurrency} cormmapThreads={params.concurrency} \
-        obtmmapConcurrency={params.concurrency} obtmmapThreads={params.concurrency} \
-        utgmmapConcurrency={params.concurrency} utgmmapThreads={params.concurrency} \
-        redConcurrency={params.concurrency} redThreads={params.concurrency} \
-        ovbConcurrency={params.concurrency} \
-        ovsConcurrency={params.concurrency} \
-        oeaConcurrency={params.concurrency}
-        )
-        2> {log}
-        """
+        "( if [ -d {params.outdir} ]; then rm -Rf {params.outdir}; fi &&"
+        " canu -correct -nanopore {input} -p {wildcards.sample} -d {params.outdir} genomeSize=30k minOverlapLength=10 minReadLength=200"
+        " useGrid=false {params.for_testing}"
+        " corMMapMerSize=10 corOutCoverage=50000 corMinCoverage=0 maxInputCoverage=20000"
+        " corOverlapper=minimap utgOverlapper=minimap obtOverlapper=minimap"
+        " corConcurrency={params.concurrency}"
+        " cormhapConcurrency={params.concurrency} cormhapThreads={params.concurrency}"
+        " cormmapConcurrency={params.concurrency} cormmapThreads={params.concurrency}"
+        " obtmmapConcurrency={params.concurrency} obtmmapThreads={params.concurrency}"
+        " utgmmapConcurrency={params.concurrency} utgmmapThreads={params.concurrency}"
+        " redConcurrency={params.concurrency} redThreads={params.concurrency}"
+        " ovbConcurrency={params.concurrency}"
+        " ovsConcurrency={params.concurrency}"
+        " oeaConcurrency={params.concurrency})"
+        "> {log} 2>&1"
 
 
 # rule medaka_consensus_reference:
