@@ -10,7 +10,6 @@ class Read:
         self.header = header
         self.name = self.header.split(">")[1]
         self.seq = seq
-        # self.prim_clipped_seq = ""
 
     def clip_primers(self, fwp_boundary, revp_boundary, mapping):
         qlen, samestrand = mapping.qlen, mapping.samestrand
@@ -136,7 +135,6 @@ class Amp:
         self.revp_boundary = min(
             [prim for prim in primers if prim.pos == "RIGHT"], key=lambda x: x.start
         ).start
-        # self.read_names = list()
         self.mappings = dict()
         self.reads = dict()
 
@@ -165,15 +163,6 @@ def create_primer_objs(primer_bed):
     return sorted(primers, key=lambda x: x.end)
 
 
-def create_primer_objs(primer_bed):
-    with open(primer_bed, "r") as bed:
-        primers = list()
-        for line in bed:
-            prim = Primer(*line.strip().split("\t"))
-            primers.append(prim)
-    return sorted(primers, key=lambda x: x.end)
-
-
 def generate_amps(primers):
     amp_nums = set([primer.amp_no for primer in primers])
     amps = list()
@@ -186,7 +175,6 @@ def generate_amps(primers):
 def filter_read_mappings(mappings):
     mappings = [m for m in mappings if 300 < m.qlen < 600]
     mappings = [m for m in mappings if m.qual == 60]
-    mappings = [m for m in mappings if m.tp == "P"]
     return mappings
 
 
@@ -234,7 +222,6 @@ def bin_mappings(amp_bins, mappings):
 
 
 def load_reads(read_fasta, amp_bins):
-
     reads = dict()
     with open(read_fasta, "r") as rfa:
         for line in rfa:
@@ -246,9 +233,9 @@ def load_reads(read_fasta, amp_bins):
                 reads[read.name] = read
 
     for amp in amp_bins:
-        print("amp.mappings", len(amp.mappings))
+        # print("amp.mappings", len(amp.mappings))
         amp.reads = {k: v for k, v in reads.items() if k in amp.mappings}
-        print("amp.reads", len(amp.reads))
+        # print("amp.reads", len(amp.reads))
 
     return amp_bins
 

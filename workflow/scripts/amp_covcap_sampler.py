@@ -3,7 +3,7 @@
 # This file may not be copied, modified, or distributed except according to those terms.
 
 import random
-from collections import Counter, defaultdict
+from collections import defaultdict
 
 
 class Mapping:
@@ -100,7 +100,7 @@ def generate_amps(primers):
     amps = list()
     for num in amp_nums:
         ao = Amp(num, [primer for primer in primers if primer.amp_no == num])
-        print(ao.name, ao.max_len)
+        # print(ao.name, ao.max_len)
         amps.append(ao)
     return sorted(amps, key=lambda x: x.name)
 
@@ -108,7 +108,6 @@ def generate_amps(primers):
 def filter_read_mappings(mappings):
     mappings = [m for m in mappings if 300 < m.qlen < 600]
     mappings = [m for m in mappings if m.qual == 60]
-    # mappings = [m for m in mappings if m.tp == "P"]
     return mappings
 
 
@@ -155,19 +154,13 @@ def bin_mappings(amp_bins, mappings):
 
     for bin in binned:
         bin.random_sample(200)
-        print(bin.name, len(bin.read_names), "selected:", len(bin.selected))
-    print("na", len(na))
+    #     print(bin.name, len(bin.read_names), "selected:", len(bin.selected))
+    # print("na", len(na))
 
     return binned
 
 
 def write_capped_reads(binned, reads, fa_out):
-    # print("Writing json")
-    # bins_dct = {amp.name:amp.read_names for amp in binned}
-    # with open(js_out, "w") as js:
-    #     json.dump(bins_dct, js)
-
-    print("Writing fasta")
     all_picks = ["@" + name for amp in binned for name in amp.selected]
     with open(reads, "r") as fq, open(fa_out, "w") as fa:
         for line in fq:

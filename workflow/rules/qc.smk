@@ -153,9 +153,10 @@ rule species_diversity_before_se:
         kraken_output=temp(
             "results/{date}/species-diversity/se/{sample}/{sample}.kraken"
         ),
-        report=(
-            "results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2"
-        ),
+        # report=(
+        #     "results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2"
+        # ),
+        report="results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2",
     log:
         "logs/{date}/kraken/se/{sample}.log",
     threads: 8

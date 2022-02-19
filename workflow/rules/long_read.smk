@@ -19,14 +19,24 @@ rule nanoQC:
         "nanoQC {input} -o {params.outdir} > {log} 2>&1"
 
 
+rule count_fastq_reads:
+    input:
+        get_reads_by_stage,
+    output:
+        temp("results/{date}/tables/fastq-read-counts/{stage}~{sample}.txt"),
+    log:
+        "logs/{date}/count_reads/{stage}~{sample}.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "echo $(( $(cat {input} | wc -l ) / 4)) > {output} 2> {log}"
+
+
 rule nanofilt:
     input:
-        # get_reads_by_stage,
         get_fastqs,
     output:
-        # "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq",
-        # temp("results/{date}/trimmed/nanofilt/{sample}.fastq"),
-        "results/{date}/filtered/nanofilt/{sample}.fastq",
+        temp("results/{date}/filtered/nanofilt/{sample}.fastq"),
     log:
         "logs/{date}/nanofilt/{sample}.log",
     params:
@@ -40,7 +50,6 @@ rule nanofilt:
 
 rule convert2fasta:
     input:
-        # "results/{barcode}/trim-filt/{barcode}_tf.fastq"
         "results/{date}/filtered/nanofilt/{sample}.fastq",
     output:
         "results/{date}/filtered/nanofilt/{sample}.fasta",
@@ -52,11 +61,10 @@ rule convert2fasta:
 
 rule map_for_capping:
     input:
-        # reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
         reads="results/{date}/filtered/nanofilt/{sample}.fasta",
         reference="resources/genomes/main.fasta",
     output:
-        "results/{date}/minimappings/{sample}.paf",
+        "results/{date}/minimappings/coverage/{sample}.paf",
     conda:
         "../envs/minimap2.yaml"
     shell:
@@ -65,9 +73,8 @@ rule map_for_capping:
 
 rule cap_cov_amp:
     input:
-        # reads=get_fastqs,
         primer="/home/simon/uncovar/.tests/resources/nCoV-2019.primer.bed",
-        mappings="results/{date}/minimappings/{sample}.paf",
+        mappings="results/{date}/minimappings/coverage/{sample}.paf",
         reads="results/{date}/filtered/nanofilt/{sample}.fastq",
     output:
         "results/{date}/normalize_reads/{sample}_cap.fasta",
@@ -75,29 +82,10 @@ rule cap_cov_amp:
         "../scripts/amp_covcap_sampler.py"
 
 
-# Intermediate number of threads (4-8) achieve best speedup of a+btrimming.
-# For large files 8 threads help accelerate some, small files are processed faster with 4 threads.
-rule porechop_adapter_barcode_trimming:
-    input:
-        "results/{date}/normalize_reads/{sample}_cap.fasta",
-    output:
-        # temp("results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta"),
-        "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta",
-    conda:
-        "../envs/porechop.yaml"
-    log:
-        "logs/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.log",
-    threads: 8
-    shell:
-        "porechop -i {input} -o {output} -t {threads} -v 1 > {log} 2>&1"
-
-
 rule canu_correct:
     input:
-        # "results/{date}/normalize_reads/{sample}_cap.fasta",
-        # "results/{date}/filtered/nanofilt/{sample}.fasta",
-        # "results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta",
-        "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta",
+        # "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta",
+        "results/{date}/normalize_reads/{sample}_cap.fasta",
     output:
         "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
     log:
@@ -130,159 +118,102 @@ rule canu_correct:
         oeaConcurrency={params.concurrency}
         )
         2> {log}
-        """
+        """  # 2>&1
 
 
-rule map_for_trimming:
+# Intermediate number of threads (4-8) achieve best speedup of a+btrimming.
+# For large files 8 threads help accelerate some, small files are processed faster with 4 threads.
+rule porechop_adapter_barcode_trimming:
     input:
-        # reads="results/{date}/filtered/nanofilt/{sample}.fasta",
-        reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        # "results/{date}/normalize_reads/{sample}_cap.fasta",
+        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+    output:
+        temp("results/{date}/corrected/trimmed/{sample}.corr.trim.fasta"),
+    #    "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta",
+    conda:
+        "../envs/porechop.yaml"
+    log:
+        "logs/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.log",
+    threads: 8
+    shell:
+        "porechop -i {input} -o {output} -t {threads} -v 1 > {log} 2>&1"
+
+
+# rule map_corr:
+#     input:
+#         reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+#         reference="resources/genomes/main.fasta",
+#     output:
+#         alignments="results/{date}/minimappings/corrected/{sample}.paf",
+#         dcreads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
+#     conda:
+#         "../envs/minimap2.yaml"
+#     shell:
+#         """
+#         minimap2 -x map-ont {input.reference} {input.reads} -o {output.alignments} --secondary=no &&
+#         gzip -d {input.reads}
+#         """
+
+
+# rule trim_primers_corrected:
+#     input:
+#         # reads=get_fastqs,
+#         primer="/home/simon/uncovar/.tests/resources/nCoV-2019.primer.bed",
+#         mappings="results/{date}/minimappings/corrected/{sample}.paf",
+#         reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
+#     output:
+#         "results/{date}/corrected/{sample}/{sample}.correctedReads.primerclip.fasta",
+#     script:
+#         "../scripts/map_trim.py"
+
+
+rule map_raw:
+    input:
+        reads="results/{date}/normalize_reads/{sample}_cap.fasta",
         reference="resources/genomes/main.fasta",
     output:
-        alignments="results/{date}/minimappings/trimming/{sample}_trim.paf",
-        dcreads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
+        alignments="results/{date}/minimappings/trim_raw/{sample}.paf",
+        # dcreads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
     conda:
         "../envs/minimap2.yaml"
     shell:
         """
-        minimap2 -x map-ont {input.reference} {input.reads} -o {output.alignments} --secondary=no &&
-        gzip -d {input.reads}
+        minimap2 -x map-ont {input.reference} {input.reads} -o {output.alignments} --secondary=no
         """
 
 
-rule trim_primers_corrected:
+rule trim_primers_raw:
     input:
         # reads=get_fastqs,
         primer="/home/simon/uncovar/.tests/resources/nCoV-2019.primer.bed",
-        mappings="results/{date}/minimappings/trimming/{sample}_trim.paf",
-        reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
+        mappings="results/{date}/minimappings/trim_raw/{sample}.paf",
+        reads="results/{date}/normalize_reads/{sample}_cap.fasta",
     output:
-        "results/{date}/corrected/{sample}/{sample}.correctedReads.primerclip.fasta",
+        "results/{date}/raw/trimmed/{sample}.raw.clip.fasta",
     script:
         "../scripts/map_trim.py"
-
-
-# rule customize_primer_porechop:
-#     input:
-#         get_artic_primer,
-#     output:
-#         "results/.indicators/replacement_notice.txt",
-#     conda:
-#         "../envs/primechop.yaml"
-#     log:
-#         "logs/customize_primer_porechop.log",
-#     shell:
-#         "(cp {input} $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py && "
-#         'echo "replaced adpaters in adapter.py file in $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py with ARTICv3 primers" > {output}) '
-#         "2> {log}"
-
-
-# Using a low number of threads (2-4) speed up primer-trimming significantly (>2x), even for large files,
-# presumably due to the much higher number of target-sequences for trimming as compared
-# to barcode+adapter-trimming. However, using only one thread is again very slow.
-# rule porechop_primer_trimming:
-#     input:
-#         # fastq_in="results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta",
-#         fastq_in="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
-#         repl_flag="results/.indicators/replacement_notice.txt",
-#     output:
-#         "results/{date}/trimmed/porechop/primer_clipped/{sample}.corr.abpclip.fasta",
-#     conda:
-#         "../envs/primechop.yaml"
-#     log:
-#         "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
-#     threads: 2
-#     shell:
-#         """
-#         (porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) 2> {log}
-#         rm results/.indicators/replacement_notice.txt
-#         """
-
-
-# rule count_fastq_reads:
-#     input:
-#         get_reads_by_stage,
-#     output:
-#         temp("results/{date}/tables/fastq-read-counts/{stage}~{sample}.txt"),
-#     log:
-#         "logs/{date}/count_reads/{stage}~{sample}.log",
-#     conda:
-#         "../envs/unix.yaml"
-#     shell:
-#         "echo $(( $(cat {input} | wc -l ) / 4)) > {output} 2> {log}"
-
-
-# # Intermediate number of threads (4-8) achieve best speedup of a+btrimming.
-# # For large files 8 threads help accelerate some, small files are processed faster with 4 threads.
-# rule porechop_adapter_barcode_trimming:
-#     input:
-#         "results/{date}/normalize_reads/{sample}_cap.fasta",
-#     output:
-#         # temp("results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta"),
-#         "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta"
-#     conda:
-#         "../envs/porechop.yaml"
-#     log:
-#         "logs/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.log",
-#     threads: 8
-#     shell:
-#         "porechop -i {input} -o {output} -t {threads} -v 1 > {log} 2>&1"
-
-
-# rule customize_primer_porechop:
-#     input:
-#         get_artic_primer,
-#     output:
-#         "results/.indicators/replacement_notice.txt",
-#     conda:
-#         "../envs/primechop.yaml"
-#     log:
-#         "logs/customize_primer_porechop.log",
-#     shell:
-#         "(cp {input} $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py && "
-#         'echo "replaced adpaters in adapter.py file in $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py with ARTICv3 primers" > {output}) '
-#         "2> {log}"
-
-
-# # Using a low number of threads (2-4) speed up primer-trimming significantly (>2x), even for large files,
-# # presumably due to the much higher number of target-sequences for trimming as compared
-# # to barcode+adapter-trimming. However, using only one thread is again very slow.
-# rule porechop_primer_trimming:
-#     input:
-#         fastq_in=(
-#             "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta"
-#         ),
-#         repl_flag="results/.indicators/replacement_notice.txt",
-#     output:
-#         "results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta",
-#     conda:
-#         "../envs/primechop.yaml"
-#     log:
-#         "logs/{date}/trimmed/porechop/primer_clipped/{sample}.log",
-#     threads: 2
-#     shell:
-#         """
-#         (porechop -i {input.fastq_in} -o {output} --no_split --end_size 35 --extra_end_trim 0 -t {threads} -v 1) 2> {log}
-#         rm results/.indicators/replacement_notice.txt
-#         """
 
 
 # rule medaka_consensus_reference:
 use rule assembly_polishing_ont as medaka_consensus_reference with:
     input:
-        # Don´t ever use corrected reads as input for medaka, it is supposed to polish with rwa-reads!
+        # Don´t ever use corrected reads as input for medaka, it is supposed to polish with raw-reads!
         # fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
         # fasta="results/{date}/filtered/nanofilt/{sample}.fasta",
-        "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta",
+        # fasta="results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta",
+        fasta="results/{date}/raw/trimmed/{sample}.raw.clip.fasta",
         reference="resources/genomes/main.fasta",
     output:
-        "results/{date}/consensus/medaka/{sample}/{sample}.fasta",
+        # "results/{date}/consensus/medaka/{sample}/{sample}.fasta",
+        "results/{date}/consensus/medaka/{sample}/consensus.fasta",
+        # "results/{date}/polishing/medaka/{sample}/{sample}.consensus.fasta",
 
 
 # polish consensus
 rule bcftools_consensus_ont:
     input:
-        fasta="results/{date}/consensus/medaka/{sample}/{sample}.fasta",
+        fasta="results/{date}/consensus/medaka/{sample}/consensus.fasta",
+        # fasta="results/{date}/consensus/medaka/{sample}/{sample}.fasta",
         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf",  # clonal vs. subclonal?
         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf.csi",
     output:

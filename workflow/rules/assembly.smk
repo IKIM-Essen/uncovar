@@ -197,9 +197,7 @@ rule assembly_polishing_ont:
         "../envs/medaka.yaml"
     threads: 4
     shell:
-        "(medaka_consensus -v -f -i {input.fasta} -o {params.outdir} -d {input.reference} -t {threads} &&"
-        " mv {params.outdir}/consensus.fasta {output}) "
-        " > {log} 2>&1"
+        "medaka_consensus -f -i {input.fasta} -o {params.outdir} -d {input.reference} -t {threads} > {log} 2>&1"
 
 
 rule aggregate_polished_de_novo_sequences:
