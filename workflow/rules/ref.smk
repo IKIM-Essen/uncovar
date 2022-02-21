@@ -47,6 +47,85 @@ rule get_genome_annotation:
         "(curl -sSL ftp://ftp.ensemblgenomes.org/pub/viruses/gff3/sars_cov_2/Sars_cov_2.ASM985889v3.101.gff3.gz | "
         "zcat | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > {output}) 2> {log}"
 
+rule download_protein_products:
+    output:
+        temp("resources/protein_products.bed"),
+    log:
+        "logs/download_protein_products.log"
+    conda:
+        "../envs/ucsc.yaml"
+    shell:
+        "(bigBedToBed http://hgdownload.soe.ucsc.edu/gbdb/wuhCor1/uniprot/unipChainCov2.bb"
+        " -chrom=NC_045512v2 -start=0 -end=29903 {output})"
+        "2>{log}"
+
+rule bed2gff:
+    input:
+        "resources/protein_products.bed",
+    output:
+        temp("resources/protein_products.gff"),
+    log:
+        "logs/bed2gff3.log"
+    conda:
+        "../envs/genometools.yaml"
+    shell:
+        "(cut -f1-12 {input} | sed -e 's/ /-/g' | sed -e 's/NC_045512v2/NC_045512.2/g'"
+        " | gt bed_to_gff3 -o {output} -force /dev/stdin )"
+        "2> {log}"
+
+
+rule sort_gff:
+    input:
+        "resources/protein_products.gff",
+    output:
+        temp("resources/protein_products.sorted.gff"),
+    log:
+        "logs/sort_gff.log"
+    conda:
+        "../envs/gff3sort.yaml"
+    shell:
+        "gff3sort.pl --precise --chr_order natural {input} > {output}"
+
+
+rule compress_gff:
+    input:
+        "resources/protein_products.sorted.gff"
+    output:
+        "resources/protein_products.gff.gz",
+    log:
+        "logs/compress_gff.log",
+    conda:
+        "../envs/tabix.yaml"
+    shell:
+        " bgzip -c {input} > {output} 2> {log}"
+
+
+# rule get_protein_products:
+#     input:
+#         "resources/protein_products.bed.gz",
+#     output:
+#         "resources/protein_products.gft.gz",
+#     log:
+#         "logs/get_protein_products.log"
+#     conda:
+#         "../envs/ucsc.yaml"
+#     shell:
+#         """
+#         (set +e
+#             ( bgzip -dkc {input} | \
+#             bedToGenePred /dev/stdin /dev/stdout | \
+#             genePredToGtf file -source=ucsc /dev/stdin /dev/stdout | \
+#             bgzip -c > {output})
+#             exitcode=$?
+#             echo 'exitcode:' $exitcode >&2
+#             if [ $exitcode -eq 1 ]
+#             then
+#                 exit 1
+#             else
+#                 exit 0
+#             fi) 2> {log}
+#         """
+
 
 rule get_genome_annotation_for_known_variants:
     output:

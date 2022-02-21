@@ -1641,6 +1641,16 @@ def get_pangolin_for_report(wildcards):
 
     return paths
 
+def get_genome_annotation(suffix=""):
+    def inner(wildcards):
+        if wildcards.annotation == "ORF":
+            return f"resources/annotation.gff.gz{suffix}"
+        elif wildcards.annotation == "Protein Products":
+            return f"resources/protein_products.gff.gz{suffix}"
+
+        raise AttributeError(f"Config for annotation '{annotation}'' not recognizied. Can be either 'ORF' or 'Protein Products'.")
+    return inner
+
 
 wildcard_constraints:
     sample="[^/.]+",

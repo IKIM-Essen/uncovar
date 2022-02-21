@@ -1,4 +1,33 @@
 sample_name,fq1,fq2,date,is_amplicon_data,technology,include_in_high_genome_summary
-SAMPLE_NAME_1,PATH/TO/fq1,PATH/TO/fq2,SEQUENCING_DATE,0,illumina,1 # Required information for a sample sequencing on the Illumina platform
-SAMPLE_NAME_2,PATH/TO/fq,,SEQUENCING_DATE,1,ont,0 # Required information for a sample sequencing on the Oxford Nanopore platform
-SAMPLE_NAME_3,PATH/TO/fq,,SEQUENCING_DATE,1,ion,0 # Required information for a sample sequencing on the Ion Torrent platform
+31654,data/2022-02-18/31654_S2_L001_R1_001.fastq.gz,data/2022-02-18/31654_S2_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+31716,data/2022-02-18/31716_S19_L001_R1_001.fastq.gz,data/2022-02-18/31716_S19_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+31912,data/2022-02-18/31912_S4_L001_R1_001.fastq.gz,data/2022-02-18/31912_S4_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+31942,data/2022-02-18/31942_S24_L001_R1_001.fastq.gz,data/2022-02-18/31942_S24_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+31952,data/2022-02-18/31952_S27_L001_R1_001.fastq.gz,data/2022-02-18/31952_S27_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+31957,data/2022-02-18/31957_S12_L001_R1_001.fastq.gz,data/2022-02-18/31957_S12_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+31978,data/2022-02-18/31978_S11_L001_R1_001.fastq.gz,data/2022-02-18/31978_S11_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+31986,data/2022-02-18/31986_S21_L001_R1_001.fastq.gz,data/2022-02-18/31986_S21_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+31996,data/2022-02-18/31996_S9_L001_R1_001.fastq.gz,data/2022-02-18/31996_S9_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32012,data/2022-02-18/32012_S14_L001_R1_001.fastq.gz,data/2022-02-18/32012_S14_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32016,data/2022-02-18/32016_S15_L001_R1_001.fastq.gz,data/2022-02-18/32016_S15_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32339,data/2022-02-18/32339_S1_L001_R1_001.fastq.gz,data/2022-02-18/32339_S1_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32496,data/2022-02-18/32496_S18_L001_R1_001.fastq.gz,data/2022-02-18/32496_S18_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32505,data/2022-02-18/32505_S28_L001_R1_001.fastq.gz,data/2022-02-18/32505_S28_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32653,data/2022-02-18/32653_S26_L001_R1_001.fastq.gz,data/2022-02-18/32653_S26_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32654,data/2022-02-18/32654_S25_L001_R1_001.fastq.gz,data/2022-02-18/32654_S25_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32655,data/2022-02-18/32655_S6_L001_R1_001.fastq.gz,data/2022-02-18/32655_S6_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32656,data/2022-02-18/32656_S10_L001_R1_001.fastq.gz,data/2022-02-18/32656_S10_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32686,data/2022-02-18/32686_S16_L001_R1_001.fastq.gz,data/2022-02-18/32686_S16_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32713,data/2022-02-18/32713_S13_L001_R1_001.fastq.gz,data/2022-02-18/32713_S13_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32845,data/2022-02-18/32845_S20_L001_R1_001.fastq.gz,data/2022-02-18/32845_S20_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32846,data/2022-02-18/32846_S29_L001_R1_001.fastq.gz,data/2022-02-18/32846_S29_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32851,data/2022-02-18/32851_S23_L001_R1_001.fastq.gz,data/2022-02-18/32851_S23_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32853,data/2022-02-18/32853_S22_L001_R1_001.fastq.gz,data/2022-02-18/32853_S22_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32898,data/2022-02-18/32898_S8_L001_R1_001.fastq.gz,data/2022-02-18/32898_S8_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32965,data/2022-02-18/32965_S3_L001_R1_001.fastq.gz,data/2022-02-18/32965_S3_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+32977,data/2022-02-18/32977_S17_L001_R1_001.fastq.gz,data/2022-02-18/32977_S17_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+33096,data/2022-02-18/33096_S5_L001_R1_001.fastq.gz,data/2022-02-18/33096_S5_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+33106,data/2022-02-18/33106_S7_L001_R1_001.fastq.gz,data/2022-02-18/33106_S7_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+34228,data/2022-02-18/34228_S30_L001_R1_001.fastq.gz,data/2022-02-18/34228_S30_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+No-RKI-11629-P0-UES-14-02-22-CALU3,data/2022-02-18/No-RKI-11629-P0-UES-14-02-22-CALU3_S32_L001_R1_001.fastq.gz,data/2022-02-18/No-RKI-11629-P0-UES-14-02-22-CALU3_S32_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1
+No-RKI-193159-P0-1-14-2-2022-VeroE6,data/2022-02-18/No-RKI-193159-P0-1-14-2-2022-VeroE6_S31_L001_R1_001.fastq.gz,data/2022-02-18/No-RKI-193159-P0-1-14-2-2022-VeroE6_S31_L001_R2_001.fastq.gz,2022-02-18,1,illumina,1

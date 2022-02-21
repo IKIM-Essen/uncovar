@@ -21,8 +21,8 @@ rule annotate_variants:
         plugins="resources/vep/plugins",
         fasta="resources/genomes/main.fasta",
         fai="resources/genomes/main.fasta.fai",
-        gff="resources/annotation.gff.gz",
-        csi="resources/annotation.gff.gz.tbi",
+        gff=get_genome_annotation(),
+        csi=get_genome_annotation(suffix=".tbi"),
         problematic="resources/problematic-sites.vcf.gz",
         problematic_tbi="resources/problematic-sites.vcf.gz.tbi",
     output:

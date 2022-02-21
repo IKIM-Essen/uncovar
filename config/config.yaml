@@ -89,6 +89,10 @@ assembly:
   min-variant-prob: 0.95
 
 variant-calling:
+  # genome annotation to use. Can be either
+  # 'ORF' (e.g. ORF1ab, S, etc..) or 
+  # 'Protein Products' (e.g. nsp1, Hel, Spike Protein S1, etc..)
+  annotation: 'Protein Products'
   # false discovery rate to control for
   fdr: 0.05
   # downsample loci to this read depth
