@@ -8,7 +8,9 @@ rule vembrane_filter:
     input:
         "results/{date}/annotated-calls/ref~main/annot~{annotation}/{sample}.bcf",
     output:
-        temp("results/{date}/filtered-calls/ref~main/annot~{annotation}/{sample}.{filter}.bcf"),
+        temp(
+            "results/{date}/filtered-calls/ref~main/annot~{annotation}/{sample}.{filter}.bcf"
+        ),
     params:
         expression=get_vembrane_expression,
         extra="",

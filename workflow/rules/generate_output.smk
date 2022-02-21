@@ -370,7 +370,7 @@ rule snakemake_reports_patient:
             "results/{{date}}/vcf-report/{target}.{filter}.{annotation}",
             target=get_samples_for_date(wildcards.date) + ["all"],
             filter=config["variant-calling"]["filters"],
-            annotation=config["variant-calling"]["annotations"]
+            annotation=config["variant-calling"]["annotations"],
         ),
         # 3. Sequencing Details
         "results/{date}/qc/laboratory/multiqc.html",
@@ -429,7 +429,7 @@ use rule snakemake_reports_patient as snakemake_reports_environment with:
             "results/{{date}}/vcf-report/{target}.{filter}.{annotation}",
             target=get_samples_for_date(wildcards.date) + ["all"],
             filter=config["variant-calling"]["filters"],
-            annotation=config["variant-calling"]["annotations"]
+            annotation=config["variant-calling"]["annotations"],
         ),
         # 3. Sequencing Details
         "results/{date}/qc/laboratory/multiqc.html",

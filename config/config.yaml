@@ -90,11 +90,11 @@ assembly:
 
 variant-calling:
   # genome annotation to use. Can be
-  # 'orf' (e.g. ORF1ab, S, etc..) or 
+  # 'orf' (e.g. ORF1ab, S, etc..) or
   # 'protein' (e.g. nsp1, Hel, Spike Protein S1, etc..)
   annotations:
-    - 'orf'
-    - 'protein'
+    - "orf"
+    - "protein"
   # false discovery rate to control for
   fdr: 0.05
   # downsample loci to this read depth
