@@ -11,15 +11,15 @@ rule vcf_report:
         bams=get_report_input("results/{date}/recal/ref~main/{sample}.bam"),
         bais=get_report_input("results/{date}/recal/ref~main/{sample}.bam.bai"),
         bcfs=get_report_input(
-            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.{filter}.bcf"
+            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.{filter}.{annotation}.bcf"
         ),
     output:
         report(
-            directory("results/{date}/vcf-report/{target}.{filter}"),
+            directory("results/{date}/vcf-report/{target}.{filter}.{annotation}"),
             htmlindex="index.html",
             caption="../report/variant-calls.rst",
             category="2. Variant Call Details",
-            subcategory="2. {filter}",
+            subcategory="2. Annotation: {annotation} Filter: {filter}",
         ),
     params:
         bcfs=get_report_bcfs,
@@ -31,7 +31,7 @@ rule vcf_report:
             template=get_resource("custom-table-report.js"),
         ),
     log:
-        "logs/{date}/vcf-report/{target}.{filter}.log",
+        "logs/{date}/vcf-report/{target}.{filter}.{annotation}.log",
     conda:
         "../envs/rbt.yaml"
     shell:
@@ -42,7 +42,7 @@ rule vcf_report:
 rule ucsc_vcf:
     input:
         bcfs=get_report_input(
-            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.{filter}.bcf"
+            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.{filter}.orf.bcf"
         ),
         strain_call=(
             "results/{date}/tables/strain-calls/{target}.polished.strains.pangolin.csv"

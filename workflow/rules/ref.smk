@@ -70,26 +70,53 @@ rule bed2gff:
         "../envs/genometools.yaml"
     shell:
         "(cut -f1-12 {input} | sed -e 's/ /-/g' | sed -e 's/NC_045512v2/NC_045512.2/g'"
-        " | gt bed_to_gff3 -o {output} -force /dev/stdin )"
+        " | gt bed_to_gff3 -featuretype cds -thicktype exon -blocktype gene -o {output} -force /dev/stdin )"
         "2> {log}"
 
 
-rule sort_gff:
+# rule sort_gff:
+#     input:
+#         "resources/protein_products.gff",
+#     output:
+#         temp("resources/protein_products.sorted.gff"),
+#     log:
+#         "logs/sort_gff.log"
+#     conda:
+#         "../envs/gff3sort.yaml"
+#     shell:
+#         "gff3sort.pl --precise --chr_order natural {input} > {output}"
+
+
+rule format_gff:
     input:
         "resources/protein_products.gff",
     output:
-        temp("resources/protein_products.sorted.gff"),
+        "resources/protein_products.formatted.gff",
     log:
-        "logs/sort_gff.log"
+        "logs/format_gff.log",
     conda:
-        "../envs/gff3sort.yaml"
+        "../envs/tabix.yaml"
     shell:
-        "gff3sort.pl --precise --chr_order natural {input} > {output}"
+        # download, sort and bgzip gff (see https://www.ensembl.org/info/docs/tools/vep/script/vep_custom.html)
+        "cat {input} | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -k9,9n -t$'\t' > {output} 2> {log}"
+
+
+rule fix_gff:
+    input:
+        "resources/protein_products.formatted.gff",
+    output:
+        "resources/protein_products.fixed.gff",
+    log:
+        "logs/fix_gff.log"
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/fix-gff.py"
 
 
 rule compress_gff:
     input:
-        "resources/protein_products.sorted.gff"
+        "resources/protein_products.fixed.gff"
     output:
         "resources/protein_products.gff.gz",
     log:
@@ -97,7 +124,7 @@ rule compress_gff:
     conda:
         "../envs/tabix.yaml"
     shell:
-        " bgzip -c {input} > {output} 2> {log}"
+        "bgzip -c {input} > {output} 2> {log}"
 
 
 # rule get_protein_products:

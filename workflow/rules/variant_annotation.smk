@@ -26,14 +26,14 @@ rule annotate_variants:
         problematic="resources/problematic-sites.vcf.gz",
         problematic_tbi="resources/problematic-sites.vcf.gz.tbi",
     output:
-        calls="results/{date}/annotated-calls/ref~main/{sample}.bcf",
-        stats="results/{date}/annotated-calls/ref~main/{sample}.html",
+        calls="results/{date}/annotated-calls/ref~main/annot~{annotation}/{sample}.bcf",
+        stats="results/{date}/annotated-calls/ref~main/annot~{annotation}/{sample}.html",
     params:
         # Pass a list of plugins to use, see https://www.ensembl.org/info/docs/tools/vep/script/vep_plugins.html
         # Plugin args can be added as well, e.g. via an entry "MyPlugin,1,FOO", see docs.
         plugins=["LoFtool"],
         extra=get_vep_args,
     log:
-        "logs/{date}/vep/{sample}.log",
+        "logs/{date}/vep/{annotation}/{sample}.log",
     wrapper:
         "0.72.0/bio/vep/annotate"

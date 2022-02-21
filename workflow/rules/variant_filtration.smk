@@ -6,14 +6,14 @@
 
 rule vembrane_filter:
     input:
-        "results/{date}/annotated-calls/ref~main/{sample}.bcf",
+        "results/{date}/annotated-calls/ref~main/annot~{annotation}/{sample}.bcf",
     output:
-        temp("results/{date}/filtered-calls/ref~main/{sample}.{filter}.bcf"),
+        temp("results/{date}/filtered-calls/ref~main/annot~{annotation}/{sample}.{filter}.bcf"),
     params:
         expression=get_vembrane_expression,
         extra="",
     log:
-        "logs/{date}/vembrane/{sample}.{filter}.log",
+        "logs/{date}/vembrane/{sample}.{filter}.{annotation}.log",
     wrapper:
         "0.71.1/bio/vembrane/filter"
 
@@ -23,13 +23,13 @@ rule control_fdr:
         get_control_fdr_input,
     output:
         temp(
-            "results/{date}/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.{vartype}.fdr-controlled.bcf"
+            "results/{date}/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.{vartype}.{annotation}.fdr-controlled.bcf"
         ),
     params:
         fdr=config["variant-calling"]["fdr"],
         events=get_target_events,
     log:
-        "logs/{date}/control-fdr/ref~{reference}/{sample}.{clonality}.{filter}.{vartype}.log",
+        "logs/{date}/control-fdr/ref~{reference}/{sample}.{clonality}.{filter}.{vartype}.{annotation}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
@@ -42,9 +42,9 @@ rule merge_calls:
         calls=get_merge_calls_input(".bcf"),
         idx=get_merge_calls_input(".bcf.csi"),
     output:
-        "results/{date}/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.bcf",
+        "results/{date}/filtered-calls/ref~{reference}/{sample}.{clonality}.{filter}.{annotation}.bcf",
     log:
-        "logs/{date}/merge-calls/ref~{reference}/{sample}.{clonality}.{filter}.log",
+        "logs/{date}/merge-calls/ref~{reference}/{sample}.{clonality}.{filter}.{annotation}.log",
     params:
         "-a -Ob",
     wrapper:
