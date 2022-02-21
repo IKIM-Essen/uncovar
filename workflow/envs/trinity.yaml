@@ -2,4 +2,4 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
-  - trinity =2.12.0
+  - trinity =2.12

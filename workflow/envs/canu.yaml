@@ -2,5 +2,5 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
-  - canu = 2.2
-  - minimap2 = 2.22
+  - canu =2.2
+  - minimap2 =2.22
