@@ -72,7 +72,7 @@ rule bed2gff:
         "../envs/genometools.yaml"
     shell:
         "(cut -f1-12 {input} | sed -e 's/ /-/g' | sed -e 's/NC_045512v2/NC_045512.2/g'"
-        " | gt bed_to_gff3 -featuretype cds -thicktype exon -blocktype gene -o {output} -force /dev/stdin )"
+        " | gt bed_to_gff3 -featuretype gene -thicktype transcript -blocktype exon -o {output} -force /dev/stdin )"
         "2> {log}"
 
 
@@ -100,7 +100,7 @@ rule format_gff:
         "../envs/tabix.yaml"
     shell:
         # download, sort and bgzip gff (see https://www.ensembl.org/info/docs/tools/vep/script/vep_custom.html)
-        "cat {input} | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -k9,9n -t$'\t' > {output} 2> {log}"
+        "cat {input} | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -k3,3n -t$'\t' > {output} 2> {log}"
 
 
 rule fix_gff:

@@ -16,7 +16,12 @@ gff = pd.read_csv(snakemake.input[0], sep="\t", header=None)
 info_column = gff.columns[-1]
 format_column = gff.columns[2]
 
+
 gff[info_column] = gff.apply(lambda x: set_id(x[info_column], x[format_column]), axis=1)
 
+
+gff.loc[gff[format_column] == "transcript", info_column] = gff.loc[
+    gff[format_column] == "transcript", info_column
+].apply(lambda x: x + ";biotype=protein_coding")
 
 gff.to_csv(snakemake.output[0], header=False, index=False, sep="\t")
