@@ -112,10 +112,7 @@ for lineage in lineage_df.columns:
     lineage_defining_variants = variants_df.index.isin(
         lineage_df.index[lineage_df[lineage] == "x"]
     )
-    lineage_defining_non_variants = ~variants_df.index.isin(
-        lineage_df.index[lineage_df[lineage] == "x"]
-    )
-    print(lineage_defining_variants)
+    lineage_defining_non_variants = ~lineage_defining_variants
     jaccard_coefficient[lineage] = round(
         (
             variants_df[lineage_defining_variants]["Prob X VAF"].sum()
@@ -211,6 +208,8 @@ variants_df.drop(
     ],
     inplace=True,
 )
+# drop other lineages, top 10 only
+variants_df.drop(variants_df.columns[12:], axis=1, inplace=True)
 
 # output variant_df
 variants_df.to_csv(snakemake.output.variant_table, index=True, sep=",")

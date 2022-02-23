@@ -162,7 +162,7 @@
       }
     }
   },
-  "Highest similarity": function (value) {
+  "1st": function (value) {
     let result = this["lineage helper"](value);
     return result;
   },
@@ -179,6 +179,26 @@
     return result;
   },
   "5th": function (value) {
+    let result = this["lineage helper"](value);
+    return result;
+  },
+  "6th": function (value) {
+    let result = this["lineage helper"](value);
+    return result;
+  },
+  "7th": function (value) {
+    let result = this["lineage helper"](value);
+    return result;
+  },
+  "8th": function (value) {
+    let result = this["lineage helper"](value);
+    return result;
+  },
+  "9th": function (value) {
+    let result = this["lineage helper"](value);
+    return result;
+  },
+  "10th": function (value) {
     let result = this["lineage helper"](value);
     return result;
   },
