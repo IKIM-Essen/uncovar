@@ -24,6 +24,22 @@ def has_numbers(inputString):
     return any(char.isdigit() for char in inputString)
 
 
+def rename_enumeration(list_length):
+    append_dict = {
+         1: "st",  2: "nd",  3: "rd",
+        21: "st", 22: "nd", 23: "rd",
+        31: "st", 32: "nd", 33: "rd",
+        41: "st", 42: "nd", 43: "rd",
+        51: "st", 52: "nd", 53: "rd",
+        }
+    range_list = list(range(1, list_length + 1))
+    for i in range(len(range_list)):
+        if range_list[i] in append_dict:
+            range_list[i] = str(range_list[i]) + append_dict[range_list[i]]
+        else:
+            range_list[i] = str(range_list[i]) + "th"
+    return range_list
+
 variants_df = pd.DataFrame()
 lineage_df = pd.DataFrame()
 
@@ -56,17 +72,6 @@ with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
                     ignore_index=True,
                 )
 
-# count occurences of signatures (x) in lineage columns and get sorted list
-lineage_dict = dict(lineage_df.count())
-lineage_dict = dict(
-    sorted(lineage_dict.items(), key=lambda item: item[1], reverse=True)
-)
-top5_lineages = list(lineage_dict.keys())
-
-# only include variant names (index=0) + top 5 variants (index=1-6) and reorder
-lineage_df.drop(labels=top5_lineages[7:], axis=1, inplace=True)
-lineage_df = lineage_df[top5_lineages[:7]]
-
 # aggregate both dataframes by summing up repeating rows for VAR (maximum=1) and multiply Prob_not_present
 variants_df = (
     variants_df.groupby(["Mutations"])
@@ -74,9 +79,7 @@ variants_df = (
         func={"Frequency": lambda x: min(sum(x), 1.0), "Prob_not_present": np.prod},
         axis=1,
     )
-    .reset_index()
 )
-pd.set_option("display.max_rows", None)
 
 # new column for 1-prob_not_present = prob_present
 variants_df["Probability"] = 1.0 - variants_df["Prob_not_present"]
@@ -88,35 +91,32 @@ lineage_df = lineage_df.fillna(0)
 lineage_df = lineage_df.replace({"x": 1})
 lineage_df = (
     lineage_df.groupby(["Mutations"])
-    .agg(func={column: np.max for column in top5_lineages[:7]})
+    .agg(func={column: np.max for column in lineage_df.columns})
     .reset_index(drop=True)
 )
 lineage_df = lineage_df.replace({1: "x", 0: ""})
 
-# calculate Jaccard coefficient for top 5 lineages and save row as df to append after sorting
+# calculate Jaccard coefficient for each lineage
+# iterate over lineages in columns (mutations as index)
+lineage_df.set_index("Mutations", inplace=True)
 jaccard_coefficient = {}
-for lineage in range(1, len(top5_lineages[:6])):
-    jaccard_coefficient[top5_lineages[lineage]] = round(
-        variants_df[
-            variants_df["Mutations"].isin(
-                lineage_df[lineage_df[top5_lineages[lineage]] == "x"]["Mutations"]
-            )
-        ]["Prob X VAF"].sum()
-        / variants_df["Prob X VAF"].sum(),
-        3,
-    )
+for lineage in lineage_df.columns:
+    lineage_defining_variants = variants_df.index.isin(lineage_df.index[lineage_df[lineage] == "x"])
+    lineage_defining_non_variants = ~variants_df.index.isin(lineage_df.index[lineage_df[lineage] == "x"])
+    print(lineage_defining_variants)
+    jaccard_coefficient[lineage] = round((variants_df[lineage_defining_variants]["Prob X VAF"].sum() +  variants_df[lineage_defining_non_variants]["Prob_not_present"].sum()) / len(variants_df),3,)
+
 jaccard_row = pd.DataFrame(
     {"Mutations": "Similarity", **jaccard_coefficient}, index=[0]
 )
-
 # merge variants dataframe and lineage dataframe
-variants_df = variants_df.merge(lineage_df, left_on="Mutations", right_on="Mutations")
+variants_df = variants_df.merge(lineage_df, left_index=True, right_index=True)
 
 # add feature column for sorting
-variants_df["Features"] = variants_df["Mutations"].str.extract(r"(.+)[:].+|\*")
+variants_df["Features"] = variants_df.index.to_series().str.extract(r"(.+)[:].+|\*")
 
 # position of variant for sorting and change type
-variants_df["Position"] = variants_df["Mutations"].str.extract(
+variants_df["Position"] = variants_df.index.to_series().str.extract(
     r"(.*:?[A-Z]+|\*$|-)([0-9]+)([A-Z]+$|\*$|-)$"
 )[1]
 variants_df = variants_df.astype({"Position": "int64"})
@@ -128,39 +128,41 @@ sorter = [k[0] for k in sorted(gene_start.items(), key=lambda item: item[1])]
 sorterIndex = dict(zip(sorter, range(len(sorter))))
 variants_df["Features_Rank"] = variants_df["Features"].map(sorterIndex)
 
-# define categories for sorting
-variants_df.loc[
-    (variants_df[top5_lineages[1]] == "x") & (variants_df["Probability"] >= 0.95),
-    "Order",
-] = 0
-variants_df.loc[
-    (variants_df[top5_lineages[1]] == "x") & (variants_df["Probability"] <= 0.05),
-    "Order",
-] = 1
-variants_df.loc[
-    (variants_df[top5_lineages[1]] != "x") & (variants_df["Probability"] >= 0.95),
-    "Order",
-] = 2
-variants_df.loc[
-    (variants_df[top5_lineages[1]] == "x")
-    & ((variants_df["Probability"] > 0.05) & (variants_df["Probability"] < 0.95)),
-    "Order",
-] = 3
-variants_df.loc[
-    (variants_df[top5_lineages[1]] != "x") & (variants_df["Probability"] <= 0.05),
-    "Order",
-] = 4
-variants_df.loc[
-    (variants_df[top5_lineages[1]] != "x")
-    & ((variants_df["Probability"] > 0.05) & (variants_df["Probability"] < 0.95)),
-    "Order",
-] = 5
-
-top5_lineages_row_df = pd.DataFrame(
-    {"Mutations": "Lineage", **{x: x for x in top5_lineages[1:6]}}, index=[0]
+# row for lineage name after renaming columns (column names can't be formatted)
+lineages_row_df = pd.DataFrame(
+    {"Mutations": "Lineage", **{x: x for x in list(lineage_df.columns) if x != "Mutations"}}, index=[0]
 )
 
+# concat row with Jaccard coefficient, drop unneccesary columns, sort with Jaccard coefficient, round
+variants_df.reset_index(inplace=True)
+variants_df = pd.concat([jaccard_row, variants_df])
+variants_df = pd.concat([lineages_row_df, variants_df])
+all_columns = variants_df.columns
+first_columns = ["Mutations", "Probability", "Frequency"]
+rest_columns = [item for item in all_columns if item not in first_columns]
+
+variants_df = variants_df.round({"Probability": 5, "Frequency": 5})
+variants_df.set_index("Mutations", inplace=True)
+variants_df.sort_values(
+    by="Similarity", axis=1, na_position="first", ascending=False, inplace=True
+)
+# rename hits ascending
+variants_df.rename(
+    columns={
+        x: y
+        for x, y in zip(
+            list(variants_df.columns)[7:],
+            rename_enumeration(len(list(variants_df.columns)[7:])),
+        )
+    },
+    errors="raise",
+    inplace=True,
+)
 # sort final DF
+variants_df.loc[variants_df["1st"] == "x", "Order",] = 1
+variants_df.loc[variants_df["1st"] != "x", "Order",] = 2
+variants_df.at["Similarity", "Order"] = 0
+variants_df.at["Lineage", "Order"] = 0
 variants_df["Prob X VAF"].replace([0, 0.0], np.NaN, inplace=True)
 variants_df.sort_values(
     by=["Order", "Features_Rank", "Position"],
@@ -168,30 +170,8 @@ variants_df.sort_values(
     na_position="last",
     inplace=True,
 )
-
-# concat row with Jaccard coefficient, drop unneccesary columns, sort with Jaccard coefficient, round
-variants_df = pd.concat([jaccard_row, variants_df]).reset_index(drop=True)
-variants_df = pd.concat([top5_lineages_row_df, variants_df]).reset_index(drop=True)
-variants_df = variants_df[
-    ["Mutations", "Probability", "Frequency", *top5_lineages[1:6]]
-]
-variants_df = variants_df.round({"Probability": 5, "Frequency": 5})
-variants_df.set_index("Mutations", inplace=True)
-variants_df.sort_values(
-    by="Similarity", axis=1, na_position="first", ascending=False, inplace=True
-)
-# rename top 5 hits
-variants_df.rename(
-    columns={
-        x: y
-        for x, y in zip(
-            list(variants_df.columns)[2:],
-            ["Highest similarity", "2nd", "3rd", "4th", "5th"],
-        )
-    },
-    errors="raise",
-    inplace=True,
-)
+# drop unwanted columns
+variants_df.drop(columns=["Prob_not_present", "Prob X VAF", "Features", "Position", "Features_Rank", "Order"], inplace=True)
 
 # output variant_df
 variants_df.to_csv(snakemake.output.variant_table, index=True, sep=",")
