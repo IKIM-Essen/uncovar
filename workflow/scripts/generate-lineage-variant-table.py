@@ -26,12 +26,22 @@ def has_numbers(inputString):
 
 def rename_enumeration(list_length):
     append_dict = {
-         1: "st",  2: "nd",  3: "rd",
-        21: "st", 22: "nd", 23: "rd",
-        31: "st", 32: "nd", 33: "rd",
-        41: "st", 42: "nd", 43: "rd",
-        51: "st", 52: "nd", 53: "rd",
-        }
+        1: "st",
+        2: "nd",
+        3: "rd",
+        21: "st",
+        22: "nd",
+        23: "rd",
+        31: "st",
+        32: "nd",
+        33: "rd",
+        41: "st",
+        42: "nd",
+        43: "rd",
+        51: "st",
+        52: "nd",
+        53: "rd",
+    }
     range_list = list(range(1, list_length + 1))
     for i in range(len(range_list)):
         if range_list[i] in append_dict:
@@ -39,6 +49,7 @@ def rename_enumeration(list_length):
         else:
             range_list[i] = str(range_list[i]) + "th"
     return range_list
+
 
 variants_df = pd.DataFrame()
 lineage_df = pd.DataFrame()
@@ -73,12 +84,9 @@ with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
                 )
 
 # aggregate both dataframes by summing up repeating rows for VAR (maximum=1) and multiply Prob_not_present
-variants_df = (
-    variants_df.groupby(["Mutations"])
-    .agg(
-        func={"Frequency": lambda x: min(sum(x), 1.0), "Prob_not_present": np.prod},
-        axis=1,
-    )
+variants_df = variants_df.groupby(["Mutations"]).agg(
+    func={"Frequency": lambda x: min(sum(x), 1.0), "Prob_not_present": np.prod},
+    axis=1,
 )
 
 # new column for 1-prob_not_present = prob_present
@@ -101,10 +109,21 @@ lineage_df = lineage_df.replace({1: "x", 0: ""})
 lineage_df.set_index("Mutations", inplace=True)
 jaccard_coefficient = {}
 for lineage in lineage_df.columns:
-    lineage_defining_variants = variants_df.index.isin(lineage_df.index[lineage_df[lineage] == "x"])
-    lineage_defining_non_variants = ~variants_df.index.isin(lineage_df.index[lineage_df[lineage] == "x"])
+    lineage_defining_variants = variants_df.index.isin(
+        lineage_df.index[lineage_df[lineage] == "x"]
+    )
+    lineage_defining_non_variants = ~variants_df.index.isin(
+        lineage_df.index[lineage_df[lineage] == "x"]
+    )
     print(lineage_defining_variants)
-    jaccard_coefficient[lineage] = round((variants_df[lineage_defining_variants]["Prob X VAF"].sum() +  variants_df[lineage_defining_non_variants]["Prob_not_present"].sum()) / len(variants_df),3,)
+    jaccard_coefficient[lineage] = round(
+        (
+            variants_df[lineage_defining_variants]["Prob X VAF"].sum()
+            + variants_df[lineage_defining_non_variants]["Prob_not_present"].sum()
+        )
+        / len(variants_df),
+        3,
+    )
 
 jaccard_row = pd.DataFrame(
     {"Mutations": "Similarity", **jaccard_coefficient}, index=[0]
@@ -130,7 +149,11 @@ variants_df["Features_Rank"] = variants_df["Features"].map(sorterIndex)
 
 # row for lineage name after renaming columns (column names can't be formatted)
 lineages_row_df = pd.DataFrame(
-    {"Mutations": "Lineage", **{x: x for x in list(lineage_df.columns) if x != "Mutations"}}, index=[0]
+    {
+        "Mutations": "Lineage",
+        **{x: x for x in list(lineage_df.columns) if x != "Mutations"},
+    },
+    index=[0],
 )
 
 # concat row with Jaccard coefficient, drop unneccesary columns, sort with Jaccard coefficient, round
@@ -159,8 +182,14 @@ variants_df.rename(
     inplace=True,
 )
 # sort final DF
-variants_df.loc[variants_df["1st"] == "x", "Order",] = 1
-variants_df.loc[variants_df["1st"] != "x", "Order",] = 2
+variants_df.loc[
+    variants_df["1st"] == "x",
+    "Order",
+] = 1
+variants_df.loc[
+    variants_df["1st"] != "x",
+    "Order",
+] = 2
 variants_df.at["Similarity", "Order"] = 0
 variants_df.at["Lineage", "Order"] = 0
 variants_df["Prob X VAF"].replace([0, 0.0], np.NaN, inplace=True)
@@ -171,7 +200,17 @@ variants_df.sort_values(
     inplace=True,
 )
 # drop unwanted columns
-variants_df.drop(columns=["Prob_not_present", "Prob X VAF", "Features", "Position", "Features_Rank", "Order"], inplace=True)
+variants_df.drop(
+    columns=[
+        "Prob_not_present",
+        "Prob X VAF",
+        "Features",
+        "Position",
+        "Features_Rank",
+        "Order",
+    ],
+    inplace=True,
+)
 
 # output variant_df
 variants_df.to_csv(snakemake.output.variant_table, index=True, sep=",")
