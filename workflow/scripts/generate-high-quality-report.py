@@ -51,7 +51,7 @@ else:
     # Creating csv-table
     csv_table = pd.DataFrame(
         {
-            "SENDING_LAB": 10259,
+            "SENDING_LAB": snakemake.params.sending_lab_number,
             "DATE_DRAW": "",
             "SEQ_TYPE": snakemake.params.seq_type,
             "SEQ_REASON": "N",
