@@ -19,7 +19,7 @@ rule vcf_report:
             htmlindex="index.html",
             caption="../report/variant-calls.rst",
             category="2. Variant Call Details",
-            subcategory="2. Variants with {filter} on {annotation} level.",
+            subcategory="2. Variants with {filter} on {annotation} level",
         ),
     params:
         bcfs=get_report_bcfs,

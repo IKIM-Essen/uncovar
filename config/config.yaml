@@ -90,7 +90,7 @@ assembly:
 
 variant-calling:
   # genome annotation to use. Can be
-  # 'orf' (e.g. ORF1ab, S, etc..) or
+  # 'orf' (e.g. ORF1ab, S, etc..) and/or
   # 'protein' (e.g. nsp1, Hel, Spike Protein S1, etc..)
   annotations:
     - "orf"
