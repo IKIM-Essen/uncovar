@@ -4,6 +4,6 @@ channels:
   - defaults
 dependencies:
   - nextflow =21.04.0
-  - artic=1.1.3
+  - artic=1.2.2
   - pyyaml=5.3.1
 # source: https://github.com/connor-lab/ncov2019-artic-nf/blob/v1.3.0/environments/nanopore/environment.yml

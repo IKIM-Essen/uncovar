@@ -3,7 +3,11 @@ rule ncov2019_artic_nf_illumina_data_prep:
     input:
         get_fastqs,
     output:
-        d=directory("resources/benchmarking/data/ncov2019_artic_nf/illumina/{sample}/"),
+        d=temp(
+            directory(
+                "resources/benchmarking/data/ncov2019_artic_nf/illumina/{sample}/"
+            )
+        ),
         fq1="resources/benchmarking/data/ncov2019_artic_nf/illumina/{sample}/{sample}_R1.fastq.gz",
         fq2="resources/benchmarking/data/ncov2019_artic_nf/illumina/{sample}/{sample}_R2.fastq.gz",
     log:
@@ -67,8 +71,10 @@ rule ncov2019_artic_nf_nanopore_data_prep:
     input:
         get_fastq_or_fast5,
     output:
-        directory(
-            "resources/benchmarking/data/ncov2019_artic_nf/nanopore/{sample}/{folder}/"
+        temp(
+            directory(
+                "resources/benchmarking/data/ncov2019_artic_nf/nanopore/{sample}/{folder}/"
+            )
         ),
     log:
         "logs/ncov2019_artic_nf_nanopore_data_prep/{sample}-{folder}.log",
@@ -126,7 +132,7 @@ use rule ncov2019_artic_nf_nanopore_nanopolish as ncov2019_artic_nf_nanopore_med
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",
         qs=lambda w, threads: threads,
-        flags="--medaka",
+        flags=f"--medaka --medaka-model {config['assembly']['oxford nanopore']['medaka_model']}",
         outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{w.sample}-{w.barcode}",
         prefix=lambda w: w.sample,
 

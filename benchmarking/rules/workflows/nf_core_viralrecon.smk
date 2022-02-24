@@ -91,7 +91,11 @@ rule nf_core_viralrecon_nanopore_prepare_samples:
     input:
         get_fastq_or_fast5,
     output:
-        directory("resources/benchmarking/data/nf-core-viralrecon/{sample}/{folder}/"),
+        temp(
+            directory(
+                "resources/benchmarking/data/nf-core-viralrecon/{sample}/{folder}/"
+            )
+        ),
     log:
         "logs/nf_core_viralrecon_nanopore_prepare_samples/{sample}-{folder}.log",
     conda:
