@@ -219,7 +219,7 @@ rule filter_overview:
     log:
         "logs/{date}/filter-overview.log",
     conda:
-        "../envs/pandas.yaml"
+        "../envs/python.yaml"
     script:
         "../scripts/generate-filter-overview.py"
 

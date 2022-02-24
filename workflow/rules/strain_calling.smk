@@ -14,7 +14,7 @@ checkpoint extract_strain_genomes_from_gisaid:
     log:
         "logs/{date}/extract-strain-genomes.log",
     conda:
-        "../envs/pandas.yaml"
+        "../envs/python.yaml"
     script:
         "../scripts/extract-strains-from-gisaid-provision.py"
 
