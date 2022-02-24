@@ -19,7 +19,7 @@ rule vcf_report:
             htmlindex="index.html",
             caption="../report/variant-calls.rst",
             category="2. Variant Call Details",
-            subcategory="2. Variants with {filter} on {annotation} level",
+            subcategory="Variants with {filter} on {annotation} level",
         ),
     params:
         bcfs=get_report_bcfs,
@@ -42,20 +42,20 @@ rule vcf_report:
 rule ucsc_vcf:
     input:
         bcfs=get_report_input(
-            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.{filter}.orf.bcf"
+            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.{filter}.{annotation}.bcf"
         ),
         strain_call=(
             "results/{date}/tables/strain-calls/{target}.polished.strains.pangolin.csv"
         ),
     output:
         report(
-            "results/{date}/ucsc-vcfs/{target}.{filter}.vcf",
+            "results/{date}/ucsc-vcfs/{target}.{filter}.{annotation}.vcf",
             caption="../report/variant-calls.rst",
             category="5. Variant Call Files",
-            subcategory="{filter}",
+            subcategory="With {filter} on {annotation}s",
         ),
     log:
-        "logs/{date}/ucsc-vcf/{target}.subclonal.{filter}.log",
+        "logs/{date}/ucsc-vcf/{target}.subclonal.{filter}.{annotation}.log",
     conda:
         "../envs/bcftools.yaml"
     script:
@@ -64,16 +64,18 @@ rule ucsc_vcf:
 
 rule aggregate_ucsc_vcfs:
     input:
-        expand_samples_for_date("results/{{date}}/ucsc-vcfs/{sample}.{{filter}}.vcf"),
+        expand_samples_for_date(
+            "results/{{date}}/ucsc-vcfs/{sample}.{{filter}}.{{annotation}}.vcf"
+        ),
     output:
         report(
-            "results/{date}/ucsc-vcfs/all.{date}.{filter}.vcf",
+            "results/{date}/ucsc-vcfs/all.{date}.{filter}.{annotation}.vcf",
             caption="../report/ucsc.rst",
             category="5. Variant Call Files",
             subcategory="Overview",
         ),
     log:
-        "logs/{date}/aggregate_ucsc_vcfs-{filter}.log",
+        "logs/{date}/aggregate_ucsc_vcfs-{filter}-{annotation}.log",
     conda:
         "../envs/unix.yaml"
     shell:

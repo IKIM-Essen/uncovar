@@ -233,7 +233,7 @@ rule filter_overview_html:
             htmlindex="index.html",
             caption="../report/filter-overview.rst",
             category="4. Sequences",
-            subcategory="0. Quality Overview",
+            subcategory=" Quality Overview",
         ),
     params:
         pin_until="Sample",
@@ -333,7 +333,7 @@ rule pangolin_call_overview_html:
             htmlindex="index.html",
             caption="../report/pangolin-call-overview.rst",
             category="4. Sequences",
-            subcategory="0. Quality Overview",
+            subcategory=" Quality Overview",
         ),
     params:
         pin_until="Sample",
@@ -390,8 +390,9 @@ rule snakemake_reports_patient:
         ),
         # 5. Variant Call Files
         expand(
-            ["results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf"],
+            ["results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.{annotation}.vcf"],
             filter=config["variant-calling"]["filters"],
+            annotation=config["variant-calling"]["annotations"],
         ),
         # 6. High Quality Genomes
         "results/high-quality-genomes/{date}.fasta",
