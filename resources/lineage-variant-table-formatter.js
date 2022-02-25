@@ -108,6 +108,16 @@
     var lighting = (0.9 - parseFloat(prob) * 0.4) * 100;
     return `<span class="badge p-0 m-1"><span class="p-1 rounded" style="background:hsl(138, 72%, ${lighting}%);">${prob}</span></span>`;
   },
+  ReadDepth: function (depth) {
+    depth = parseInt(depth)
+    if (!isNaN(depth)) { 
+      if (depth < 10) {
+        return `<span class="badge p-0 m-1"><span class="p-1 rounded" style="background:#EE4B2B;">${depth}</span></span>`;  
+      } else {
+        return `<span class="badge p-0 m-1"><span class="p-1 rounded" style="background:#24DC5B;">${depth}</span></span>`;
+      }
+    }
+  },
   "lineage helper": function (value) {
     if (isNaN(value)) {
       var variant_colors = {
@@ -140,7 +150,7 @@
       if (value == "x") {
         return `<span class="badge p-0 m-1"><span class="p-1 rounded" style="background:#24DC5B;">${"\u2713"}</span></span>`;
       } else {
-        const match = /^(?<parent>.{3})\s(?<version>.+)\s?.*$/i.exec(value);
+        const match = /^(?<parent>.{1,3})\s(?<version>.+)\s?.*$/i.exec(value);
 
         var parent = match.groups?.parent;
         var version = match.groups?.version;
