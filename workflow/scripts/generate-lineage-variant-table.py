@@ -97,7 +97,11 @@ with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
 
 # aggregate both dataframes by summing up repeating rows for VAR (maximum=1) and multiply Prob_not_present
 variants_df = variants_df.groupby(["Mutations"]).agg(
-    func={"Frequency": lambda x: min(sum(x), 1.0), "Prob_not_present": prod_prob_not_present, "ReadDepth": np.min},
+    func={
+        "Frequency": lambda x: min(sum(x), 1.0),
+        "Prob_not_present": prod_prob_not_present,
+        "ReadDepth": np.min,
+    },
     axis=1,
 )
 
