@@ -4,7 +4,6 @@ sample_name,date,seq_summary,is_amplicon_data,fq1,fq2,fast5_pass,fastq_pass,tech
 3_nim,2022-02-11,,1,data/ANONYMIZED/Nimagen/3_nim_R1.fastq.gz,data/ANONYMIZED/Nimagen/3_nim_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/3_mid.fasta
 4_nim,2022-02-11,,1,data/ANONYMIZED/Nimagen/4_nim_R1.fastq.gz,data/ANONYMIZED/Nimagen/4_nim_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/4_mid.fasta
 5_nim,2022-02-11,,1,data/ANONYMIZED/Nimagen/5_nim_R1.fastq.gz,data/ANONYMIZED/Nimagen/5_nim_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/5_mid.fasta
-6_nim,2022-02-11,,1,data/ANONYMIZED/Nimagen/6_nim_R1.fastq.gz,data/ANONYMIZED/Nimagen/6_nim_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/6_mid.fasta
 7_nim,2022-02-11,,1,data/ANONYMIZED/Nimagen/7_nim_R1.fastq.gz,data/ANONYMIZED/Nimagen/7_nim_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/7_beg.fasta;data/SANGER/ANONYMIZED/7_mid.fasta
 8_nim,2022-02-11,,1,data/ANONYMIZED/Nimagen/8_nim_R1.fastq.gz,data/ANONYMIZED/Nimagen/8_nim_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/8_beg.fasta;data/SANGER/ANONYMIZED/8_mid.fasta
 9_nim,2022-02-11,,1,data/ANONYMIZED/Nimagen/9_nim_R1.fastq.gz,data/ANONYMIZED/Nimagen/9_nim_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/9_beg.fasta;data/SANGER/ANONYMIZED/9_mid.fasta
@@ -59,7 +58,6 @@ sample_name,date,seq_summary,is_amplicon_data,fq1,fq2,fast5_pass,fastq_pass,tech
 3_ill,2022-02-11,,1,data/ANONYMIZED/Illumina/3_ill_R1.fastq.gz,data/ANONYMIZED/Illumina/3_ill_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/3_mid.fasta
 4_ill,2022-02-11,,1,data/ANONYMIZED/Illumina/4_ill_R1.fastq.gz,data/ANONYMIZED/Illumina/4_ill_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/4_mid.fasta
 5_ill,2022-02-11,,1,data/ANONYMIZED/Illumina/5_ill_R1.fastq.gz,data/ANONYMIZED/Illumina/5_ill_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/5_mid.fasta
-6_ill,2022-02-11,,1,data/ANONYMIZED/Illumina/6_ill_R1.fastq.gz,data/ANONYMIZED/Illumina/6_ill_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/6_mid.fasta
 7_ill,2022-02-11,,1,data/ANONYMIZED/Illumina/7_ill_R1.fastq.gz,data/ANONYMIZED/Illumina/7_ill_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/7_beg.fasta;data/SANGER/ANONYMIZED/7_mid.fasta
 8_ill,2022-02-11,,1,data/ANONYMIZED/Illumina/8_ill_R1.fastq.gz,data/ANONYMIZED/Illumina/8_ill_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/8_beg.fasta;data/SANGER/ANONYMIZED/8_mid.fasta
 9_ill,2022-02-11,,1,data/ANONYMIZED/Illumina/9_ill_R1.fastq.gz,data/ANONYMIZED/Illumina/9_ill_R2.fastq.gz,,,illumina,data/SANGER/ANONYMIZED/9_beg.fasta;data/SANGER/ANONYMIZED/9_mid.fasta
@@ -114,7 +112,6 @@ sample_name,date,seq_summary,is_amplicon_data,fq1,fq2,fast5_pass,fastq_pass,tech
 3_ont,2022-02-11,data/RAW/ONT_batch2/sequencing_summary.txt,1,data/ANONYMIZED/Nanopore/3_ont.fastq.gz,,data/RAW/ONT_batch2/fast5_pass/barcode18,data/RAW/ONT_batch2/fastq_pass/barcode18,ont,data/SANGER/ANONYMIZED/3_mid.fasta
 4_ont,2022-02-11,data/RAW/ONT_batch2/sequencing_summary.txt,1,data/ANONYMIZED/Nanopore/4_ont.fastq.gz,,data/RAW/ONT_batch2/fast5_pass/barcode02,data/RAW/ONT_batch2/fastq_pass/barcode02,ont,data/SANGER/ANONYMIZED/4_mid.fasta
 5_ont,2022-02-11,data/RAW/ONT_batch2/sequencing_summary.txt,1,data/ANONYMIZED/Nanopore/5_ont.fastq.gz,,data/RAW/ONT_batch2/fast5_pass/barcode03,data/RAW/ONT_batch2/fastq_pass/barcode03,ont,data/SANGER/ANONYMIZED/5_mid.fasta
-6_ont,2022-02-11,data/RAW/ONT_batch2/sequencing_summary.txt,1,data/ANONYMIZED/Nanopore/6_ont.fastq.gz,,data/RAW/ONT_batch2/fast5_pass/barcode15,data/RAW/ONT_batch2/fastq_pass/barcode15,ont,data/SANGER/ANONYMIZED/6_mid.fasta
 7_ont,2022-02-11,data/RAW/ONT_batch0/sequencing_summary.txt,1,data/ANONYMIZED/Nanopore/7_ont.fastq.gz,,data/RAW/ONT_batch0/fast5_pass/barcode03,data/RAW/ONT_batch0/fastq_pass/barcode03,ont,data/SANGER/ANONYMIZED/7_beg.fasta;data/SANGER/ANONYMIZED/7_mid.fasta
 8_ont,2022-02-11,data/RAW/ONT_batch0/sequencing_summary.txt,1,data/ANONYMIZED/Nanopore/8_ont.fastq.gz,,data/RAW/ONT_batch0/fast5_pass/barcode01,data/RAW/ONT_batch0/fastq_pass/barcode01,ont,data/SANGER/ANONYMIZED/8_beg.fasta;data/SANGER/ANONYMIZED/8_mid.fasta
 9_ont,2022-02-11,data/RAW/ONT_batch0/sequencing_summary.txt,1,data/ANONYMIZED/Nanopore/9_ont.fastq.gz,,data/RAW/ONT_batch0/fast5_pass/barcode05,data/RAW/ONT_batch0/fastq_pass/barcode05,ont,data/SANGER/ANONYMIZED/9_beg.fasta;data/SANGER/ANONYMIZED/9_mid.fasta

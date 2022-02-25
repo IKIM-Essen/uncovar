@@ -1,4 +1,5 @@
 import sys
+from turtle import color
 
 import altair as alt
 import pandas as pd
@@ -26,21 +27,6 @@ metrics = pd.read_csv(snakemake.input[0], sep="\t")
 
 metrics.columns = [col.replace(".", "-") for col in metrics.columns]
 
-value_vars = ["METRIC-Recall", "METRIC-Precision"]
-id_vars = metrics.columns.tolist()
-
-id_vars.remove("Unnamed: 0")
-
-for value_var in value_vars:
-    id_vars.remove(value_var)
-
-metrics = metrics.melt(
-    id_vars=id_vars, value_vars=value_vars, var_name="Metric", value_name="Value"
-)
-
-# metrics.columns = [col.removeprefix("METRIC-") for col in metrics.columns]
-metrics["Metric"] = metrics["Metric"].str.removeprefix("METRIC-")
-
 for key, value in WORKFLOWS.items():
     metrics["Workflow"] = metrics["Workflow"].str.replace(key, value)
 
@@ -50,26 +36,101 @@ for key, value in PLATTFORM.items():
 metrics["Workflow"] = metrics["Workflow"] + " (" + metrics["Mode"].fillna("") + ")"
 metrics["Workflow"] = metrics["Workflow"].str.removesuffix(" ()")
 
-bars = (
-    alt.Chart(metrics)
-    .mark_bar()
-    .encode(
-        alt.X("mean(Value):Q"), alt.Y("Workflow:N", title=None), alt.Color("Type:N")
+metrics.drop(
+    columns=[
+        "METRIC-Recall",
+        "METRIC-Precision",
+        "METRIC-Frac_NA",
+        "METRIC-F1_Score",
+        "TRUTH-TOTAL-TiTv_ratio",
+        "QUERY-TOTAL-TiTv_ratio",
+        "TRUTH-TOTAL-het_hom_ratio",
+        "QUERY-TOTAL-het_hom_ratio",
+        "Unnamed: 0",
+    ],
+    inplace=True,
+)
+
+metrics = metrics.groupby(by=["Workflow", "Platform", "Type"]).sum()
+metrics["Recall"] = metrics["TRUTH-TP"] / (metrics["TRUTH-TP"] + metrics["TRUTH-FN"])
+metrics["Precision"] = metrics["TRUTH-TP"] / (metrics["TRUTH-TP"] + metrics["QUERY-FP"])
+metrics.reset_index(inplace=True)
+
+value_vars = ["Recall", "Precision"]
+
+id_vars = metrics.columns.tolist()
+for value_var in value_vars:
+    id_vars.remove(value_var)
+
+metrics = metrics.melt(id_vars=id_vars, value_vars=value_vars, var_name="Metric")
+
+
+# SNP           SNP or MNP variants. We count single nucleotides that have changed
+# INDEL         Indels and complex variants
+# TRUTH.TOTAL	Total number of truth variants
+# TRUTH.TP	    Number of true-positive calls in truth representation (counted via the truth sample column)
+# TRUTH.FN	    Number of false-negative calls = calls in truth without matching query call
+# QUERY.TOTAL	Total number of query calls
+# QUERY.TP	    Number of true positive calls in query representation (counted via the query sample column)
+# QUERY.FP	    Number of false-positive calls in the query file (mismatched query calls within the confident regions)
+# QUERY.UNK	    Number of query calls outside the confident regions
+# FP.gt	        Number of genotype mismatches (alleles match, but different zygosity)
+# FP.al	        Number of allele mismatches (variants matched by position and not by haplotype)
+
+# Recall = TP/(TP+FN)
+# Precision = TP/(TP+FP)
+# Frac_NA = UNK/total(query)
+# F1_Score = 2 * Precision * Recall / (Precision + Recall)
+
+
+# metrics["Text"] = f'TP:' + metrics["TRUTH-TP"].astype(str)
+
+print(metrics)
+
+
+def barplot(platform):
+    return (
+        alt.Chart()
+        .mark_bar()
+        .encode(
+            alt.X("value:Q", title=None),
+            alt.Y("Metric:N", title=None),
+            alt.Color("Metric:N", legend=None),
+        )
     )
-)
 
-error_bars = (
-    alt.Chart()
-    .mark_errorbar(extent="ci")
-    .encode(
-        alt.X("Value:Q"),
-        alt.Y("Workflow:N"),
+
+def plot_numbers(platform):
+    return (
+        alt.Chart()
+        .mark_text(
+            color="black",
+            align="left",
+            baseline="middle",
+            dx=4,
+        )
+        .encode(
+            alt.X("value:Q"),
+            alt.Y("Metric:N", title=None),
+            alt.Text("value:Q", format=".2f"),
+        )
     )
+
+
+def faceted(data, platform):
+    chart = barplot(platform) + plot_numbers(platform)
+    return chart.facet(
+        row=alt.Row(
+            "Workflow:N", title=None, header=alt.Header(labelAngle=0, labelAlign="left")
+        ),
+        column=alt.Column("Type:N", title=f"Variant Calls on {platform} Workflows"),
+        data=data,
+    )
+
+
+ill = metrics.loc[metrics["Platform"] == "Illumina"]
+ont = metrics.loc[metrics["Platform"] == "Nanopore"]
+
+alt.vconcat(faceted(ill, "Illumina"), faceted(ont, "Nanopore"), data=metrics).save(
+    snakemake.output[0]
 )
-
-plot = alt.layer(bars, error_bars, data=metrics).facet(
-    column="Platform:N", row="Metric:N"
-)
-
-
-plot.save(snakemake.output[0])

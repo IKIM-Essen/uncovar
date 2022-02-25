@@ -53,8 +53,8 @@ rule normalize_calls:
         genome_index="resources/genomes/main.fasta.fai",
     output:
         "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
-    params:
-        extra=lambda w, input: f"--atomize -f {input.genome} --check-ref w --rm-dup exact",
+    params:  #TODO: Add --atomize back in. See https://github.com/samtools/bcftools/issues/1668
+        extra=lambda w, input: f"-f {input.genome} --check-ref w --rm-dup exact",
     log:
         "logs/normalize-calls/{workflow}/{sample}.log",
     conda:
@@ -130,8 +130,8 @@ rule agg_happy:
     conda:
         "../envs/python.yaml"
     params:
-        metadata=get_benchmark_path("{workflow},{sample}"),
-        platforms=get_benchmark_platforms,
+        metadata=get_benchmark_path("{workflow},{sample}", remove="sanger"),
+        platforms=get_benchmark_platforms(remove="sanger"),
     script:
         "../scripts/agg_happy.py"
 

@@ -230,16 +230,25 @@ def get_benchmark_path(path, remove=None):
     return inner_get_benchmark_path
 
 
-def get_benchmark_platforms(wildcards):
-    return ["nanopore"] * len(
-        get_benchmark_paths_by_tech(
-            "{workflow},{sample}", "nanopore", get_nanopore_samples(wildcards)
+def get_benchmark_platforms(remove=None):
+    def inner(wildcards):
+        return ["nanopore"] * len(
+            get_benchmark_paths_by_tech(
+                "{workflow},{sample}",
+                "nanopore",
+                get_nanopore_samples(wildcards),
+                remove,
+            )
+        ) + ["illumina"] * len(
+            get_benchmark_paths_by_tech(
+                "{workflow},{sample}",
+                "illumina",
+                get_illumina_samples(wildcards),
+                remove,
+            )
         )
-    ) + ["illumina"] * len(
-        get_benchmark_paths_by_tech(
-            "{workflow},{sample}", "illumina", get_illumina_samples(wildcards)
-        )
-    )
+
+    return inner
 
 
 def get_workflow_output(wildcards):
