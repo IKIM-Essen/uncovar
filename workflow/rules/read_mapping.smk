@@ -60,6 +60,7 @@ rule map_reads:
     threads: 8
     wrapper:
         "0.69.0/bio/bwa/mem"
+        # "v1.1.0/bio/bwa/mem"
 
 
 rule mark_duplicates:
