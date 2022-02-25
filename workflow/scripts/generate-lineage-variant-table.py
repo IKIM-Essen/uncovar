@@ -16,8 +16,16 @@ import pysam
 
 def phred_to_prob(phred):
     if phred is None:
-        return 0
+        return pd.NA
     return 10 ** (-phred / 10)
+
+
+# np.prod returns 1's as values for a pd series with NaN's. A list would return NaN's
+def prod_prob_not_present(probs):
+    if pd.isna(probs).any():
+        return pd.NA
+    else:
+        return np.prod(probs)
 
 
 def has_numbers(inputString):
@@ -60,9 +68,12 @@ with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
         if "SIGNATURES" in record.info:
             signatures = record.info.get("SIGNATURES", ("#ERROR0",))
             vaf = record.samples[0]["AF"][0]
+            dp = record.samples[0]["DP"]
             prob_not_present = phred_to_prob(
                 record.info["PROB_ABSENT"][0]
             ) + phred_to_prob(record.info["PROB_ARTIFACT"][0])
+            if pd.isna(prob_not_present):
+                vaf = pd.NA
             lineages = record.info["LINEAGES"]
             for signature in signatures:
                 # generate df with all signatures + VAF and Prob_not_present from calculation
@@ -70,6 +81,7 @@ with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
                     {
                         "Mutations": signature,
                         "Frequency": vaf,
+                        "ReadDepth": dp,
                         "Prob_not_present": prob_not_present,
                     },
                     ignore_index=True,
@@ -85,7 +97,7 @@ with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
 
 # aggregate both dataframes by summing up repeating rows for VAR (maximum=1) and multiply Prob_not_present
 variants_df = variants_df.groupby(["Mutations"]).agg(
-    func={"Frequency": lambda x: min(sum(x), 1.0), "Prob_not_present": np.prod},
+    func={"Frequency": lambda x: min(sum(x), 1.0), "Prob_not_present": prod_prob_not_present, "ReadDepth": np.min},
     axis=1,
 )
 
@@ -157,11 +169,9 @@ lineages_row_df = pd.DataFrame(
 variants_df.reset_index(inplace=True)
 variants_df = pd.concat([jaccard_row, variants_df])
 variants_df = pd.concat([lineages_row_df, variants_df])
-all_columns = variants_df.columns
-first_columns = ["Mutations", "Probability", "Frequency"]
-rest_columns = [item for item in all_columns if item not in first_columns]
 
-variants_df = variants_df.round({"Probability": 5, "Frequency": 5})
+
+variants_df = variants_df.round({"Probability": 2, "Frequency": 2})
 variants_df.set_index("Mutations", inplace=True)
 variants_df.sort_values(
     by="Similarity", axis=1, na_position="first", ascending=False, inplace=True
@@ -171,8 +181,8 @@ variants_df.rename(
     columns={
         x: y
         for x, y in zip(
-            list(variants_df.columns)[7:],
-            rename_enumeration(len(list(variants_df.columns)[7:])),
+            list(variants_df.columns)[8:],
+            rename_enumeration(len(list(variants_df.columns)[8:])),
         )
     },
     errors="raise",
@@ -208,8 +218,13 @@ variants_df.drop(
     ],
     inplace=True,
 )
+all_columns = variants_df.columns
+first_columns = ["Probability", "Frequency", "ReadDepth"]
+rest_columns = [item for item in all_columns if item not in first_columns]
+variants_df = variants_df[[*first_columns, *rest_columns]]
+
 # drop other lineages, top 10 only
-variants_df.drop(variants_df.columns[12:], axis=1, inplace=True)
+variants_df.drop(variants_df.columns[13:], axis=1, inplace=True)
 
 # output variant_df
 variants_df.to_csv(snakemake.output.variant_table, index=True, sep=",")
