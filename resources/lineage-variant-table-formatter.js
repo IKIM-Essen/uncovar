@@ -101,12 +101,32 @@
     }
   },
   Frequency: function (vaf) {
-    var lighting = (0.9 - parseFloat(vaf) * 0.4) * 100;
-    return `<span class="badge p-0 m-1"><span class="p-1 rounded" style="background:hsl(190, 92%, ${lighting}%);">${vaf}</span></span>`;
+    vaf = parseFloat(vaf)
+    if (!isNaN(vaf)) {
+      var lighting = (0.9 - vaf * 0.4) * 100;
+      if (vaf < 0.1) {
+        vaf = vaf.toExponential(2)
+      } else {
+        vaf = vaf.toFixed(2)
+      }
+      return `<span class="badge p-0 m-1"><span class="p-1 rounded" style="background:hsl(190, 92%, ${lighting}%);">${vaf}</span></span>`;
+    } else {
+      return "&nbsp;"
+    }
   },
   Probability: function (prob) {
-    var lighting = (0.9 - parseFloat(prob) * 0.4) * 100;
-    return `<span class="badge p-0 m-1"><span class="p-1 rounded" style="background:hsl(138, 72%, ${lighting}%);">${prob}</span></span>`;
+    prob = parseFloat(prob)
+    if (!isNaN(prob)) {
+      var lighting = (0.9 - prob * 0.4) * 100;
+      if (prob < 0.1) {  
+        prob = prob.toExponential(2)
+      } else {
+        prob = prob.toFixed(2)
+      }
+      return `<span class="badge p-0 m-1"><span class="p-1 rounded" style="background:hsl(138, 72%, ${lighting}%);">${prob}</span></span>`;
+    } else {
+      return "&nbsp;"
+    }
   },
   ReadDepth: function (depth) {
     depth = parseInt(depth)
@@ -116,6 +136,8 @@
       } else {
         return `<span class="badge p-0 m-1"><span class="p-1 rounded" style="background:#24DC5B;">${depth}</span></span>`;
       }
+    } else {
+      return "&nbsp;"
     }
   },
   "lineage helper": function (value) {
