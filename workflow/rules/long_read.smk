@@ -45,49 +45,42 @@ rule nanofilt:
     conda:
         "../envs/nanofilt.yaml"
     shell:
-        "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 600 {input} > {output} 2> {log}"  # --maxlength 700
+        "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 700 {input} > {output} 2> {log}"
 
 
-rule convert2fasta:
-    input:
-        "results/{date}/filtered/nanofilt/{sample}.fastq",
-    output:
-        "results/{date}/filtered/nanofilt/{sample}.fasta",
-    conda:
-        "../envs/seqtk.yaml"
-    shell:
-        "seqtk seq -A  {input} > {output}"
-
-
-rule map_for_capping:
-    input:
-        reads="results/{date}/filtered/nanofilt/{sample}.fasta",
-        reference="resources/genomes/main.fasta",
-    output:
-        "results/{date}/minimappings/coverage/{sample}.paf",
-    conda:
-        "../envs/minimap2.yaml"
-    shell:
-        "minimap2 -x map-ont {input.reference} {input.reads} -o {output} --secondary=no"
-
-
-rule cap_cov_amp:
+rule downsample_and_trim_raw:
     input:
         primer="/home/simon/uncovar/.tests/resources/nCoV-2019.primer.bed",
-        mappings="results/{date}/minimappings/coverage/{sample}.paf",
         reads="results/{date}/filtered/nanofilt/{sample}.fastq",
+        ref_genome="resources/genomes/main.fasta",
     output:
-        "results/{date}/normalize_reads/{sample}_cap.fasta",
-    script:
-        "../scripts/amp_covcap_sampler.py"
+        "results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.fasta",
+        "results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.clip.fasta",
+    params:
+        outdir="results/{date}/norm_trim_raw_reads/{sample}",
+    log:
+        "results/{date}/norm_trim_raw_reads/{sample}/notramp.log",
+    conda:
+        "../envs/notramp.yaml"
+    shell:
+        "notramp -a -r {input.reads} -p {input.primer} -g {input.ref_genome} -o {params.outdir)"
+
+
+# rule medaka_consensus_reference:
+use rule assembly_polishing_ont as medaka_consensus_reference with:
+    input:
+        # Don´t ever use corrected reads as input for medaka, it is supposed to polish with raw-reads!
+        fasta="results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.clip.fasta",
+        reference="resources/genomes/main.fasta",
+    output:
+        "results/{date}/consensus/medaka/{sample}/consensus.fasta",
 
 
 rule canu_correct:
     input:
-        # "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta",
-        "results/{date}/normalize_reads/{sample}_cap.fasta",
+        "results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.fasta",
     output:
-        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
     log:
         "logs/{date}/canu/correct/{sample}.log",
     params:
@@ -116,104 +109,31 @@ rule canu_correct:
         ovbConcurrency={params.concurrency} \
         ovsConcurrency={params.concurrency} \
         oeaConcurrency={params.concurrency}
-        )
+        && gzip -d {output}.gz)
         2> {log}
         """  # 2>&1
 
 
-# Intermediate number of threads (4-8) achieve best speedup of a+btrimming.
-# For large files 8 threads help accelerate some, small files are processed faster with 4 threads.
-rule porechop_adapter_barcode_trimming:
+rule clip_adbc_corrected:
     input:
-        # "results/{date}/normalize_reads/{sample}_cap.fasta",
-        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
-    output:
-        temp("results/{date}/corrected/trimmed/{sample}.corr.trim.fasta"),
-    #    "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta",
-    conda:
-        "../envs/porechop.yaml"
-    log:
-        "logs/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.log",
-    threads: 8
-    shell:
-        "porechop -i {input} -o {output} -t {threads} -v 1 > {log} 2>&1"
-
-
-# rule map_corr:
-#     input:
-#         reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
-#         reference="resources/genomes/main.fasta",
-#     output:
-#         alignments="results/{date}/minimappings/corrected/{sample}.paf",
-#         dcreads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
-#     conda:
-#         "../envs/minimap2.yaml"
-#     shell:
-#         """
-#         minimap2 -x map-ont {input.reference} {input.reads} -o {output.alignments} --secondary=no &&
-#         gzip -d {input.reads}
-#         """
-
-
-# rule trim_primers_corrected:
-#     input:
-#         # reads=get_fastqs,
-#         primer="/home/simon/uncovar/.tests/resources/nCoV-2019.primer.bed",
-#         mappings="results/{date}/minimappings/corrected/{sample}.paf",
-#         reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
-#     output:
-#         "results/{date}/corrected/{sample}/{sample}.correctedReads.primerclip.fasta",
-#     script:
-#         "../scripts/map_trim.py"
-
-
-rule map_raw:
-    input:
-        reads="results/{date}/normalize_reads/{sample}_cap.fasta",
-        reference="resources/genomes/main.fasta",
-    output:
-        alignments="results/{date}/minimappings/trim_raw/{sample}.paf",
-        # dcreads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
-    conda:
-        "../envs/minimap2.yaml"
-    shell:
-        """
-        minimap2 -x map-ont {input.reference} {input.reads} -o {output.alignments} --secondary=no
-        """
-
-
-rule trim_primers_raw:
-    input:
-        # reads=get_fastqs,
         primer="/home/simon/uncovar/.tests/resources/nCoV-2019.primer.bed",
-        mappings="results/{date}/minimappings/trim_raw/{sample}.paf",
-        reads="results/{date}/normalize_reads/{sample}_cap.fasta",
+        reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
+        ref_genome="resources/genomes/main.fasta",
     output:
-        "results/{date}/raw/trimmed/{sample}.raw.clip.fasta",
-    script:
-        "../scripts/map_trim.py"
+        "results/{date}/norm_trim_corr_reads/{sample}/{sample}.cap.clip.fasta",
+    params:
+        outdir="results/{date}/norm_trim_corr_reads/{sample}",
+    log:
+        "results/{date}/norm_trim_corr_reads/{sample}/notramp.log",
+    conda:
+        "../envs/notramp.yaml"
+    shell:
+        "notramp -t --incl_prim -r {input.reads} -p {input.primer} -g {input.ref_genome} -o {params.outdir)"
 
 
-# rule medaka_consensus_reference:
-use rule assembly_polishing_ont as medaka_consensus_reference with:
-    input:
-        # Don´t ever use corrected reads as input for medaka, it is supposed to polish with raw-reads!
-        # fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
-        # fasta="results/{date}/filtered/nanofilt/{sample}.fasta",
-        # fasta="results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta",
-        fasta="results/{date}/raw/trimmed/{sample}.raw.clip.fasta",
-        reference="resources/genomes/main.fasta",
-    output:
-        # "results/{date}/consensus/medaka/{sample}/{sample}.fasta",
-        "results/{date}/consensus/medaka/{sample}/consensus.fasta",
-        # "results/{date}/polishing/medaka/{sample}/{sample}.consensus.fasta",
-
-
-# polish consensus
 rule bcftools_consensus_ont:
     input:
         fasta="results/{date}/consensus/medaka/{sample}/consensus.fasta",
-        # fasta="results/{date}/consensus/medaka/{sample}/{sample}.fasta",
         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf",  # clonal vs. subclonal?
         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf.csi",
     output:
