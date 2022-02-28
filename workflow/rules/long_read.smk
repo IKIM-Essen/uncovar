@@ -111,7 +111,7 @@ rule canu_correct:
         oeaConcurrency={params.concurrency})
         gzip -d {output}.gz
         2> {log}
-        """  # 2>&1
+        """
 
 
 rule clip_adbc_corrected:

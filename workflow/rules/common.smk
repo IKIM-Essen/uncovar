@@ -1314,9 +1314,7 @@ def get_trimmed_reads(wildcards):
             "results/{{{{date}}}}/trimmed/fastp-pe/{{sample}}.{read}.fastq.gz",
             read=[1, 2],
         ),
-        # ont_pattern="results/{{date}}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq.gz",
         ont_pattern="results/{{date}}/corrected/{sample}/{sample}.correctedReads.fasta",
-        # ont_pattern="results/{date}/raw/trimmed/{sample}.raw.trim.fasta"
         ion_torrent_pattern="results/{{date}}/trimmed/fastp-se/{sample}.fastq.gz",
     )
 
@@ -1410,12 +1408,8 @@ def get_reads_by_stage(wildcards):
         return get_fastqs(wildcards)
     elif wildcards.stage == "trimmed":
         return "results/{date}/norm_trim_corr_reads/{sample}/{sample}.correctedReads.clip.fasta"
-    # return "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fasta"
-    # return "results/{date}/corrected/trimmed/{sample}.corr.trim.fasta"
     elif wildcards.stage == "clipped":
         return "results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.clip.fasta"
-    # return "results/{date}/trimmed/porechop/primer_clipped/{sample}.fasta"
-    # "results/{date}/raw/trimmed/{sample}.raw.clip.fasta"
     elif wildcards.stage == "filtered":
         return "results/{date}/trimmed/nanofilt/{sample}.fasta"
 
