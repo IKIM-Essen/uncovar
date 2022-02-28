@@ -1,4 +1,6 @@
 channels:
   - simakro
+  - bioconda
 dependencies:
   - notramp
+  - minimap2

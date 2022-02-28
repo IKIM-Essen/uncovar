@@ -63,7 +63,7 @@ rule downsample_and_trim_raw:
     conda:
         "../envs/notramp.yaml"
     shell:
-        "notramp -a -r {input.reads} -p {input.primer} -g {input.ref_genome} -o {params.outdir)"
+        "notramp -a -r {input.reads} -p {input.primer} -g {input.ref_genome} -o {params.outdir}"
 
 
 # rule medaka_consensus_reference:
@@ -108,8 +108,8 @@ rule canu_correct:
         redConcurrency={params.concurrency} redThreads={params.concurrency} \
         ovbConcurrency={params.concurrency} \
         ovsConcurrency={params.concurrency} \
-        oeaConcurrency={params.concurrency}
-        && gzip -d {output}.gz)
+        oeaConcurrency={params.concurrency})
+        gzip -d {output}.gz
         2> {log}
         """  # 2>&1
 
@@ -120,7 +120,7 @@ rule clip_adbc_corrected:
         reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
         ref_genome="resources/genomes/main.fasta",
     output:
-        "results/{date}/norm_trim_corr_reads/{sample}/{sample}.cap.clip.fasta",
+        "results/{date}/norm_trim_corr_reads/{sample}/{sample}.clip.fasta",
     params:
         outdir="results/{date}/norm_trim_corr_reads/{sample}",
     log:
@@ -128,7 +128,7 @@ rule clip_adbc_corrected:
     conda:
         "../envs/notramp.yaml"
     shell:
-        "notramp -t --incl_prim -r {input.reads} -p {input.primer} -g {input.ref_genome} -o {params.outdir)"
+        "notramp -t --incl_prim -r {input.reads} -p {input.primer} -g {input.ref_genome} -o {params.outdir}"
 
 
 rule bcftools_consensus_ont:

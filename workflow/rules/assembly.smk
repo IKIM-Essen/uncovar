@@ -179,7 +179,7 @@ rule assembly_polishing_illumina:
 # polish ont de novo assembly
 rule assembly_polishing_ont:
     input:
-        fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
         reference="results/{date}/contigs/ordered/{sample}.fasta",
     output:
         report(
