@@ -179,6 +179,6 @@ checkpoint get_lineages_for_non_gisaid_based_calling:
     log:
         "logs/{date}/get_lineages_for_non_gisaid_based_calling.log",
     conda:
-        "../envs/pandas.yaml"
+        "../envs/python.yaml"
     script:
         "../scripts/get-strains-from-genbank.py"
