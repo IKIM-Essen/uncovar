@@ -50,7 +50,7 @@ rule nanofilt:
 
 rule downsample_and_trim_raw:
     input:
-        primer=".tests/resources/nCoV-2019.primer.bed",
+        primer=get_artic_primer,
         reads="results/{date}/filtered/nanofilt/{sample}.fastq",
         ref_genome="resources/genomes/main.fasta",
     output:
@@ -119,7 +119,7 @@ rule canu_correct:
 
 rule clip_adbc_corrected:
     input:
-        primer=".tests/resources/nCoV-2019.primer.bed",
+        primer=get_artic_primer,
         reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
         ref_genome="resources/genomes/main.fasta",
     output:
