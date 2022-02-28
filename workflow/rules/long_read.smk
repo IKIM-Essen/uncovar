@@ -80,7 +80,10 @@ rule canu_correct:
     input:
         "results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.fasta",
     output:
-        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
+        temp(directory("results/{date}/corrected/{sample}/correction")),
+        temp(directory("results/{date}/corrected/{sample}/{sample}.seqStore")),
+        corr_gz="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        corr_fa="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
     log:
         "logs/{date}/canu/correct/{sample}.log",
     params:
@@ -109,7 +112,7 @@ rule canu_correct:
         ovbConcurrency={params.concurrency} \
         ovsConcurrency={params.concurrency} \
         oeaConcurrency={params.concurrency})
-        gzip -d {output}.gz
+        gzip -d {output.corr_gz}
         2> {log}
         """
 
