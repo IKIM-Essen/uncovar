@@ -77,6 +77,9 @@ rule stratify:
         "bedtools intersect -b {input.regions} -a <(bcftools view {input.variants}) -wa -f 1.0 -header | bcftools view -Oz > {output} 2> {log}"
 
 
+# TODO: add exclusion of samples with multiallelic calls
+
+
 rule bcftools_index:
     input:
         "results/benchmarking/{infix}.vcf.gz",
@@ -142,6 +145,9 @@ rule agg:
             "results/benchmarking/workflow-comparison.{source}.tsv",
             source=["stratified", "normalized-variants"],
         ),
+
+
+# TODO: add propper calc of PR and RC, see benchmarking
 
 
 rule plot_plot_precision_recall:
