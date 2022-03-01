@@ -162,8 +162,6 @@ metrics["Mismatches"].replace(
     inplace=True,
 )
 
-metrics.to_csv(snakemake.output.data, sep="\t", index=False)
-
 
 def plot_mismatches(data, platform):
     return (
