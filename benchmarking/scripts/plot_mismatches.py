@@ -5,7 +5,7 @@ from turtle import color
 import altair as alt
 import pandas as pd
 
-# sys.stderr = open(snakemake.log[0], "w")
+sys.stderr = open(snakemake.log[0], "w")
 
 
 SUFFIXES = ["-medaka", "-nanopolish"]
@@ -52,21 +52,6 @@ metrics.drop(
     inplace=True,
 )
 
-metrics = metrics.groupby(by=["Workflow", "Platform", "Type"]).sum()
-metrics["Recall"] = metrics["TRUTH-TP"] / (metrics["TRUTH-TP"] + metrics["TRUTH-FN"])
-metrics["Precision"] = metrics["TRUTH-TP"] / (metrics["TRUTH-TP"] + metrics["QUERY-FP"])
-metrics.reset_index(inplace=True)
-
-print(metrics)
-
-value_vars = ["Recall", "Precision"]
-
-id_vars = metrics.columns.tolist()
-for value_var in value_vars:
-    id_vars.remove(value_var)
-
-metrics = metrics.melt(id_vars=id_vars, value_vars=value_vars, var_name="Metric")
-
 metrics = metrics.drop(
     columns=[
         "TRUTH-TOTAL",
@@ -74,8 +59,6 @@ metrics = metrics.drop(
         "TRUTH-FN",
         "QUERY-TOTAL",
         "QUERY-FP",
-        "Metric",
-        "value",
         "QUERY-UNK",
     ]
 ).melt(

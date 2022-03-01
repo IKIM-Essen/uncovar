@@ -4,7 +4,7 @@ from turtle import color
 import altair as alt
 import pandas as pd
 
-# sys.stderr = open(snakemake.log[0], "w")
+sys.stderr = open(snakemake.log[0], "w")
 
 
 SUFFIXES = ["-medaka", "-nanopolish"]
@@ -75,8 +75,6 @@ metrics["T"] = metrics["TP_no_gt"] + metrics["TRUTH-FN"]
 metrics["Precision"] = metrics["TP_no_gt"] / metrics["QUERY-TOTAL"]
 metrics["Recall"] = metrics["TP_no_gt"] / (metrics["T"])
 
-print(metrics)
-
 metrics.reset_index(inplace=True)
 
 value_vars = ["Recall", "Precision"]
@@ -103,8 +101,6 @@ metrics["Numbers"] = metrics.apply(
 )
 
 metrics.to_csv(snakemake.output.data, sep="\t", index=False)
-
-print(metrics)
 
 
 def barplot(platform):
