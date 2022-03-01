@@ -1,4 +1,5 @@
 import sys
+from os import sep
 from turtle import color
 
 import altair as alt
@@ -56,6 +57,8 @@ metrics["Recall"] = metrics["TRUTH-TP"] / (metrics["TRUTH-TP"] + metrics["TRUTH-
 metrics["Precision"] = metrics["TRUTH-TP"] / (metrics["TRUTH-TP"] + metrics["QUERY-FP"])
 metrics.reset_index(inplace=True)
 
+print(metrics)
+
 value_vars = ["Recall", "Precision"]
 
 id_vars = metrics.columns.tolist()
@@ -63,78 +66,6 @@ for value_var in value_vars:
     id_vars.remove(value_var)
 
 metrics = metrics.melt(id_vars=id_vars, value_vars=value_vars, var_name="Metric")
-
-
-# SNP           SNP or MNP variants. We count single nucleotides that have changed
-# INDEL         Indels and complex variants
-# TRUTH.TOTAL	Total number of truth variants
-# TRUTH.TP	    Number of true-positive calls in truth representation (counted via the truth sample column)
-# TRUTH.FN	    Number of false-negative calls = calls in truth without matching query call
-# QUERY.TOTAL	Total number of query calls
-# QUERY.TP	    Number of true positive calls in query representation (counted via the query sample column)
-# QUERY.FP	    Number of false-positive calls in the query file (mismatched query calls within the confident regions)
-# QUERY.UNK	    Number of query calls outside the confident regions
-# FP.gt	        Number of genotype mismatches (alleles match, but different zygosity)
-# FP.al	        Number of allele mismatches (variants matched by position and not by haplotype)
-
-# Recall = TP/(TP+FN)
-# Precision = TP/(TP+FP)
-# Frac_NA = UNK/total(query)
-# F1_Score = 2 * Precision * Recall / (Precision + Recall)
-
-
-# metrics["Text"] = f'TP:' + metrics["TRUTH-TP"].astype(str)
-
-
-metrics.to_csv(snakemake.output.data, sep="\t", index=False)
-
-
-def barplot(platform):
-    return (
-        alt.Chart()
-        .mark_bar()
-        .encode(
-            alt.X("value:Q", title=None),
-            alt.Y("Metric:N", title=None),
-            alt.Color("Metric:N", legend=None),
-        )
-    )
-
-
-def plot_numbers(platform):
-    return (
-        alt.Chart()
-        .mark_text(
-            color="black",
-            align="left",
-            baseline="middle",
-            dx=4,
-        )
-        .encode(
-            alt.X("value:Q"),
-            alt.Y("Metric:N", title=None),
-            alt.Text("value:Q", format=".2f"),
-        )
-    )
-
-
-def faceted(data, platform):
-    chart = barplot(platform) + plot_numbers(platform)
-    return chart.facet(
-        row=alt.Row(
-            "Workflow:N", title=None, header=alt.Header(labelAngle=0, labelAlign="left")
-        ),
-        column=alt.Column("Type:N", title=f"Variant Calls on {platform} Workflows"),
-        data=data,
-    )
-
-
-ill = metrics.loc[metrics["Platform"] == "Illumina"]
-ont = metrics.loc[metrics["Platform"] == "Nanopore"]
-
-alt.vconcat(faceted(ill, "Illumina"), faceted(ont, "Nanopore"), data=metrics).save(
-    snakemake.output.variants
-)
 
 metrics = metrics.drop(
     columns=[
@@ -189,6 +120,8 @@ def plot_mismatches(data, platform):
 ill = metrics.loc[metrics["Platform"] == "Illumina"]
 ont = metrics.loc[metrics["Platform"] == "Nanopore"]
 
+metrics.to_csv(snakemake.output.data, sep="\t", index=False)
+
 alt.vconcat(plot_mismatches(ill, "Illumina"), plot_mismatches(ont, "Nanopore")).save(
-    snakemake.output.mismatches
+    snakemake.output.plot
 )

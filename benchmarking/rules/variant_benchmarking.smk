@@ -147,19 +147,29 @@ rule agg:
         ),
 
 
-# TODO: add propper calc of PR and RC, see benchmarking
-
-
-rule plot_plot_precision_recall:
+rule plot_precision_recall:
     input:
         "results/benchmarking/workflow-comparison.stratified.tsv",
     output:
-        variants="results/benchmarking/workflow-comparison-varaints.svg",
-        mismatches="results/benchmarking/workflow-comparison-mismatches.svg",
-        data="results/benchmarking/workflow-comparison.tsv",
+        plot="results/benchmarking/workflow-comparison-varaints.svg",
+        data="results/benchmarking/workflow-comparison-varaints.tsv",
     log:
-        "logs/plot_plot_precision_recall.log",
+        "logs/plot_precision_recall.log",
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/plot_plot_precision_recall.py"
+        "../scripts/plot_precision_recall.py"
+
+
+rule plot_mismatches:
+    input:
+        "results/benchmarking/workflow-comparison.stratified.tsv",
+    output:
+        plot="results/benchmarking/workflow-comparison-mismatches.svg",
+        data="results/benchmarking/workflow-comparison-mismatches.tsv",
+    log:
+        "logs/plot_mismatches.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot_mismatches.py"
