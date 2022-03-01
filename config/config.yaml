@@ -11,6 +11,8 @@ virus-reference-genome:
 human-genome-download-path:
   - ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.28_GRCh38.p13/GCA_000001405.28_GRCh38.p13_genomic.fna.gz
 
+sending_lab_number: 10259
+
 data-handling:
   # flag for using the following data-handling structure
   # True: data-handling structure is used as shown below
