@@ -48,19 +48,19 @@ rule check_genotype:
 
 rule normalize_calls:
     input:
-        "results/benchmarking/variant-calls/genotyped/{workflow}/{sample}.vcf",
+        vcf="results/benchmarking/variant-calls/genotyped/{workflow}/{sample}.vcf",
         genome="resources/genomes/main.fasta",
         genome_index="resources/genomes/main.fasta.fai",
     output:
         "results/benchmarking/variant-calls/normalized-variants/{workflow}/{sample}.vcf.gz",
-    params:  #TODO: Add --atomize back in. See https://github.com/samtools/bcftools/issues/1668
-        extra=lambda w, input: f"-f {input.genome} --check-ref w --rm-dup exact",
     log:
         "logs/normalize-calls/{workflow}/{sample}.log",
     conda:
         "../envs/tools.yaml"
-    wrapper:
-        "v1.0.0/bio/bcftools/norm"
+    shell:
+        "(bcftools norm --check-ref s  -f {input.genome} {input.vcf} |"
+        " bcftools norm --output-type z -o {output} -f {input.genome} --check-ref w --rm-dup exact --atomize)"
+        "2> {log}"
 
 
 rule stratify:
@@ -148,7 +148,9 @@ rule plot_plot_precision_recall:
     input:
         "results/benchmarking/workflow-comparison.stratified.tsv",
     output:
-        plot="results/benchmarking/workflow-comparison.svg",
+        variants="results/benchmarking/workflow-comparison-varaints.svg",
+        mismatches="results/benchmarking/workflow-comparison-mismatches.svg",
+        data="results/benchmarking/workflow-comparison.tsv",
     log:
         "logs/plot_plot_precision_recall.log",
     conda:

@@ -85,7 +85,8 @@ metrics = metrics.melt(id_vars=id_vars, value_vars=value_vars, var_name="Metric"
 
 # metrics["Text"] = f'TP:' + metrics["TRUTH-TP"].astype(str)
 
-print(metrics)
+
+metrics.to_csv(snakemake.output.data, sep="\t", index=False)
 
 
 def barplot(platform):
@@ -132,5 +133,64 @@ ill = metrics.loc[metrics["Platform"] == "Illumina"]
 ont = metrics.loc[metrics["Platform"] == "Nanopore"]
 
 alt.vconcat(faceted(ill, "Illumina"), faceted(ont, "Nanopore"), data=metrics).save(
-    snakemake.output[0]
+    snakemake.output.variants
+)
+
+metrics = metrics.drop(
+    columns=[
+        "TRUTH-TOTAL",
+        "TRUTH-TP",
+        "TRUTH-FN",
+        "QUERY-TOTAL",
+        "QUERY-FP",
+        "Metric",
+        "value",
+        "QUERY-UNK",
+    ]
+).melt(
+    id_vars=["Workflow", "Platform", "Type"],
+    value_vars=["FP-gt", "FP-al"],
+    var_name="Mismatches",
+    value_name="Number",
+)
+
+metrics["Mismatches"].replace(
+    {
+        "FP-gt": "Genotype",
+        "FP-al": "Allelic",
+    },
+    inplace=True,
+)
+
+metrics.to_csv(snakemake.output.data, sep="\t", index=False)
+
+
+def plot_mismatches(data, platform):
+    return (
+        alt.Chart()
+        .mark_bar()
+        .encode(
+            alt.Y("Number:Q"),
+            alt.X("Mismatches:N", title=None),
+            alt.Color("Mismatches:N"),
+        )
+        + alt.Chart()
+        .mark_text(
+            dy=-5,
+        )
+        .encode(
+            alt.Y("Number:Q"), alt.X("Mismatches:N", title=None), alt.Text("Number:Q")
+        )
+    ).facet(
+        column=alt.Column("Workflow:N", title=f"Variant Calls on {platform} Workflows"),
+        row=alt.Row("Type:N", title=None),
+        data=data,
+    )
+
+
+ill = metrics.loc[metrics["Platform"] == "Illumina"]
+ont = metrics.loc[metrics["Platform"] == "Nanopore"]
+
+alt.vconcat(plot_mismatches(ill, "Illumina"), plot_mismatches(ont, "Nanopore")).save(
+    snakemake.output.mismatches
 )
