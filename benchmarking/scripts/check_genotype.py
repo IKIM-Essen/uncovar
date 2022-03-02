@@ -8,7 +8,10 @@ FILLER_SAMPLE_NAME = "SAMPLE"
 
 
 def copy_record(old_record, new_record):
-    new_record.alleles = old_record.alleles
+    if len(old_record.alleles):
+        new_record.alleles = (old_record.alleles[0], ".")
+    else:
+        new_record.alleles = old_record.alleles
     new_record.chrom = old_record.chrom
     new_record.contig = old_record.contig
     new_record.pos = old_record.pos
@@ -45,6 +48,9 @@ with pysam.VariantFile(snakemake.input[0]) as in_vcf:
 
             for sample in record.samples.keys():
                 print(f"Add GT tag to sample {sample}.", file=sys.stderr)
-                record.samples[sample]["GT"] = (0, 1)
+                if record.alts == (".",):  # deletion
+                    record.samples[sample]["GT"] = (0, 0)
+                else:
+                    record.samples[sample]["GT"] = (0, 1)
 
             out_vcf.write(record)
