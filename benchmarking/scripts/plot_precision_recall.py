@@ -72,8 +72,8 @@ metrics = metrics.groupby(by=["Workflow", "Platform", "Type"]).sum()
 
 metrics["TP_no_gt"] = metrics["QUERY-TOTAL"] - metrics["QUERY-FP"] + metrics["FP-gt"]
 metrics["T"] = metrics["TP_no_gt"] + metrics["TRUTH-FN"]
-metrics["Precision"] = metrics["TP_no_gt"] / metrics["QUERY-TOTAL"]
-metrics["Recall"] = metrics["TP_no_gt"] / (metrics["T"])
+metrics["Precision"] = metrics["TP_no_gt"] / (metrics["TP_no_gt"] + metrics["TRUTH-FN"])
+metrics["Recall"] = metrics["TP_no_gt"] / (metrics["TP_no_gt"] + metrics["QUERY-FP"])
 
 metrics.reset_index(inplace=True)
 
@@ -87,15 +87,19 @@ metrics = metrics.melt(id_vars=id_vars, value_vars=value_vars, var_name="Metric"
 
 
 def get_number(metric, value, tp, qt, t):
-    if metric == "Recall":
-        return f"{int(tp)}/{int(qt)} = {round(value,2)}"
-    elif metric == "Precision":
-        return f"{int(tp)}/{int(t)} = {round(value,2)}"
+    if metric == "Recall":  # TP_no_gt / QUERY-TOTAL
+        return f"{round(value,2)} ({int(tp)}/{int(qt)})"
+    elif metric == "Precision":  # TP_no_gt / T
+        return f"{round(value,2)} ({int(tp)}/{int(t)})"
 
 
 metrics["Numbers"] = metrics.apply(
     lambda row: get_number(
-        row["Metric"], row["value"], row["TP_no_gt"], row["QUERY-TOTAL"], row["T"]
+        metric=row["Metric"],
+        value=row["value"],
+        tp=row["TP_no_gt"],
+        qt=row["QUERY-TOTAL"],
+        t=row["T"],
     ),
     axis=1,
 )

@@ -602,6 +602,10 @@ def get_target_events(wildcards):
 
 def get_control_fdr_input(wildcards):
     if wildcards.reference == "main":
+        if (
+            wildcards.filter == "nofilter"
+        ):  # use directly the annotated output, instead of the filtered one
+            return "results/{date}/annotated-calls/ref~main/{sample}.bcf"
         return "results/{date}/filtered-calls/ref~{reference}/{sample}.{filter}.bcf"
     else:
         # If reference is not main, we are polishing an assembly.
