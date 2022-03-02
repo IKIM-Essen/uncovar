@@ -205,9 +205,13 @@ def get_sanger_files_for_sample(wildcards):
     return pep.sample_table.loc[wildcards.sample]["sanger"].split(";")
 
 
-def get_benchmark_paths_by_tech(path, tech, samples, remove=None):
+def get_benchmark_paths_by_tech(path, tech, samples, remove=None, pop_samples=None):
 
     workflows = list(PIPELINES[tech].keys())
+
+    if pop_samples is not None:
+        samples = samples.tolist()
+        [samples.remove(sample) for sample in pop_samples if sample in samples]
 
     if remove in workflows:
         workflows.remove(remove)
@@ -219,18 +223,18 @@ def get_benchmark_paths_by_tech(path, tech, samples, remove=None):
     )
 
 
-def get_benchmark_path(path, remove=None):
+def get_benchmark_path(path, remove=None, pop_sample=None):
     def inner_get_benchmark_path(wildcards):
         return get_benchmark_paths_by_tech(
-            path, "nanopore", get_nanopore_samples(wildcards), remove
+            path, "nanopore", get_nanopore_samples(wildcards), remove, pop_sample
         ) + get_benchmark_paths_by_tech(
-            path, "illumina", get_illumina_samples(wildcards), remove
+            path, "illumina", get_illumina_samples(wildcards), remove, pop_sample
         )
 
     return inner_get_benchmark_path
 
 
-def get_benchmark_platforms(remove=None):
+def get_benchmark_platforms(remove=None, pop_sample=None):
     def inner(wildcards):
         return ["nanopore"] * len(
             get_benchmark_paths_by_tech(
@@ -238,6 +242,7 @@ def get_benchmark_platforms(remove=None):
                 "nanopore",
                 get_nanopore_samples(wildcards),
                 remove,
+                pop_sample,
             )
         ) + ["illumina"] * len(
             get_benchmark_paths_by_tech(
@@ -245,6 +250,7 @@ def get_benchmark_platforms(remove=None):
                 "illumina",
                 get_illumina_samples(wildcards),
                 remove,
+                pop_sample,
             )
         )
 
@@ -276,3 +282,59 @@ def get_all_outputs(wildcards):
                             )
                         )
     return paths
+
+
+def get_happy_output(path):
+    def inner(wildcards):
+        with checkpoints.get_samples_with_multiallelic_calls.get(
+            source=wildcards.source
+        ).output[0].open() as f:
+            samples_to_exclude = [line.split("\t")[0] for line in f.readlines()]
+
+            samples_to_exclude = list(set(samples_to_exclude))
+
+        return get_benchmark_paths_by_tech(
+            path,
+            "nanopore",
+            get_nanopore_samples(wildcards),
+            "sanger",
+            samples_to_exclude,
+        ) + get_benchmark_paths_by_tech(
+            path,
+            "illumina",
+            get_illumina_samples(wildcards),
+            "sanger",
+            samples_to_exclude,
+        )
+
+    return inner
+
+
+def get_happy_platform_data(remove):
+    def inner(wildcards):
+        with checkpoints.get_samples_with_multiallelic_calls.get(
+            source=wildcards.source
+        ).output[0].open() as f:
+            samples_to_exclude = [line.split("\t")[0] for line in f.readlines()]
+
+            samples_to_exclude = list(set(samples_to_exclude))
+
+        return ["nanopore"] * len(
+            get_benchmark_paths_by_tech(
+                "{workflow},{sample}",
+                "nanopore",
+                get_nanopore_samples(wildcards),
+                remove,
+                samples_to_exclude,
+            )
+        ) + ["illumina"] * len(
+            get_benchmark_paths_by_tech(
+                "{workflow},{sample}",
+                "illumina",
+                get_illumina_samples(wildcards),
+                remove,
+                samples_to_exclude,
+            )
+        )
+
+    return inner

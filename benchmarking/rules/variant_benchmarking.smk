@@ -77,9 +77,6 @@ rule stratify:
         "bedtools intersect -b {input.regions} -a <(bcftools view {input.variants}) -wa -f 1.0 -header | bcftools view -Oz > {output} 2> {log}"
 
 
-# TODO: add exclusion of samples with multiallelic calls
-
-
 rule bcftools_index:
     input:
         "results/benchmarking/{infix}.vcf.gz",
@@ -120,11 +117,32 @@ rule benchmark_variants:
         "v1.0.0/bio/hap.py/hap.py"
 
 
+checkpoint get_samples_with_multiallelic_calls:
+    input:
+        vcfs=get_benchmark_path(
+            "results/benchmarking/variant-calls/{{source}}/{workflow}/{sample}.vcf.gz",
+            remove="sanger",
+        ),
+        index=get_benchmark_path(
+            "results/benchmarking/variant-calls/{{source}}/{workflow}/{sample}.vcf.gz.csi",
+            remove="sanger",
+        ),
+    output:
+        "results/benchmarking/tabels/multiallelic_{source}_calls.tsv",
+    log:
+        "logs/get_samples_with_multiallelic_calls/{source}.log",
+    conda:
+        "../envs/python.yaml"
+    params:
+        metadata=get_benchmark_path("{workflow},{sample}", remove="sanger"),
+    script:
+        "../scripts/get_samples_with_multiallelic_calls.py"
+
+
 rule agg_happy:
     input:
-        get_benchmark_path(
-            "results/benchmarking/happy/{{source}}/sanger-vs-{workflow}/{sample}/report.summary.csv",
-            remove="sanger",
+        get_happy_output(
+            "results/benchmarking/happy/{{source}}/sanger-vs-{workflow}/{sample}/report.summary.csv"
         ),
     output:
         "results/benchmarking/workflow-comparison.{source}.tsv",
@@ -133,8 +151,8 @@ rule agg_happy:
     conda:
         "../envs/python.yaml"
     params:
-        metadata=get_benchmark_path("{workflow},{sample}", remove="sanger"),
-        platforms=get_benchmark_platforms(remove="sanger"),
+        metadata=get_happy_output("{workflow},{sample}"),
+        platforms=get_happy_platform_data(remove="sanger"),
     script:
         "../scripts/agg_happy.py"
 
