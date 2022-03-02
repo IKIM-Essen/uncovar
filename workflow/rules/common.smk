@@ -1301,7 +1301,7 @@ def get_artic_primer(wildcards):
     # TODO add more _adapters.py (not preferred) or
     # add a script to generate them from a link to a bed file.
     # The bed file can be found in the artic repo. Related to #356
-    return "resources/ARTIC_v{}_adapters.py".format(
+    return "resources/ARTIC_v{}_nCoV-2019.primer.bed".format(
         config["preprocessing"]["artic-primer-version"]
     )
 

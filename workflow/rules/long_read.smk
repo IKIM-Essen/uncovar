@@ -57,7 +57,8 @@ rule downsample_and_trim_raw:
         "results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.fasta",
         "results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.clip.fasta",
     params:
-        outdir="results/{date}/norm_trim_raw_reads/{sample}",
+        # outdir="results/{date}/norm_trim_raw_reads/{sample}",
+        outdir=lambda w, output: os.path.dirname(output[0]),
     log:
         "results/{date}/norm_trim_raw_reads/{sample}/notramp.log",
     conda:
