@@ -40,7 +40,7 @@ PIPELINES = {
         # },
         "uncovar": {
             "outdir": [],
-            "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.vcf",
+            "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.nofilter.vcf",
         },
         "sanger": {
             "outdir": [],
@@ -86,7 +86,7 @@ PIPELINES = {
         },
         "uncovar": {
             "outdir": [],
-            "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.vcf",
+            "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.nofilter.vcf",
         },
         "v-pipe": {
             "outdir": [
