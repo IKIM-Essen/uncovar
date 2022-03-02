@@ -1,6 +1,7 @@
 channels:
   - simakro
   - bioconda
+  - conda-forge
 dependencies:
   - notramp =1.0.3
   - minimap2 =2.22
