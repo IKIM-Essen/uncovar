@@ -2,5 +2,5 @@ channels:
   - simakro
   - bioconda
 dependencies:
-  - notramp = 1.0.3
-  - minimap2
+  - notramp =1.0.3
+  - minimap2 =2.22
