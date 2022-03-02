@@ -57,8 +57,7 @@ rule downsample_and_trim_raw:
         "results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.fasta",
         "results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.clip.fasta",
     params:
-        # outdir="results/{date}/norm_trim_raw_reads/{sample}",
-        outdir=lambda w, output: os.path.dirname(output[0]),
+        outdir=get_output_dir,
     log:
         "results/{date}/norm_trim_raw_reads/{sample}/notramp.log",
     conda:
@@ -113,7 +112,7 @@ rule canu_correct:
         ovbConcurrency={params.concurrency} \
         ovsConcurrency={params.concurrency} \
         oeaConcurrency={params.concurrency})
-        gzip -d {output.corr_gz}
+        gzip -d {output.corr_gz} --keep
         > {log} 2>&1
         """
 
@@ -126,7 +125,8 @@ rule clip_adbc_corrected:
     output:
         "results/{date}/norm_trim_corr_reads/{sample}/{sample}.correctedReads.clip.fasta",
     params:
-        outdir="results/{date}/norm_trim_corr_reads/{sample}",
+        # outdir="results/{date}/norm_trim_corr_reads/{sample}",
+        outdir=get_output_dir,
     log:
         "results/{date}/norm_trim_corr_reads/{sample}/notramp.log",
     conda:
