@@ -1297,15 +1297,6 @@ def get_include_flag_for_date(wildcards):
         return [get_include_flag(sample) for sample in allsamplelist]
 
 
-def get_artic_primer(wildcards):
-    # TODO add more _adapters.py (not preferred) or
-    # add a script to generate them from a link to a bed file.
-    # The bed file can be found in the artic repo. Related to #356
-    return "resources/ARTIC_v{}_nCoV-2019.primer.bed".format(
-        config["preprocessing"]["artic-primer-version"]
-    )
-
-
 def get_trimmed_reads(wildcards):
     """Returns paths of files of the trimmed reads for parsing by kraken."""
     return get_list_of_expanded_patters_by_technology(
