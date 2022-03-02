@@ -4,6 +4,9 @@
 # except according to those terms.
 
 
+configfile: "config/config.yaml"
+
+
 rule masking:
     input:
         bamfile="results/{date}/mapped/ref~{reference}-{sample}/{sample}.bam",
@@ -107,6 +110,8 @@ rule high_quality_genomes_report:
         ),
     params:
         includeflag=get_include_flag_for_date,
+        sending_lab_number=config["sending_lab_number"],
+        date_draw=lambda wildcards: wildcards.date,
         seq_type=lambda wildcards: get_assemblies_for_submission(
             wildcards, "accepted samples technology"
         ),
