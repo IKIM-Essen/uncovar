@@ -113,7 +113,7 @@ rule canu_correct:
         ovsConcurrency={params.concurrency} \
         oeaConcurrency={params.concurrency})
         gzip -d {output.corr_gz}
-        2> {log}
+        > {log} 2>&1
         """
 
 
@@ -123,7 +123,7 @@ rule clip_adbc_corrected:
         reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
         ref_genome="resources/genomes/main.fasta",
     output:
-        "results/{date}/norm_trim_corr_reads/{sample}/{sample}.clip.fasta",
+        "results/{date}/norm_trim_corr_reads/{sample}/{sample}.correctedReads.clip.fasta",
     params:
         outdir="results/{date}/norm_trim_corr_reads/{sample}",
     log:
