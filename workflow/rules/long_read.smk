@@ -66,7 +66,6 @@ rule downsample_and_trim_raw:
         "notramp -a -r {input.reads} -p {input.primer} -g {input.ref_genome} -o {params.outdir}"
 
 
-# rule medaka_consensus_reference:
 use rule assembly_polishing_ont as medaka_consensus_reference with:
     input:
         # Don´t ever use corrected reads as input for medaka, it is supposed to polish with raw-reads!
@@ -125,7 +124,6 @@ rule clip_adbc_corrected:
     output:
         "results/{date}/norm_trim_corr_reads/{sample}/{sample}.correctedReads.clip.fasta",
     params:
-        # outdir="results/{date}/norm_trim_corr_reads/{sample}",
         outdir=get_output_dir,
     log:
         "results/{date}/norm_trim_corr_reads/{sample}/notramp.log",
