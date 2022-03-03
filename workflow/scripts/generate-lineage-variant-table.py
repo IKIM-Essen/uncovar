@@ -32,31 +32,20 @@ def has_numbers(inputString):
     return any(char.isdigit() for char in inputString)
 
 
+def add_number_suffix(number):
+    number = str(number)
+
+    if number.endswith("1") and number != "11":
+        return f"{number}st"
+    elif number.endswith("2") and number != "12":
+        return f"{number}nd"
+    elif number.endswith("3")  and number != "13":
+        return f"{number}rd"
+    else:
+        return f"{number}th"
+
 def rename_enumeration(list_length):
-    append_dict = {
-        1: "st",
-        2: "nd",
-        3: "rd",
-        21: "st",
-        22: "nd",
-        23: "rd",
-        31: "st",
-        32: "nd",
-        33: "rd",
-        41: "st",
-        42: "nd",
-        43: "rd",
-        51: "st",
-        52: "nd",
-        53: "rd",
-    }
-    range_list = list(range(1, list_length + 1))
-    for i in range(len(range_list)):
-        if range_list[i] in append_dict:
-            range_list[i] = str(range_list[i]) + append_dict[range_list[i]]
-        else:
-            range_list[i] = str(range_list[i]) + "th"
-    return range_list
+    return [add_number_suffix(x) for in in range(1, list_length+1)]
 
 
 variants_df = pd.DataFrame()
