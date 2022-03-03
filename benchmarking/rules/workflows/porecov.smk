@@ -20,7 +20,7 @@ rule poreCov:
     input:
         fastq_pass=get_fastq_pass_path_barcode,
         sample_names="results/benchmarking/poreCov/sample-sheets/{sample}/sample_names.csv",
-    output:  # varaints="" #TODO
+    output:  # varaints="" # TODO
         outdir=temp(directory("results/benchmarking/poreCov/{sample}/")),
         consensus="results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta",
         lineage_call="results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
