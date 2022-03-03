@@ -19,14 +19,6 @@ This workflow is written with snakemake and its usage is described in the
 If you use this workflow in a paper, don't forget to give credits to the
 authors by citing the URL of this repository and its DOI (see above).
 
-## Authors
-
-- Thomas Battenfeld (@thomasbtf)
-- Alexander Thomas (@alethomas)
-- Felix Wiegand (@fxwiegand)
-- Folker Meyer (@folker)
-- Johannes Köster (@johanneskoester)
-
 ## Tools, Frameworks and Packages used
 
 This project wouldn't be possible without several open source libraries:
