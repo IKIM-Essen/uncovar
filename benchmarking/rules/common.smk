@@ -338,3 +338,33 @@ def get_happy_platform_data(remove):
         )
 
     return inner
+
+
+def get_output_of_pipelines(path, output):
+    def inner(wildcards):
+        expanded_paths = []
+        for tech, workflow_dict in PIPELINES.items():
+            for workflow, output_dict in workflow_dict.items():
+                if output in output_dict.keys():
+                    if tech == "illumina":
+                        samples = get_illumina_samples(wildcards)
+                    elif tech == "nanopore":
+                        samples = get_nanopore_samples(wildcards)
+
+                    paths = expand(
+                        path,
+                        output_type=output,
+                        tech=tech,
+                        workflow=workflow,
+                        sample=samples,
+                    )
+                    expanded_paths.append(paths)
+
+        # flatten list of lists
+        expanded_paths = [item for sublist in expanded_paths for item in sublist]
+
+        assert len(expanded_paths) > 0, f"No files found for {output}"
+
+        return expanded_paths
+
+    return inner

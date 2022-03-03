@@ -11,7 +11,8 @@ include: "workflows/snakelines.smk"
 include: "workflows/uncovar.smk"
 include: "workflows/v_pipe.smk"
 include: "sanger.smk"
-include: "variant_benchmarking.smk"
+include: "benchmarking_variants.smk"
+include: "benchmarking_sequences.smk"
 
 
 # TODO: change file type
@@ -20,7 +21,7 @@ rule save_workflow_output:
         get_workflow_output,
         get_output_from_pipline("outdir"),
     output:
-        "results/benchmarking/backups/{key}/{tech}/{workflow}/{sample}.fasta",
+        "results/benchmarking/backups/{key}/{tech}/{workflow}/{sample}",
     log:
         "logs/save/{key}/{tech}/{workflow}/{sample}.log",
     conda:
