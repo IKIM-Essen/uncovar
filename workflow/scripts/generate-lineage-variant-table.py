@@ -39,13 +39,14 @@ def add_number_suffix(number):
         return f"{number}st"
     elif number.endswith("2") and number != "12":
         return f"{number}nd"
-    elif number.endswith("3")  and number != "13":
+    elif number.endswith("3") and number != "13":
         return f"{number}rd"
     else:
         return f"{number}th"
 
+
 def rename_enumeration(list_length):
-    return [add_number_suffix(x) for in in range(1, list_length+1)]
+    return [add_number_suffix(x) for x in range(1, list_length + 1)]
 
 
 variants_df = pd.DataFrame()
