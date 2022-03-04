@@ -239,7 +239,7 @@ def get_report_samples(wildcards):
 def get_merge_calls_input(suffix):
     def inner(wildcards):
         return expand(
-            "results/{{date}}/filtered-calls/ref~{{reference}}/{{sample}}.{{clonality}}.{{filter}}.{vartype}.fdr-controlled{suffix}",
+            "results/{{date}}/filtered-calls/ref~{{reference}}/{{sample}}.{{clonality}}.{{filter}}.{vartype}.{{annotation}}.fdr-controlled{suffix}",
             suffix=suffix,
             vartype=VARTYPES,
         )
@@ -602,7 +602,7 @@ def get_target_events(wildcards):
 
 def get_control_fdr_input(wildcards):
     if wildcards.reference == "main":
-        return "results/{date}/filtered-calls/ref~{reference}/{sample}.{filter}.bcf"
+        return "results/{date}/filtered-calls/ref~{reference}/annot~{annotation}/{sample}.{filter}.bcf"
     else:
         # If reference is not main, we are polishing an assembly.
         # Here, there is no need to structural variants or annotation based filtering.
@@ -1590,7 +1590,7 @@ def get_input_by_mode(wildcard):
             mode=["major", "any"],
         ),
         zip_expand(
-            "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.bcf",
+            "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.orf.bcf",
             zip_wildcard_1=get_dates(),
             zip_wildcard_2=get_samples(),
             expand_wildcard=config["variant-calling"]["filters"],
@@ -1642,10 +1642,25 @@ def get_pangolin_for_report(wildcards):
     return paths
 
 
+def get_genome_annotation(suffix=""):
+    def inner(wildcards):
+        if wildcards.annotation == "orf":
+            return f"resources/annotation.gff.gz{suffix}"
+        elif wildcards.annotation == "protein":
+            return f"resources/protein_products.gff.gz{suffix}"
+
+        raise AttributeError(
+            f"Config for annotation '{wildcards.annotation}' not recognizied. Can be either 'orf' or 'protein'."
+        )
+
+    return inner
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),
     clonality="subclonal|clonal",
+    annotation="orf|protein",
     filter="|".join(
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
     ),
