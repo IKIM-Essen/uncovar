@@ -48,6 +48,88 @@ rule get_genome_annotation:
         "zcat | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > {output}) 2> {log}"
 
 
+rule download_protein_products:
+    output:
+        temp("resources/protein_products.bed"),
+    log:
+        "logs/download_protein_products.log",
+    conda:
+        "../envs/ucsc.yaml"
+    shell:
+        "(bigBedToBed http://hgdownload.soe.ucsc.edu/gbdb/wuhCor1/uniprot/unipChainCov2.bb"
+        " -chrom=NC_045512v2 -start=0 -end=29903 {output})"
+        "2>{log}"
+
+
+rule bed2gff:
+    input:
+        "resources/protein_products.bed",
+    output:
+        temp("resources/protein_products.gff"),
+    log:
+        "logs/bed2gff3.log",
+    conda:
+        "../envs/genometools.yaml"
+    shell:
+        "(cut -f1-12 {input} | sed -e 's/ /-/g' | sed -e 's/NC_045512v2/NC_045512.2/g'"
+        " | gt bed_to_gff3 -featuretype gene -thicktype transcript -blocktype CDS -o {output} -force /dev/stdin )"
+        "2> {log}"
+
+
+rule filter_gff:
+    input:
+        "resources/protein_products.gff",
+    output:
+        temp("resources/protein_products.formatted.gff"),
+    log:
+        "logs/format_gff.log",
+    conda:
+        "../envs/tabix.yaml"
+    shell:
+        # download, sort and bgzip gff (see https://www.ensembl.org/info/docs/tools/vep/script/vep_custom.html)
+        "cat {input} | grep -v '#' > {output} 2> {log}"
+
+
+rule fix_gff:
+    input:
+        "resources/protein_products.formatted.gff",
+    output:
+        temp("resources/protein_products.fixed.gff"),
+    log:
+        "logs/fix_gff.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/fix-protein-gff.py"
+
+
+rule format_fixed_gff:
+    input:
+        "resources/protein_products.fixed.gff",
+    output:
+        temp("resources/protein_products.fixed.formatted.gff"),
+    log:
+        "logs/format_gff.log",
+    conda:
+        "../envs/tabix.yaml"
+    shell:
+        # download, sort and bgzip gff (see https://www.ensembl.org/info/docs/tools/vep/script/vep_custom.html)
+        "cat {input} | grep -v '#' | sort -k1,1 -k4,4n -k5,5n -k3,3n -t$'\t' > {output} 2> {log}"
+
+
+rule compress_gff:
+    input:
+        "resources/protein_products.fixed.formatted.gff",
+    output:
+        "resources/protein_products.gff.gz",
+    log:
+        "logs/compress_gff.log",
+    conda:
+        "../envs/tabix.yaml"
+    shell:
+        "bgzip -c {input} > {output} 2> {log}"
+
+
 rule get_genome_annotation_for_known_variants:
     output:
         "resources/annotation_known_variants.gff.gz",

@@ -81,7 +81,7 @@ rule samtools_calmd:
         aln=get_recal_input,
         ref=get_reference(),
     output:
-        temp("results/{date}/recal/ref~{reference}/{sample}.bam"),
+        "results/{date}/recal/ref~{reference}/{sample}.bam",
     log:
         "logs/{date}/samtools-calmd/ref~{reference}/{sample}.log",
     params:

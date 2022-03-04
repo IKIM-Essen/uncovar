@@ -53,7 +53,7 @@ jobs:
     if: github.ref != 'refs/heads/master'
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v3
       - uses: pre-commit/action@v2.0.3
 
   Technology-Tests:
@@ -122,7 +122,7 @@ jobs:
           # mkdir -p .tests/resources/minikraken-8GB
           # curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
           mkdir -p .tests/resources/genomes
-          curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
+          curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=BA000005.3&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
       - name: Simulate GISAID download
         run: |
           mkdir -p .tests/results/benchmarking/tables
@@ -300,7 +300,7 @@ jobs:
           # mkdir -p .tests/resources/minikraken-8GB
           # curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
           mkdir -p .tests/resources/genomes
-          curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
+          curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=BA000005.3&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
       - name: Simulate GISAID download
         run: |
           mkdir -p .tests/results/benchmarking/tables

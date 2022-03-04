@@ -159,8 +159,8 @@ rule filter_chr0:
 rule assembly_polishing_illumina:
     input:
         fasta="results/{date}/contigs/ordered/{sample}.fasta",
-        bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf",
-        bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.bcf.csi",
+        bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.orf.bcf",
+        bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.clonal.nofilter.orf.bcf.csi",
     output:
         report(
             "results/{date}/polishing/bcftools-illumina/{sample}.fasta",
