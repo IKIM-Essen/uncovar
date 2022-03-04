@@ -12,21 +12,6 @@ rule align_sanger:
         "minimap2 -a {input.target} {input.query} -o {output} 2> {log}"
 
 
-# rule align_biopython:
-#     input:
-#         "results/{date}/contigs/polished/{sample}.fasta",
-#         "sanger_files/all_files_filtered/{sample}_{region}.fasta",
-#     output:
-#         "results/{date}/sanger-aligned/ref~{sample}/{region}~{sample}.csv",
-#         "results/{date}/sanger-aligned/ref~{sample}/{region}~{sample}.sam",
-#     log:
-#         "logs/{date}/biopython/sanger-vs-genome/{region}~{sample}.log",
-#     params:
-#         regions=lambda wildcards: get_sanger_files(wildcards, "regions")
-#     script:
-#         "../workflow/scripts/biopython-aligner.py"
-
-
 rule sort_bam_sanger:
     input:
         "results/{date}/sanger-aligned/ref~{reference}/{sample}.sam",
@@ -59,19 +44,6 @@ rule freebayes_sanger:
         "0.68.0/bio/freebayes"
 
 
-rule norm_bcfs:
-    input:
-        get_bcf,
-    output:
-        "results/{date}/sanger-var-calls/normed/ref~{reference}/{region}~{sample}.bcf",
-    log:
-        "logs/{date}/norm-bcfs/{reference}~{region}/{sample}.log",
-    params:
-        "-f /local/data/repos/snakemake-workflow-sars-cov2/resources/genomes/main.fasta -O b",
-    wrapper:
-        "0.79.0/bio/bcftools/norm"
-
-
 rule annotate_variants_sanger:
     input:
         calls="results/{date}/sanger-var-calls/ref~main/{sample}.bcf",
@@ -83,8 +55,8 @@ rule annotate_variants_sanger:
         problematic="resources/problematic-sites.vcf.gz",
         problematic_tbi="resources/problematic-sites.vcf.gz.tbi",
     output:
-        calls="results/{date}/sanger-var-calls/ref~main/annotated~{sample}.bcf",
-        stats="results/{date}/sanger-var-calls/ref~main/annotated~{sample}.html",
+        calls="results/{date}/sanger-var-calls_annotated/ref~main/{sample}.bcf",
+        stats="results/{date}/sanger-var-calls_annotated/ref~main/{sample}.html",
     params:
         # Pass a list of plugins to use, see https://www.ensembl.org/info/docs/tools/vep/script/vep_plugins.html
         # Plugin args can be added as well, e.g. via an entry "MyPlugin,1,FOO", see docs.
@@ -96,56 +68,57 @@ rule annotate_variants_sanger:
         "0.72.0/bio/vep/annotate"
 
 
-# rule fill_md:
-#     input:
-#         sam="results/{date}/sanger-aligned/ref~{sample}/{region}~{sample}.sam",
-#         target="results/{date}/contigs/polished/{sample}.fasta"
-#     output:
-#         "results/{date}/sanger-aligned/ref~{sample}/{region}~{sample}.md.bam",
-#     log:
-#         "logs/{date}/fill_md/ref~{sample}/{region}~{sample}.log",
-#     conda:
-#         "../envs/samtools.yaml"
-#     shell:
-#         "samtools fillmd {input.bam} {input.target} > {output} 2> {log}"
+rule compare_sanger2:
+    input:
+        ngs_calls="results/{date}/annotated-calls/ref~main/{sample}.bcf",
+        sanger_calls="results/{date}/sanger-var-calls_annotated/ref~main/{sample}.bcf",
+        sanger_aln="results/{date}/sanger-aligned/ref~main/{sample}.sam",
+    output:
+        sanger_vs_ngs="results/{date}/sanger-vs-genome/{sample}.txt",
+    log:
+        "logs/{date}/sanger-vs-genome/{sample}.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/sanger-comparison2.py"
 
 
-rule get_var_calls:
+rule get_comps:
     input:
         expand(
-            "results/{date}/annotated-calls/ref~main/{sample}.bcf",
+            "results/{date}/sanger-vs-genome/{sample}.txt",
             date="2022-01-25",
             sample=get_samples(),
         ),
 
 
-rule compare_sanger:
-    input:
-        sanger=lambda wildcards: get_sanger_files(
-            wildcards,
-            "expand-sample",
-            "results/{{date}}/sanger-var-calls/ref~main/annotated_{region}~{sample}.bcf",
-        ),
-        ngs_genome="results/{date}/annotated-calls/ref~main/{sample}.bcf",
-        sanger_vs_ngs_genome=lambda wildcards: get_sanger_files(
-            wildcards,
-            "expand-sample",
-            "results/{{date}}/sanger-aligned/ref~{sample}/{region}~{sample}.csv",
-        ),
-        coverage="results/{date}/qc/samtools_depth/{sample}.txt",
-    output:
-        sanger_ngs_diff="results/{date}/sanger-vs-genome/{sample}.txt",
-        sanger_vars="results/{date}/sanger-vs-genome/vars/sanger_{sample}.csv",
-        ngs_vars="results/{date}/sanger-vs-genome/vars/ngs_{sample}.csv",
-        sanger_vs_genome="results/{date}/sanger-vs-genome/{sample}.csv",
-        sanger_ngs_diff_readable="results/{date}/sanger-vs-genome/{sample}_readable.txt",
-    log:
-        "logs/{date}/sanger-vs-genome/{sample}.log",
-    params:
-        voc=config.get("voc"),
-        regions=lambda wildcards: get_sanger_files(wildcards, "regions"),
-    script:
-        "../workflow/scripts/sanger-comp.py"
+# rule compare_sanger:
+#     input:
+#         sanger=lambda wildcards: get_sanger_files(
+#             wildcards,
+#             "expand-sample",
+#             "results/{{date}}/sanger-var-calls/ref~main/annotated_{region}~{sample}.bcf",
+#         ),
+#         ngs_genome="results/{date}/annotated-calls/ref~main/{sample}.bcf",
+#         sanger_vs_ngs_genome=lambda wildcards: get_sanger_files(
+#             wildcards,
+#             "expand-sample",
+#             "results/{{date}}/sanger-aligned/ref~{sample}/{region}~{sample}.csv",
+#         ),
+#         coverage="results/{date}/qc/samtools_depth/{sample}.txt",
+#     output:
+#         sanger_ngs_diff="results/{date}/sanger-vs-genome/{sample}.txt",
+#         sanger_vars="results/{date}/sanger-vs-genome/vars/sanger_{sample}.csv",
+#         ngs_vars="results/{date}/sanger-vs-genome/vars/ngs_{sample}.csv",
+#         sanger_vs_genome="results/{date}/sanger-vs-genome/{sample}.csv",
+#         sanger_ngs_diff_readable="results/{date}/sanger-vs-genome/{sample}_readable.txt",
+#     log:
+#         "logs/{date}/sanger-vs-genome/{sample}.log",
+#     params:
+#         voc=config.get("voc"),
+#         regions=lambda wildcards: get_sanger_files(wildcards, "regions"),
+#     script:
+#         "../workflow/scripts/sanger-comp.py"
 
 
 rule aggregate_sanger:
