@@ -25,13 +25,20 @@ sum_dict = {}
 count_true = 0
 count_all = 0
 for key in sorted(count_dict.keys()):
-    print(key, ":", count_dict[key][0] + count_true, count_dict[key][0], count_dict[key][1] + count_all, count_dict[key][1])
+    print(
+        key,
+        ":",
+        count_dict[key][0] + count_true,
+        count_dict[key][0],
+        count_dict[key][1] + count_all,
+        count_dict[key][1],
+    )
     sum_dict[key] = [count_dict[key][0] + count_true, count_dict[key][1] + count_all]
     count_true += count_dict[key][0]
     count_all += count_dict[key][1]
 
-count_df = pd.DataFrame.from_dict(count_dict, orient='index', columns=["true", "all"])
-sum_df = pd.DataFrame.from_dict(sum_dict, orient='index')
+count_df = pd.DataFrame.from_dict(count_dict, orient="index", columns=["true", "all"])
+sum_df = pd.DataFrame.from_dict(sum_dict, orient="index")
 print(sum_df)
 
 # plot = (alt.Chart(count_df.reset_index()).mark_line().transform_window(
@@ -43,7 +50,7 @@ print(sum_df)
 #     # What to add up as you go
 #     trues='sum(true)',
 #     alls='sum(all)',
-#     percent='datum.sum(true) / datum.sum(all)' 
+#     percent='datum.sum(true) / datum.sum(all)'
 # ).encode(
 #     x='index:Q',
 #     # Plot the calculated field created by the transformation
@@ -52,15 +59,24 @@ print(sum_df)
 
 # plot.save(snakemake.output[1])
 
-sum_df = pd.DataFrame.from_dict(sum_dict, orient='index', columns=["true", "all"])
+sum_df = pd.DataFrame.from_dict(sum_dict, orient="index", columns=["true", "all"])
 print(sum_df)
 
-plot = (alt.Chart(sum_df.reset_index()).mark_line().transform_calculate(
-    percent = 'datum.true / datum.all'
-).encode(
-    x=alt.X('index:Q', axis=alt.Axis(title='coverage')),
-    # Plot the calculated field created by the transformation
-    y=alt.Y('percent:Q', axis=alt.Axis(format='%', title='percentage of sanger variants present in NGS genome')),
-).properties(width=1000))
+plot = (
+    alt.Chart(sum_df.reset_index())
+    .mark_line()
+    .transform_calculate(percent="datum.true / datum.all")
+    .encode(
+        x=alt.X("index:Q", axis=alt.Axis(title="coverage")),
+        # Plot the calculated field created by the transformation
+        y=alt.Y(
+            "percent:Q",
+            axis=alt.Axis(
+                format="%", title="percentage of sanger variants present in NGS genome"
+            ),
+        ),
+    )
+    .properties(width=1000)
+)
 
 plot.save(snakemake.output[1])
