@@ -45,7 +45,13 @@ rule nanofilt:
     conda:
         "../envs/nanofilt.yaml"
     shell:
-        "NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 700 {input} > {output} 2> {log}"
+        """
+        if (file {input} | grep -q gzip) ; then
+            gunzip -c {input} | NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 700 > {output} 2> {log}
+        else
+            NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 700 {input} > {output} 2> {log}
+        fi
+        """
 
 
 rule downsample_and_trim_raw:
