@@ -81,12 +81,13 @@ rule canu_correct:
     output:
         temp(directory("results/{date}/corrected/{sample}/correction")),
         temp(directory("results/{date}/corrected/{sample}/{sample}.seqStore")),
-        corr_gz="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        # corr_gz="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
         corr_fa="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
     log:
         "logs/{date}/canu/correct/{sample}.log",
     params:
         outdir=get_output_dir,
+        corr_gz="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
         concurrency=lambda w, threads: get_canu_concurrency(threads),
         min_length=config["quality-criteria"]["ont"]["min-length-reads"],
         for_testing=lambda w, threads: get_if_testing(
@@ -111,7 +112,7 @@ rule canu_correct:
         ovbConcurrency={params.concurrency} \
         ovsConcurrency={params.concurrency} \
         oeaConcurrency={params.concurrency})
-        gzip -d {output.corr_gz} --keep
+        gzip -d {params.corr_gz} --keep
         > {log} 2>&1
         """
 
