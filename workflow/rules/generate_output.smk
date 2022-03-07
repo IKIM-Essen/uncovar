@@ -141,7 +141,7 @@ rule overview_table_patient_csv:
         kraken=get_kraken_output,
         pangolin=get_pangolin_for_report,
         bcf=expand_samples_for_date(
-            "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
+            "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.orf.bcf",
         ),
         # Added because WorkflowError: Rule parameter depends on checkpoint but checkpoint output is not defined
         # as input file for the rule. Please add the output of the respective checkpoint to the rule inputs.
@@ -172,7 +172,7 @@ use rule overview_table_patient_csv as overview_table_environment_csv with:
             "results/{{date}}/tables/read_pair_counts/{sample}.txt",
         ),
         bcf=expand_samples_for_date(
-            "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
+            "results/{{date}}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.orf.bcf",
         ),
     output:
         qc_data="results/{date}/tables/environment-overview.csv",
@@ -238,7 +238,7 @@ rule filter_overview_html:
             htmlindex="index.html",
             caption="../report/filter-overview.rst",
             category="4. Sequences",
-            subcategory="0. Quality Overview",
+            subcategory=" Quality Overview",
         ),
     params:
         pin_until="Sample",
@@ -279,13 +279,13 @@ rule plot_lineages_over_time:
 rule plot_variants_over_time:
     input:
         bcf=lambda wildcards: expand(
-            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf",
+            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.orf.bcf",
             zip,
             date=get_dates_before_date(wildcards),
             sample=get_samples_before_date(wildcards),
         ),
         csi=lambda wildcards: expand(
-            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf.csi",
+            "results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.orf.bcf.csi",
             zip,
             date=get_dates_before_date(wildcards),
             sample=get_samples_before_date(wildcards),
@@ -338,7 +338,7 @@ rule pangolin_call_overview_html:
             htmlindex="index.html",
             caption="../report/pangolin-call-overview.rst",
             category="4. Sequences",
-            subcategory="0. Quality Overview",
+            subcategory=" Quality Overview",
         ),
     params:
         pin_until="Sample",
@@ -372,9 +372,10 @@ rule snakemake_reports_patient:
             ["results/{{date}}/lineage-variant-report/{sample}.lineage-variants"]
         ),
         lambda wildcards: expand(
-            "results/{{date}}/vcf-report/{target}.{filter}",
+            "results/{{date}}/vcf-report/{target}.{filter}.{annotation}",
             target=get_samples_for_date(wildcards.date) + ["all"],
             filter=config["variant-calling"]["filters"],
+            annotation=config["variant-calling"]["annotations"],
         ),
         # 3. Sequencing Details
         "results/{date}/qc/laboratory/multiqc.html",
@@ -394,8 +395,9 @@ rule snakemake_reports_patient:
         ),
         # 5. Variant Call Files
         expand(
-            ["results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.vcf"],
+            ["results/{{date}}/ucsc-vcfs/all.{{date}}.{filter}.{annotation}.vcf"],
             filter=config["variant-calling"]["filters"],
+            annotation=config["variant-calling"]["annotations"],
         ),
         # 6. High Quality Genomes
         "results/high-quality-genomes/{date}.fasta",
@@ -430,9 +432,10 @@ use rule snakemake_reports_patient as snakemake_reports_environment with:
             ["results/{{date}}/lineage-variant-report/{sample}.lineage-variants"]
         ),
         lambda wildcards: expand(
-            "results/{{date}}/vcf-report/{target}.{filter}",
+            "results/{{date}}/vcf-report/{target}.{filter}.{annotation}",
             target=get_samples_for_date(wildcards.date) + ["all"],
             filter=config["variant-calling"]["filters"],
+            annotation=config["variant-calling"]["annotations"],
         ),
         # 3. Sequencing Details
         "results/{date}/qc/laboratory/multiqc.html",

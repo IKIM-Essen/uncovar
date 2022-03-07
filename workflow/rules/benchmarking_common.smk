@@ -21,8 +21,8 @@ def get_test_cases_variant_calls(technology, suffix="", get="path"):
             len(sample_table) == 1
         ), f'Too many sampels are defined with technology "{technology}" for test case {wildcards.test_case}.'
 
-        bcf_path_high = "results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.bcf{suffix}"
-        bcf_path_low = "results/{date}/filtered-calls/ref~main/{sample}.subclonal.low-impact.bcf{suffix}"
+        bcf_path_high = "results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.orf.bcf{suffix}"
+        bcf_path_low = "results/{date}/filtered-calls/ref~main/{sample}.subclonal.low-impact.orf.bcf{suffix}"
 
         high_impact = expand(
             bcf_path_high,
