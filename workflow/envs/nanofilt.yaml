@@ -4,3 +4,4 @@ channels:
 dependencies:
   - nanofilt =2.8
   - gzip
+  - file
