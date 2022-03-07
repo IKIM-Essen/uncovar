@@ -32,8 +32,6 @@ pangolin_calls_by_stage.loc[failed_called, "lineage"] = (
     "Call failed. Reason: " + pangolin_calls_by_stage.loc[failed_called, "note"]
 )
 
-print(pangolin_calls_by_stage)
-
 pangolin_calls_by_stage = pangolin_calls_by_stage.pivot(
     index="sample", columns="stage", values="lineage"
 ).reset_index()
