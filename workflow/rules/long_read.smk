@@ -140,34 +140,36 @@ rule clip_adbc_corrected:
         "notramp -t --incl_prim -r {input.reads} -p {input.primer} -g {input.ref_genome} -o {params.outdir}"
 
 
-# rule bcftools_consensus_ont:
-#     input:
-#         fasta="results/{date}/consensus/medaka/{sample}/consensus.fasta",
-#         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf",  # clonal vs. subclonal?
-#         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.bcf.csi",
-#     output:
-#         "results/{date}/consensus/bcftools/{sample}.fasta",
-#     log:
-#         "logs/{date}/bcftools-consensus-ont/{sample}.log",
-#     conda:
-#         "../envs/bcftools.yaml"
-#     shell:
-#         "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"
-# rule rename_consensus:
-#     input:
-#         "results/{date}/consensus/bcftools/{sample}.fasta",
-#     output:
-#         report(
-#             "results/{date}/contigs/consensus/{sample}.fasta",
-#             category="4. Sequences",
-#             subcategory="3. Consensus Sequences",
-#             caption="../report/assembly_consensus.rst",
-#         ),
-#     log:
-#         "logs/{date}/rename-consensus-fasta/{sample}.log",
-#     conda:
-#         "../envs/unix.yaml"
-#     shell:
-#         "(cp {input} {output} && "
-#         ' sed -i "1s/.*/>{wildcards.sample}/" {output})'
-#         " 2> {log}"
+rule bcftools_consensus_ont:
+    input:
+        fasta="results/{date}/consensus/medaka/{sample}/consensus.fasta",
+        bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.orf.bcf",  # clonal vs. subclonal?
+        bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.orf.bcf.csi",
+    output:
+        "results/{date}/consensus/bcftools/{sample}.fasta",
+    log:
+        "logs/{date}/bcftools-consensus-ont/{sample}.log",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        "bcftools consensus -f {input.fasta} {input.bcf} > {output} 2> {log}"
+
+
+rule rename_consensus:
+    input:
+        "results/{date}/consensus/bcftools/{sample}.fasta",
+    output:
+        report(
+            "results/{date}/contigs/consensus/{sample}.fasta",
+            category="4. Sequences",
+            subcategory="3. Consensus Sequences",
+            caption="../report/assembly_consensus.rst",
+        ),
+    log:
+        "logs/{date}/rename-consensus-fasta/{sample}.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "(cp {input} {output} && "
+        ' sed -i "1s/.*/>{wildcards.sample}/" {output})'
+        " 2> {log}"
