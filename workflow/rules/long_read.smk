@@ -87,7 +87,7 @@ rule canu_correct:
     output:
         temp(directory("results/{date}/corrected/{sample}/correction")),
         temp(directory("results/{date}/corrected/{sample}/{sample}.seqStore")),
-        # corr_gz="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        corr_gz="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
         corr_fa="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
     log:
         "logs/{date}/canu/correct/{sample}.log",
