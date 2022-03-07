@@ -97,7 +97,7 @@ rule canu_correct:
         concurrency=lambda w, threads: get_canu_concurrency(threads),
         min_length=config["quality-criteria"]["ont"]["min-length-reads"],
         for_testing=lambda w, threads: get_if_testing(
-            f"corThreads={threads} redMemory=6 oeaMemory=6"
+            f"corThreads={threads} corMemory=6 redMemory=6 oeaMemory=6"
         ),
     conda:
         "../envs/canu.yaml"
