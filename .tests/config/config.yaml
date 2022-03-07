@@ -128,7 +128,7 @@ strain-calling:
   # paths to store genomes that are extracted from the full GISAID data
   extracted-strain-genomes: resources/genomes
   # flag for using all lineage reference from GISAIDS Epicov database. API key must be exported as env var GISAID_API_TOKEN.
-  use-gisaid: True
+  use-gisaid: False
   # GenBank accession for downloading lineage-references
   # only used, if use-gisaid flag is set to False
   lineage-references:
