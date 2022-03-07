@@ -46,7 +46,7 @@ rule nanofilt:
         "../envs/nanofilt.yaml"
     shell:
         """
-        if (file {input} | grep -q gzip) ; then
+        if (file {input} | grep -q compressed) ; then
             gunzip -c {input} | NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 700 > {output} 2> {log}
         else
             NanoFilt --length {params.min_length} --quality {params.min_PHRED} --maxlength 700 {input} > {output} 2> {log}
