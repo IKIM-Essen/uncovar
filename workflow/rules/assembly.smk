@@ -183,7 +183,7 @@ rule assembly_polishing_ont:
         reference="results/{date}/contigs/ordered/{sample}.fasta",
     output:
         report(
-            "results/{date}/polishing/medaka/{sample}/{sample}.fasta",
+            "results/{date}/polishing/medaka/{sample}/consensus.fasta",
             category="4. Sequences",
             subcategory="1. De Novo Assembled Sequences",
             caption="../report/assembly_ont.rst",

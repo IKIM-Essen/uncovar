@@ -1410,7 +1410,8 @@ def get_polished_sequence(wildcards):
     return get_pattern_by_technology(
         wildcards,
         illumina_pattern="results/{date}/polishing/bcftools-illumina/{sample}.fasta",
-        ont_pattern="results/{date}/polishing/medaka/{sample}/{sample}.fasta",
+        # ont_pattern="results/{date}/polishing/medaka/{sample}/consensus.fasta",
+        ont_pattern="results/{date}/consensus/medaka/{sample}/consensus.fasta",
         ion_torrent_pattern="results/{date}/polishing/bcftools-illumina/{sample}.fasta",
     )
 

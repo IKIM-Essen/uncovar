@@ -49,7 +49,8 @@ rule map_reads:
         reads=get_reads,
         idx=get_bwa_index,
     output:
-        temp("results/{date}/mapped/ref~{reference}/{sample}.bam"),
+        # temp("results/{date}/mapped/ref~{reference}/{sample}.bam"),
+        "results/{date}/mapped/ref~{reference}/{sample}.bam",
     log:
         "logs/{date}/bwa-mem/ref~{reference}/{sample}.log",
     params:

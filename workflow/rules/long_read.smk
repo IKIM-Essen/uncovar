@@ -1,4 +1,4 @@
-# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster, Simon Magin.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -138,6 +138,19 @@ rule clip_adbc_corrected:
         "../envs/notramp.yaml"
     shell:
         "notramp -t --incl_prim -r {input.reads} -p {input.primer} -g {input.ref_genome} -o {params.outdir}"
+
+
+rule spades_assemble:
+    input:
+        "results/{date}/norm_trim_corr_reads/{sample}/{sample}.correctedReads.clip.fasta",
+    output:
+        outdir=directory("results/{date}/{sample}_spades_asm"),
+        outfile="results/{date}/{sample}_spades_asm/raw_contigs.fasta",
+    conda:
+        "../envs/spades.yaml"
+    threads: 6
+    shell:
+        "spades.py --corona -s {input} -o {output.outdir}"
 
 
 rule bcftools_consensus_ont:
