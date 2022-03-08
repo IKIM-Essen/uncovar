@@ -1,8 +1,8 @@
-from numpy import cov
-import pandas as pd
 import os
-import altair as alt
 
+import altair as alt
+import pandas as pd
+from numpy import cov
 from pandas.io.parsers import count_empty_vals
 
 count_dict = {}

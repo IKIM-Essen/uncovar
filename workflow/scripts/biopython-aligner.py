@@ -1,8 +1,8 @@
 import os
-from numpy import diff
+
 import pandas as pd
-from Bio import SeqIO
-from Bio import Align
+from Bio import Align, SeqIO
+from numpy import diff
 
 
 def alignment(file1, file2):

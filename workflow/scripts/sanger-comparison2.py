@@ -1,5 +1,5 @@
-import pysam
 import pandas as pd
+import pysam
 
 
 def get_hgvsp(input):
