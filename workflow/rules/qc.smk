@@ -153,9 +153,6 @@ rule species_diversity_before_se:
         kraken_output=temp(
             "results/{date}/species-diversity/se/{sample}/{sample}.kraken"
         ),
-        # report=(
-        #     "results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2"
-        # ),
         report="results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2",
     log:
         "logs/{date}/kraken/se/{sample}.log",
@@ -204,7 +201,6 @@ rule extract_reads_of_interest:
         bam="results/{date}/mapped/ref~main+human/{sample}.bam",
         index="results/{date}/mapped/ref~main+human/{sample}.bam.bai",
     output:
-        # temp("results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam"),
         "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
     log:
         "logs/{date}/extract_reads_of_interest/{sample}.log",
@@ -238,9 +234,7 @@ rule order_nonhuman_reads_se:
     input:
         "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
     output:
-        # fq=temp("results/{date}/nonhuman-reads/se/{sample}.fastq.gz"),
         fq="results/{date}/nonhuman-reads/se/{sample}.fastq",
-        # fa="results/{date}/nonhuman-reads/se/{sample}.correctedReads.clip.fasta",
         bam_sorted=temp("results/{date}/nonhuman-reads/{sample}.sorted.bam"),
     log:
         "logs/{date}/order_nonhuman_reads/se/{sample}.log",
@@ -252,7 +246,6 @@ rule order_nonhuman_reads_se:
         " samtools fastq -@ {threads} -0 {output.fq} {output.bam_sorted})"
 
         " > {log} 2>&1"
-        # " samtools fasta -@ {threads} -0 {output.fa} {output.bam_sorted})"
 
 
 # analysis of species diversity present AFTER removing human contamination
@@ -264,6 +257,7 @@ rule species_diversity_after_pe:
         kraken_output=temp(
             "results/{date}/species-diversity-nonhuman/pe/{sample}/{sample}.kraken"
         ),
+        # removed parethesis; used to be temp()?
         report="results/{date}/species-diversity-nonhuman/pe/{sample}/{sample}.cleaned.kreport2",
     log:
         "logs/{date}/kraken/{sample}_pe_nonhuman.log",

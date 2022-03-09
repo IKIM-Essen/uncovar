@@ -49,7 +49,7 @@ rule map_reads:
         reads=get_reads,
         idx=get_bwa_index,
     output:
-        # temp("results/{date}/mapped/ref~{reference}/{sample}.bam"),
+        # used to be temp()
         "results/{date}/mapped/ref~{reference}/{sample}.bam",
     log:
         "logs/{date}/bwa-mem/ref~{reference}/{sample}.log",
@@ -60,7 +60,6 @@ rule map_reads:
         sort_order="coordinate",
     threads: 8
     wrapper:
-        # "v1.2.0/bio/bwa-mem2/mem"
         "0.69.0/bio/bwa/mem"
 
 
