@@ -129,11 +129,13 @@ rule clip_adbc_corrected:
         reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
         ref_genome="resources/genomes/main.fasta",
     output:
-        "results/{date}/norm_trim_corr_reads/{sample}/{sample}.correctedReads.clip.fasta",
+        # "results/{date}/norm_trim_corr_reads/{sample}/{sample}.correctedReads.clip.fasta",
+        "results/{date}/corrected/{sample}/{sample}.correctedReads.clip.fasta",
     params:
         outdir=get_output_dir,
     log:
-        "results/{date}/norm_trim_corr_reads/{sample}/notramp.log",
+        # "results/{date}/norm_trim_corr_reads/{sample}/notramp.log",
+        "results/{date}/corrected/{sample}/notramp.log",
     conda:
         "../envs/notramp.yaml"
     shell:
@@ -142,7 +144,8 @@ rule clip_adbc_corrected:
 
 rule spades_assemble:
     input:
-        "results/{date}/norm_trim_corr_reads/{sample}/{sample}.correctedReads.clip.fasta",
+        # "results/{date}/norm_trim_corr_reads/{sample}/{sample}.correctedReads.clip.fastq",
+        "results/{date}/corrected/{sample}/{sample}.correctedReads.clip.fastq",
     output:
         outdir=directory("results/{date}/{sample}_spades_asm"),
         outfile="results/{date}/{sample}_spades_asm/raw_contigs.fasta",

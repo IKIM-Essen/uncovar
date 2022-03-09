@@ -91,9 +91,15 @@ rule assembly_spades_pe:
 
 rule spades_assemble_se:
     input:
-        get_reads_after_qc,
+        # get_reads_after_qc,
+        # "results/newdate/norm_trim_corr_reads/UnCoVar_RefDataSet_Batch2_BC03_cat/UnCoVar_RefDataSet_Batch2_BC03_cat.correctedReads.clip.fasta"
+        # "results/newdate/nonhuman-reads/se/UnCoVar_RefDataSet_Batch2_BC03_cat.correctedReads.clip.fastq"
+        "results/newdate/nonhuman-reads/se/UnCoVar_RefDataSet_Batch2_BC03_cat.fastq",
     output:
-        temp("results/{date}/assembly/{sample}/spades-se/{sample}.contigs.fasta"),
+        # temp("results/{date}/assembly/{sample}/spades-se/{sample}.contigs.fasta"),
+        # "results/{date}/assembly/{sample}/spades-se/{sample}.correctedReads.clip.contigs.fasta",
+        # "results/{date}/assembly/{sample}/spades-se/{sample}.contigs.fasta",
+        "results/{date}/assembly/{sample}/spades-se/{sample}.contigs.fasta",
     log:
         "logs/{date}/spades/se/{sample}.log",
     conda:

@@ -407,7 +407,7 @@ def get_reads(wildcards):
         )
 
         ont_pattern = expand(
-            "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
+            "results/{date}/corrected/{sample}/{sample}.correctedReads.clip.fasta",
             **wildcards,
         )
 
@@ -458,7 +458,9 @@ def get_reads_after_qc(wildcards, read="both"):
             **wildcards,
         )
         ont_pattern = expand(
-            "results/{date}/nonhuman-reads/se/{sample}.fastq.gz", **wildcards
+            # "results/{date}/nonhuman-reads/se/{sample}.correctedReads.clip.fastq", **wildcards
+            "results/{date}/nonhuman-reads/se/{sample}.fastq",
+            **wildcards,
         )
         ion_torrent_pattern = expand(
             "results/{date}/read-clipping/fastq/se/{sample}.fastq", **wildcards
@@ -1398,7 +1400,8 @@ def get_reads_by_stage(wildcards):
     if wildcards.stage == "raw":
         return get_fastqs(wildcards)
     elif wildcards.stage == "trimmed":
-        return "results/{date}/norm_trim_corr_reads/{sample}/{sample}.correctedReads.clip.fasta"
+        # return "results/{date}/norm_trim_corr_reads/{sample}/{sample}.correctedReads.clip.fasta"
+        return "results/{date}/corrected/{sample}/{sample}.correctedReads.clip.fasta"
     elif wildcards.stage == "clipped":
         return "results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.clip.fasta"
     elif wildcards.stage == "filtered":
