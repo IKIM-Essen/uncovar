@@ -3,5 +3,5 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
-  - notramp =1.0.3
+  - notramp =1.0.4
   - minimap2 =2.22
