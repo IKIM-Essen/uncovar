@@ -98,3 +98,17 @@ rule artic_minion_medaka:
         " --read-file {params.read_file}"
         " nCoV-2019/V3 {wildcards.sample})"
         "> {params.cwd}/{log} 2>&1"
+
+
+rule artic_medaka_time:
+    input:
+        minion="benchmarks/{artic}/{sample}.benchmark.txt",
+        guppyplex="benchmarks/artic_guppyplex/{sample}.benchmark.txt",
+    output:
+        "benchmarks/{artic}/{sample}.all.benchmark.txt",
+    log:
+        "logs/{artic}/{sample}.log",
+    conda:
+        "../../envs/python.yaml"
+    script:
+        "../../scripts/time_artic_medaka.py"

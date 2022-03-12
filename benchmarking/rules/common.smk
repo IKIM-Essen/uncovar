@@ -5,38 +5,45 @@ PIPELINES = {
             "outdir": "results/benchmarking/artic/minion/medaka/{sample}/",
             "vcf": "results/benchmarking/artic/minion/medaka/{sample}/{sample}.merged.vcf",
             "consensus": "results/benchmarking/artic/minion/medaka/{sample}/{sample}.consensus.fasta",
+            "time": "benchmarks/artic_medaka/{sample}.all.benchmark.txt",
         },
         "artic-nanopolish": {
             "outdir": "results/benchmarking/artic/minion/nanopolish/{sample}/",
             "vcf": "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.merged.vcf",
             "consensus": "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.consensus.fasta",
+            "time": "benchmarks/artic_nanopolish/{sample}.all.benchmark.txt",
         },
         # "ncov2019-artic-nf-medaka": {
         #     "outdir": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/",
         #     "vcf": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}_{barcode}.vcf",
         #     "consensus": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{{sample}}_{barcode}.consensus.fasta",
+        #     "time": "benchmarks/ncov2019_artic_nf_medaka/{{sample}}~{barcode}.benchmark.txt"
         # },
         "ncov2019-artic-nf-nanopolish": {
             "outdir": "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/",
             "vcf": "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{{sample}}_{barcode}.merged.vcf",
             "consensus": "results/benchmarking/ncov2019_artic_nf/nanopore/nanopolish/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisNanopolish_articMinIONNanopolish/{{sample}}_{barcode}.consensus.fasta",
+            "time": "benchmarks/ncov2019_artic_nf_nanopolish/{{sample}}~{barcode}.benchmark.txt",
         },
         "nf-core-viralrecon-nanopolish": {
             "outdir": "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}",
             "vcf": "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/{sample}.merged.vcf",
             "consensus": "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/{sample}.consensus.fasta",
             "pangolin": "results/benchmarking/nf-core-viralrecon/nanopore/nanopolish/{sample}/nanopolish/pangolin/{sample}.pangolin.csv",
+            "time": "benchmarks/nf_core_viralrecon_nanopolish/{sample}.benchmark.txt",
         },
         "nf-core-viralrecon-medaka": {
             "outdir": "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/",
             "vcf": "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/{sample}.merged.vcf",
             "consensus": "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/{sample}.consensus.fasta",
             "pangolin": "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/pangolin/{sample}.pangolin.csv",
+            "time": "benchmarks/nf_core_viralrecon_medaka/{sample}.benchmark.txt",
         },
         # "poreCov": { # no vcf output
         #     "outdir": "results/benchmarking/poreCov/{sample}/",
         #     "consensus": "results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta",
         #     "lineage_call": "results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
+        #     "time":"benchmarks/porecov/{sample}.benchmark.txt"
         # },
         "uncovar": {
             "outdir": [],
@@ -53,17 +60,20 @@ PIPELINES = {
             "vcf": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/intermediate_data/04_variant_calling/{{sample}}_/{{sample}}_.vcf",
             "consensus": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/consensuses_masked/{{sample}}_.masked_consensus.fasta",
             "pangolin": "results/benchmarking/CovPipe/{{sample}}-{covpipe_name}/results/intermediate_data/06_lineages/{{sample}}_/{{sample}}_.lineage.txt",
+            "time": "benchmarks/covpipe/{{sample}}~{covpipe_name}.benchmark.txt",
         },
         "havoc": {
             "outdir": "results/benchmarking/havoc/{{sample}}/data/{havoc_name}/",
             "vcf": "results/benchmarking/havoc/{sample}/{sample}.fixed.vcf",
             "consensus": "results/benchmarking/havoc/{{sample}}/data/{havoc_name}/{havoc_name}_consensus.fa",
             "pangolin": "results/benchmarking/havoc/{{sample}}/data/{havoc_name}/{havoc_name}_pangolin_lineage.csv",
+            "time": "benchmarks/havoc/{{sample}}~{havoc_name}.benchmark.txt",
         },
         "ncov2019-artic-nf": {
             "outdir": "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/",
             "vcf": "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_callVariants/{sample}.variants.vcf",
             "consensus": "results/benchmarking/ncov2019_artic_nf/illumina/{sample}/ncovIllumina_sequenceAnalysis_makeConsensus/{sample}.primertrimmed.consensus.fa",
+            "time": "benchmarks/ncov2019_artic_nf_illumina/{sample}.benchmark.txt",
         },
         "nf-core-viralrecon": {
             "outdir": "results/benchmarking/nf-core-viralrecon/illumina/{sample}",
@@ -71,18 +81,21 @@ PIPELINES = {
             "consensus": "results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/consensus/{sample}.consensus.fa",
             "pangolin": "results/benchmarking/nf-core-viralrecon/illumina/{sample}/variants/bcftools/pangolin/{sample}.pangolin.csv",
             "de_novo_assembly": "results/benchmarking/nf-core-viralrecon/illumina/{sample}/assembly/spades/rnaviral/{sample}.contigs.fa",
+            "time": "benchmarks/nf_core_viralrecon_illumina/{sample}.benchmark.txt",
         },
         # "signal": { # failes bc of pangolin update, which uses GiTHub API, which is rate limitet to 60 requests
         #     "outdir": "results/benchmarking/SIGNAL/{sample}/results_dir",
         #     "vcf": "results/benchmarking/SIGNAL/{sample}/results_dir/{sample}/freebayes/{sample}.variants.norm.vcf",
         #     "consensus": "results/benchmarking/SIGNAL/{sample}/results_dir/all_freebayes_genomes.fa",
         #     "pangolin": "results/benchmarking/SIGNAL/{sample}/results_dir/freebayes_lineage_assignments.tsv",
+        #     "time":"benchmarks/signal/{sample}.benchmark.txt"
         # },
         "snakelines": {
             "outdir": "results/benchmarking/snakelines/{sample}/",
             "vcf": "results/benchmarking/snakelines/{sample}/variant/sars_cov_2-wgs/original/{sample}.vcf",
             "consensus": "results/benchmarking/snakelines/{sample}/report/public/01-example/{sample}/consensus-sars_cov_2-wgs.fa",
             "pangolin": "results/benchmarking/snakelines/{sample}/report/public/01-example/{sample}/lineage_report-sars_cov_2-wgs.csv",
+            "time": "benchmarks/snakeline/{sample}.benchmark.txt",
         },
         "uncovar": {
             "outdir": [],
@@ -95,6 +108,7 @@ PIPELINES = {
             ],
             "vcf": "results/benchmarking/v-pipe/fixed-vcf/{sample}.vcf",
             "consensus": "results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/references/ref_majority.fasta",
+            "time": "benchmarks/v_pipe/{sample}.benchmark.txt",
         },
         "sanger": {
             "outdir": [],
@@ -263,7 +277,9 @@ def get_workflow_output(wildcards):
 
 
 def get_all_outputs(wildcards):
-    path = "results/benchmarking/backups/{key}/{tech}/{workflow}/{sample}.fasta"
+    path = (
+        "results/benchmarking/backups/{key}/{tech}/{workflow}/{sample}.some.extension"
+    )
 
     paths = []
     for tech, tech_dict in PIPELINES.items():
@@ -368,3 +384,17 @@ def get_output_of_pipelines(path, output):
         return expanded_paths
 
     return inner
+
+
+def get_paths_of_input_files(wildcards):
+    if is_illumina(wildcards):
+        return get_fastqs(wildcards)[0]
+    elif is_ont(wildcards):
+        fastq_path = get_fastq_pass_path_barcode(wildcards)
+        return [
+            os.path.join(fastq_path, f)
+            for f in os.listdir(fastq_path)
+            if os.path.isfile(os.path.join(fastq_path, f))
+        ]
+
+    raise NotImplementedError(f"No file found for {wildcards}")
