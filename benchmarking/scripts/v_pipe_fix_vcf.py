@@ -36,8 +36,7 @@ with pysam.VariantFile(snakemake.input[0]) as in_vcf:
 
     with pysam.VariantFile(snakemake.output[0], "w", header=header) as out_vcf:
         for record in in_vcf.fetch():
-            if record.alts == ("-",):
-                record.alts = (".",)
+            if record.alts != ("-",):
+                write_record(out_vcf, record)
+                # record.alts = (".",)
                 # record.info.update({"SVLEN": -len(record.alts)})
-
-            write_record(out_vcf, record)

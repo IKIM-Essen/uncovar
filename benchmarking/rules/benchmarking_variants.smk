@@ -139,6 +139,10 @@ checkpoint get_samples_with_multiallelic_calls:
         "../scripts/get_samples_with_multiallelic_calls.py"
 
 
+# TODO Filter out Sanger variants, if the sample has no coverage at that pos
+# TODO Add covarge staratic in none, low <020, and high >20
+
+
 rule agg_happy:
     input:
         get_happy_output(
