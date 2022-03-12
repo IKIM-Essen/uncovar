@@ -1,6 +1,6 @@
 use rule minimap2_bam_sanger as align_sequence with:
     input:
-        query="results/benchmarking/backups/{output_type}/{tech}/{workflow}/{sample}",
+        query="results/benchmarking/backups/{output_type}/{tech}/{workflow}/{sample}.fasta",
         target="resources/genomes/main.fasta",
     output:
         "results/benchmarking/sequences/aligned/{output_type}/{tech}/{workflow}/{sample}.bam",
@@ -14,7 +14,7 @@ use rule minimap2_bam_sanger as align_sequence with:
 
 rule benchmark_sequence:
     input:
-        fasta="results/benchmarking/backups/{output_type}/{tech}/{workflow}/{sample}",
+        fasta="results/benchmarking/backups/{output_type}/{tech}/{workflow}/{sample}.some.extension",
         bam="results/benchmarking/sequences/aligned/{output_type}/{tech}/{workflow}/{sample}.bam",
         reference="resources/genomes/main.fasta",
     output:
@@ -35,7 +35,7 @@ rule benchmark_sequence:
 rule agg_quast:
     input:
         get_output_of_pipelines(
-            path="results/benchmarking/backups/{output_type}/{tech}/{workflow}/{sample}.fasta",
+            path="results/benchmarking/sequences/quast/{output_type}/{tech}/{workflow}/{sample}/report.tsv",
             output="consensus",
         ),
     output:

@@ -1,12 +1,9 @@
 import sys
-from os import sep
-from turtle import color
-
-import altair as alt
-import pandas as pd
 
 sys.stderr = open(snakemake.log[0], "w")
 
+import altair as alt
+import pandas as pd
 
 SUFFIXES = ["-medaka", "-nanopolish"]
 

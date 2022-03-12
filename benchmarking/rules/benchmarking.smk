@@ -13,15 +13,16 @@ include: "workflows/v_pipe.smk"
 include: "sanger.smk"
 include: "benchmarking_variants.smk"
 include: "benchmarking_sequences.smk"
+include: "benchmarking_lineages.smk"
+include: "benchmarking_time.smk"
 
 
-# TODO: change file type
 rule save_workflow_output:
     input:
         get_workflow_output,
         get_output_from_pipline("outdir"),
     output:
-        "results/benchmarking/backups/{key}/{tech}/{workflow}/{sample}",
+        "results/benchmarking/backups/{key}/{tech}/{workflow}/{sample}.some.extension",
     log:
         "logs/save/{key}/{tech}/{workflow}/{sample}.log",
     conda:
@@ -35,6 +36,16 @@ rule save_all_workflow_outputs:
         get_all_outputs,
     output:
         touch("results/benchmarking/.saved"),
+
+
+rule agg_benchmarking_plots:
+    input:
+        "results/benchmarking/.saved",
+        "results/benchmarking/workflow-comparison-varaints.svg",
+        "results/benchmarking/workflow-comparison-mismatches.svg",
+        "results/benchmarking/plots/pangolin.svg",
+        "results/benchmarking/plots/time.svg",
+        # "results/benchmarking/tabels/quast-sequences.tsv"
 
 
 # output:
