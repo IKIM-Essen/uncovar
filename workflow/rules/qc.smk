@@ -201,7 +201,7 @@ rule extract_reads_of_interest:
         bam="results/{date}/mapped/ref~main+human/{sample}.bam",
         index="results/{date}/mapped/ref~main+human/{sample}.bam.bai",
     output:
-        "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
+        temp("results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam"),
     log:
         "logs/{date}/extract_reads_of_interest/{sample}.log",
     params:
@@ -234,7 +234,7 @@ rule order_nonhuman_reads_se:
     input:
         "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
     output:
-        fq="results/{date}/nonhuman-reads/se/{sample}.fastq",
+        fq=temp("results/{date}/nonhuman-reads/se/{sample}.fastq"),
         bam_sorted=temp("results/{date}/nonhuman-reads/{sample}.sorted.bam"),
     log:
         "logs/{date}/order_nonhuman_reads/se/{sample}.log",

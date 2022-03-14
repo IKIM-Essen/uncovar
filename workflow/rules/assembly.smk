@@ -94,8 +94,7 @@ rule spades_assemble_se:
         # "results/newdate/nonhuman-reads/se/UnCoVar_RefDataSet_Batch2_BC03_cat.fastq",
         "results/newdate/nonhuman-reads/se/{sample}.fastq",
     output:
-        # used to be temp()
-        "results/{date}/assembly/{sample}/spades-se/{sample}.contigs.fasta",
+        temp("results/{date}/assembly/{sample}/spades-se/{sample}.contigs.fasta"),
     log:
         "logs/{date}/spades/se/{sample}.log",
     conda:
