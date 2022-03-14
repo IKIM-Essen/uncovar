@@ -142,7 +142,7 @@ rule bcftools_consensus_ont:
         bcf="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.orf.bcf",  # clonal vs. subclonal?
         bcfidx="results/{date}/filtered-calls/ref~{sample}/{sample}.subclonal.high+moderate-impact.orf.bcf.csi",
     output:
-        "results/{date}/consensus/bcftools/{sample}.fasta",
+        temp("results/{date}/consensus/bcftools/{sample}.fasta"),
     log:
         "logs/{date}/bcftools-consensus-ont/{sample}.log",
     conda:
