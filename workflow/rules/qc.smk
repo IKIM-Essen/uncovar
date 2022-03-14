@@ -244,8 +244,7 @@ rule order_nonhuman_reads_se:
     shell:
         "(samtools sort  -@ {threads} -n {input} -o {output.bam_sorted}; "
         " samtools fastq -@ {threads} -0 {output.fq} {output.bam_sorted})"
-
-        " > {log} 2>&1"
+        "> {log} 2>&1"
 
 
 # analysis of species diversity present AFTER removing human contamination
