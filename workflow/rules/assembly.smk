@@ -91,8 +91,7 @@ rule assembly_spades_pe:
 
 rule spades_assemble_se:
     input:
-        # "results/newdate/nonhuman-reads/se/UnCoVar_RefDataSet_Batch2_BC03_cat.fastq",
-        "results/newdate/nonhuman-reads/se/{sample}.fastq",
+        get_reads_after_qc,
     output:
         temp("results/{date}/assembly/{sample}/spades-se/{sample}.contigs.fasta"),
     log:
