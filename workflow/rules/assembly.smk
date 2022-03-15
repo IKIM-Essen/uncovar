@@ -179,11 +179,11 @@ rule assembly_polishing_illumina:
 # polish ont de novo assembly
 rule assembly_polishing_ont:
     input:
-        fasta="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        fasta="results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.clip.fasta",
         reference="results/{date}/contigs/ordered/{sample}.fasta",
     output:
         report(
-            "results/{date}/polishing/medaka/{sample}/{sample}.fasta",
+            "results/{date}/polishing/medaka/{sample}/consensus.fasta",
             category="4. Sequences",
             subcategory="1. De Novo Assembled Sequences",
             caption="../report/assembly_ont.rst",
@@ -197,9 +197,7 @@ rule assembly_polishing_ont:
         "../envs/medaka.yaml"
     threads: 4
     shell:
-        "(medaka_consensus -v -f -i {input.fasta} -o {params.outdir} -d {input.reference} -t {threads} &&"
-        " mv {params.outdir}/consensus.fasta {output}) "
-        " > {log} 2>&1"
+        "medaka_consensus -f -i {input.fasta} -o {params.outdir} -d {input.reference} -t {threads} > {log} 2>&1"
 
 
 rule aggregate_polished_de_novo_sequences:
