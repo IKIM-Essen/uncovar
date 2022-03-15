@@ -69,7 +69,7 @@ rule downsample_and_trim_raw:
     conda:
         "../envs/notramp.yaml"
     shell:
-        "notramp -a -r {input.reads} -p {input.primer} -g {input.ref_genome} -o {params.outdir}"
+        "notramp -a -r {input.reads} -p {input.primer} -g {input.ref_genome} -o {params.outdir}  2> {log}"
 
 
 use rule assembly_polishing_ont as medaka_consensus_reference with:
@@ -133,7 +133,7 @@ rule clip_adbc_corrected:
     conda:
         "../envs/notramp.yaml"
     shell:
-        "notramp -t --incl_prim -r {input.reads} -p {input.primer} -g {input.ref_genome} -o {params.outdir}"
+        "notramp -t --incl_prim -r {input.reads} -p {input.primer} -g {input.ref_genome} -o {params.outdir}  2> {log}"
 
 
 rule bcftools_consensus_ont:

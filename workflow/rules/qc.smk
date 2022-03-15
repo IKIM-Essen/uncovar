@@ -256,7 +256,6 @@ rule species_diversity_after_pe:
         kraken_output=temp(
             "results/{date}/species-diversity-nonhuman/pe/{sample}/{sample}.kraken"
         ),
-        # removed parethesis; used to be temp()?
         report="results/{date}/species-diversity-nonhuman/pe/{sample}/{sample}.cleaned.kreport2",
     log:
         "logs/{date}/kraken/{sample}_pe_nonhuman.log",
