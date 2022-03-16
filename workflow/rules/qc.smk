@@ -153,9 +153,7 @@ rule species_diversity_before_se:
         kraken_output=temp(
             "results/{date}/species-diversity/se/{sample}/{sample}.kraken"
         ),
-        report=(
-            "results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2"
-        ),
+        report="results/{date}/species-diversity/se/{sample}/{sample}.uncleaned.kreport2",
     log:
         "logs/{date}/kraken/se/{sample}.log",
     threads: 8
@@ -236,7 +234,7 @@ rule order_nonhuman_reads_se:
     input:
         "results/{date}/mapped/ref~main+human/nonhuman/{sample}.bam",
     output:
-        fq=temp("results/{date}/nonhuman-reads/se/{sample}.fastq.gz"),
+        fq=temp("results/{date}/nonhuman-reads/se/{sample}.fastq"),
         bam_sorted=temp("results/{date}/nonhuman-reads/{sample}.sorted.bam"),
     log:
         "logs/{date}/order_nonhuman_reads/se/{sample}.log",
@@ -246,7 +244,7 @@ rule order_nonhuman_reads_se:
     shell:
         "(samtools sort  -@ {threads} -n {input} -o {output.bam_sorted}; "
         " samtools fastq -@ {threads} -0 {output.fq} {output.bam_sorted})"
-        " > {log} 2>&1"
+        "> {log} 2>&1"
 
 
 # analysis of species diversity present AFTER removing human contamination

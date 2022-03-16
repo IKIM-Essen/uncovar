@@ -407,7 +407,7 @@ def get_reads(wildcards):
         )
 
         ont_pattern = expand(
-            "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+            "results/{date}/corrected/{sample}/{sample}.correctedReads.clip.fasta",
             **wildcards,
         )
 
@@ -458,7 +458,7 @@ def get_reads_after_qc(wildcards, read="both"):
             **wildcards,
         )
         ont_pattern = expand(
-            "results/{date}/nonhuman-reads/se/{sample}.fastq.gz", **wildcards
+            "results/{date}/nonhuman-reads/se/{sample}.fastq", **wildcards
         )
         ion_torrent_pattern = expand(
             "results/{date}/read-clipping/fastq/se/{sample}.fastq", **wildcards
@@ -1297,15 +1297,6 @@ def get_include_flag_for_date(wildcards):
         return [get_include_flag(sample) for sample in allsamplelist]
 
 
-def get_artic_primer(wildcards):
-    # TODO add more _adapters.py (not preferred) or
-    # add a script to generate them from a link to a bed file.
-    # The bed file can be found in the artic repo. Related to #356
-    return "resources/ARTIC_v{}_adapters.py".format(
-        config["preprocessing"]["artic-primer-version"]
-    )
-
-
 def get_trimmed_reads(wildcards):
     """Returns paths of files of the trimmed reads for parsing by kraken."""
     return get_list_of_expanded_patters_by_technology(
@@ -1314,7 +1305,7 @@ def get_trimmed_reads(wildcards):
             "results/{{{{date}}}}/trimmed/fastp-pe/{{sample}}.{read}.fastq.gz",
             read=[1, 2],
         ),
-        ont_pattern="results/{{date}}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq.gz",
+        ont_pattern="results/{{date}}/corrected/{sample}/{sample}.correctedReads.fasta",
         ion_torrent_pattern="results/{{date}}/trimmed/fastp-se/{sample}.fastq.gz",
     )
 
@@ -1407,11 +1398,11 @@ def get_reads_by_stage(wildcards):
     if wildcards.stage == "raw":
         return get_fastqs(wildcards)
     elif wildcards.stage == "trimmed":
-        return "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"
+        return "results/{date}/corrected/{sample}/{sample}.correctedReads.clip.fasta"
     elif wildcards.stage == "clipped":
-        return "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"
+        return "results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.clip.fasta"
     elif wildcards.stage == "filtered":
-        return "results/{date}/trimmed/nanofilt/{sample}.fastq"
+        return "results/{date}/trimmed/nanofilt/{sample}.fasta"
 
 
 def get_polished_sequence(wildcards):
@@ -1419,7 +1410,7 @@ def get_polished_sequence(wildcards):
     return get_pattern_by_technology(
         wildcards,
         illumina_pattern="results/{date}/polishing/bcftools-illumina/{sample}.fasta",
-        ont_pattern="results/{date}/polishing/medaka/{sample}/{sample}.fasta",
+        ont_pattern="results/{date}/consensus/medaka/{sample}/consensus.fasta",
         ion_torrent_pattern="results/{date}/polishing/bcftools-illumina/{sample}.fasta",
     )
 
