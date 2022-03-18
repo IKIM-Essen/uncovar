@@ -85,7 +85,7 @@ rule artic_minion_medaka:
             os.getcwd(), input.repo, "primer_schemes"
         ),
         read_file=lambda w, input: os.path.join(os.getcwd(), input.fasta),
-        medaka_model=config["assembly"]["oxford nanopore"]["medaka_model"],
+        medaka_model=config["medaka_model"],
         cwd=lambda w: os.getcwd(),
         outdir=temp(directory("results/benchmarking/artic/minion/medaka/{sample}/")),
     resources:

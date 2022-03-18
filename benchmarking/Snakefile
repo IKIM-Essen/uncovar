@@ -1,0 +1,17 @@
+configfile: "benchmarking/config/config.yaml"
+
+
+pepfile: config["pepfile"]
+
+
+include: "rules/benchmarking.smk"
+
+
+rule all:
+    input:
+        "results/benchmarking/.saved",
+        "results/benchmarking/workflow-comparison-varaints.svg",
+        "results/benchmarking/workflow-comparison-mismatches.svg",
+        "results/benchmarking/plots/pangolin.svg",
+        "results/benchmarking/plots/time.svg",
+        # "results/benchmarking/tabels/quast-sequences.tsv"

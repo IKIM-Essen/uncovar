@@ -38,16 +38,6 @@ rule save_all_workflow_outputs:
         touch("results/benchmarking/.saved"),
 
 
-rule agg_benchmarking_plots:
-    input:
-        "results/benchmarking/.saved",
-        "results/benchmarking/workflow-comparison-varaints.svg",
-        "results/benchmarking/workflow-comparison-mismatches.svg",
-        "results/benchmarking/plots/pangolin.svg",
-        "results/benchmarking/plots/time.svg",
-        # "results/benchmarking/tabels/quast-sequences.tsv"
-
-
 # output:
 #     "",
 # log:

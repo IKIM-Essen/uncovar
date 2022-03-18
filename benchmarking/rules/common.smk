@@ -117,6 +117,43 @@ PIPELINES = {
     },
 }
 
+ILLUMINA = "illumina"
+ONT = "ont"
+
+
+def get_samples():
+    return list(pep.sample_table["sample_name"].values)
+
+
+def get_output_dir(wildcards, output):
+    return os.path.dirname(output[0])
+
+
+def get_technology(wildcards, sample=None):
+    if sample is None:
+        sample = wildcards.sample
+
+    return pep.sample_table.loc[sample]["technology"]
+
+
+def is_illumina(wildcards, sample=None):
+    if sample is None:
+        return get_technology(wildcards) == ILLUMINA
+    return get_technology(None, sample) == ILLUMINA
+
+
+def is_ont(wildcards, sample=None):
+    if sample is None:
+        return get_technology(wildcards) == ONT
+    return get_technology(None, sample) == ONT
+
+
+def get_fastqs(wildcards):
+    if is_illumina(wildcards):
+        return pep.sample_table.loc[wildcards.sample][["fq1", "fq2"]]
+    elif is_ont(wildcards):
+        return pep.sample_table.loc[wildcards.sample][["fq1"]]
+
 
 def get_fastq_pass_path_barcode(wildcards, sample=None):
     if sample is not None:
@@ -398,3 +435,7 @@ def get_paths_of_input_files(wildcards):
         ]
 
     raise NotImplementedError(f"No file found for {wildcards}")
+
+
+wildcard_constraints:
+    sample="[^/.]+",

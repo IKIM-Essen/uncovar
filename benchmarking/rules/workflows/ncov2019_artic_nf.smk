@@ -132,7 +132,7 @@ use rule ncov2019_artic_nf_nanopore_nanopolish as ncov2019_artic_nf_nanopore_med
         pipeline="connor-lab/ncov2019-artic-nf",
         revision="v1.3.0",
         qs=lambda w, threads: threads,
-        flags=f"--medaka --medaka-model {config['assembly']['oxford nanopore']['medaka_model']}",
+        flags=f"--medaka --medaka-model {config['medaka_model']}",
         outdir=lambda w: f"results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{w.sample}-{w.barcode}",
         prefix=lambda w: w.sample,
 

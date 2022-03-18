@@ -164,5 +164,5 @@ use rule nf_core_viralrecon_nanopore_nanopolish as nf_core_viralrecon_nanopore_m
         genome="'MN908947.3'",
         primer_set_version=3,
         artic_minion_caller="medaka",
-        artic_minion_medaka_model=config["assembly"]["oxford nanopore"]["medaka_model"],
+        artic_minion_medaka_model=config["medaka_model"],
         outdir="results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}",
