@@ -37,7 +37,7 @@ rule plot_coverage_main_sequence:
         expand_samples_for_date("results/{{date}}/qc/samtools_depth/{sample}.txt"),
     output:
         report(
-            "results/{date}/plots/coverage-reference-genome.svg",
+            "results/{date}/plots/coverage-reference-genome.png",
             caption="../report/all-main-coverage.rst",
             category="3. Sequencing Details",
             subcategory="2. Coverage of Reference Genome",
@@ -59,7 +59,7 @@ rule plot_coverage_polished_sequence:
         ),
     output:
         report(
-            "results/{date}/plots/coverage-assembled-genome.svg",
+            "results/{date}/plots/coverage-assembled-genome.png",
             caption="../report/all-final-coverage.rst",
             category="3. Sequencing Details",
             subcategory="3. Coverage of Reconstructed Sequences",
@@ -379,8 +379,8 @@ rule snakemake_reports_patient:
         ),
         # 3. Sequencing Details
         "results/{date}/qc/laboratory/multiqc.html",
-        "results/{date}/plots/coverage-reference-genome.svg",
-        "results/{date}/plots/coverage-assembled-genome.svg",
+        "results/{date}/plots/coverage-reference-genome.png",
+        "results/{date}/plots/coverage-assembled-genome.png",
         lambda wildcards: "results/{date}/plots/primer-clipping-intervals.svg"
         if any_sample_is_amplicon(wildcards)
         else [],
@@ -439,7 +439,7 @@ use rule snakemake_reports_patient as snakemake_reports_environment with:
         ),
         # 3. Sequencing Details
         "results/{date}/qc/laboratory/multiqc.html",
-        "results/{date}/plots/coverage-reference-genome.svg",
+        "results/{date}/plots/coverage-reference-genome.png",
     output:
         "results/environment-reports/{date}.zip",
     log:
