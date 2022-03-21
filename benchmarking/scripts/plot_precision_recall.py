@@ -33,6 +33,7 @@ for key, value in WORKFLOWS.items():
 for key, value in PLATTFORM.items():
     metrics["Platform"] = metrics["Platform"].str.replace(key, value)
 
+
 metrics["Workflow"] = metrics["Workflow"] + " (" + metrics["Mode"].fillna("") + ")"
 metrics["Workflow"] = metrics["Workflow"].str.removesuffix(" ()")
 
@@ -142,7 +143,10 @@ def faceted(data, platform):
         row=alt.Row(
             "Workflow:N", title=None, header=alt.Header(labelAngle=0, labelAlign="left")
         ),
-        column=alt.Column("Type:N", title=f"Variant Calls on {platform} Workflows"),
+        column=alt.Column(
+            "Type:N",
+            title=f"Variant calls on {platform} workflows with {snakemake.wildcards.cov} ({snakemake.params.cov_label}) coverage",
+        ),
         data=data,
     )
 

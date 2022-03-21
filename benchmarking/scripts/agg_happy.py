@@ -15,6 +15,8 @@ for happy_path, meta, platform in zip(
 
     happy = pd.read_csv(happy_path)
 
+    happy["Mode"] = ""
+
     for suffix in SUFFIXES:
         if workflow.endswith(suffix):
             workflow = workflow.removesuffix(suffix)
@@ -23,6 +25,7 @@ for happy_path, meta, platform in zip(
     happy["Workflow"] = workflow
     happy["Sample"] = sample
     happy["Platform"] = platform
+    happy["Coverage"] = snakemake.wildcards.cov
 
     happy_outputs.append(happy)
 

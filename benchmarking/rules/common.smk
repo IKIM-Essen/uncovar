@@ -45,10 +45,10 @@ PIPELINES = {
         #     "lineage_call": "results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
         #     "time":"benchmarks/porecov/{sample}.benchmark.txt"
         # },
-        "uncovar": {
-            "outdir": [],
-            "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.nofilter.vcf",
-        },
+        # "uncovar": {
+        #     "outdir": [],
+        #     "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.nofilter.vcf",
+        # },
         "sanger": {
             "outdir": [],
             "vcf": "results/benchmarking/sanger/fixed-genotype/{sample}.vcf",
@@ -97,10 +97,10 @@ PIPELINES = {
             "pangolin": "results/benchmarking/snakelines/{sample}/report/public/01-example/{sample}/lineage_report-sars_cov_2-wgs.csv",
             "time": "benchmarks/snakeline/{sample}.benchmark.txt",
         },
-        "uncovar": {
-            "outdir": [],
-            "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.nofilter.vcf",
-        },
+        # "uncovar": {
+        #     "outdir": [],
+        #     "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.nofilter.vcf",
+        # },
         "v-pipe": {
             "outdir": [
                 "results/benchmarking/v-pipe/{sample}/samples/{sample}/20200102/variants",
@@ -119,6 +119,13 @@ PIPELINES = {
 
 ILLUMINA = "illumina"
 ONT = "ont"
+
+COVERAGES = {
+    "none": 0,
+    "abit": 0,
+    "low": 1,
+    "high": 20,
+}
 
 
 def get_samples():
@@ -340,11 +347,16 @@ def get_all_outputs(wildcards):
 def get_happy_output(path):
     def inner(wildcards):
         with checkpoints.get_samples_with_multiallelic_calls.get(
-            source=wildcards.source
+            source=wildcards.source, cov=wildcards.cov
         ).output[0].open() as f:
-            samples_to_exclude = [line.split("\t")[0] for line in f.readlines()]
+            multiallelic_calls = [line.split("\t")[0] for line in f.readlines()]
 
-            samples_to_exclude = list(set(samples_to_exclude))
+        with checkpoints.extract_truth_without_calls.get(
+            source=wildcards.source, cov=wildcards.cov
+        ).output[0].open() as f:
+            truth_without_calls = [line.strip() for line in f.readlines()]
+
+        samples_to_exclude = list(set(multiallelic_calls + truth_without_calls))
 
         return get_benchmark_paths_by_tech(
             path,
@@ -366,11 +378,16 @@ def get_happy_output(path):
 def get_happy_platform_data(remove):
     def inner(wildcards):
         with checkpoints.get_samples_with_multiallelic_calls.get(
-            source=wildcards.source
+            source=wildcards.source, cov=wildcards.cov
         ).output[0].open() as f:
-            samples_to_exclude = [line.split("\t")[0] for line in f.readlines()]
+            multiallelic_calls = [line.split("\t")[0] for line in f.readlines()]
 
-            samples_to_exclude = list(set(samples_to_exclude))
+        with checkpoints.extract_truth_without_calls.get(
+            source=wildcards.source, cov=wildcards.cov
+        ).output[0].open() as f:
+            truth_without_calls = [line.strip() for line in f.readlines()]
+
+        samples_to_exclude = list(set(multiallelic_calls + truth_without_calls))
 
         return ["nanopore"] * len(
             get_benchmark_paths_by_tech(
@@ -435,6 +452,36 @@ def get_paths_of_input_files(wildcards):
         ]
 
     raise NotImplementedError(f"No file found for {wildcards}")
+
+
+def get_mosdepth_quantize():
+    return ":".join(map(str, sorted(COVERAGES.values()))) + ":"
+
+
+def get_io_prefix(getter):
+    def inner(wildcards, input, output):
+
+        return getter(input, output).split(".")[0]
+
+    return inner
+
+
+def get_cov_label(wildcards):
+    lower, upper = get_cov_interval(wildcards.cov)
+    if upper:
+        return f"{lower}:{upper}"
+    return f"{lower}:inf"
+
+
+def get_cov_interval(name):
+    threshold = COVERAGES[name]
+    upper_bound = None
+
+    greater = [cov for cov in COVERAGES.values() if cov > threshold]
+    if greater:
+        upper_bound = min(greater)
+
+    return threshold, upper_bound
 
 
 wildcard_constraints:
