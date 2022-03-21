@@ -265,7 +265,7 @@ rule agg_happy:
             "results/benchmarking/happy/{{source}}/sanger-vs-{workflow}/{sample}/cov-{{cov}}/report.summary.csv"
         ),
     output:
-        "results/benchmarking/workflow-comparison.source-{source}.cov-{cov}.tsv",
+        "results/benchmarking/tabels/workflow-comparison.source-{source}.cov-{cov}.tsv",
     log:
         "logs/agg_happy/{source}.cov-{cov}.log",
     conda:
@@ -280,7 +280,7 @@ rule agg_happy:
 rule agg:
     input:
         expand(
-            "results/benchmarking/workflow-comparison.source-{source}.cov-{cov}.tsv",
+            "results/benchmarking/tabels/workflow-comparison.source-{source}.cov-{cov}.tsv",
             source=["stratified", "normalized-variants"],
             cov=COVERAGES.keys(),
         ),
@@ -288,7 +288,7 @@ rule agg:
 
 rule plot_precision_recall:
     input:
-        "results/benchmarking/workflow-comparison.source-{source}.cov-{cov}.tsv",
+        "results/benchmarking/tabels/workflow-comparison.source-{source}.cov-{cov}.tsv",
     output:
         plot="results/benchmarking/plots/variant-calls/precision-recall.source-{source}.cov-{cov}.svg",
         data="results/benchmarking/tabels/variant-calls/precision-recall.source-{source}.cov-{cov}.tsv",
@@ -304,7 +304,7 @@ rule plot_precision_recall:
 
 rule plot_mismatches:
     input:
-        "results/benchmarking/workflow-comparison.stratified.source-{source}.cov-{cov}.tsv",
+        "results/benchmarking/tabels/workflow-comparison.stratified.source-{source}.cov-{cov}.tsv",
     output:
         plot="results/benchmarking/plots/variant-missmatches/source-{source}.cov-{cov}.svg",
         data="results/benchmarking/tabels/variant-missmatches/source-{source}.cov-{cov}.tsv",
