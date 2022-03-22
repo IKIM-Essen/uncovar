@@ -601,9 +601,9 @@ def get_target_events(wildcards):
 
 
 def get_control_fdr_input(wildcards):
-    if wildcards.reference == "main" and widlcards.filter != "nofilter":
+    if wildcards.reference == "main" and wildcards.filter != "nofilter":
         return "results/{date}/filtered-calls/ref~{reference}/annot~{annotation}/{sample}.{filter}.bcf"
-    elif wildcards.reference == "main" and widlcards.filter == "nofilter":
+    elif wildcards.reference == "main" and wildcards.filter == "nofilter":
         # use directly the annotated output, instead of the filtered one
         return "results/{date}/annotated-calls/ref~{reference}/annot~{annotation}/{sample}.bcf"
     else:
