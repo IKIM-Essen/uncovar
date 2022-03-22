@@ -1,4 +1,3 @@
-# PIPELINES = {"nanopore": ["uncovar"], "illumina": ["uncovar", "covpipe"]}
 PIPELINES = {
     "nanopore": {
         "artic-medaka": {
@@ -39,12 +38,12 @@ PIPELINES = {
             "pangolin": "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/pangolin/{sample}.pangolin.csv",
             "time": "benchmarks/nf_core_viralrecon_medaka/{sample}.benchmark.txt",
         },
-        # "poreCov": { # no vcf output
-        #     "outdir": "results/benchmarking/poreCov/{sample}/",
-        #     "consensus": "results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta",
-        #     "lineage_call": "results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
-        #     "time":"benchmarks/porecov/{sample}.benchmark.txt"
-        # },
+        "poreCov": {  # no vcf output
+            "outdir": "results/benchmarking/poreCov/{sample}/",
+            "consensus": "results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta",
+            "lineage_call": "results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
+            "time": "benchmarks/porecov/{sample}.benchmark.txt",
+        },
         # "uncovar": {
         #     "outdir": [],
         #     "vcf": "results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.nofilter.vcf",
@@ -263,9 +262,16 @@ def get_sanger_files_for_sample(wildcards):
     return pep.sample_table.loc[wildcards.sample]["sanger"].split(";")
 
 
-def get_benchmark_paths_by_tech(path, tech, samples, remove=None, pop_samples=None):
+def get_benchmark_paths_by_tech(
+    path, tech, samples, remove=None, pop_samples=None, key=None
+):
 
     workflows = list(PIPELINES[tech].keys())
+
+    if key is not None:
+        for workflow in workflows:
+            if key not in PIPELINES[tech][workflow].keys():
+                workflows.remove(workflow)
 
     if pop_samples is not None:
         samples = samples.tolist()
@@ -359,17 +365,19 @@ def get_happy_output(path):
         samples_to_exclude = list(set(multiallelic_calls + truth_without_calls))
 
         return get_benchmark_paths_by_tech(
-            path,
-            "nanopore",
-            get_nanopore_samples(wildcards),
-            "sanger",
-            samples_to_exclude,
+            path=path,
+            tech="nanopore",
+            samples=get_nanopore_samples(wildcards),
+            remove="sanger",
+            pop_samples=samples_to_exclude,
+            key="vcf",
         ) + get_benchmark_paths_by_tech(
-            path,
-            "illumina",
-            get_illumina_samples(wildcards),
-            "sanger",
-            samples_to_exclude,
+            path=path,
+            tech="illumina",
+            samples=get_illumina_samples(wildcards),
+            remove="sanger",
+            pop_samples=samples_to_exclude,
+            key="vcf",
         )
 
     return inner
@@ -482,6 +490,26 @@ def get_cov_interval(name):
         upper_bound = min(greater)
 
     return threshold, upper_bound
+
+
+def get_adapters(wildcards):
+    try:
+        samples = pep.sample_table
+        samples.dropna(subset=["adapters"], inplace=True)
+        adapters = samples.loc[wildcards.sample]["adapters"]
+
+        # predefined adapters
+        # https://lifesciences.tecan.com/revelo-rna-seq-library-prep-kit
+        if adapters == "revelo-rna-seq":
+            return "--adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+        # https://www.nimagen.com/shop/products/rc-cov096/easyseq-sars-cov-2-novel-coronavirus-whole-genome-sequencing-kit
+        elif adapters == "nimagen-easy-seq":
+            return "--adapter_sequence GCGAATTTCGACGATCGTTGCATTAACTCGCGAA --adapter_sequence_r2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+
+    # If there is no column namend "adapters" in the sample sheet
+    # return the adapters defined in the config file
+    except KeyError:
+        return config["kit-adapters"]
 
 
 wildcard_constraints:
