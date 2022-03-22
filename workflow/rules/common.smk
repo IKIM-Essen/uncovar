@@ -605,7 +605,7 @@ def get_control_fdr_input(wildcards):
         return "results/{date}/filtered-calls/ref~{reference}/annot~{annotation}/{sample}.{filter}.bcf"
     elif wildcards.reference == "main" and widlcards.filter == "nofilter":
         # use directly the annotated output, instead of the filtered one
-        return "results/{date}/annotated-calls/ref~main/annot~{annotation}/{sample}.bcf"
+        return "results/{date}/annotated-calls/ref~{reference}/annot~{annotation}/{sample}.bcf"
     else:
         # If reference is not main, we are polishing an assembly.
         # Here, there is no need to structural variants or annotation based filtering.
