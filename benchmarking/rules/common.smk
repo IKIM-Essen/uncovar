@@ -38,15 +38,16 @@ PIPELINES = {
             "pangolin": "results/benchmarking/nf-core-viralrecon/nanopore/medaka/{sample}/medaka/pangolin/{sample}.pangolin.csv",
             "time": "benchmarks/nf_core_viralrecon_medaka/{sample}.benchmark.txt",
         },
-        "poreCov": {  # no vcf output
-            "outdir": "results/benchmarking/poreCov/{sample}/",
-            "consensus": "results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta",
-            "lineage_call": "results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
-            "time": "benchmarks/porecov/{sample}.benchmark.txt",
-        },
+        # "poreCov": {  # no vcf output
+        #     "outdir": "results/benchmarking/poreCov/{sample}/",
+        #     "consensus": "results/benchmarking/poreCov/{sample}/2.Genomes/all_consensus_sequences/{sample}.consensus.fasta",
+        #     "lineage_call": "results/benchmarking/poreCov/{sample}/3.Lineages_Clades_Mutations/{sample}/lineage_report_{sample}.csv",
+        #     "time": "benchmarks/porecov/{sample}.benchmark.txt",
+        # },
         "uncovar": {
             "outdir": [],
             "vcf": "results/benchmarking/UnCoVar/benchmark-result/{sample}.vcf",
+            "time": "benchmarks/uncovar/{{sample}}~{date}.benchmark.txt",
         },
         "sanger": {
             "outdir": [],
@@ -99,6 +100,7 @@ PIPELINES = {
         "uncovar": {
             "outdir": [],
             "vcf": "results/benchmarking/UnCoVar/benchmark-result/{sample}.vcf",
+            "time": "benchmarks/uncovar/{{sample}}~{date}.benchmark.txt",
         },
         "v-pipe": {
             "outdir": [
