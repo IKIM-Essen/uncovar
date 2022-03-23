@@ -255,10 +255,6 @@ checkpoint extract_truth_without_calls:
         "../scripts/extract_truth_with_calls.py"
 
 
-# TODO Filter out Sanger variants, if the sample has no coverage at that pos
-# TODO Add covarge staratic in none, low <020, and high >20
-
-
 rule agg_happy:
     input:
         get_happy_output(
