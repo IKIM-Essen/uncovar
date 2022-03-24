@@ -14,9 +14,9 @@ rule all:
             source=["stratified"],
             cov=["low", "high"],
         ),
+        "results/benchmarking/plots/time.svg",
         # "results/benchmarking/.saved",
         # "results/benchmarking/workflow-comparison-varaints.svg",
         # "results/benchmarking/workflow-comparison-mismatches.svg",
         # "results/benchmarking/plots/pangolin.svg",
-        # "results/benchmarking/plots/time.svg",
         # "results/benchmarking/tabels/quast-sequences.tsv"
