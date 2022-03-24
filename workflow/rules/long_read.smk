@@ -160,6 +160,7 @@ rule rename_consensus:
             category="4. Sequences",
             subcategory="3. Consensus Sequences",
             caption="../report/assembly_consensus.rst",
+            labels={"sample": "{sample}"},
         ),
     log:
         "logs/{date}/rename-consensus-fasta/{sample}.log",

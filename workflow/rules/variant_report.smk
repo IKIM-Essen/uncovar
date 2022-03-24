@@ -20,6 +20,7 @@ rule vcf_report:
             caption="../report/variant-calls.rst",
             category="2. Variant Call Details",
             subcategory="Variants with {filter} on {annotation} level",
+            labels={"sample": "{target}", "impact":"{filter}", "annotation":"{annotation}"},
         ),
     params:
         bcfs=get_report_bcfs,
@@ -53,6 +54,8 @@ rule ucsc_vcf:
             caption="../report/variant-calls.rst",
             category="5. Variant Call Files",
             subcategory="With {filter} on {annotation}s",
+            labels={"sample": "{target}", "impact":"{filter}", "annotation":"{annotation}"},
+
         ),
     log:
         "logs/{date}/ucsc-vcf/{target}.subclonal.{filter}.{annotation}.log",
@@ -73,6 +76,8 @@ rule aggregate_ucsc_vcfs:
             caption="../report/ucsc.rst",
             category="5. Variant Call Files",
             subcategory="Overview",
+            labels={"impact":"{filter}", "annotation":"{annotation}"},
+
         ),
     log:
         "logs/{date}/aggregate_ucsc_vcfs-{filter}-{annotation}.log",

@@ -18,6 +18,8 @@ rule masking:
             category="4. Sequences",
             subcategory="4. Masked Sequences",
             caption="../report/masked_sequences.rst",
+            labels={"sample": "{sample}"},
+
         ),
         coverage="results/{date}/tables/coverage/{reference}/{sample}.txt",
     params:
@@ -40,7 +42,8 @@ rule plot_coverage_main_sequence:
             "results/{date}/plots/coverage-reference-genome.png",
             caption="../report/all-main-coverage.rst",
             category="3. Sequencing Details",
-            subcategory="2. Coverage of Reference Genome",
+            subcategory="2. Coverage",
+            labels={"of": "reference genome"},  
         ),
     params:
         min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
@@ -62,7 +65,9 @@ rule plot_coverage_polished_sequence:
             "results/{date}/plots/coverage-assembled-genome.png",
             caption="../report/all-final-coverage.rst",
             category="3. Sequencing Details",
-            subcategory="3. Coverage of Reconstructed Sequences",
+            subcategory="2. Coverage of ",
+            labels={"of": "reconstructed sequences"},
+
         ),
     params:
         min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
@@ -296,6 +301,7 @@ rule plot_variants_over_time:
             caption="../report/variants-over-time.rst",
             category="1. Overview",
             subcategory="5. Variant Development",
+            labels={"ORF": "{ORFNAME}"},
         ),
         "results/{date}/tables/variants-{ORFNAME}-over-time.csv",
     params:

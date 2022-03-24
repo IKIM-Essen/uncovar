@@ -60,6 +60,7 @@ use rule overview_table_html as generate_lineage_variant_report with:
             caption="../report/lineage-variant-report.rst",
             category="2. Variant Call Details",
             subcategory=" VOC Similarity",
+            labels={"sample": "{sample}"},
         ),
     log:
         "logs/{date}/lineage-variant-report/{sample}.log",

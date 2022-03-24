@@ -167,6 +167,8 @@ rule assembly_polishing_illumina:
             category="4. Sequences",
             subcategory="1. De Novo Assembled Sequences",
             caption="../report/assembly_illumina.rst",
+            labels={"sample": "{sample}"},
+
         ),
     log:
         "logs/{date}/bcftools-consensus-illumina/{sample}.log",
@@ -187,6 +189,8 @@ rule assembly_polishing_ont:
             category="4. Sequences",
             subcategory="1. De Novo Assembled Sequences",
             caption="../report/assembly_ont.rst",
+            labels={"sample": "{sample}"},
+
         ),
     log:
         "logs/{date}/medaka/consensus/{sample}.log",

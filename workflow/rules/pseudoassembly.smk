@@ -18,6 +18,7 @@ rule vcf_to_fasta:
             category="4. Sequences",
             subcategory="2. Pseudo Assembled Sequences",
             caption="../report/assembly_pesudo.rst",
+            labels={"sample": "{sample}"},
         ),
     params:
         min_prob_apply=config["assembly"]["min-variant-prob"],
