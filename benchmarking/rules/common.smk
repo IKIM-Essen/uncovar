@@ -12,7 +12,7 @@ PIPELINES = {
             "consensus": "results/benchmarking/artic/minion/nanopolish/{sample}/{sample}.consensus.fasta",
             "time": "benchmarks/artic_nanopolish/{sample}.all.benchmark.txt",
         },
-        # "ncov2019-artic-nf-medaka": {
+        # "ncov2019-artic-nf-medaka": { # Must specify --medaka-model if using the --medaka workflow. But this is not possible as ncov2019 does not provide an interface for tht.
         #     "outdir": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/",
         #     "vcf": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}_{barcode}.vcf",
         #     "consensus": "results/benchmarking/ncov2019_artic_nf/nanopore/medaka/{{sample}}-{barcode}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/{{sample}}_{barcode}.consensus.fasta",
