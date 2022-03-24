@@ -19,7 +19,6 @@ rule masking:
             subcategory="4. Masked Sequences",
             caption="../report/masked_sequences.rst",
             labels={"sample": "{sample}"},
-
         ),
         coverage="results/{date}/tables/coverage/{reference}/{sample}.txt",
     params:
@@ -43,7 +42,7 @@ rule plot_coverage_main_sequence:
             caption="../report/all-main-coverage.rst",
             category="3. Sequencing Details",
             subcategory="2. Coverage",
-            labels={"of": "reference genome"},  
+            labels={"of": "reference genome"},
         ),
     params:
         min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
@@ -67,7 +66,6 @@ rule plot_coverage_polished_sequence:
             category="3. Sequencing Details",
             subcategory="2. Coverage of ",
             labels={"of": "reconstructed sequences"},
-
         ),
     params:
         min_coverage=config["quality-criteria"]["min-depth-with-PCR-duplicates"],
