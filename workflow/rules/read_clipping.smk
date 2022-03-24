@@ -57,7 +57,7 @@ rule bamclipper:
         "(cp {input.bam} {params.output_dir} &&"
         " cp {input.bai} {params.output_dir} &&"
         " cd {params.output_dir} &&"
-        " bamclipper.sh -b {params.bam} -p {params.bed_path} -n {threads}) "
+        " bamclipper.sh -b {params.bam} -p {params.bed_path} -n {threads} -u 5 -d 5) "
         " > {params.cwd}/{log} 2>&1"
 
 
