@@ -6,7 +6,7 @@ default_stages: [commit, push]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v4.1.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -16,12 +16,12 @@ repos:
       - id: no-commit-to-branch
 
   - repo: https://github.com/snakemake/snakefmt
-    rev: 0.4.4
+    rev: v0.6.0
     hooks:
       - id: snakefmt
 
   - repo: https://github.com/psf/black
-    rev: 21.12b0
+    rev: 22.1.0
     hooks:
       - id: black
       - id: black-jupyter
@@ -32,13 +32,13 @@ repos:
       - id: isort
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.30.0
+    rev: v0.31.1
     hooks:
       - id: markdownlint-fix
         args: [-c, .markdownlint.yaml]
 
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v2.5.1
+    rev: v2.6.0
     hooks:
       - id: prettier
 
