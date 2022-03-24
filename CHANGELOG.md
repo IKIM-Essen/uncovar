@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.15.0](https://github.com/IKIM-Essen/uncovar/compare/v0.14.0...v0.15.0) (2022-03-24)
+
+
+### Features
+
+* update rbt to 0.39 ([#510](https://github.com/IKIM-Essen/uncovar/issues/510)) ([91b5ac5](https://github.com/IKIM-Essen/uncovar/commit/91b5ac585177b127a80548235abe7469a04e97cc))
+
+
+### Bug Fixes
+
+* add nofilter flag for variant calls ([#505](https://github.com/IKIM-Essen/uncovar/issues/505)) ([381007c](https://github.com/IKIM-Essen/uncovar/commit/381007c351db1809d6c93dc337920d9e9fa3ed54))
+* primer clipping add up- and downstream ([#515](https://github.com/IKIM-Essen/uncovar/issues/515)) ([5c886fa](https://github.com/IKIM-Essen/uncovar/commit/5c886fa439399c129fcec536b6d149b4e1741685))
+
 ## [0.14.0](https://github.com/IKIM-Essen/uncovar/compare/v0.13.2...v0.14.0) (2022-03-21)
 
 
