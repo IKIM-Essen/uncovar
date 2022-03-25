@@ -1,4 +1,6 @@
 import sys
+from cgi import print_environ
+from time import time
 from turtle import width
 
 sys.stderr = open(snakemake.log[0], "w")
@@ -37,61 +39,62 @@ times = times.merge(size, how="left")
 times["Workflow"] = times["Workflow"].replace(WORKFLOWS)
 times["Platform"] = times["Platform"].replace(PLATTFORM)
 
-times["s"] = pd.to_datetime(times["s"], unit="s")
-# times['h:m:s'] = pd.to_datetime(times["h:m:s"], format= '%H:%M:%S')
+times["s"] = pd.to_timedelta(times["s"], unit="s")
+times["s"] = times["s"].dt.total_seconds().div(60)
+times["cpu_time"] = pd.to_timedelta(times["cpu_time"], unit="s")
+times["cpu_time"] = times["cpu_time"].dt.total_seconds().div(60)
 
-print(times)
-print(times.info())
 
-
-boxplot = (
-    alt.Chart(times)
-    .mark_boxplot()
-    .encode(
-        alt.X("s:T", title=None, axis=alt.Axis(labels=False, ticks=False)),
-        alt.Y("Workflow:O"),
-        alt.Color("Workflow"),
+def boxplot(x):
+    return (
+        alt.Chart(times)
+        .mark_boxplot()
+        .encode(
+            alt.X(x, title=None, axis=alt.Axis(labels=False, ticks=False)),
+            alt.Y("Workflow:O"),
+            alt.Color("Workflow"),
+        )
+        .facet(column=alt.Column("Platform", title=None))
     )
-    .facet(column=alt.Column("Platform", title=None))
-)
 
-line = (
-    alt.Chart(times)
-    .mark_line(opacity=0.2)
-    .encode(
-        alt.X("hoursminutes(s):T", title="Wall clock time (h:m)"),
-        alt.Y("# Bases"),
-        alt.Color("Workflow"),
+
+def dot_line(x, title):
+    line = (
+        alt.Chart(times)
+        .mark_line(opacity=0.2)
+        .encode(
+            alt.X(x, title=title),
+            alt.Y("# Bases"),
+            alt.Color("Workflow"),
+        )
     )
-)
 
-
-dot = (
-    alt.Chart(times)
-    .mark_circle(opacity=0.4)
-    .encode(
-        alt.X("hoursminutes(s):T"),
-        alt.Y("# Bases"),
-        alt.Color(
-            "Workflow",
-            legend=alt.Legend(
-                orient="top", direction="vertical", columns=4, symbolLimit=0
+    dot = (
+        alt.Chart(times)
+        .mark_circle(opacity=0.4)
+        .encode(
+            alt.X(x),
+            alt.Y("# Bases"),
+            alt.Color(
+                "Workflow",
+                legend=alt.Legend(
+                    orient="top", direction="vertical", columns=4, symbolLimit=0
+                ),
+                title=None,
             ),
-            title=None,
-        ),
+        )
     )
-)
 
-dot_line = (line + dot).facet(
-    column=alt.Column("Platform", title=None, header=alt.Header(labels=False))
-)
+    dot_line = (line + dot).facet(
+        column=alt.Column("Platform", title=None, header=alt.Header(labels=False))
+    )
+
+    return dot_line
 
 
-(boxplot & dot_line).configure_legend(labelLimit=0).configure_axis(labelLimit=0).save(
-    snakemake.output[0]
-)
-
-#
-# .properties(
-#     width=340
-# )
+(
+    # boxplot("s:Q") &
+    # dot_line("s:Q",  "Wall clock time (min)")
+    boxplot("cpu_time:Q")
+    & dot_line("cpu_time:Q", "CPU time (min)")
+).configure_legend(labelLimit=0).configure_axis(labelLimit=0).save(snakemake.output[0])
