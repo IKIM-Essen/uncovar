@@ -222,7 +222,7 @@ checkpoint get_samples_with_multiallelic_calls:
             remove="sanger",
         ),
     output:
-        "results/benchmarking/tabels/multiallelic_{source}_{cov}_calls.tsv",
+        temp("results/benchmarking/tabels/multiallelic_{source}_{cov}_calls.tsv"),
     log:
         "logs/get_samples_with_multiallelic_calls/{source}.cov-{cov}.log",
     conda:
@@ -244,7 +244,7 @@ checkpoint extract_truth_without_calls:
             sample=get_samples(),
         ),
     output:
-        "results/benchmarking/tabels/truth_without_calls_{source}_{cov}_calls.tsv",
+        temp("results/benchmarking/tabels/truth_without_calls_{source}_{cov}_calls.tsv"),
     log:
         "logs/get_truth_with_calls/{source}_{cov}.log",
     conda:
