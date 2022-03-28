@@ -20,7 +20,7 @@ rule uncovar_download:
         repo=directory("results/benchmarking/UnCoVar/"),
     shell:
         "if [ -d '{params.repo}' ]; then rm -Rf {params.repo}; fi &&"
-        "git clone --branch v0.14.0 https://github.com/IKIM-Essen/uncovar {params.repo} 2> {log}"
+        "git clone --branch v0.15.0 https://github.com/IKIM-Essen/uncovar {params.repo} 2> {log}"
 
 
 rule uncovar_prep_sample_sheet:
@@ -58,13 +58,14 @@ rule uncovar_run:
         samples="results/benchmarking/.indicators/uncovar/samples_preped",
         data="results/benchmarking/.indicators/uncovar/data_preped",
     output:
-        "results/benchmarking/UnCoVar/results/{date}/filtered-calls/ref~main/{sample}.subclonal.high+moderate-impact.orf.bcf",
+        "results/benchmarking/UnCoVar/results/{date}/filtered-calls/ref~main/{sample}.subclonal.nofilter.orf.bcf",
+        "results/benchmarking/UnCoVar/results/{date}/tables/strain-calls/{sample}.polished.strains.pangolin.csv",
     log:
         "logs/uncovar_run/{sample}-{date}.log",
     conda:
         "../../envs/snakemake.yaml"
     benchmark:
-        "benchmarks/uncovar/{sample}~{date}.benchmark.txt"
+        "benchmarks/uncovar/{sample}~{date}~polished.benchmark.txt"
     threads: 4
     resources:
         uncovar=1,
@@ -79,10 +80,17 @@ rule uncovar_run:
         ") > {log} 2>&1"
 
 
+use rule uncovar_run as uncovar_run_consensus with:
+    output:
+        "results/benchmarking/UnCoVar/results/{date}/tables/strain-calls/{sample}.consensus.strains.pangolin.csv",
+    benchmark:
+        "benchmarks/uncovar/{sample}~{date}~consensus.benchmark.txt"
+
+
 rule uncovar_bcf_2_vcf:
     input:
         lambda w: expand(
-            "results/benchmarking/UnCoVar/results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.high+moderate-impact.orf.bcf",
+            "results/benchmarking/UnCoVar/results/{date}/filtered-calls/ref~main/{{sample}}.subclonal.nofilter.orf.bcf",
             date=get_date_for_sample(w),
         ),
     output:
