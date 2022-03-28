@@ -10,7 +10,7 @@ rule minimap2_bam_sanger:
         extra="",
         sorting="coordinate",
         sort_extra="",
-    threads: 3
+    threads: 4
     wrapper:
         "v1.0.0/bio/minimap2/aligner"
 

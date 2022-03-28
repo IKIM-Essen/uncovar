@@ -1,6 +1,6 @@
 use rule minimap2_bam_sanger as align_sequence with:
     input:
-        query="results/benchmarking/backups/{output_type}/{tech}/{workflow}/{sample}.fasta",
+        query="results/benchmarking/backups/{output_type}/{tech}/{workflow}/{sample}.some.extension",
         target="resources/genomes/main.fasta",
     output:
         "results/benchmarking/sequences/aligned/{output_type}/{tech}/{workflow}/{sample}.bam",
