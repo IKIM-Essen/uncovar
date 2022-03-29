@@ -16,4 +16,5 @@ rule all:
         ),
         "results/benchmarking/plots/time.svg",
         "results/benchmarking/plots/pangolin.svg",
-        "results/benchmarking/tabels/quast-sequences.tsv" "results/benchmarking/.saved",
+        "results/benchmarking/tabels/quast-sequences.tsv",
+        "results/benchmarking/.saved",
