@@ -23,6 +23,7 @@ nav:
       - Create Your Analysis: user-guide/create-your-analysis.md
       - Share Your Results: user-guide/share-your-results.md
       - Customize Your Analysis: user-guide/customize-your-analysis.md
+      - Benchmark: user-guide/benchmarking.md
       - FAQs: user-guide/faqs.md
   - Developer Guide:
       - Overview: dev-guide/index.md
