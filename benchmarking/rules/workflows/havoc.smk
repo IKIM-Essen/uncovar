@@ -81,7 +81,7 @@ rule HaVoc:
         cwd=os.getcwd(),
     shell:
         "(cd {params.out_dir} &&"
-        " bash {params.cwd}/{input.script} {params.cwd}/{params.fastq_dir}) > {log} 2>&1"
+        " bash {params.cwd}/{input.script} --thread_num {threads} {params.cwd}/{params.fastq_dir}) > {log} 2>&1"
 
 
 rule HaVoc_fix_vcf:

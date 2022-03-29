@@ -48,10 +48,12 @@ rule CovPipe:
         "../../envs/covpipe.yaml"
     benchmark:
         "benchmarks/covpipe/{sample}~{covpipe_name}.benchmark.txt"
+    threads: 4
     resources:
         external_pipeline=1,
     shell:
         "(ncov_minipipe"
+        " --cores {threads}"
         " --reference {input.reference}"
         " --input {input.input_dir}"
         " --adapter {input.adapter}"
