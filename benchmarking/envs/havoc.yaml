@@ -14,3 +14,4 @@ dependencies:
   - sambamba
   - samtools
   - trimmomatic
+# source: https://bitbucket.org/auto_cov_pipeline/havoc/src/master/havoc_environment.yml
