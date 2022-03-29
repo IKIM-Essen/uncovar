@@ -1,6 +1,7 @@
 channels:
+  - simakro
   - bioconda
   - conda-forge
 dependencies:
-  - porechop = 0.2.4
-  - python = 3.6
+  - notramp =1.0.5
+  - minimap2 =2.22

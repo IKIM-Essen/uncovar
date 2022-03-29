@@ -23,6 +23,8 @@ virus-reference-genome:
 human-genome-download-path:
   - ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.28_GRCh38.p13/GCA_000001405.28_GRCh38.p13_genomic.fna.gz
 
+sending_lab_number: 10259
+
 data-handling:
   # flag for using the following data-handling structure
   # True: data-handling structure is used as shown below
@@ -80,6 +82,12 @@ preprocessing:
   amplicon-reference: "MN908947"
 
 variant-calling:
+  # genome annotation to use. Can be
+  # 'orf' (e.g. ORF1ab, S, etc..) and/or
+  # 'protein' (e.g. nsp1, Hel, Spike Protein S1, etc..)
+  annotations:
+    - "orf"
+    - "protein"
   # false discovery rate to control for
   fdr: 0.05
   # downsample loci to this read depth

@@ -239,7 +239,7 @@ def get_report_samples(wildcards):
 def get_merge_calls_input(suffix):
     def inner(wildcards):
         return expand(
-            "results/{{date}}/filtered-calls/ref~{{reference}}/{{sample}}.{{clonality}}.{{filter}}.{vartype}.fdr-controlled{suffix}",
+            "results/{{date}}/filtered-calls/ref~{{reference}}/{{sample}}.{{clonality}}.{{filter}}.{vartype}.{{annotation}}.fdr-controlled{suffix}",
             suffix=suffix,
             vartype=VARTYPES,
         )
@@ -407,7 +407,7 @@ def get_reads(wildcards):
         )
 
         ont_pattern = expand(
-            "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+            "results/{date}/corrected/{sample}/{sample}.correctedReads.clip.fasta",
             **wildcards,
         )
 
@@ -458,7 +458,7 @@ def get_reads_after_qc(wildcards, read="both"):
             **wildcards,
         )
         ont_pattern = expand(
-            "results/{date}/nonhuman-reads/se/{sample}.fastq.gz", **wildcards
+            "results/{date}/nonhuman-reads/se/{sample}.fastq", **wildcards
         )
         ion_torrent_pattern = expand(
             "results/{date}/read-clipping/fastq/se/{sample}.fastq", **wildcards
@@ -601,12 +601,11 @@ def get_target_events(wildcards):
 
 
 def get_control_fdr_input(wildcards):
-    if wildcards.reference == "main":
-        if (
-            wildcards.filter == "nofilter"
-        ):  # use directly the annotated output, instead of the filtered one
-            return "results/{date}/annotated-calls/ref~main/{sample}.bcf"
-        return "results/{date}/filtered-calls/ref~{reference}/{sample}.{filter}.bcf"
+    if wildcards.reference == "main" and wildcards.filter != "nofilter":
+        return "results/{date}/filtered-calls/ref~{reference}/annot~{annotation}/{sample}.{filter}.bcf"
+    elif wildcards.reference == "main" and wildcards.filter == "nofilter":
+        # use directly the annotated output, instead of the filtered one
+        return "results/{date}/annotated-calls/ref~{reference}/annot~{annotation}/{sample}.bcf"
     else:
         # If reference is not main, we are polishing an assembly.
         # Here, there is no need to structural variants or annotation based filtering.
@@ -1301,15 +1300,6 @@ def get_include_flag_for_date(wildcards):
         return [get_include_flag(sample) for sample in allsamplelist]
 
 
-def get_artic_primer(wildcards):
-    # TODO add more _adapters.py (not preferred) or
-    # add a script to generate them from a link to a bed file.
-    # The bed file can be found in the artic repo. Related to #356
-    return "resources/ARTIC_v{}_adapters.py".format(
-        config["preprocessing"]["artic-primer-version"]
-    )
-
-
 def get_trimmed_reads(wildcards):
     """Returns paths of files of the trimmed reads for parsing by kraken."""
     return get_list_of_expanded_patters_by_technology(
@@ -1318,7 +1308,7 @@ def get_trimmed_reads(wildcards):
             "results/{{{{date}}}}/trimmed/fastp-pe/{{sample}}.{read}.fastq.gz",
             read=[1, 2],
         ),
-        ont_pattern="results/{{date}}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq.gz",
+        ont_pattern="results/{{date}}/corrected/{sample}/{sample}.correctedReads.fasta",
         ion_torrent_pattern="results/{{date}}/trimmed/fastp-se/{sample}.fastq.gz",
     )
 
@@ -1411,11 +1401,11 @@ def get_reads_by_stage(wildcards):
     if wildcards.stage == "raw":
         return get_fastqs(wildcards)
     elif wildcards.stage == "trimmed":
-        return "results/{date}/trimmed/porechop/adapter_barcode_trimming/{sample}.fastq"
+        return "results/{date}/corrected/{sample}/{sample}.correctedReads.clip.fasta"
     elif wildcards.stage == "clipped":
-        return "results/{date}/trimmed/porechop/primer_clipped/{sample}.fastq"
+        return "results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.clip.fasta"
     elif wildcards.stage == "filtered":
-        return "results/{date}/trimmed/nanofilt/{sample}.fastq"
+        return "results/{date}/trimmed/nanofilt/{sample}.fasta"
 
 
 def get_polished_sequence(wildcards):
@@ -1423,7 +1413,7 @@ def get_polished_sequence(wildcards):
     return get_pattern_by_technology(
         wildcards,
         illumina_pattern="results/{date}/polishing/bcftools-illumina/{sample}.fasta",
-        ont_pattern="results/{date}/polishing/medaka/{sample}/{sample}.fasta",
+        ont_pattern="results/{date}/consensus/medaka/{sample}/consensus.fasta",
         ion_torrent_pattern="results/{date}/polishing/bcftools-illumina/{sample}.fasta",
     )
 
@@ -1594,7 +1584,7 @@ def get_input_by_mode(wildcard):
             mode=["major", "any"],
         ),
         zip_expand(
-            "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.bcf",
+            "results/{zip1}/filtered-calls/ref~main/{zip2}.subclonal.{{exp}}.orf.bcf",
             zip_wildcard_1=get_dates(),
             zip_wildcard_2=get_samples(),
             expand_wildcard=config["variant-calling"]["filters"],
@@ -1646,10 +1636,25 @@ def get_pangolin_for_report(wildcards):
     return paths
 
 
+def get_genome_annotation(suffix=""):
+    def inner(wildcards):
+        if wildcards.annotation == "orf":
+            return f"resources/annotation.gff.gz{suffix}"
+        elif wildcards.annotation == "protein":
+            return f"resources/protein_products.gff.gz{suffix}"
+
+        raise AttributeError(
+            f"Config for annotation '{wildcards.annotation}' not recognizied. Can be either 'orf' or 'protein'."
+        )
+
+    return inner
+
+
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),
     clonality="subclonal|clonal",
+    annotation="orf|protein",
     filter="|".join(
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
     ),

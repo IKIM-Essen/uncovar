@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Formatting
-        uses: github/super-linter@v4.8.7
+        uses: github/super-linter@v4.9.0
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
@@ -53,7 +53,7 @@ jobs:
     if: github.ref != 'refs/heads/master'
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v3
       - uses: pre-commit/action@v2.0.3
 
   Technology-Tests:
@@ -122,7 +122,7 @@ jobs:
           # mkdir -p .tests/resources/minikraken-8GB
           # curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
           mkdir -p .tests/resources/genomes
-          curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
+          curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=BA000005.3&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
       - name: Simulate GISAID download
         run: |
           mkdir -p .tests/results/benchmarking/tables
@@ -150,7 +150,7 @@ jobs:
         if: matrix.technology == 'all' && matrix.rule != 'all -npr'
         with:
           name: report-rule-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}
-          path: .tests/report.zip
+          path: .tests/results/patient-reports/2022-01-01.zip
 
       - name: Upload logs
         uses: actions/upload-artifact@v2
@@ -300,7 +300,7 @@ jobs:
           # mkdir -p .tests/resources/minikraken-8GB
           # curl -SL https://github.com/thomasbtf/small-kraken-db/raw/master/human_k2db.tar.gz | tar zxvf - -C .tests/resources/minikraken-8GB --strip 1
           mkdir -p .tests/resources/genomes
-          curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000021.9&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
+          curl -SL "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=BA000005.3&db=nuccore&report=fasta" | gzip -c > .tests/resources/genomes/human-genome.fna.gz
       - name: Simulate GISAID download
         run: |
           mkdir -p .tests/results/benchmarking/tables
@@ -327,7 +327,7 @@ jobs:
       #   uses: actions/upload-artifact@v2
       #   with:
       #     name: report-rule-${{ matrix.rule }}
-      #     path: .tests/report.zip
+      #     path: .tests/results/patient-reports/2022-01-01.zip
 
       - name: Upload logs
         uses: actions/upload-artifact@v2

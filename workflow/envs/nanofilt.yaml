@@ -2,4 +2,6 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
-  - nanofilt = 2.8.0
+  - nanofilt =2.8
+  - gzip =1.11
+  - file =5.39

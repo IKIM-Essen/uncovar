@@ -1,5 +1,65 @@
 # Changelog
 
+## [0.15.0](https://github.com/IKIM-Essen/uncovar/compare/v0.14.0...v0.15.0) (2022-03-24)
+
+
+### Features
+
+* update rbt to 0.39 ([#510](https://github.com/IKIM-Essen/uncovar/issues/510)) ([91b5ac5](https://github.com/IKIM-Essen/uncovar/commit/91b5ac585177b127a80548235abe7469a04e97cc))
+
+
+### Bug Fixes
+
+* add nofilter flag for variant calls ([#505](https://github.com/IKIM-Essen/uncovar/issues/505)) ([381007c](https://github.com/IKIM-Essen/uncovar/commit/381007c351db1809d6c93dc337920d9e9fa3ed54))
+* primer clipping add up- and downstream ([#515](https://github.com/IKIM-Essen/uncovar/issues/515)) ([5c886fa](https://github.com/IKIM-Essen/uncovar/commit/5c886fa439399c129fcec536b6d149b4e1741685))
+
+## [0.14.0](https://github.com/IKIM-Essen/uncovar/compare/v0.13.2...v0.14.0) (2022-03-21)
+
+
+### Features
+
+* add variant call details based on protein annotation ([#487](https://github.com/IKIM-Essen/uncovar/issues/487)) ([016bcfb](https://github.com/IKIM-Essen/uncovar/commit/016bcfb3721ed31b208b29a9bdab7957be32439d))
+* call known lineage variants ([#392](https://github.com/IKIM-Essen/uncovar/issues/392)) ([9ad720c](https://github.com/IKIM-Essen/uncovar/commit/9ad720c32f1b246b5ef8a20871063a05dfd682b8))
+* **deps:** bump github/super-linter from 4.8.6 to 4.8.7 ([#459](https://github.com/IKIM-Essen/uncovar/issues/459)) ([c18f241](https://github.com/IKIM-Essen/uncovar/commit/c18f2412f576b26050e3296bdcc509cd5facf462))
+* **deps:** update pangolin to 3.1.19 ([#461](https://github.com/IKIM-Essen/uncovar/issues/461)) ([3971687](https://github.com/IKIM-Essen/uncovar/commit/3971687db229577fa862b40f900701f18270011d))
+* **deps:** update pangolin to 3.1.19 ([#461](https://github.com/IKIM-Essen/uncovar/issues/461)) ([d5f42ca](https://github.com/IKIM-Essen/uncovar/commit/d5f42ca229c038adaf0ccb1ce772aaa4e229b1fe))
+* **deps:** update pangolin to 3.1.20 ([#467](https://github.com/IKIM-Essen/uncovar/issues/467)) ([78cb7f4](https://github.com/IKIM-Essen/uncovar/commit/78cb7f4452fe703194aed2fb393649572b60519c))
+* make incoming and archive structure data-handling optional ([#443](https://github.com/IKIM-Essen/uncovar/issues/443)) ([559e9c1](https://github.com/IKIM-Essen/uncovar/commit/559e9c1c1af503398a1669fd0e4f04e7d4b4a7ac))
+* make sending lab column in rki report csv adjustable via config file ([#492](https://github.com/IKIM-Essen/uncovar/issues/492)) ([311e857](https://github.com/IKIM-Essen/uncovar/commit/311e8578a7d9956ffb532314da60b01211a90b60))
+* rule and script bed_to_bedpe ([#447](https://github.com/IKIM-Essen/uncovar/issues/447)) ([3022eab](https://github.com/IKIM-Essen/uncovar/commit/3022eab0854992fb40894c7b1dd0feca8400b2fc))
+
+
+### Bug Fixes
+
+* add missing fasta index to vcf report ([#480](https://github.com/IKIM-Essen/uncovar/issues/480)) ([1697fb5](https://github.com/IKIM-Essen/uncovar/commit/1697fb50b2e4b3d249c4a83e83ecab2876118a91))
+* add missing voc variant report to environmental report ([#479](https://github.com/IKIM-Essen/uncovar/issues/479)) ([16baef1](https://github.com/IKIM-Essen/uncovar/commit/16baef1c440dbf6e059b81d2c3f7f100c53ee692))
+* bump rust-bio-tools to 0.38 ([#449](https://github.com/IKIM-Essen/uncovar/issues/449)) ([e85fa15](https://github.com/IKIM-Essen/uncovar/commit/e85fa15f0489185b9fc7a851005da1078c06c3fb))
+* canu and porechop logging ([5db0935](https://github.com/IKIM-Essen/uncovar/commit/5db09352abdcb2af41ae5b72250b26c547951877))
+* canu and porechop logs ([#473](https://github.com/IKIM-Essen/uncovar/issues/473)) ([497bfcd](https://github.com/IKIM-Essen/uncovar/commit/497bfcdd1bda588209295e7cc3e7d3acf20a2182))
+* **ci:** add missing missing echo to release please ([#476](https://github.com/IKIM-Essen/uncovar/issues/476)) ([6a0b899](https://github.com/IKIM-Essen/uncovar/commit/6a0b899454883d6c53c4234f2b356f20ac503249))
+* **ci:** change human reference from NC_000021.9 to BA000005.3 ([#488](https://github.com/IKIM-Essen/uncovar/issues/488)) ([14b4be0](https://github.com/IKIM-Essen/uncovar/commit/14b4be01ee1ff586b0e12d13b15c254d739e260b))
+* **ci:** change release please PR branch ([#481](https://github.com/IKIM-Essen/uncovar/issues/481)) ([603d3b5](https://github.com/IKIM-Essen/uncovar/commit/603d3b5edfbc7864e279950f8981c534397105d9))
+* **ci:** parse new json output from release please ([#474](https://github.com/IKIM-Essen/uncovar/issues/474)) ([eb598b7](https://github.com/IKIM-Essen/uncovar/commit/eb598b7f4feb51d8d5679dc2ef0aa823a7127a52))
+* **ci:** release please checkout branch ([#477](https://github.com/IKIM-Essen/uncovar/issues/477)) ([03a69bf](https://github.com/IKIM-Essen/uncovar/commit/03a69bfe23097222cf88f43f15d4b40b5f4fb3de))
+* correct filtering in plot-lineages-over-time ([#445](https://github.com/IKIM-Essen/uncovar/issues/445)) ([c71f72b](https://github.com/IKIM-Essen/uncovar/commit/c71f72bad90cc32923b7de6ffcc6de66367cf6ff))
+* **deps:** update multiqc wrapper ([#329](https://github.com/IKIM-Essen/uncovar/issues/329)) ([42fbcd8](https://github.com/IKIM-Essen/uncovar/commit/42fbcd8bc442d5c1e2142fc6c14406819c2b63bb))
+* fixed include flag KeyError ([#452](https://github.com/IKIM-Essen/uncovar/issues/452)) ([f47dad2](https://github.com/IKIM-Essen/uncovar/commit/f47dad20891a447e202aa2ff3f1712b77daaa593))
+* order of include flag sample ([#462](https://github.com/IKIM-Essen/uncovar/issues/462)) ([429e5d9](https://github.com/IKIM-Essen/uncovar/commit/429e5d9447b64dfbd20bcfaa924feb5fae7ddfb9))
+* pangolin plot color ([#483](https://github.com/IKIM-Essen/uncovar/issues/483)) ([9e368d5](https://github.com/IKIM-Essen/uncovar/commit/9e368d572abfb4816f8a3270b8deb22c198234ad))
+* reduce loading time of coverage plots ([#498](https://github.com/IKIM-Essen/uncovar/issues/498)) ([8a8f533](https://github.com/IKIM-Essen/uncovar/commit/8a8f53347aa90c66075c1418e9cdf34bbecc02bc))
+* remove removal of .indicators/replacement_notice.txt for int ([#457](https://github.com/IKIM-Essen/uncovar/issues/457)) ([c5b9f6c](https://github.com/IKIM-Essen/uncovar/commit/c5b9f6c02c6e65646d0bc748cef5962b56322b3e))
+* rename column header in report formatter ([#444](https://github.com/IKIM-Essen/uncovar/issues/444)) ([8ba21d9](https://github.com/IKIM-Essen/uncovar/commit/8ba21d90caa0e312e4619fc02e1a38f84039805b))
+* reset over table formatter ([#448](https://github.com/IKIM-Essen/uncovar/issues/448)) ([ee30a46](https://github.com/IKIM-Essen/uncovar/commit/ee30a46bc966413fbd1f8d616a3f1f97b356ff72))
+* untmp recalibrated bam ([#491](https://github.com/IKIM-Essen/uncovar/issues/491)) ([1118fd9](https://github.com/IKIM-Essen/uncovar/commit/1118fd91a815f002188ba9969ece6a159279953a))
+* VOC mutation table similarity calculation ([#484](https://github.com/IKIM-Essen/uncovar/issues/484)) ([82405ee](https://github.com/IKIM-Essen/uncovar/commit/82405ee8e1d0eddcf40315888ef3a32eda7b3954))
+
+
+### Performance Improvements
+
+* add ont temp flags ([#475](https://github.com/IKIM-Essen/uncovar/issues/475)) ([6447583](https://github.com/IKIM-Essen/uncovar/commit/6447583800b756c573bcf959d14d0d6f29eebd21))
+* ont downsampling normalisation ([#489](https://github.com/IKIM-Essen/uncovar/issues/489)) ([f502dd2](https://github.com/IKIM-Essen/uncovar/commit/f502dd287be37c76997f44054389124494e23ab7))
+* optimisations for ont - barcode+adapter-trimming, primer-trimming (porechop) and read correction (Canu) ([#454](https://github.com/IKIM-Essen/uncovar/issues/454)) ([e844fc4](https://github.com/IKIM-Essen/uncovar/commit/e844fc40923fcaa8c680079a05cd09173027fb00))
+
 ### [0.13.2](https://github.com/IKIM-Essen/uncovar/compare/v0.13.1...v0.13.2) (2022-01-06)
 
 

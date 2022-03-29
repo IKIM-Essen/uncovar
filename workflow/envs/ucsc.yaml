@@ -1,4 +1,5 @@
 channels:
+  - bioconda
   - conda-forge
 dependencies:
-  - pandas =1.3
+  - ucsc-bigbedtobed =377
