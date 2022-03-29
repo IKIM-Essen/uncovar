@@ -147,7 +147,6 @@ rule v_pipe_run:
         "> {log} 2>&1"
 
 
-# TODO: Exclude DELs, bc. of encoding of DELs
 # TODO: Contact authors by mail and check why the calls are so bad. Add Johannes in cc.
 # Problems:
 # - ref error

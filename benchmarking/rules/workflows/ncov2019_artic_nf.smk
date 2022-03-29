@@ -1,4 +1,6 @@
 # source: https://github.com/connor-lab/ncov2019-artic-nf
+
+
 rule ncov2019_artic_nf_illumina_data_prep:
     input:
         get_fastqs,

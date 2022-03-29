@@ -1,3 +1,6 @@
+# source: https://github.com/IKIM-Essen/uncovar
+
+# TODO: change to snakedeloy when resources of UnCoVar are restructured.
 # rule uncovar_deploy_workflow:
 #     output:
 #         directory("results/benchmarking/UnCoVar/"),

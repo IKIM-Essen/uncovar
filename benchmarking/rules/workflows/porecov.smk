@@ -1,4 +1,6 @@
 # source: https://github.com/replikation/poreCov
+
+
 rule poreCov_sample_sheet:
     input:
         get_fastq_pass_path_barcode,

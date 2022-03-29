@@ -1,3 +1,6 @@
+# source: https://github.com/jaleezyy/covid-19-signal
+
+
 rule download_SIGNAL:
     output:
         repo=directory("resources/benchmarking/SIGNAL/repo"),

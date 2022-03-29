@@ -1,4 +1,6 @@
 # source: https://nf-co.re/viralrecon/2.2/usage#usage
+
+
 rule download_viralrecon_script:
     output:
         "resources/benchmarking/nf-core-viralrecon/fastq_dir_to_samplesheet.py",

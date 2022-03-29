@@ -1,4 +1,6 @@
 # source: https://artic.network/ncov-2019/ncov2019-bioinformatics-sop.html
+
+
 rule download_artic_primer_schemes:
     output:
         directory("resources/benchmarking/artic/repo"),

@@ -84,8 +84,6 @@ rule bwa_index:
         idx=multiext("resources/genomes/main", ".amb", ".ann", ".bwt", ".pac", ".sa"),
     log:
         "logs/bwa-index.log",
-    # params:
-    #     prefix=get_io_prefix(lambda input, output: output[0]),
     wrapper:
         "v1.3.1/bio/bwa/index"
 

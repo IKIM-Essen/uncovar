@@ -1,4 +1,6 @@
 # source: https://bitbucket.org/auto_cov_pipeline/havoc/src/master/
+
+
 rule download_HAVoC:
     output:
         script="resources/benchmarking/havoc/HAVoC.sh",

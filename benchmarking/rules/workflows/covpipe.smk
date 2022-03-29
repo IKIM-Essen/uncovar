@@ -1,4 +1,6 @@
 # source: https://gitlab.com/RKIBioinformaticsPipelines/ncov_minipipe#3-usage
+
+
 rule CovPipe_prepare_samples:
     input:
         get_fastqs,
