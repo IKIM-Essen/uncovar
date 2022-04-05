@@ -2,4 +2,4 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
-  - pangolin =3.1.20
+  - pangolin =4.0.1
