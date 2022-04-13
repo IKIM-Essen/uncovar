@@ -25,7 +25,7 @@ for path, sample, stage in zip(
 
 pangolin_calls_by_stage = pd.concat(pangolin_calls, axis=0, ignore_index=True)
 
-failed_called = (pangolin_calls_by_stage["status"] == "fail") | (
+failed_called = (pangolin_calls_by_stage["qc_status"] == "fail") | (
     pangolin_calls_by_stage["lineage"] == "None"
 )
 pangolin_calls_by_stage.loc[failed_called, "lineage"] = (
