@@ -15,10 +15,10 @@ def analyize_pangolin(sm_input, accessions):
             pango_df = pd.read_csv(pango_file)
             if pango_df.loc[0, "note"] == "seq_len:1":
                 temp_dict[sample] = "assembly failed"
-            elif pango_df.loc[0, "status"] == "fail":
+            elif pango_df.loc[0, "qc_status"] == "fail":
                 temp_dict[sample] = "is non-sars-cov-2"
             elif (
-                pango_df.loc[0, "status"] == "pass"
+                pango_df.loc[0, "qc_status"] == "pass"
                 and pango_df.loc[0, "lineage"] == "None"
             ):
                 temp_dict[sample] = "is non-sars-cov-2"
