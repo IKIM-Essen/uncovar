@@ -46,7 +46,7 @@ def load_pangolin_df(i, path):
         inplace=True,
     )
     pangolin_df.drop(
-        columns=["taxon", "pangoLEARN_version", "qc_status", "note"], inplace=True
+        columns=["taxon", "qc_status", "note"], inplace=True
     )
     pangolin_df["mix"] = i
     return pangolin_df
