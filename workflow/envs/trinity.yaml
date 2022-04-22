@@ -4,5 +4,5 @@ channels:
   - defaults
 dependencies:
   - trinity =2.13
-  # workaround for mamba bug: https://github.com/mamba-org/mamba/issues/1643
-  - tbb >=2020.2,<2021.0.0a0
+  # ensure that we use a bowtie2 that already contains fixed dependency constraints
+  - bowtie2 =2.4.5
