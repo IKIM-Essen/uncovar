@@ -67,22 +67,38 @@ with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
             lineages = record.info["LINEAGES"]
             for signature in signatures:
                 # generate df with all signatures + VAF and Prob_not_present from calculation
-                variants_df = variants_df.append(
-                    {
-                        "Mutations": signature,
-                        "Frequency": vaf,
-                        "ReadDepth": dp,
-                        "Prob_not_present": prob_not_present,
-                    },
-                    ignore_index=True,
+                # variants_df = variants_df.append(
+                #    {
+                #        "Mutations": signature,
+                #        "Frequency": vaf,
+                #        "ReadDepth": dp,
+                #        "Prob_not_present": prob_not_present,
+                #    },
+                #    ignore_index=True,
+                # )
+                variants_df_append = {
+                    "Mutations": signature,
+                    "Frequency": vaf,
+                    "ReadDepth": dp,
+                    "Prob_not_present": prob_not_present,
+                }
+                variants_df = pd.concat(
+                    [variants_df, variants_df_append], ignore_index=True
                 )
                 # generate df with lineage matrix for all signatures
-                lineage_df = lineage_df.append(
-                    {
-                        "Mutations": signature,
-                        **{lineage.replace(".", " "): "x" for lineage in lineages},
-                    },
-                    ignore_index=True,
+                # lineage_df = lineage_df.append(
+                #    {
+                #        "Mutations": signature,
+                #        **{lineage.replace(".", " "): "x" for lineage in lineages},
+                #    },
+                #    ignore_index=True,
+                # )
+                lineage_df_append = {
+                    "Mutations": signature,
+                    **{lineage.replace(".", " "): "x" for lineage in lineages},
+                }
+                lineage_df = pd.concat(
+                    [lineage_df, lineage_df_append], ignore_index=True
                 )
 
 # aggregate both dataframes by summing up repeating rows for VAR (maximum=1) and multiply Prob_not_present

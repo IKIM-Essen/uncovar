@@ -147,13 +147,15 @@ for sample, file in iter_with_samples(snakemake.input.unclipped):
     counts_before = count_intervals(file)
     counts_before["sample"] = sample
     counts_before["state"] = "before"
-    all_df = all_df.append(counts_before, ignore_index=True)
+    # all_df = all_df.append(counts_before, ignore_index=True)
+    all_df = pd.concat([all_df, counts_before], ignore_index=True)
 
 for sample, file in iter_with_samples(snakemake.input.clipped):
     counts_after = count_intervals(file)
     counts_after["sample"] = sample
     counts_after["state"] = "after"
-    all_df = all_df.append(counts_after, ignore_index=True)
+    # all_df = all_df.append(counts_after, ignore_index=True)
+    all_df = pd.concat([all_df, counts_after], ignore_index=True)
 
 bars, text = plot_classes(all_df)
 

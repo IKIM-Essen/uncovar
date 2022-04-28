@@ -64,7 +64,8 @@ def eval_error(paths, sm_output, max_reads, prefix, separator, percentage, load_
 
         df = df.merge(org_mix_df, how="outer").fillna(0)
 
-        results_df = results_df.append(df)
+        # results_df = results_df.append(df)
+        results_df = pd.concat([results_df, df])
 
     for sample in results_df["mix"].unique():
         sample_rmse = rmse(

@@ -21,7 +21,10 @@ def extract_strains_from_provision(
     chunks = pd.read_json(path_to_provision, lines=True, chunksize=9000)
     for i, chunk in enumerate(chunks):
         print(f"Parsing chunk {i}", file=sys.stderr)
-        provision = provision.append(select_oldest_strains(chunk), ignore_index=True)
+        # provision = provision.append(select_oldest_strains(chunk), ignore_index=True)
+        provision = pd.concat(
+            [provision, select_oldest_strains(chunk)], ignore_index=True
+        )
     provision = select_oldest_strains(provision)
 
     # save strain genomes

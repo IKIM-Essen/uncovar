@@ -35,7 +35,8 @@ def plot_pangolin_conflict(sm_input, sm_output):
         pangolin_output = pd.read_csv(input)
         pangolin_output["true_lineage"] = true_lineage
         pangolin_output["true_lineage_percent"] = percent
-        all_sampes = all_sampes.append(pangolin_output, ignore_index=True)
+        # all_sampes = all_sampes.append(pangolin_output, ignore_index=True)
+        all_sampes = pd.concat([all_sampes, pangolin_output], ignore_index=True)
 
     all_sampes["correct_lineage_assignment"] = (
         all_sampes["lineage"] == all_sampes["true_lineage"]
