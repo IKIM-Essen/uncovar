@@ -241,7 +241,7 @@ rule assembly_comparison_trinity:
         "../envs/trinity.yaml"
     shell:
         "(Trinity --left {input.fastq1} --max_memory 16G --right {input.fastq2} --CPU {threads} --seqType fq --output {params.outdir} && "
-        "mv {params.outdir}/Trinity.fasta {output} ) > {log} 2>&1"
+        "mv {params.outdir}.Trinity.fasta {output} ) > {log} 2>&1"
 
 
 rule assembly_comparison_velvet:
