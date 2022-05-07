@@ -45,9 +45,7 @@ def load_pangolin_df(i, path):
         columns={"lineage": "target_id", "scorpio_support": "est_fraction"},
         inplace=True,
     )
-    pangolin_df.drop(
-        columns=["taxon", "pangoLEARN_version", "status", "note"], inplace=True
-    )
+    pangolin_df.drop(columns=["taxon", "qc_status", "note"], inplace=True)
     pangolin_df["mix"] = i
     return pangolin_df
 
