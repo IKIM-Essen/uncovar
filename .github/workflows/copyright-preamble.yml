@@ -25,7 +25,7 @@ jobs:
 
       # Creates pull request with all changes in file
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         with:
           commit-message: "chore: update copyright preamble"
           delete-branch: true
