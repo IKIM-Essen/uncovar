@@ -21,12 +21,18 @@ def phred_to_prob(phred):
 
 
 # np.prod returns 1's as values for a pd series with NaN's. A list would return NaN's
-def prod_prob_not_present(probs):
+# switched for use of minimum
+# def prod_prob_not_present(probs):
+#     if pd.isna(probs).any():
+#         return pd.NA
+#     else:
+#         return np.prod(probs)
+
+def min_prob_not_present(probs):
     if pd.isna(probs).any():
         return pd.NA
     else:
-        return np.prod(probs)
-
+        return np.min(probs)
 
 def has_numbers(inputString):
     return any(char.isdigit() for char in inputString)
@@ -87,9 +93,9 @@ with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
 
 # aggregate both dataframes by summing up repeating rows for VAR (maximum=1) and multiply Prob_not_present
 variants_df = variants_df.groupby(["Mutations"]).agg(
-    func={
+    func={ 
         "Frequency": lambda x: min(sum(x), 1.0),
-        "Prob_not_present": prod_prob_not_present,
+        "Prob_not_present": min_prob_not_present,
         "ReadDepth": np.min,
     },
     axis=1,
