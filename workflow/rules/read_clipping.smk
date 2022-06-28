@@ -25,59 +25,44 @@ rule bed_to_bedpe:
     input:
         check_bed_for_URL(config["preprocessing"]["amplicon-primers"]),
     output:
-        "resources/primer.bedpe",
+        "resources/primer.tsv",
     log:
         "logs/bed-to-bedpe.log",
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/bed-to-bedpe.py"
+        "../scripts/bed-to-tsv.py"
 
 
-rule bamclipper:
+rule trim_primers_fgbio:
     input:
         bam="results/{date}/read-sorted/{read_type}~position/{sample}.initial.bam",
         bai="results/{date}/read-sorted/{read_type}~position/{sample}.initial.bam.bai",
-        bedpe="resources/primer.bedpe",
-    output:
-        temp(
-            "results/{date}/read-clipping/softclipped/{read_type}/{sample}/{sample}.initial.primerclipped.bam"
-        ),
-    params:
-        output_dir=get_output_dir,
-        cwd=lambda w: os.getcwd(),
-        bed_path=lambda w, input: os.path.join(os.getcwd(), input.bedpe),
-        bam=lambda w, input: os.path.basename(input.bam),
-    log:
-        "logs/{date}/bamclipper/{read_type}/{sample}.log",
-    conda:
-        "../envs/bamclipper.yaml"
-    threads: 6
-    shell:
-        "(cp {input.bam} {params.output_dir} &&"
-        " cp {input.bai} {params.output_dir} &&"
-        " cd {params.output_dir} &&"
-        " bamclipper.sh -b {params.bam} -p {params.bed_path} -n {threads} -u 5 -d 5) "
-        " > {params.cwd}/{log} 2>&1"
-
-
-rule fgbio:
-    input:
-        bam="results/{date}/read-clipping/softclipped/{read_type}/{sample}/{sample}.initial.primerclipped.bam",
-        bai="results/{date}/read-clipping/softclipped/{read_type}/{sample}/{sample}.initial.primerclipped.bam.bai",
         ref="resources/genomes/{reference}.fasta".format(
             reference=config["preprocessing"]["amplicon-reference"]
         ),
+        primers="resources/primer.tsv",
     output:
-        temp(
-            "results/{date}/read-clipping/hardclipped/{read_type}/{sample}/{sample}.bam"
-        ),
+        "results/{date}/read-clipping/hardclipped/{read_type}/{sample}/{sample}.bam"
     log:
-        "logs/{date}/fgbio/{read_type}/{sample}.log",
+        "logs/{date}/fgbio_primer_clipping/{read_type}/{sample}.log"
     conda:
         "../envs/fgbio.yaml"
     shell:
-        "fgbio --sam-validation-stringency=LENIENT ClipBam -i {input.bam} -o {output} -H true -r {input.ref} > {log} 2>&1"
+        "fgbio TrimPrimers -i {input.bam} -p {input.primers} -o {output} -H true -r {input.ref} > {log} 2>&1"
+
+
+rule filter_bam_fgbio:
+    input:
+        bam="results/{date}/read-clipping/hardclipped/{read_type}/{sample}/{sample}.bam"
+    output:
+        "results/{date}/read-clipping/hc_filtered/{read_type}/{sample}/{sample}.bam"
+    log:
+        "logs/{date}/fgbio_filter_bam/{read_type}/{sample}.log"
+    conda:
+        "../envs/fgbio.yaml"
+    shell:
+        "fgbio FilterBam -i {input.bam} -o {output} --min-insert-size 100 --remove-single-end-mappings > {log} 2>&1"
 
 
 rule samtools_fastq_pe:
@@ -132,7 +117,7 @@ rule plot_primer_clipping:
         ),
     params:
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
-        bedpe="resources/primer.bedpe",
+        bedpe="resources/primer.tsv",
     log:
         "logs/{date}/plot-primer-clipping.log",
     conda:
