@@ -57,7 +57,6 @@ def collect_calls(sm_input, sm_output, states, lineage, number, length):
     ]
 
     # bring them together
-    # call = pangolin_calls.append(call)
     call = pd.concat([pangolin_calls, call])
 
     call.to_csv(sm_output, sep="\t", index=False)

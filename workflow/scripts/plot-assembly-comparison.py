@@ -18,18 +18,7 @@ def register_lengths(sample, file_list, state, amplicon_state, data):
     for file, assembler in zip(file_list, snakemake.params.assembler):
         if state in ("initial", "scaffolded"):
             with pysam.FastxFile(file) as infile:
-                # data = data.append(
-                #    {
-                #        "Sample": sample,
-                #        "Assembler": assembler,
-                #        "Amplicon": amplicon_state,
-                #        "length (bp)": max(len(contig.sequence) for contig in infile),
-                #        "State": state,
-                #    },
-                #    ignore_index=True,
-                # )
-
-                data_append = pd.DataFrame(
+                data = pd.concat([data, pd.DataFrame(
                     {
                         "Sample": sample,
                         "Assembler": assembler,
@@ -38,24 +27,10 @@ def register_lengths(sample, file_list, state, amplicon_state, data):
                         "State": state,
                     },
                     index=[0],
-                )
-                data = pd.concat([data, data_append], ignore_index=True)
+                )], ignore_index=True)
         else:
             quastDf = pd.read_csv(file, sep="\t")
-            # data = data.append(
-            #    {
-            #        "Sample": sample,
-            #        "Assembler": assembler,
-            #        "Amplicon": amplicon_state,
-            #        "length (bp)": quastDf.loc[0, "N50"],
-            #        "State": "N50",
-            #        "Genome fraction (%)": quastDf.loc[0, "Genome fraction (%)"]
-            #        if "Genome fraction (%)" in quastDf.columns
-            #        else float("nan"),
-            #    },
-            #    ignore_index=True,
-            # )
-            data_append = pd.DataFrame(
+            data = pd.concat([data, pd.DataFrame(
                 {
                     "Sample": sample,
                     "Assembler": assembler,
@@ -67,8 +42,7 @@ def register_lengths(sample, file_list, state, amplicon_state, data):
                     else float("nan"),
                 },
                 index=[0],
-            )
-            data = pd.concat([data, data_append], ignore_index=True)
+            )], ignore_index=True)
     return data
 
 

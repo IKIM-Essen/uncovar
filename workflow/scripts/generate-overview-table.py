@@ -65,7 +65,6 @@ for sample, file in iter_with_samples(snakemake.input.kraken):
         columns=[eukaryota, bacteria, viruses, sars_cov2, unclassified]
     ).fillna(0)
     kraken_results["sample"] = sample
-    # species_columns = species_columns.append(kraken_results, ignore_index=True)
     species_columns = pd.concat([species_columns, kraken_results], ignore_index=True)
 
 data = data.join(species_columns.set_index("sample"))
