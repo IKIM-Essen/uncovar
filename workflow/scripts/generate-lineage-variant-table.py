@@ -76,25 +76,36 @@ with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
             for signature in signatures:
                 # generate df with all signatures + VAF and Prob_not_present from calculation
                 variants_df = pd.concat(
-                    [variants_df, pd.DataFrame(
-                    {
-                        "Frequency": vaf,
-                        "Mutations": signature,
-                        "Prob_not_present": prob_not_present,
-                        "ReadDepth": dp,
-                    },
-                    index=[0],
-                )], ignore_index=True
+                    [
+                        variants_df,
+                        pd.DataFrame(
+                            {
+                                "Frequency": vaf,
+                                "Mutations": signature,
+                                "Prob_not_present": prob_not_present,
+                                "ReadDepth": dp,
+                            },
+                            index=[0],
+                        ),
+                    ],
+                    ignore_index=True,
                 )
 
                 lineage_df = pd.concat(
-                    [lineage_df, pd.DataFrame(
-                    {
-                        "Mutations": [signature],
-                        **{lineage.replace(".", " "): "x" for lineage in lineages},
-                    },
-                    index=[0],
-                )], ignore_index=True
+                    [
+                        lineage_df,
+                        pd.DataFrame(
+                            {
+                                "Mutations": [signature],
+                                **{
+                                    lineage.replace(".", " "): "x"
+                                    for lineage in lineages
+                                },
+                            },
+                            index=[0],
+                        ),
+                    ],
+                    ignore_index=True,
                 )
 
 # aggregate both dataframes by summing up repeating rows for VAR (maximum=1) and multiply Prob_not_present
