@@ -43,9 +43,9 @@ rule trim_primers_fgbio:
         ),
         primers="resources/primer.tsv",
     output:
-        "results/{date}/read-clipping/hardclipped/{read_type}/{sample}/{sample}.bam"
+        "results/{date}/read-clipping/hardclipped/{read_type}/{sample}/{sample}.bam",
     log:
-        "logs/{date}/fgbio_primer_clipping/{read_type}/{sample}.log"
+        "logs/{date}/fgbio_primer_clipping/{read_type}/{sample}.log",
     conda:
         "../envs/fgbio.yaml"
     shell:
@@ -54,11 +54,11 @@ rule trim_primers_fgbio:
 
 rule filter_bam_fgbio:
     input:
-        bam="results/{date}/read-clipping/hardclipped/{read_type}/{sample}/{sample}.bam"
+        bam="results/{date}/read-clipping/hardclipped/{read_type}/{sample}/{sample}.bam",
     output:
-        "results/{date}/read-clipping/hc_filtered/{read_type}/{sample}/{sample}.bam"
+        "results/{date}/read-clipping/hc_filtered/{read_type}/{sample}/{sample}.bam",
     log:
-        "logs/{date}/fgbio_filter_bam/{read_type}/{sample}.log"
+        "logs/{date}/fgbio_filter_bam/{read_type}/{sample}.log",
     conda:
         "../envs/fgbio.yaml"
     shell:
