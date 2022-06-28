@@ -35,7 +35,7 @@ def plot_dependency_of_pangolin_call(sm_input, sm_output):
         pangolin_output["mixture_content"] = input.split(MIXTURE_PREFIX, 1)[-1].split(
             "."
         )[0]
-        all_sampes = all_sampes.append(pangolin_output, ignore_index=True)
+        all_sampes = pd.concat([all_sampes, pangolin_output], ignore_index=True)
 
     all_sampes["mixture_content"] = all_sampes["mixture_content"].str.replace("-", ".")
 

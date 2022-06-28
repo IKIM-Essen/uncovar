@@ -18,29 +18,43 @@ def register_lengths(sample, file_list, state, amplicon_state, data):
     for file, assembler in zip(file_list, snakemake.params.assembler):
         if state in ("initial", "scaffolded"):
             with pysam.FastxFile(file) as infile:
-                data = data.append(
-                    {
-                        "Sample": sample,
-                        "Assembler": assembler,
-                        "Amplicon": amplicon_state,
-                        "length (bp)": max(len(contig.sequence) for contig in infile),
-                        "State": state,
-                    },
+                data = pd.concat(
+                    [
+                        data,
+                        pd.DataFrame(
+                            {
+                                "Sample": sample,
+                                "Assembler": assembler,
+                                "Amplicon": amplicon_state,
+                                "length (bp)": max(
+                                    len(contig.sequence) for contig in infile
+                                ),
+                                "State": state,
+                            },
+                            index=[0],
+                        ),
+                    ],
                     ignore_index=True,
                 )
         else:
             quastDf = pd.read_csv(file, sep="\t")
-            data = data.append(
-                {
-                    "Sample": sample,
-                    "Assembler": assembler,
-                    "Amplicon": amplicon_state,
-                    "length (bp)": quastDf.loc[0, "N50"],
-                    "State": "N50",
-                    "Genome fraction (%)": quastDf.loc[0, "Genome fraction (%)"]
-                    if "Genome fraction (%)" in quastDf.columns
-                    else float("nan"),
-                },
+            data = pd.concat(
+                [
+                    data,
+                    pd.DataFrame(
+                        {
+                            "Sample": sample,
+                            "Assembler": assembler,
+                            "Amplicon": amplicon_state,
+                            "length (bp)": quastDf.loc[0, "N50"],
+                            "State": "N50",
+                            "Genome fraction (%)": quastDf.loc[0, "Genome fraction (%)"]
+                            if "Genome fraction (%)" in quastDf.columns
+                            else float("nan"),
+                        },
+                        index=[0],
+                    ),
+                ],
                 ignore_index=True,
             )
     return data
