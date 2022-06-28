@@ -29,13 +29,13 @@ def register_lengths(sample, file_list, state, amplicon_state, data):
                 #    ignore_index=True,
                 # )
 
-                data_append = {
+                data_append = pd.DataFrame({
                     "Sample": sample,
                     "Assembler": assembler,
                     "Amplicon": amplicon_state,
                     "length (bp)": max(len(contig.sequence) for contig in infile),
                     "State": state,
-                }
+                }, index=[0])
                 data = pd.concat([data, data_append], ignore_index=True)
         else:
             quastDf = pd.read_csv(file, sep="\t")
@@ -52,7 +52,7 @@ def register_lengths(sample, file_list, state, amplicon_state, data):
             #    },
             #    ignore_index=True,
             # )
-            data_append = {
+            data_append = pd.DataFrame({
                 "Sample": sample,
                 "Assembler": assembler,
                 "Amplicon": amplicon_state,
@@ -61,7 +61,7 @@ def register_lengths(sample, file_list, state, amplicon_state, data):
                 "Genome fraction (%)": quastDf.loc[0, "Genome fraction (%)"]
                 if "Genome fraction (%)" in quastDf.columns
                 else float("nan"),
-            }
+            }, index=[0])
             data = pd.concat([data, data_append], ignore_index=True)
     return data
 
