@@ -75,18 +75,21 @@ with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
                 #        "Prob_not_present": prob_not_present,
                 #    },
                 #    ignore_index=True,
-                #)
-                variants_df_append = pd.DataFrame({
-                    "Frequency": vaf,
-                    "Mutations": signature,
-                    "Prob_not_present": prob_not_present,
-                    "ReadDepth": dp,
-                }, index=[0])
+                # )
+                variants_df_append = pd.DataFrame(
+                    {
+                        "Frequency": vaf,
+                        "Mutations": signature,
+                        "Prob_not_present": prob_not_present,
+                        "ReadDepth": dp,
+                    },
+                    index=[0],
+                )
 
                 variants_df = pd.concat(
                     [variants_df, variants_df_append], ignore_index=True
                 )
-                #generate df with lineage matrix for all signatures
+                # generate df with lineage matrix for all signatures
                 # lineage_df = lineage_df.append(
                 #    {
                 #        "Mutations": signature,
@@ -94,15 +97,18 @@ with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
                 #    },
                 #    ignore_index=True,
                 # )
-                
-                lineage_df_append = pd.DataFrame({
-                    "Mutations": [signature],
-                    **{lineage.replace(".", " "): "x" for lineage in lineages},
-                }, index=[0])
+
+                lineage_df_append = pd.DataFrame(
+                    {
+                        "Mutations": [signature],
+                        **{lineage.replace(".", " "): "x" for lineage in lineages},
+                    },
+                    index=[0],
+                )
 
                 lineage_df = pd.concat(
                     [lineage_df, lineage_df_append], ignore_index=True
-                )              
+                )
 
 # aggregate both dataframes by summing up repeating rows for VAR (maximum=1) and multiply Prob_not_present
 variants_df = variants_df.groupby(["Mutations"]).agg(
