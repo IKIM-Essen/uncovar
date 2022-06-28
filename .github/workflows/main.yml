@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Formatting
-        uses: github/super-linter@v4.9.1
+        uses: github/super-linter@v4.9.2
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v3
-      - uses: pre-commit/action@v2.0.3
+      - uses: pre-commit/action@v3.0.0
 
   Technology-Tests:
     runs-on: ubuntu-latest
@@ -133,6 +133,7 @@ jobs:
       - name: Test rule ${{ matrix.rule }} on ${{ matrix.technology }} ${{ matrix.seq_method }} data
         uses: snakemake/snakemake-github-action@v1.24.0
         with:
+          stagein: mamba env create -f workflow/envs/trinity.yaml -n trinity
           directory: .tests
           snakefile: workflow/Snakefile
           args: "-pr --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
@@ -146,14 +147,14 @@ jobs:
           args: "${{ matrix.rule }} --report report.zip"
 
       - name: Upload report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: matrix.technology == 'all' && matrix.rule != 'all -npr'
         with:
           name: report-rule-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}
           path: .tests/results/patient-reports/2022-01-01.zip
 
       - name: Upload logs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: matrix.technology == 'all' && matrix.rule != 'all -npr'
         with:
           name: log-rule-${{ matrix.rule }}-technology-${{ matrix.technology }}
@@ -324,13 +325,13 @@ jobs:
           args: "${{ matrix.rule }} --report report.zip"
 
       # - name: Upload report
-      #   uses: actions/upload-artifact@v2
+      #   uses: actions/upload-artifact@v3
       #   with:
       #     name: report-rule-${{ matrix.rule }}
       #     path: .tests/results/patient-reports/2022-01-01.zip
 
       - name: Upload logs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: log-rule-${{ matrix.rule }}
           path: .tests/logs/

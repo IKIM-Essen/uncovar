@@ -252,7 +252,7 @@ def get_strain_accessions(wildcards):
         # Get genomes for benchmarking from config
         accessions = config.get("testing", {}).get("benchmark-genomes", [])
         if not accessions:
-            accessions = pd.read_csv(f, squeeze=True)
+            accessions = pd.read_csv(f).squeeze("columns")
         try:
             accessions = accessions[: config["testing"]["limit-strain-genomes"]]
         except KeyError:
@@ -267,7 +267,7 @@ def get_non_cov2_accessions():
 
 
 def load_strain_genomes(f):
-    strain_genomes = pd.read_csv(f, squeeze=True).to_list()
+    strain_genomes = pd.read_csv(f).squeeze("columns").to_list()
     strain_genomes.append("resources/genomes/main.fasta")
     return expand("{strains}", strains=strain_genomes)
 
@@ -924,7 +924,7 @@ def load_filtered_samples(wildcards, assembly_type):
         date=wildcards.date, assembly_type=assembly_type
     ).output.passed_filter.open() as f:
         try:
-            return pd.read_csv(f, squeeze=True, header=None).astype(str).to_list()
+            return pd.read_csv(f, header=None).squeeze("columns").astype(str).to_list()
         except pd.errors.EmptyDataError:
             return []
 
