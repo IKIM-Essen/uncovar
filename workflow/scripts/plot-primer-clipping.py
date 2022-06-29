@@ -13,8 +13,10 @@ import pysam
 from intervaltree import IntervalTree
 
 # read primer bedpe to df
-PRIMER = pd.read_csv(snakemake.params.get("bedpe", ""), delimiter="\t", header=None)
-PRIMER.drop(PRIMER.columns[[0, 3]], axis=1, inplace=True)
+PRIMER = pd.read_csv(snakemake.params.get("bedpe", ""), delimiter="\t", header=0)
+print(PRIMER)
+PRIMER.drop(PRIMER.columns[[0]], axis=1, inplace=True)
+print(PRIMER)
 PRIMER.columns = ["p1_start", "p1_end", "p2_start", "p2_end"]
 
 # convert df to interval trees
