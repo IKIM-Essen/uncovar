@@ -118,7 +118,7 @@ def count_intervals(file):
                     "uncut primer within",
                     "cut primer exact",
                     "cut primer within",
-                    "no mathing win",
+                    "no matching win",
                 ],
             }
         )
