@@ -13,7 +13,7 @@ import pysam
 from intervaltree import IntervalTree
 
 # read primer bedpe to df
-PRIMER = pd.read_csv(snakemake.params.get("bedpe", ""), delimiter="\t", header=None)
+PRIMER = pd.read_csv(snakemake.params.get("bedpe", ""), delimiter="\t", header=0)
 print(PRIMER)
 PRIMER.drop(PRIMER.columns[[0]], axis=1, inplace=True)
 print(PRIMER)
