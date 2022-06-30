@@ -21,7 +21,7 @@ rule samtools_sort:
         "0.74.0/bio/samtools/sort"
 
 
-rule bed_to_bedpe:
+rule bed_to_tsv:
     input:
         check_bed_for_URL(config["preprocessing"]["amplicon-primers"]),
     output:
