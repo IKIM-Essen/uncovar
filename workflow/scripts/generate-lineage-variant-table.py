@@ -21,11 +21,19 @@ def phred_to_prob(phred):
 
 
 # np.prod returns 1's as values for a pd series with NaN's. A list would return NaN's
-def prod_prob_not_present(probs):
+# switched for use of minimum
+# def prod_prob_not_present(probs):
+#     if pd.isna(probs).any():
+#         return pd.NA
+#     else:
+#         return np.prod(probs)
+
+
+def min_prob_not_present(probs):
     if pd.isna(probs).any():
         return pd.NA
     else:
-        return np.prod(probs)
+        return np.min(probs)
 
 
 def has_numbers(inputString):
@@ -67,21 +75,36 @@ with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
             lineages = record.info["LINEAGES"]
             for signature in signatures:
                 # generate df with all signatures + VAF and Prob_not_present from calculation
-                variants_df = variants_df.append(
-                    {
-                        "Mutations": signature,
-                        "Frequency": vaf,
-                        "ReadDepth": dp,
-                        "Prob_not_present": prob_not_present,
-                    },
+                variants_df = pd.concat(
+                    [
+                        variants_df,
+                        pd.DataFrame(
+                            {
+                                "Frequency": vaf,
+                                "Mutations": signature,
+                                "Prob_not_present": prob_not_present,
+                                "ReadDepth": dp,
+                            },
+                            index=[0],
+                        ),
+                    ],
                     ignore_index=True,
                 )
-                # generate df with lineage matrix for all signatures
-                lineage_df = lineage_df.append(
-                    {
-                        "Mutations": signature,
-                        **{lineage.replace(".", " "): "x" for lineage in lineages},
-                    },
+
+                lineage_df = pd.concat(
+                    [
+                        lineage_df,
+                        pd.DataFrame(
+                            {
+                                "Mutations": [signature],
+                                **{
+                                    lineage.replace(".", " "): "x"
+                                    for lineage in lineages
+                                },
+                            },
+                            index=[0],
+                        ),
+                    ],
                     ignore_index=True,
                 )
 
@@ -89,7 +112,7 @@ with pysam.VariantFile(snakemake.input.variant_file, "rb") as infile:
 variants_df = variants_df.groupby(["Mutations"]).agg(
     func={
         "Frequency": lambda x: min(sum(x), 1.0),
-        "Prob_not_present": prod_prob_not_present,
+        "Prob_not_present": min_prob_not_present,
         "ReadDepth": np.min,
     },
     axis=1,

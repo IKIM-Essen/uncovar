@@ -117,13 +117,23 @@
   Probability: function (prob) {
     prob = parseFloat(prob)
     if (!isNaN(prob)) {
-      var lighting = (0.9 - prob * 0.4) * 100;
+      if (prob < 0.5) {  
+        var lighting = (0.5 + (prob * 0.8)) * 100;
+        var color = "10, 85%, " + lighting + "%"
+
+      } else if (prob < 0.95 && prob >= 0.5){
+        var lighting = ((0.9 * prob) + 0.05) * 100;
+        var color = "47, 100%, " + lighting + "%"
+      } else {
+        var lighting = (8.5 - (prob * 8)) * 100;
+        var color = "138, 72%, " + lighting + "%"
+      }
       if (prob < 0.1) {  
         prob = prob.toExponential(2)
       } else {
         prob = prob.toFixed(2)
       }
-      return `<span class="badge p-0 m-1"><span class="p-1 rounded" style="background:hsl(138, 72%, ${lighting}%);">${prob}</span></span>`;
+      return `<span class="badge p-0 m-1"><span class="p-1 rounded" style="background:hsl(${color});">${prob}</span></span>`;
     } else {
       return "&nbsp;"
     }

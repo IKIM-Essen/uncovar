@@ -23,7 +23,7 @@ def plot_coverage(sm_input, sm_output, min_coverage):
 
         sample_df["Sample"] = sample_df["#CHROM"].apply(lambda x: str(x).split(".")[0])
 
-        coverage = coverage.append(sample_df, ignore_index=True)
+        coverage = pd.concat([coverage, sample_df], ignore_index=True)
 
     coverage["# Coverage"] = coverage.Coverage.apply(
         lambda x: f"< {min_coverage}"
