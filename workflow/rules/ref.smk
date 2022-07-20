@@ -18,11 +18,8 @@ rule init:
            #directory("resources/minikraken-8GB"),
            #directory("resources/krona/"),
            "resources/genomes/human-genome.fna.gz",
-           #directory("results/{date}/pangolin/pangoLEARN"),
-           #directory("results/{date}/pangolin/lineages"),
            #temp("resources/gisaid/provision.json"),
            #"resources/genomes-renamed/{accession}.fasta",
-           #"results/{date}/tables/predefinded-strain-genomes.txt",
 
 checkpoint get_strain_accessions:
     output:
