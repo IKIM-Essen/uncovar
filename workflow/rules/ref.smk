@@ -3,6 +3,26 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
+rule init:
+    input: "resources/strain-accessions.txt",
+           #"resources/genomes/{accession}.fasta",
+           #"resources/annotation.gff.gz",
+           #temp("resources/protein_products.bed"),
+           #temp("resources/protein_products.gff"),
+           #temp("resources/protein_products.formatted.gff"),
+           #temp("resources/protein_products.fixed.gff"),
+           #temp("resources/protein_products.fixed.formatted.gff"),
+           #"resources/protein_products.gff.gz",
+           #"resources/annotation_known_variants.gff.gz",
+           #temp("resources/problematic-sites.vcf.gz"),
+           #directory("resources/minikraken-8GB"),
+           #directory("resources/krona/"),
+           "resources/genomes/human-genome.fna.gz",
+           #directory("results/{date}/pangolin/pangoLEARN"),
+           #directory("results/{date}/pangolin/lineages"),
+           #temp("resources/gisaid/provision.json"),
+           #"resources/genomes-renamed/{accession}.fasta",
+           #"results/{date}/tables/predefinded-strain-genomes.txt",
 
 checkpoint get_strain_accessions:
     output:
