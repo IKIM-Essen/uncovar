@@ -3,5 +3,3 @@ channels:
   - conda-forge
 dependencies:
   - medaka =1.6.1
-  - h5py =2.7
-  - tensorflow =2.7
