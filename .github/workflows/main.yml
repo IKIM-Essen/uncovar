@@ -67,7 +67,9 @@ jobs:
     strategy:
       matrix:
         rule: [all, all -npr]
-        technology: [all, illumina, ont, ion]
+        # disable ont actions
+        # technology: [all, illumina, ont, ion]
+        technology: [all, illumina, ion]
         seq_method: [shotgun, amplicon]
     steps:
       - uses: actions/checkout@v2
