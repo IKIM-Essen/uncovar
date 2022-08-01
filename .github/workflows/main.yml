@@ -87,11 +87,9 @@ jobs:
           mkdir -p .tests/data
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.1.fastq.gz
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
-          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ERR5745913.fastq.gz > .tests/data/ion_reads.fastq.gz
           echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
           echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,$AMPLICON,illumina >> .tests/config/pep/samples.csv
-          echo ont-test,data/ont_reads.fastq.gz,,2022-01-01,$AMPLICON,ont >> .tests/config/pep/samples.csv
           echo ion-test,data/ion_reads.fastq.gz,,2022-01-01,$AMPLICON,ion >> .tests/config/pep/samples.csv
       - name: Prepare test data for Illumina
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'illumina' || matrix.rule == 'compare_assemblers')
@@ -102,14 +100,14 @@ jobs:
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
           echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
           echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,$AMPLICON,illumina >> .tests/config/pep/samples.csv
-      - name: Prepare test data for Oxford Nanopore
-        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ont' || matrix.rule == 'compare_assemblers')
-        run: |
-          if [[ "${{ matrix.seq_method }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
-          mkdir -p .tests/data
-          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz
-          echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
-          echo ont-test,data/ont_reads.fastq.gz,2022-01-01,$AMPLICON,ont >> .tests/config/pep/samples.csv
+      # - name: Prepare test data for Oxford Nanopore
+      #   if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ont' || matrix.rule == 'compare_assemblers')
+      #   run: |
+      #     if [[ "${{ matrix.seq_method }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
+      #     mkdir -p .tests/data
+      #     curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz
+      #     echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
+      #     echo ont-test,data/ont_reads.fastq.gz,2022-01-01,$AMPLICON,ont >> .tests/config/pep/samples.csv
       - name: Prepare test data for Ion Torrent
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ion' || matrix.rule == 'compare_assemblers')
         run: |
@@ -178,8 +176,7 @@ jobs:
       - Pre-Commit
     strategy:
       matrix:
-        rule:
-          [
+        rule: [
             benchmark_strain_calling,
             benchmark_assembly,
             benchmark_mixtures,
