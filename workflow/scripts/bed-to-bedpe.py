@@ -23,9 +23,10 @@ data = [
     df_sense["chrom"],
     df_sense["start"],
     df_sense["end"],
+    df_antisense["chrom"],
     df_antisense["start"],
     df_antisense["end"],
 ]
-headers = ["chrom", "left_start", "left_end", "right_start", "right_end"]
+headers = ["chrom1", "start1", "end1", "chrom2", "start2", "end2"]
 df_bedpe = pd.concat(data, axis=1, keys=headers)
-df_bedpe.to_csv(snakemake.output[0], index=None, sep="\t", mode="a")
+df_bedpe.to_csv(snakemake.output[0], header=None, index=None, sep="\t", mode="a")
