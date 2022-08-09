@@ -2,4 +2,6 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
-  - medaka =1.6.1
+  - medaka =1.0
+  - tensorflow =1.14
+  - h5py =2.7
