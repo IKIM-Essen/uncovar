@@ -42,6 +42,14 @@ validate(config, "../schemas/config.schema.yaml")
 validate(pep.sample_table, "../schemas/samples.schema.yaml")
 
 
+def get_accessions():
+    ampl = config["preprocessing"]["amplicon-reference"]
+    A = list(config["strain-calling"]["lineage-references"].values())
+    genomes = ["main", ampl]
+    for ref in A: 
+        genomes.append(ref)
+    return genomes
+
 def get_samples():
     return list(pep.sample_table["sample_name"].values)
 

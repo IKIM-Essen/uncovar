@@ -3,17 +3,6 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
-rule init:
-    input: "resources/strain-accessions.txt",
-           #"resources/genomes/{accession}.fasta",
-           "resources/annotation.gff.gz",
-           "resources/protein_products.gff.gz",
-           "resources/annotation_known_variants.gff.gz",
-           #directory("resources/minikraken-8GB"),
-           #directory("resources/krona/"),
-           "resources/genomes/human-genome.fna.gz",
-           #temp("resources/gisaid/provision.json"),
-           #"resources/genomes-renamed/{accession}.fasta",
 
 checkpoint get_strain_accessions:
     output:
