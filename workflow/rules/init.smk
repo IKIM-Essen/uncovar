@@ -9,7 +9,6 @@ rule init:
            "resources/minikraken-8GB/",
            "resources/krona/",
            "resources/genomes/human-genome.fna.gz",
-           #temp("resources/gisaid/provision.json"),
            expand("resources/genomes-renamed/{accession}.fasta", accession=config["strain-calling"]["lineage-references"].values()),
            ancient("data/"),
            ancient("../archive"),
@@ -41,15 +40,4 @@ rule make_directory_archive:
     shell:
         "for dir in {output}; do if [ ! -d ""$dir"" ];"
         " then mkdir ""$dir""; fi done"
-
-#rule make_directories:
-    #output:
-        #data=directory("data"),
-        #incoming=directory("../incoming/"),
-        #archive=directory("../archive"),
-    #log:
-        #"log/make_directories.log"
-    #shell:
-        #"for dir in {output}; do if [ ! -d ""$dir"" ];"
-        #" then mkdir ""$dir""; fi done"
     
