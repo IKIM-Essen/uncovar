@@ -1,2 +1,2 @@
 sample_name,fq1,fq2,date,is_amplicon_data,technology,include_in_high_genome_summary
-SAMPLE_NAME_1,/local/work/init/incoming/B.1.1.7.reads.1.fastq.gz,/local/work/init/incoming/B.1.1.7.reads.2.fastq.gz,SEQUENCING_DATE,0,illumina,1
+SAMPLE_NAME_1,/local/work/check_init/incoming/B.1.1.7.reads.1.fastq.gz,/local/work/check_init/incoming/B.1.1.7.reads.2.fastq.gz,SEQUENCING_DATE,0,illumina,1

@@ -10,19 +10,46 @@ rule init:
            "resources/krona/",
            "resources/genomes/human-genome.fna.gz",
            #temp("resources/gisaid/provision.json"),
-           #expand("resources/genomes-renamed/{accession}.fasta", accession=get_accessions()),
-           "data/",
-           "../archive",
-           "../incoming",
+           expand("resources/genomes-renamed/{accession}.fasta", accession=config["strain-calling"]["lineage-references"].values()),
+           ancient("data/"),
+           ancient("../archive"),
+           ancient("../incoming"),
 
-
-rule make_directories:
+rule make_directory_data:
     output:
-        data="data/",
-        incoming="../incoming",
-        archive="../archive"
+        data=directory("data"),
     log:
-        "log/make_directories.log"
+        "log/make_directory_data.log"
     shell:
-        "for dir in data/ ../archive/ ../incoming/; do if [ ! -d ""$dir"" ];"
+        "for dir in {output}; do if [ ! -d ""$dir"" ];"
         " then mkdir ""$dir""; fi done"
+
+rule make_directory_incoming:
+    output:
+        incoming=directory("../incoming/"),
+    log:
+        "log/make_directory_incoming.log"
+    shell:
+        "for dir in {output}; do if [ ! -d ""$dir"" ];"
+        " then mkdir ""$dir""; fi done"
+
+rule make_directory_archive:
+    output:
+        archive=directory("../archive"),
+    log:
+        "log/make_directory_archive.log"
+    shell:
+        "for dir in {output}; do if [ ! -d ""$dir"" ];"
+        " then mkdir ""$dir""; fi done"
+
+#rule make_directories:
+    #output:
+        #data=directory("data"),
+        #incoming=directory("../incoming/"),
+        #archive=directory("../archive"),
+    #log:
+        #"log/make_directories.log"
+    #shell:
+        #"for dir in {output}; do if [ ! -d ""$dir"" ];"
+        #" then mkdir ""$dir""; fi done"
+    

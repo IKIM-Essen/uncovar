@@ -43,11 +43,11 @@ validate(pep.sample_table, "../schemas/samples.schema.yaml")
 
 
 def get_accessions():
-    ampl = config["preprocessing"]["amplicon-reference"]
-    A = list(config["strain-calling"]["lineage-references"].values())
-    genomes = ["main", ampl]
-    for ref in A: 
-        genomes.append(ref)
+    amplicon_ref = config["preprocessing"]["amplicon-reference"]
+    #lin_ref = list(config["strain-calling"]["lineage-references"].values())
+    genomes = ["main", amplicon_ref]
+    #for ref in lin_ref: 
+        #genomes.append()
     return genomes
 
 def get_samples():
