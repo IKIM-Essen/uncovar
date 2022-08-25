@@ -46,12 +46,7 @@ rule medaka_variant:
     input:
         ref=get_reference(),
         sample="results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.clip.fasta",
-        # sample="results/{date}/recal/ref~{reference}/{sample}.bam",
-        # bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        # temp(
-        #     "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer-medaka.vcf"
-        # ),
         "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer-medaka.vcf",
     params:
         outdir=get_output_dir,
@@ -61,9 +56,6 @@ rule medaka_variant:
         "../envs/medaka.yaml"
     threads: 4
     shell:
-        # "(medaka_variant -i {input.sample} -f {input.ref} -o {params.outdir}/{wildcards.sample} -t {threads} &&"
-        # " mv $(cat {log}| grep '\- Final VCF written to' | sed s/'- Final VCF written to '//\ ) {output})"
-        # " > {log} 2>&1"
         "(medaka_haploid_variant -i {input.sample} -r {input.ref} -t {threads} &&"
         " mv medaka/medaka.annotated.vcf {output} && rm -r medaka)"
         " > {log} 2>&1"
