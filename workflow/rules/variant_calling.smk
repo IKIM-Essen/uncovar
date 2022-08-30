@@ -1,4 +1,4 @@
-# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Simon Magin, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -53,7 +53,7 @@ rule medaka_variant:
         # The default model covers almost all current use cases on MinION & GridION. For best results
         # with PromethION and future pores etc. an option to switch between models would be required,
         # e.g. add col model in sample-sheet & use default (will still work for all) if not provided.
-        model="r941_min_hac_variant_g507"
+        model="r941_min_hac_variant_g507",
     log:
         "logs/{date}/medaka/variant/ref~{reference}/{sample}.log",
     conda:
@@ -62,7 +62,7 @@ rule medaka_variant:
     shell:
         "(medaka_haploid_variant -i {input.sample} -r {input.ref} -o medaka_{wildcards.sample}"
         " -t {threads} -m {params.model} && mv medaka_{wildcards.sample}/medaka.annotated.vcf {output} &&"
-        "  rm -r medaka_{wildcards.sample}) > {log} 2>&1"
+        " rm -r medaka_{wildcards.sample}) > {log} 2>&1"
 
 
 rule longshot:
