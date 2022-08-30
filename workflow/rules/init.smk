@@ -18,7 +18,7 @@ rule make_directory_data:
     output:
         data=directory("data"),
     log:
-        "log/make_directory_data.log"
+        "logs/make_directory_data.log"
     shell:
         "for dir in {output}; do if [ ! -d ""$dir"" ];"
         " then mkdir ""$dir""; fi done"
@@ -27,7 +27,7 @@ rule make_directory_incoming:
     output:
         incoming=directory("../incoming/"),
     log:
-        "log/make_directory_incoming.log"
+        "logs/make_directory_incoming.log"
     shell:
         "for dir in {output}; do if [ ! -d ""$dir"" ];"
         " then mkdir ""$dir""; fi done"
@@ -36,7 +36,7 @@ rule make_directory_archive:
     output:
         archive=directory("../archive"),
     log:
-        "log/make_directory_archive.log"
+        "logs/make_directory_archive.log"
     shell:
         "for dir in {output}; do if [ ! -d ""$dir"" ];"
         " then mkdir ""$dir""; fi done"
