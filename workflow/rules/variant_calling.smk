@@ -51,7 +51,7 @@ rule medaka_variant:
     params:
         outdir=get_output_dir,
         # The default model covers almost all current use cases on MinION & GridION. For best results
-        # with PromethION and future pores etc. an option to switch between models would be required,
+        # with PromethION and future pores etc an option to switch between models would be required,
         # e.g. add col model in sample-sheet & use default (will still work for all) if not provided.
         model="r941_min_hac_variant_g507",
     log:
