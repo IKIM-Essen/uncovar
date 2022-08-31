@@ -14,7 +14,7 @@ rule tabix_index:
     log:
         "logs/tabix-{fmt}/{prefix}.log",
     wrapper:
-        "0.70.0/bio/tabix"
+        "v1.12.0/bio/tabix"
 
 
 rule bam_index:
