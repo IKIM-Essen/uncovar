@@ -4,7 +4,6 @@ channels:
   - anaconda
   - nodefaults
 dependencies:
-  - python =3.9
   - pandas =1.2
   - jupyter =1.0
   - altair =4.1
