@@ -1,7 +1,7 @@
 channels:
   - conda-forge
   - bioconda
-  - nodefault
+  - nodefaults
 dependencies:
   - nanofilt =2.8
   - gzip =1.11

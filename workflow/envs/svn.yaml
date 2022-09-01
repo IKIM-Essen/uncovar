@@ -1,5 +1,5 @@
 channels:
   - anaconda
-  - nodefault
+  - nodefaults
 dependencies:
   - svn =1.10

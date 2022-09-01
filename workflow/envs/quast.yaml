@@ -1,6 +1,6 @@
 channels:
   - conda-forge
   - bioconda
-  - nodefault
+  - nodefaults
 dependencies:
   - quast =5.0

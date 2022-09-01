@@ -2,6 +2,6 @@ channels:
   - conda-forge
   - bioconda
   - imperial-college-research-computing
-  - nodefault
+  - nodefaults
 dependencies:
   - ragoo =1.1

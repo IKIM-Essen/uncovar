@@ -1,7 +1,7 @@
 channels:
   - conda-forge
   - bioconda
-  - nodefault
+  - nodefaults
 dependencies:
   - medaka =1.0
   - tensorflow =1.14

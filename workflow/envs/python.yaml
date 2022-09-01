@@ -2,7 +2,7 @@ channels:
   - conda-forge
   - bioconda
   - anaconda
-  - nodefault
+  - nodefaults
 dependencies:
   - python =3.9
   - pandas =1.2
