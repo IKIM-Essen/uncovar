@@ -2,6 +2,7 @@ channels:
   - conda-forge
   - bioconda
   - anaconda
+  - nodefault
 dependencies:
   - pandas =1.2
   - jupyter =1.0

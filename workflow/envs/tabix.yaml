@@ -1,6 +1,7 @@
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
+  - nodefault
 dependencies:
   - tabix =0.2
   - curl

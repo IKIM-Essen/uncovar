@@ -1,6 +1,7 @@
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
+  - nodefault
 dependencies:
   - bamclipper =1.0
   - samtools =1.14 # see https://github.com/merenlab/anvio/issues/1479

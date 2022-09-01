@@ -1,5 +1,6 @@
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
+  - nodefault
 dependencies:
   - genometools-genometools =1.6.2

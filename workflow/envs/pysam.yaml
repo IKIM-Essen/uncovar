@@ -1,6 +1,7 @@
 channels:
   - conda-forge
   - bioconda
+  - nodefault
 dependencies:
   - jupyter =1.0
   - pysam =0.16
