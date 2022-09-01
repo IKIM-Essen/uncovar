@@ -1,6 +1,6 @@
 channels:
   - conda-forge
   - bioconda
-  - nodefault  
+  - nodefault
 dependencies:
   - mason =2.0
