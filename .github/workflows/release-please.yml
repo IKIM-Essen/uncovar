@@ -68,14 +68,14 @@ jobs:
           remove-android: "true"
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Space
         run: |
           echo "Free space:"
           df -h
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Checkout release PR locally
         if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }}
