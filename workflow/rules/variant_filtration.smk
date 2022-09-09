@@ -17,7 +17,7 @@ rule vembrane_filter:
     log:
         "logs/{date}/vembrane/{sample}.{filter}.{annotation}.log",
     wrapper:
-        "0.71.1/bio/vembrane/filter"
+        "v1.12.2/bio/vembrane/filter"
 
 
 rule control_fdr:
@@ -50,4 +50,4 @@ rule merge_calls:
     params:
         "-a -Ob",
     wrapper:
-        "0.69.0/bio/bcftools/concat"
+        "v1.12.2/bio/bcftools/concat"

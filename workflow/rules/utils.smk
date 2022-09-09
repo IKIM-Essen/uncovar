@@ -14,7 +14,7 @@ rule tabix_index:
     log:
         "logs/tabix-{fmt}/{prefix}.log",
     wrapper:
-        "0.70.0/bio/tabix"
+        "v1.12.2/bio/tabix/index"
 
 
 rule bam_index:
@@ -25,7 +25,7 @@ rule bam_index:
     log:
         "logs/bam-index/{prefix}.log",
     wrapper:
-        "0.70.0/bio/samtools/index"
+        "v1.12.2/bio/samtools/index"
 
 
 rule bcf_index:
@@ -62,7 +62,7 @@ rule faidx:
     log:
         "logs/faidx/{prefix}.log",
     wrapper:
-        "0.70.0/bio/samtools/faidx"
+        "v1.12.2/bio/samtools/faidx"
 
 
 rule gzip:

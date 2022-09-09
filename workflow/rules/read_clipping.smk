@@ -18,7 +18,7 @@ rule samtools_sort:
         "logs/{date}/sort-bam/{read_type}~{sorted_by}/{sample}.{stage}.log",
     threads: 8
     wrapper:
-        "0.74.0/bio/samtools/sort"
+        "v1.12.2/bio/samtools/sort"
 
 
 rule bed_to_bedpe:

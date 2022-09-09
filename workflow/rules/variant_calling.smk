@@ -22,7 +22,7 @@ rule freebayes:
     log:
         "logs/{date}/freebayes/ref~{reference}/{sample}.log",
     wrapper:
-        "0.80.1/bio/freebayes"
+        "v1.12.2/bio/freebayes"
 
 
 # TODO check delly single end mode
@@ -186,4 +186,4 @@ rule merge_varranges:
     params:
         "-a -Ob",
     wrapper:
-        "0.69.0/bio/bcftools/concat"
+        "v1.12.2/bio/bcftools/concat"

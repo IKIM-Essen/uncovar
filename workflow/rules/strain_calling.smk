@@ -43,7 +43,7 @@ rule kallisto_index:
         "logs/{date}/kallisto-index.log",
     threads: 8
     wrapper:
-        "0.70.0/bio/kallisto/index"
+        "v1.12.2/bio/kallisto/index"
 
 
 rule kallisto_metrics:
@@ -74,7 +74,7 @@ rule kallisto_quant:
         "logs/{date}/kallisto_quant/{sample}.log",
     threads: 8
     wrapper:
-        "0.70.0/bio/kallisto/quant"
+        "v1.12.2/bio/kallisto/quant"
 
 
 rule kallisto_call_strains:

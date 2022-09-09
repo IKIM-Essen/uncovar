@@ -21,7 +21,7 @@ rule bwa_index:
     log:
         "logs/{date}/bwa-index/ref~{reference}.log",
     wrapper:
-        "0.69.0/bio/bwa/index"
+        "v1.12.2/bio/bwa/index"
 
 
 rule bwa_large_index:
@@ -41,7 +41,7 @@ rule bwa_large_index:
     log:
         "logs/bwa-index/ref~{reference}.log",
     wrapper:
-        "0.69.0/bio/bwa/index"
+        "v1.12.2/bio/bwa/index"
 
 
 rule map_reads:
@@ -59,7 +59,7 @@ rule map_reads:
         sort_order="coordinate",
     threads: 8
     wrapper:
-        "0.69.0/bio/bwa/mem"
+        "v1.12.2/bio/bwa/mem"
 
 
 rule mark_duplicates:
@@ -73,7 +73,7 @@ rule mark_duplicates:
     params:
         "",
     wrapper:
-        "0.69.0/bio/picard/markduplicates"
+        "v1.12.2/bio/picard/markduplicates"
 
 
 rule samtools_calmd:
@@ -88,4 +88,4 @@ rule samtools_calmd:
         "-A",
     threads: 8
     wrapper:
-        "0.69.0/bio/samtools/calmd"
+        "v1.12.2/bio/samtools/calmd"
