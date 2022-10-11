@@ -64,7 +64,7 @@ rule map_reads:
 
 rule mark_duplicates:
     input:
-        "results/{date}/mapped/ref~{reference}/{sample}.bam",
+        bams="results/{date}/mapped/ref~{reference}/{sample}.bam",
     output:
         bam=temp("results/{date}/dedup/ref~{reference}/{sample}.bam"),
         metrics="results/{date}/qc/dedup/ref~{reference}/{sample}.metrics.txt",
