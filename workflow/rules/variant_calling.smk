@@ -186,4 +186,4 @@ rule merge_varranges:
     params:
         "-a -Ob",
     wrapper:
-        "v1.12.2/bio/bcftools/concat"
+        "v1.15.0/bio/bcftools/concat"
