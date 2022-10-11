@@ -55,7 +55,7 @@ rule map_reads:
     params:
         index=lambda w, input: get_bwa_index_prefix(input.idx),
         extra="",
-        sort="samtools",
+        sorting="samtools",
         sort_order="coordinate",
     threads: 8
     wrapper:
