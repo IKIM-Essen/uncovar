@@ -8,7 +8,7 @@ rule bwa_index:
     input:
         get_reference(),
     output:
-        multiext(
+        idx=multiext(
             "results/{date}/bwa/index/ref~{reference}.fasta",
             ".amb",
             ".ann",
@@ -28,7 +28,7 @@ rule bwa_large_index:
     input:
         get_reference(),
     output:
-        multiext(
+        idx=multiext(
             "resources/bwa/index/ref~{reference}.fasta",
             ".amb",
             ".ann",
