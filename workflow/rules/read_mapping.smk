@@ -16,8 +16,6 @@ rule bwa_index:
             ".pac",
             ".sa",
         ),
-    params:
-        prefix=lambda w, output: get_bwa_index_prefix(output),
     log:
         "logs/{date}/bwa-index/ref~{reference}.log",
     wrapper:
@@ -36,8 +34,6 @@ rule bwa_large_index:
             ".pac",
             ".sa",
         ),
-    params:
-        prefix=lambda w, output: get_bwa_index_prefix(output),
     log:
         "logs/bwa-index/ref~{reference}.log",
     wrapper:
