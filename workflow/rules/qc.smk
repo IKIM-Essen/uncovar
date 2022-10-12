@@ -13,7 +13,7 @@ rule fastqc:
     log:
         "logs/{date}/fastqc/{sample}.log",
     wrapper:
-        "0.69.0/bio/fastqc"
+        "v1.12.2/bio/fastqc"
 
 
 # TODO Change multiqc rules back to MultiQC wrapper once v1.11 is released
@@ -38,13 +38,13 @@ rule multiqc:
     output:
         "results/{date}/qc/multiqc.html",
     params:
-        params=(
+        extra=(
             "--config config/multiqc_config.yaml --title 'Results for data from {date}'"
         ),
     log:
         "logs/{date}/multiqc.log",
     wrapper:
-        "v0.86.0/bio/multiqc"
+        "v1.15.1/bio/multiqc"
 
 
 rule multiqc_lab:
@@ -66,11 +66,11 @@ rule multiqc_lab:
             subcategory="1. Quality Control",
         ),
     params:
-        params="--config config/multiqc_config_lab.yaml --title 'Results for data from {date}'",
+        extra="--config config/multiqc_config_lab.yaml --title 'Results for data from {date}'",
     log:
         "logs/{date}/multiqc.log",
     wrapper:
-        "v0.86.0/bio/multiqc"
+        "v1.15.1/bio/multiqc"
 
 
 rule samtools_flagstat:
@@ -81,7 +81,7 @@ rule samtools_flagstat:
     log:
         "logs/{date}/samtools/{sample}_flagstat.log",
     wrapper:
-        "0.70.0/bio/samtools/flagstat"
+        "v1.15.1/bio/samtools/flagstat"
 
 
 rule samtools_depth:

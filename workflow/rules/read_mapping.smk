@@ -8,7 +8,7 @@ rule bwa_index:
     input:
         get_reference(),
     output:
-        multiext(
+        idx=multiext(
             "results/{date}/bwa/index/ref~{reference}.fasta",
             ".amb",
             ".ann",
@@ -16,19 +16,17 @@ rule bwa_index:
             ".pac",
             ".sa",
         ),
-    params:
-        prefix=lambda w, output: get_bwa_index_prefix(output),
     log:
         "logs/{date}/bwa-index/ref~{reference}.log",
     wrapper:
-        "0.69.0/bio/bwa/index"
+        "v1.15.1/bio/bwa/index"
 
 
 rule bwa_large_index:
     input:
         get_reference(),
     output:
-        multiext(
+        idx=multiext(
             "resources/bwa/index/ref~{reference}.fasta",
             ".amb",
             ".ann",
@@ -36,12 +34,10 @@ rule bwa_large_index:
             ".pac",
             ".sa",
         ),
-    params:
-        prefix=lambda w, output: get_bwa_index_prefix(output),
     log:
         "logs/bwa-index/ref~{reference}.log",
     wrapper:
-        "0.69.0/bio/bwa/index"
+        "v1.15.1/bio/bwa/index"
 
 
 rule map_reads:
@@ -53,27 +49,24 @@ rule map_reads:
     log:
         "logs/{date}/bwa-mem/ref~{reference}/{sample}.log",
     params:
-        index=lambda w, input: get_bwa_index_prefix(input.idx),
         extra="",
-        sort="samtools",
+        sorting="samtools",
         sort_order="coordinate",
     threads: 8
     wrapper:
-        "0.69.0/bio/bwa/mem"
+        "v1.15.1/bio/bwa/mem"
 
 
 rule mark_duplicates:
     input:
-        "results/{date}/mapped/ref~{reference}/{sample}.bam",
+        bams="results/{date}/mapped/ref~{reference}/{sample}.bam",
     output:
         bam=temp("results/{date}/dedup/ref~{reference}/{sample}.bam"),
         metrics="results/{date}/qc/dedup/ref~{reference}/{sample}.metrics.txt",
     log:
         "logs/{date}/picard/dedup/ref~{reference}/{sample}.log",
-    params:
-        "",
     wrapper:
-        "0.69.0/bio/picard/markduplicates"
+        "v1.15.1/bio/picard/markduplicates"
 
 
 rule samtools_calmd:
@@ -85,7 +78,7 @@ rule samtools_calmd:
     log:
         "logs/{date}/samtools-calmd/ref~{reference}/{sample}.log",
     params:
-        "-A",
+        extra="-A",
     threads: 8
     wrapper:
-        "0.69.0/bio/samtools/calmd"
+        "v1.15.1/bio/samtools/calmd"

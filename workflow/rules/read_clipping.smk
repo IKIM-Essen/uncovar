@@ -13,12 +13,11 @@ rule samtools_sort:
         extra=(
             lambda wildcards: "-n -m 4G" if wildcards.sorted_by == "name" else "-m 4G"
         ),
-        tmp_dir="/tmp/",
     log:
         "logs/{date}/sort-bam/{read_type}~{sorted_by}/{sample}.{stage}.log",
     threads: 8
     wrapper:
-        "0.74.0/bio/samtools/sort"
+        "v1.15.1/bio/samtools/sort"
 
 
 rule bed_to_tsv:
