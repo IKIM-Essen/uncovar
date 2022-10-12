@@ -50,4 +50,4 @@ rule merge_calls:
     params:
         "-a -Ob",
     wrapper:
-        "v1.15.0/bio/bcftools/concat"
+        "v1.15.1/bio/bcftools/concat"

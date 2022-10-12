@@ -100,7 +100,7 @@ rule vcf_2_bcf:
     conda:
         "../envs/bcftools.yaml"
     shell:
-        "bcftools view -Oz -o {output} {input} 2> {log}"
+        "bcftools view -Oz -o {output} {input} 2> {log}"  # TODO -Oz generates a .vcf.gz!!
 
 
 rule render_scenario:
@@ -186,4 +186,4 @@ rule merge_varranges:
     params:
         "-a -Ob",
     wrapper:
-        "v1.15.0/bio/bcftools/concat"
+        "v1.15.1/bio/bcftools/concat"
