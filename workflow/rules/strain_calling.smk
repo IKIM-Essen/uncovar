@@ -37,13 +37,11 @@ rule kallisto_index:
         fasta="results/{date}/kallisto/strain-genomes.fasta",
     output:
         index=temp("results/{date}/kallisto/strain-genomes.idx"),
-    params:
-        extra="",
     log:
         "logs/{date}/kallisto-index.log",
     threads: 8
     wrapper:
-        "0.70.0/bio/kallisto/index"
+        "v1.15.1/bio/kallisto/index"
 
 
 rule kallisto_metrics:
@@ -74,7 +72,7 @@ rule kallisto_quant:
         "logs/{date}/kallisto_quant/{sample}.log",
     threads: 8
     wrapper:
-        "0.70.0/bio/kallisto/quant"
+        "v1.15.1/bio/kallisto/quant"
 
 
 rule kallisto_call_strains:
