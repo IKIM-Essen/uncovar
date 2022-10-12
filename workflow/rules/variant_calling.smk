@@ -10,9 +10,9 @@ rule freebayes:
         ref_idx=get_reference(".fai"),
         # you can have a list of samples here
         samples="results/{date}/recal/ref~{reference}/{sample}.bam",
-        index="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
+        indexes="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.small.bcf"),
+        "results/{date}/candidate-calls/ref~{reference}/{sample}.small.bcf",
     params:
         # genotyping is performed by varlociraptor, hence we deactivate it in freebayes by
         # always setting --pooled-continuous
@@ -22,7 +22,7 @@ rule freebayes:
     log:
         "logs/{date}/freebayes/ref~{reference}/{sample}.log",
     wrapper:
-        "v1.12.2/bio/freebayes"
+        "v1.15.1/bio/freebayes"
 
 
 # TODO check delly single end mode
@@ -33,7 +33,7 @@ rule delly:
         sample="results/{date}/recal/ref~{reference}/{sample}.bam",
         sample_idx="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.structural.bcf"),
+        "results/{date}/candidate-calls/ref~{reference}/{sample}.structural.bcf",
     log:
         "logs/{date}/delly/ref~{reference}/{sample}.log",
     conda:
@@ -184,6 +184,6 @@ rule merge_varranges:
     log:
         "logs/{date}/merge-calls/ref~{reference}/{sample}.log",
     params:
-        "-a -Ob",
+        extra="-a -Ob",
     wrapper:
         "v1.15.1/bio/bcftools/concat"

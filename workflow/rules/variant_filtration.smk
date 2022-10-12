@@ -6,9 +6,9 @@
 
 rule vembrane_filter:
     input:
-        "results/{date}/annotated-calls/ref~main/annot~{annotation}/{sample}.bcf",
+        vcf="results/{date}/annotated-calls/ref~main/annot~{annotation}/{sample}.bcf",
     output:
-        temp(
+        vcf=temp(
             "results/{date}/filtered-calls/ref~main/annot~{annotation}/{sample}.{filter}.bcf"
         ),
     params:
@@ -17,7 +17,7 @@ rule vembrane_filter:
     log:
         "logs/{date}/vembrane/{sample}.{filter}.{annotation}.log",
     wrapper:
-        "v1.12.2/bio/vembrane/filter"
+        "v1.15.1/bio/vembrane/filter"
 
 
 rule control_fdr:
@@ -48,6 +48,6 @@ rule merge_calls:
     log:
         "logs/{date}/merge-calls/ref~{reference}/{sample}.{clonality}.{filter}.{annotation}.log",
     params:
-        "-a -Ob",
+        extra="-a -Ob",
     wrapper:
         "v1.15.1/bio/bcftools/concat"

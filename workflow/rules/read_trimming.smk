@@ -28,7 +28,7 @@ rule fastp_pe:
         "logs/{date}/fastp/fastp-pe/{sample}.log",
     threads: 2
     wrapper:
-        "v1.12.2/bio/fastp"
+        "v1.15.1/bio/fastp"
 
 
 rule fastp_se:
@@ -50,4 +50,4 @@ rule fastp_se:
         "results/{date}/trimmed/fastp-se/{sample}.log",
     threads: 2
     wrapper:
-        "v1.12.2/bio/fastp"
+        "v1.15.1/bio/fastp"

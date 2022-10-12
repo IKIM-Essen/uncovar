@@ -12,7 +12,7 @@ rule get_vep_plugins:
     log:
         "logs/vep-plugins.log",
     wrapper:
-        "v1.12.2/bio/vep/plugins"
+        "v1.15.1/bio/vep/plugins"
 
 
 rule annotate_variants:
@@ -36,4 +36,4 @@ rule annotate_variants:
     log:
         "logs/{date}/vep/{annotation}/{sample}.log",
     wrapper:
-        "v1.12.2/bio/vep/annotate"
+        "v1.15.1/bio/vep/annotate"

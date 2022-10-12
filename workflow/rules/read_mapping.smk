@@ -21,7 +21,7 @@ rule bwa_index:
     log:
         "logs/{date}/bwa-index/ref~{reference}.log",
     wrapper:
-        "v1.12.2/bio/bwa/index"
+        "v1.15.1/bio/bwa/index"
 
 
 rule bwa_large_index:
@@ -41,7 +41,7 @@ rule bwa_large_index:
     log:
         "logs/bwa-index/ref~{reference}.log",
     wrapper:
-        "v1.12.2/bio/bwa/index"
+        "v1.15.1/bio/bwa/index"
 
 
 rule map_reads:
@@ -53,13 +53,12 @@ rule map_reads:
     log:
         "logs/{date}/bwa-mem/ref~{reference}/{sample}.log",
     params:
-        index=lambda w, input: get_bwa_index_prefix(input.idx),
         extra="",
         sorting="samtools",
         sort_order="coordinate",
     threads: 8
     wrapper:
-        "v1.12.2/bio/bwa/mem"
+        "v1.15.1/bio/bwa/mem"
 
 
 rule mark_duplicates:
@@ -70,10 +69,8 @@ rule mark_duplicates:
         metrics="results/{date}/qc/dedup/ref~{reference}/{sample}.metrics.txt",
     log:
         "logs/{date}/picard/dedup/ref~{reference}/{sample}.log",
-    params:
-        "",
     wrapper:
-        "v1.12.2/bio/picard/markduplicates"
+        "v1.15.1/bio/picard/markduplicates"
 
 
 rule samtools_calmd:
@@ -85,7 +82,7 @@ rule samtools_calmd:
     log:
         "logs/{date}/samtools-calmd/ref~{reference}/{sample}.log",
     params:
-        "-A",
+        extra="-A",
     threads: 8
     wrapper:
-        "v1.12.2/bio/samtools/calmd"
+        "v1.15.1/bio/samtools/calmd"
