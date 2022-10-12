@@ -386,10 +386,6 @@ def get_reference(suffix=""):
     return inner
 
 
-def get_bwa_index_prefix(index_paths):
-    return os.path.splitext(index_paths[0])[0]
-
-
 def get_reads(wildcards):
     # alignment against the human reference genome is done with trimmed reads,
     # since this alignment is used to generate the ordered, non human reads

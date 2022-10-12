@@ -1,7 +1,7 @@
 channels:
   - conda-forge
   - bioconda
-  - defaults
+  - nodefaults
 dependencies:
   - trinity =2.13
   # ensure that we use a bowtie2 that already contains fixed dependency constraints
