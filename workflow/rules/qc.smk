@@ -81,7 +81,7 @@ rule samtools_flagstat:
     log:
         "logs/{date}/samtools/{sample}_flagstat.log",
     wrapper:
-        "v1.12.2/bio/samtools/view"
+        "v1.12.2/bio/samtools/flagstat"
 
 
 rule samtools_depth:
