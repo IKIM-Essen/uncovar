@@ -184,6 +184,6 @@ rule merge_varranges:
     log:
         "logs/{date}/merge-calls/ref~{reference}/{sample}.log",
     params:
-        extra="-a -Ob",
+        extra="-a",
     wrapper:
         "v1.15.1/bio/bcftools/concat"

@@ -48,6 +48,6 @@ rule merge_calls:
     log:
         "logs/{date}/merge-calls/ref~{reference}/{sample}.{clonality}.{filter}.{annotation}.log",
     params:
-        extra="-a -Ob",
+        extra="-a",
     wrapper:
         "v1.15.1/bio/bcftools/concat"
