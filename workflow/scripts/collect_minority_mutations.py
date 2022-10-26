@@ -45,15 +45,15 @@ AA_ALPHABET_TRANSLATION = {
 }
 
 # create empty lists
-sig=[]
-rd=[]
-freq=[]
-prob=[]
-name=[]
-ddir=[]
-gen=[]
-posi=[]
-lin=[]
+data_dict={"Signature": [],
+                    "Gene": [],
+                    "Position": [],
+                    "ReadDepth": [],
+                    "Frequency": [], 
+                    "Probability": [],
+                    "Sample_id": [],
+                    "Week": [],
+                    "Lineage":[]}
 
 # iterate over files in directory
 for file in glob.glob('/groups/ds/kblock/virusrecombination/results_15orfs/week*/annotated-calls/ref~main/annot~orf/*.bcf'):
@@ -140,40 +140,30 @@ for file in glob.glob('/groups/ds/kblock/virusrecombination/results_15orfs/week*
                 else:
                     raise Exception("Something unexpected occured in this record:", str(record), file)
                 # add results in lists
-                sig.append(alt)
+                data_dict["Signature"].append(alt)
                 # position
-                posi.append(pos)
+                data_dict["Position"].append(pos)
                 # ORF
-                gen.append(gene_name)
+                data_dict["Gene"].append(gene_name)
                 # read depth
-                rd.append(record.samples[0]["DP"])
+                data_dict["ReadDepth"].append(record.samples[0]["DP"])
                 # frequency
-                freq.append(record.samples[0]["AF"][0])
+                data_dict["Frequency"].append(record.samples[0]["AF"][0])
                 # probability
-                prob.append(1.0 - (phred_to_prob(record.info["PROB_ABSENT"][0]) + phred_to_prob(record.info["PROB_ARTIFACT"][0])))
+                data_dict["Probability"].append(1.0 - (phred_to_prob(record.info["PROB_ABSENT"][0]) + phred_to_prob(record.info["PROB_ARTIFACT"][0])))
                 # filename
-                name.append(filename)
+                data_dict["Sample_id"].append(filename)
                 # week
-                ddir.append(dir_name)
+                data_dict["Week"].append(dir_name)
                 # lineage
-                lin.append(lineage)
+                data_dict["Lineage"].append(lineage)
     else:
         print(dir_name, filename, "does not exists!")
         continue
     
 
 # create dataframe
-df= pd.DataFrame({
-                    "Signature": sig,
-                    "Gen": gen,
-                    "Position": posi,
-                    "ReadDepth": rd,
-                    "Frequency": freq, 
-                    "Probability": prob,
-                    "Sample_id": name,
-                    "Week": ddir,
-                    "Lineage":lin
-                  })
+df = pd.DataFrame().from_dict(data_dict)
 
 # filter duplicates 
 df = df.drop_duplicates()
