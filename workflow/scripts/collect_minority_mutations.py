@@ -45,20 +45,23 @@ AA_ALPHABET_TRANSLATION = {
 }
 
 # create empty lists
-data_dict={"Signature": [],
-                    "Gene": [],
-                    "Position": [],
-                    "ReadDepth": [],
-                    "Frequency": [], 
-                    "Probability": [],
-                    "Sample_id": [],
-                    "Week": [],
-                    "Lineage":[]}
+data_dict = {
+    "Signature": [],
+    "Gene": [],
+    "Position": [],
+    "ReadDepth": [],
+    "Frequency": [], 
+    "Probability": [],
+    "Sample_id": [],
+    "Week": [],
+    "Lineage":[]
+}
 
 # iterate over files in directory
 for file in glob.glob('/groups/ds/kblock/virusrecombination/results_15orfs/week*/annotated-calls/ref~main/annot~orf/*.bcf'):
     bcf_in = (pysam.VariantFile(file))
     # extract week name to append to dataframe
+    # TODO change to date!!!
     dir_name = os.path.split(os.path.split(os.path.split(os.path.split(os.path.dirname(file))[0])[0])[0])[1]
     filename = path.Path(file).stem
     # retrives pangolin lineage file
@@ -66,8 +69,7 @@ for file in glob.glob('/groups/ds/kblock/virusrecombination/results_15orfs/week*
     if os.path.exists(lin_dir):
         lineages = pd.read_csv(lin_dir, dtype={'Sample': str})
         idx = list(lineages['Sample']).index(str(filename))
-        # pseudo or scaffold(prefered) from pangolin_calls_per_stage.csv if scaff empty take pseudo
-        #ADD FILTER FOR UNASSIGNED
+        # pseudo or scaffold(preferred) from pangolin_calls_per_stage.csv if scaff empty take pseudo
         lineage = lineages['Scaffolded Seq'].values[idx] if lineages['Scaffolded Seq'].values[idx] != "Not called on" else lineages['Pseudo Seq'].values[idx]
         # fill lists with data obtained from file
         # iterate over records
@@ -161,7 +163,6 @@ for file in glob.glob('/groups/ds/kblock/virusrecombination/results_15orfs/week*
         print(dir_name, filename, "does not exists!")
         continue
     
-
 # create dataframe
 df = pd.DataFrame().from_dict(data_dict)
 
@@ -170,18 +171,6 @@ df = df.drop_duplicates()
 
 # filter dataframe for searched information
 df_filtered = df.drop(df[(df.ReadDepth < 10) | (df.Frequency < 0.1) | (df.Frequency > 0.9)].index).sort_values(by=['Frequency'], ascending=False).reset_index(drop=True)
-
-# df to show around
-# df = df[["Sample_id", "Gen", "Signature", "Position", "Frequency", "ReadDepth", "Lineage", "Week", "Probability"]]
-# df_show = df.drop(df[(df.ReadDepth < 10) | (df.Frequency < 0.1) | (df.Frequency > 0.9)].index).drop(columns=['Week', 'Probability']).sort_values(by=['Signature']).reset_index(drop=True)
-    
-# filter dataframe for mutations present in more than one week
-# df_wo_unique = df_filtered[df_filtered.duplicated(subset=['Signature'], keep=False)]
-# df_wo_unique = df_wo_unique.sort_values('Signature')
-
-# min_repeat = 10
-# vc = df_filtered["Signature"].value_counts()
-# df_10 = df_filtered[df_filtered["Signature"].isin(vc[vc > min_repeat].index)]
 
 # collect known mutations
 covariants_data = requests.get(
@@ -203,25 +192,8 @@ for i in range(len(covariants_data["clusters"])):
             mutation_overview = pd.concat([mutation_overview, pd.DataFrame({"Signature": [mutation], "Strain": strain_name})], ignore_index=True)
 mutation_overview = mutation_overview.reset_index(drop=True)
 
-# df_show.to_excel("VirusRecombination.xlsx", engine='xlsxwriter', index=False)
-with pd.ExcelWriter('ViralMutations.xlsx', engine='xlsxwriter') as writer:
-    df_filtered.to_excel(writer, sheet_name='filtered', index=False)
-    df.to_excel(writer, sheet_name='all', index=False)
-
-# export filtered mutations without unique mutations
-# df_10.to_csv("wo_unique_mutations.csv", index=False, sep=",")
-
 # export filtered mutations
 df_filtered.to_csv("filtered_mutations.csv", index=False, sep=",")
 
 # export list of all mutations found
 df.to_csv("allmutationsfound.csv", index=False, sep=",")
-
-# export known mutiations overview (complete)
-# mutation_overview.to_csv("known_mutations_overview.csv", index=False)
-
-# comparison with known mutations
-# df_comparison = df_filtered.merge(mutation_overview, left_on='Signature', right_on='Signature', how='inner')
-
-# export found known mutations
-# df_comparison.to_csv("found_mutations_known.csv", index=False, sep=",")
