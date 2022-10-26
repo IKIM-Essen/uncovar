@@ -23,16 +23,12 @@ parser = argparse.ArgumentParser(formatter_class=Formatter,
         Laboratory data regarding mutation interactions and interdependencies is unavailable. Therefore, the presented algorithm is not able to interfere possible mutation interactions and interdependencies from the data.
         Since mutation interactions are expected the suggested antibody might be wrong.'''), epilog='Please cite me if you are using this program. Have fun! :)')
 
-parser.add_argument('-p', "--print_string", help="Prints the supplied argument.", default = 'A random string.', nargs='?', const='A random string.', type=str) #works with value after flag given or not 
-parser.add_argument('-k', "--keks", help="Prints the supplied argument.", type=int) #expects value after flag
-parser.add_argument('-z', "--zoom", help="Prints the supplied argument.", action="store_true") #flag sets boolean to True
 parser.add_argument('-w', '--week', help="Selects timespan", default = 'week87', type=str)
 parser.add_argument('-f', '--frequency', help="The frequency, or allel frequency, is the relative frequency of a variant of a nucleic acid at a particular position in a genome.", default = 0.0, nargs='?', const=0.0, type=float)
 parser.add_argument('-d', '--readdepth', help='Number of reads at a particular position in a genome', default = 10, nargs='?', const = 10, type=int)
 args = parser.parse_args()
 
 #retrive args
-print(args)
 week = str(args.week)
 freq = float(args.frequency)
 rd = int(args.readdepth)
@@ -48,14 +44,12 @@ factors = factors[['Mutation', 'S309', 'COV2-2130', 'COV2-2196']].set_index('Mut
 # list of mutations in samples
 df = pd.read_csv("/groups/ds/kblock/virusrecombination/results/allmutationsfound.csv")
 # filter for tests
-# TODO keep all filenames ?list?
+# TODO keep all filenames ?list? snakemake input only provides only one week keep all # perhabs do list of sample ids and append missing ones 
 df = df[(df['Gen'] == 'S') & (df['Week'] == week) & (df['Frequency'] > freq) & (df['ReadDepth'] > rd) & ((df['ReadDepth'] * df['Frequency']) > 1)]
-# filter of all samples containing concerning mutations
-df = df[df['Signature'].str.contains('|'.join(all_escaping_mutations),case=False, na = False)].reset_index(drop=True)
+df = df[(df['Gen'] == 'S') & (df['Week'] == week) & (df['Frequency'] > freq) & (df['ReadDepth'] > rd) & ((df['ReadDepth'] * df['Frequency']) > 1)]
+
 df = df.drop(columns= ['Position', 'ReadDepth', 'Probability'])
 df = df[['Filename', 'Signature', 'Gen', 'Week', 'Frequency', 'Lineage']].reset_index(drop=True)
-df["ShortSig"] = np.nan
-df["Ineffektiv"] = np.nan
 
 # lists containing mutations 
 medis = escaping_mutations.index.values
@@ -80,10 +74,15 @@ for idx, (sid, group) in enumerate(df.groupby('Filename')):
     ab = n_fac.sum().sort_values(ascending = False)
     for i, a in enumerate(ab.index):
         ls = sorted(list(zip(i_fac[ab.index[i]].index, i_fac[ab.index[i]])), key=lambda a: a[1], reverse = True)
+        hif = i_fac[a].min()
         df_g.at[i, "Escaping_mutations"] = ls
         df_g.at[i, "Antibody"] = a
+        df_g.at[i, "hig_imp_fac"] = hif
         df_g.at[i, "Sample_id"] = sid
     df_sid = pd.concat([df_sid, df_g])
 
-print(df_sid)
+#for every sampleid check if present
+#if present: fine
+#else add with empty columns
+
 df_sid.to_csv('resistogram.csv', index=False)
