@@ -22,7 +22,7 @@ jobs:
   Formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Formatting
         uses: github/super-linter@v4.9.7
         env:
@@ -39,7 +39,7 @@ jobs:
     env:
       GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Lint workflow
         uses: snakemake/snakemake-github-action@v1.24.0
         with:
@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/master'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
       - uses: pre-commit/action@v3.0.0
 
@@ -72,7 +72,7 @@ jobs:
         technology: [all, illumina, ion]
         seq_method: [shotgun, amplicon]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # android - will release about 10 GB if you don't need Android
       # dotnet  - will release about 20 GB if you don't need .NET
@@ -185,7 +185,7 @@ jobs:
             # generate_test_cases,
           ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # - name: Cache conda dependencies
       #   uses: actions/cache@v2
