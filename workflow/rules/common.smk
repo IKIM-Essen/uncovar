@@ -805,6 +805,12 @@ def get_list_of_amplicon_states_assembler(samples):
 
 
 def get_varlociraptor_bias_flags(wildcards):
+    if wildcards.varrange == "lineage-variants":
+        # known variants, we don't want to use bias detection at all
+        return (
+            "--omit-strand-bias --omit-read-orientation-bias --omit-read-position-bias "
+            "--omit-softclip-bias --omit-homopolymer-artifact-detection --omit-alt-locus-bias"
+        )
     if is_amplicon_data(wildcards.sample):
         # no bias detection possible
         return (
