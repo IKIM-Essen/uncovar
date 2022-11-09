@@ -60,9 +60,9 @@ rule medaka_variant:
         "../envs/medaka.yaml"
     threads: 4
     shell:
-        "(medaka_haploid_variant -i {input.sample} -r {input.ref} -o medaka_{wildcards.sample}"
-        " -t {threads} -m {params.model} && mv medaka_{wildcards.sample}/medaka.annotated.vcf {output} &&"
-        " rm -r medaka_{wildcards.sample}) > {log} 2>&1"
+        "(medaka_haploid_variant -i {input.sample} -r {input.ref} -o medaka_tmp/medaka/{wildcards.date}/{wildcards.reference}/{wildcards.sample}"
+        " -t {threads} -m {params.model} && mv medaka_tmp/medaka/{wildcards.date}/{wildcards.reference}/{wildcards.sample}/medaka.annotated.vcf {output} &&"
+        " rm -r medaka_tmp/medaka/{wildcards.date}/{wildcards.reference}/{wildcards.sample}) > {log} 2>&1"
 
 
 rule longshot:
