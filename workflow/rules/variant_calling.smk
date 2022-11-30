@@ -1,4 +1,4 @@
-# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Simon Magin, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -45,23 +45,24 @@ rule delly:
 rule medaka_variant:
     input:
         ref=get_reference(),
-        sample="results/{date}/recal/ref~{reference}/{sample}.bam",
-        bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
+        sample="results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.clip.fasta",
     output:
-        temp(
-            "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer-medaka.vcf"
-        ),
+        "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer-medaka.vcf",
     params:
         outdir=get_output_dir,
+        # The default model covers almost all current use cases on MinION & GridION. For best results
+        # with PromethION and future pores etc an option to switch between models would be required,
+        # e.g. add col model in sample-sheet & use default (will still work for all) if not provided.
+        model="r941_min_hac_variant_g507",
     log:
         "logs/{date}/medaka/variant/ref~{reference}/{sample}.log",
     conda:
         "../envs/medaka.yaml"
     threads: 4
     shell:
-        "(medaka_variant -i {input.sample} -f {input.ref} -o {params.outdir}/{wildcards.sample} -t {threads} &&"
-        " mv $(cat {log}| grep '\- Final VCF written to' | sed s/'- Final VCF written to '//\ ) {output})"
-        " > {log} 2>&1"
+        "(medaka_haploid_variant -i {input.sample} -r {input.ref} -o medaka_tmp/medaka/{wildcards.date}/{wildcards.reference}/{wildcards.sample}"
+        " -t {threads} -m {params.model} && mv medaka_tmp/medaka/{wildcards.date}/{wildcards.reference}/{wildcards.sample}/medaka.annotated.vcf {output} &&"
+        " rm -r medaka_tmp/medaka/{wildcards.date}/{wildcards.reference}/{wildcards.sample}) > {log} 2>&1"
 
 
 rule longshot:
