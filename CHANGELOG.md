@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.15.1](https://github.com/IKIM-Essen/uncovar/compare/v0.15.0...v0.15.1) (2022-11-30)
+
+
+### Bug Fixes
+
+* **ci:** update black to rev 22.3.0 ([#523](https://github.com/IKIM-Essen/uncovar/issues/523)) ([2273b7d](https://github.com/IKIM-Essen/uncovar/commit/2273b7d49d21dfe48812f7e3e4d33969b62e1d9e))
+* disable ont actions ([#555](https://github.com/IKIM-Essen/uncovar/issues/555)) ([56e46ef](https://github.com/IKIM-Essen/uncovar/commit/56e46ef7e1663b4de3447068df7cb8b9d1d7b67f))
+* Replace outdated df append ([#544](https://github.com/IKIM-Essen/uncovar/issues/544)) ([4a40003](https://github.com/IKIM-Essen/uncovar/commit/4a4000310cba4f3e8640172eadebcd35239b2e34))
+* update channel priorities and snakemake wrappers ([#562](https://github.com/IKIM-Essen/uncovar/issues/562)) ([a0b6fd0](https://github.com/IKIM-Essen/uncovar/commit/a0b6fd0557b7e6cb3aeddd22e6a3350560c18415))
+* use latest varlociraptor release and ignore all biases in case of known lineage variant calling ([#575](https://github.com/IKIM-Essen/uncovar/issues/575)) ([fa957fd](https://github.com/IKIM-Essen/uncovar/commit/fa957fd44594920c12df3821a23905055b1de9c9))
+* voc probability ([#541](https://github.com/IKIM-Essen/uncovar/issues/541)) ([db6eb17](https://github.com/IKIM-Essen/uncovar/commit/db6eb175aa7c25948677a9b64258afd377016d8c))
+
 ## [0.15.0](https://github.com/IKIM-Essen/uncovar/compare/v0.14.0...v0.15.0) (2022-03-24)
 
 
