@@ -8,6 +8,9 @@ import pandas as pd
 import numpy as np
 import re
 import textwrap
+import sys
+
+sys.stderr = open(snakemake.log[0], "w")
 
 # list of mutations effectiv in escaping the antibodies.
 escaping_mutations = pd.read_json('/homes/kblock/scripts/resistogram/mabs.json').set_index('mAbs')
