@@ -7,31 +7,7 @@
 import pandas as pd
 import numpy as np
 import re
-import argparse
 import textwrap
-
-class Formatter(argparse.ArgumentDefaultsHelpFormatter, argparse.MetavarTypeHelpFormatter, argparse.RawDescriptionHelpFormatter):
-    pass
-
-parser = argparse.ArgumentParser(formatter_class=Formatter, 
-                                description=textwrap.dedent('''
-         Please do not mess up this text!
-         --------------------------------
-        Script for estimating efficency of antibodies against SARS-CoV-2 infection in the presence of mutations. 
-        If the patient number is not in the list all known antibodies are efficient. 
-        Predictions are based on the work of Lui et.al (https://doi.org/10.1038/s41586-021-04388-0), who investigated the impact of individual mutations within B.1.1.529 against monoclonal antibodies. 
-        Laboratory data regarding mutation interactions and interdependencies is unavailable. Therefore, the presented algorithm is not able to interfere possible mutation interactions and interdependencies from the data.
-        Since mutation interactions are expected the suggested antibody might be wrong.'''), epilog='Please cite me if you are using this program. Have fun! :)')
-
-parser.add_argument('-w', '--week', help="Selects timespan", default = 'week87', type=str)
-parser.add_argument('-f', '--frequency', help="The frequency, or allel frequency, is the relative frequency of a variant of a nucleic acid at a particular position in a genome.", default = 0.0, nargs='?', const=0.0, type=float)
-parser.add_argument('-d', '--readdepth', help='Number of reads at a particular position in a genome', default = 10, nargs='?', const = 10, type=int)
-args = parser.parse_args()
-
-#retrive args
-week = str(args.week)
-freq = float(args.frequency)
-rd = int(args.readdepth)
 
 # list of mutations effectiv in escaping the antibodies.
 escaping_mutations = pd.read_json('/homes/kblock/scripts/resistogram/mabs.json').set_index('mAbs')
@@ -45,8 +21,8 @@ factors = factors[['Mutation', 'S309', 'COV2-2130', 'COV2-2196']].set_index('Mut
 df = pd.read_csv("/groups/ds/kblock/virusrecombination/results/allmutationsfound.csv")
 # filter for tests
 # TODO keep all filenames ?list? snakemake input only provides only one week keep all # perhabs do list of sample ids and append missing ones 
-df = df[(df['Gen'] == 'S') & (df['Week'] == week) & (df['Frequency'] > freq) & (df['ReadDepth'] > rd) & ((df['ReadDepth'] * df['Frequency']) > 1)]
-df = df[(df['Gen'] == 'S') & (df['Week'] == week) & (df['Frequency'] > freq) & (df['ReadDepth'] > rd) & ((df['ReadDepth'] * df['Frequency']) > 1)]
+df = df[(df['Gen'] == 'S') & (df['Week'] == week) & (df['Frequency'] > 0) & (df['ReadDepth'] > 10) & ((df['ReadDepth'] * df['Frequency']) > 1)]
+df = df[(df['Gen'] == 'S') & (df['Week'] == week) & (df['Frequency'] > 0) & (df['ReadDepth'] > 10) & ((df['ReadDepth'] * df['Frequency']) > 1)]
 
 df = df.drop(columns= ['Position', 'ReadDepth', 'Probability'])
 df = df[['Filename', 'Signature', 'Gen', 'Week', 'Frequency', 'Lineage']].reset_index(drop=True)
