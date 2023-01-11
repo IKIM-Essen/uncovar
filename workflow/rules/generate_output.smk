@@ -399,6 +399,8 @@ rule snakemake_reports_patient:
             filter=config["variant-calling"]["filters"],
             annotation=config["variant-calling"]["annotations"],
         ),
+        # Resistogram 
+        "results/{date}/resistogram/resistogram.json",
         # 6. High Quality Genomes
         "results/high-quality-genomes/{date}.fasta",
         "results/high-quality-genomes/{date}.csv",

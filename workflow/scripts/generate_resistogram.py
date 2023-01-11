@@ -13,15 +13,15 @@ import sys
 sys.stderr = open(snakemake.log[0], "w")
 
 # list of mutations effectiv in escaping the antibodies.
-escaping_mutations = pd.read_json('/homes/kblock/scripts/resistogram/mabs.json').set_index('mAbs')
+escaping_mutations = pd.read_json(snakemake.input.escaping_mutations).set_index('mAbs')
 all_escaping_mutations = [item for sublist in escaping_mutations['Mutation'].tolist() for item in sublist]
 
 # list of factors
-factors = pd.read_csv("/groups/ds/kblock/resistogram/factortab.csv")
+factors = pd.read_csv(snakemake.input.factors)
 factors = factors[['Mutation', 'S309', 'COV2-2130', 'COV2-2196']].set_index('Mutation')
 
 # list of mutations in samples
-df = pd.read_csv("/groups/ds/kblock/virusrecombination/results/allmutationsfound.csv")
+df = pd.read_csv(snakmake.input.allmutationsfound)
 # filter for tests
 # TODO keep all filenames ?list? snakemake input only provides only one week keep all # perhabs do list of sample ids and append missing ones 
 df = df[(df['Gen'] == 'S') & (df['Week'] == week) & (df['Frequency'] > 0) & (df['ReadDepth'] > 10) & ((df['ReadDepth'] * df['Frequency']) > 1)]
@@ -64,4 +64,4 @@ for idx, (sid, group) in enumerate(df.groupby('Filename')):
 #if present: fine
 #else add with empty columns
 
-df_sid.to_csv('resistogram.csv', index=False)
+df_sid.to_csv(snakemake.output, index=False)

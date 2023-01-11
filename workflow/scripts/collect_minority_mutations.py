@@ -4,15 +4,12 @@
 # except according to those terms.
 
 # import required packages
-import pathlib as path
 import os
-from xml.dom import INDEX_SIZE_ERR
 import pandas as pd
 import pysam
 import re
 import numpy as np
 import requests
-import glob
 import sys
 
 sys.stderr = open(snakemake.log[0], "w")

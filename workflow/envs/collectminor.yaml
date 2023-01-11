@@ -1,0 +1,10 @@
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - numpy
+  - pandas
+  - pysam
+  - python
+  - samtools
+  - snakemake
