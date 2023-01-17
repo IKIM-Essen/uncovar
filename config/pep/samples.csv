@@ -1,2 +1,2 @@
 sample_name,fq1,fq2,date,is_amplicon_data,technology,include_in_high_genome_summary
-202281,data/2023-01-10/202281_S20_L001_R1_001.fastq.gz,data/2023-01-10/202281_S20_L001_R2_001.fastq.gz,2023-01-10,1,illumina,1
+202431,data/2023-01-11/202431_S28_L001_R1_001.fastq.gz,data/2023-01-11/202431_S28_L001_R2_001.fastq.gz,2023-01-11,1,illumina,1

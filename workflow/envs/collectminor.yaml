@@ -5,6 +5,4 @@ dependencies:
   - numpy
   - pandas
   - pysam
-  - python
   - samtools
-  - snakemake

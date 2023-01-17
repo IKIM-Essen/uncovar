@@ -21,14 +21,13 @@ factors = pd.read_csv(snakemake.input.factors)
 factors = factors[['Mutation', 'S309', 'COV2-2130', 'COV2-2196']].set_index('Mutation')
 
 # list of mutations in samples
-df = pd.read_csv(snakmake.input.allmutationsfound)
+df = pd.read_csv(snakemake.input.allmutationsfound)
 # filter for tests
-# TODO keep all filenames ?list? snakemake input only provides only one week keep all # perhabs do list of sample ids and append missing ones 
-df = df[(df['Gen'] == 'S') & (df['Week'] == week) & (df['Frequency'] > 0) & (df['ReadDepth'] > 10) & ((df['ReadDepth'] * df['Frequency']) > 1)]
-df = df[(df['Gen'] == 'S') & (df['Week'] == week) & (df['Frequency'] > 0) & (df['ReadDepth'] > 10) & ((df['ReadDepth'] * df['Frequency']) > 1)]
+# TODO keep all filenames ?list? # perhabs do list of sample ids and append missing ones 
+df = df[(df['Gen'] == 'S')  & (df['Frequency'] > 0) & (df['ReadDepth'] > 10) & ((df['ReadDepth'] * df['Frequency']) > 1)]
 
 df = df.drop(columns= ['Position', 'ReadDepth', 'Probability'])
-df = df[['Filename', 'Signature', 'Gen', 'Week', 'Frequency', 'Lineage']].reset_index(drop=True)
+df = df[['Sample_id', 'Signature', 'Gen', 'Frequency', 'Lineage']].reset_index(drop=True)
 
 # lists containing mutations 
 medis = escaping_mutations.index.values
@@ -42,7 +41,7 @@ df_g = pd.DataFrame(columns=['Sample_id', 'Antibody', 'hig_imp_fac', 'Escaping_m
 shortsigs =[]
 
 #creation of output file
-for idx, (sid, group) in enumerate(df.groupby('Filename')):
+for idx, (sid, group) in enumerate(df.groupby('Sample_id')):
     #check if there are any antibodies against which there are no mutations? <- Check with Folker
     group = group.reset_index(drop=True)
     for ix, sig in enumerate(group['Signature']):
@@ -63,5 +62,5 @@ for idx, (sid, group) in enumerate(df.groupby('Filename')):
 #for every sampleid check if present
 #if present: fine
 #else add with empty columns
-
-df_sid.to_csv(snakemake.output, index=False)
+df_sid = df_sid.reset_index(drop=True)
+df_sid.to_json(snakemake.output[0], orient="records")

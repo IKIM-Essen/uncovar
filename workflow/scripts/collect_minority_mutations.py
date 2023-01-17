@@ -4,6 +4,7 @@
 # except according to those terms.
 
 # import required packages
+import pathlib as path
 import os
 import pandas as pd
 import pysam
@@ -44,21 +45,33 @@ AA_ALPHABET_TRANSLATION = {
     "Thr": "T",
 }
 
-# create empty lists
-data_dict = {
-    "Signature": [],
-    "Gene": [],
-    "Position": [],
-    "ReadDepth": [],
-    "Frequency": [], 
-    "Probability": [],
-    "Sample_id": [],
-    "Lineage":[]
-}
+# # create empty lists
+#     "Signature": [],
+#     "Gene": [],
+#     "Position": [],
+#     "ReadDepth": [],
+#     "Frequency": [], 
+#     "Probability": [],
+#     "Sample_id": [],
+#     "Lineage":[]
 
+# create empty lists
+sig=[]
+rd=[]
+freq=[]
+prob=[]
+name=[]
+ddir=[]
+gen=[]
+posi=[]
+lin=[]
+
+
+#def bcf_to_df(data_dict, AA_ALPHABET_TRANSLATION):
 # iterate over files in directory
 for file in snakemake.input.bcfs:
     bcf_in = (pysam.VariantFile(file))
+    filename = path.Path(file).stem
     lineages = pd.read_csv(snakemake.input.pan_calls, dtype={'Sample': str})
     idx = list(lineages['Sample']).index(str(filename))
     # pseudo or scaffold(preferred) from pangolin_calls_per_stage.csv if scaff empty take pseudo
@@ -134,27 +147,58 @@ for file in snakemake.input.bcfs:
             else:
                 raise Exception("Something unexpected occured in this record:", str(record), file)
             # add results in lists
-            data_dict["Signature"].append(alt)
+            sig.append(alt)
             # position
-            data_dict["Position"].append(pos)
+            posi.append(pos)
             # ORF
-            data_dict["Gene"].append(gene_name)
+            gen.append(gene_name)
             # read depth
-            data_dict["ReadDepth"].append(record.samples[0]["DP"])
+            rd.append(record.samples[0]["DP"])
             # frequency
-            data_dict["Frequency"].append(record.samples[0]["AF"][0])
+            freq.append(record.samples[0]["AF"][0])
             # probability
-            data_dict["Probability"].append(1.0 - (phred_to_prob(record.info["PROB_ABSENT"][0]) + phred_to_prob(record.info["PROB_ARTIFACT"][0])))
+            prob.append(1.0 - (phred_to_prob(record.info["PROB_ABSENT"][0]) + phred_to_prob(record.info["PROB_ARTIFACT"][0])))
             # filename
-            data_dict["Sample_id"].append(filename)
+            name.append(filename)
             # lineage
-            data_dict["Lineage"].append(lineage)    
-    
+            lin.append(lineage)
+            # # add results in lists
+            # data_dict["Signature"].append(alt)
+            # # position
+            # data_dict["Position"].append(pos)
+            # # ORF
+            # data_dict["Gene"].append(gene_name)
+            # # read depth
+            # data_dict["ReadDepth"].append(record.samples[0]["DP"])
+            # # frequency
+            # data_dict["Frequency"].append(record.samples[0]["AF"][0])
+            # # probability
+            # data_dict["Probability"].append(1.0 - (phred_to_prob(record.info["PROB_ABSENT"][0]) + phred_to_prob(record.info["PROB_ARTIFACT"][0])))
+            # # filename
+            # data_dict["Sample_id"].append(filename)
+            # # lineage
+            # data_dict["Lineage"].append(lineage)
+
 # create dataframe
-df = pd.DataFrame().from_dict(data_dict)
+df= pd.DataFrame({
+                    "Signature": sig,
+                    "Gen": gen,
+                    "Position": posi,
+                    "ReadDepth": rd,
+                    "Frequency": freq, 
+                    "Probability": prob,
+                    "Sample_id": name,
+                    "Lineage":lin
+                  })
+# create dataframe
+#df = pd.DataFrame()
+#.from_dict(data_dict)
+    #return(df)
+
+#df = bcf_to_df(data_dict, AA_ALPHABET_TRANSLATION)
 
 # filter duplicates 
 df = df.drop_duplicates()
 
 # export list of all mutations found
-df.to_csv(snakemake.output, index=False, sep=",")
+df.to_csv(snakemake.output[0], index=False, sep=",")
