@@ -3,15 +3,16 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
+import os
 # import required packages
 import pathlib as path
-import os
+import re
+import sys
+
+import numpy as np
 import pandas as pd
 import pysam
-import re
-import numpy as np
 import requests
-import sys
 
 sys.stderr = open(snakemake.log[0], "w")
 

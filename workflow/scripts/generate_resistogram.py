@@ -3,12 +3,13 @@
 # This file may not be copied, modified, or distributed
 # except according to those terms.
 
+import re
+import sys
+import textwrap
+
+import numpy as np
 # import required packages
 import pandas as pd
-import numpy as np
-import re
-import textwrap
-import sys
 
 sys.stderr = open(snakemake.log[0], "w")
 
