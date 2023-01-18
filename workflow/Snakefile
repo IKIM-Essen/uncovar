@@ -31,23 +31,58 @@ if config["strain-calling"]["use-gisaid"]:
 
 
 include: "rules/common.smk"
+
+
 include: "rules/benchmarking_common.smk"
+
+
 include: "rules/utils.smk"
+
+
 include: "rules/ref.smk"
+
+
 include: "rules/qc.smk"
+
+
 include: "rules/read_trimming.smk"
+
+
 include: "rules/read_clipping.smk"
+
+
 include: "rules/read_mapping.smk"
+
+
 include: "rules/assembly.smk"
+
+
 include: "rules/pseudoassembly.smk"
+
+
 include: "rules/strain_calling.smk"
+
+
 include: "rules/variant_calling.smk"
+
+
 include: "rules/variant_annotation.smk"
+
+
 include: "rules/variant_filtration.smk"
+
+
 include: "rules/variant_report.smk"
+
+
 include: "rules/generate_output.smk"
+
+
 include: "rules/benchmarking.smk"
+
+
 include: "rules/minority_variants_resistogram.smk"
+
 
 if config["data-handling"]["use-data-handling"]:
 
@@ -55,6 +90,8 @@ if config["data-handling"]["use-data-handling"]:
 
 
 include: "rules/long_read.smk"
+
+
 include: "rules/lineage_variant_calling.smk"
 
 
