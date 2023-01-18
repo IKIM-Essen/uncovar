@@ -47,7 +47,6 @@ include: "rules/variant_filtration.smk"
 include: "rules/variant_report.smk"
 include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
-
 include: "rules/minority_variants_resistogram.smk"
 
 if config["data-handling"]["use-data-handling"]:
@@ -142,5 +141,3 @@ rule benchmark_reads:
 rule generate_test_cases:
     input:
         get_test_cases,
-
-
