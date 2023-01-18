@@ -4,7 +4,6 @@
 # except according to those terms.
 
 import os
-# import required packages
 import pathlib as path
 import re
 import sys
