@@ -74,5 +74,7 @@ rule gzip:
         "logs/gzip/{prefix}.log",
     conda:
         "../envs/unix.yaml"
+    wildcard_constraints:
+        prefix="^((?!benchmarking).)*$",
     shell:
         "gzip --keep {input}"

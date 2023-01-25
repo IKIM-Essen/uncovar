@@ -3,6 +3,11 @@
 !.github/**
 !.tests
 !.tests/data
+!benchmarking
+!benchmarking/*
+!benchmarking/envs/*
+!benchmarking/rules/**
+!benchmarking/scripts/*
 !config
 !config/REAMDE.md
 !config/config.yaml
@@ -22,7 +27,7 @@
 !workflow/envs/*
 !workflow/notebooks/*
 !workflow/report/*
-!workflow/rules/*
+!workflow/rules/**
 !workflow/scripts/**
 !workflow/schemas/*
 !.editorconfig

@@ -46,7 +46,6 @@ include: "rules/variant_annotation.smk"
 include: "rules/variant_filtration.smk"
 include: "rules/variant_report.smk"
 include: "rules/generate_output.smk"
-include: "rules/benchmarking.smk"
 
 
 if config["data-handling"]["use-data-handling"]:
@@ -55,6 +54,7 @@ if config["data-handling"]["use-data-handling"]:
 
 
 include: "rules/long_read.smk"
+include: "../benchmarking/rules/benchmarking.smk"
 include: "rules/lineage_variant_calling.smk"
 
 

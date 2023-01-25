@@ -1,0 +1,17 @@
+name: havoc
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - bcftools
+  - bedtools
+  - bowtie2
+  - bwa
+  - fastp
+  - lofreq
+  - pangolin
+  - sambamba
+  - samtools
+  - trimmomatic
+# source: https://bitbucket.org/auto_cov_pipeline/havoc/src/master/havoc_environment.yml
