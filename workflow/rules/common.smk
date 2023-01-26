@@ -11,8 +11,18 @@ import urllib.request
 from snakemake.utils import validate
 
 
+if config["strain-calling"]["use-gisaid"]:
+
+    envvars:
+        "GISAID_API_TOKEN",
+
+
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
+
+
 ILLUMINA_VARRANGE = ["small", "structural"]
+
+
 ONT_VARRANGE = ["homopolymer-medaka", "homopolymer-longshot"]
 ION_VARRANGE = ["small", "structural"]
 

@@ -24,12 +24,6 @@ container: "docker://condaforge/mambaforge"
 containerized: "quay.io/uncovar/uncovar#0.15.1"
 
 
-if config["strain-calling"]["use-gisaid"]:
-
-    envvars:
-        "GISAID_API_TOKEN",
-
-
 include: "rules/common.smk"
 include: "rules/benchmarking_common.smk"
 include: "rules/utils.smk"
@@ -55,6 +49,8 @@ if config["data-handling"]["use-data-handling"]:
 
 
 include: "rules/long_read.smk"
+
+
 include: "rules/lineage_variant_calling.smk"
 
 
