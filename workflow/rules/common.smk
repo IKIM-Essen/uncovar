@@ -11,8 +11,18 @@ import urllib.request
 from snakemake.utils import validate
 
 
+if config["strain-calling"]["use-gisaid"]:
+
+    envvars:
+        "GISAID_API_TOKEN",
+
+
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
+
+
 ILLUMINA_VARRANGE = ["small", "structural"]
+
+
 ONT_VARRANGE = ["homopolymer-medaka", "homopolymer-longshot"]
 ION_VARRANGE = ["small", "structural"]
 
@@ -805,6 +815,16 @@ def get_list_of_amplicon_states_assembler(samples):
 
 
 def get_varlociraptor_bias_flags(wildcards):
+    if wildcards.varrange == "lineage-variants":
+        # Known variants, we don't want to use bias detection at all.
+        # Rationale: the determined biases are hints for artifacts, which are particularly
+        # important to maintain a high precision with denovo calls. When there is prior knowledge
+        # about a variant like here, they are too conservative. E.g., when I see a typical omicron
+        # variant in a sample, I tend to believe it even if it happens to have a strand bias.
+        return (
+            "--omit-strand-bias --omit-read-orientation-bias --omit-read-position-bias "
+            "--omit-softclip-bias --omit-homopolymer-artifact-detection --omit-alt-locus-bias"
+        )
     if is_amplicon_data(wildcards.sample):
         # no bias detection possible
         return (

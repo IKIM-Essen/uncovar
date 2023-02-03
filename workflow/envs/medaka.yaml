@@ -3,6 +3,8 @@ channels:
   - bioconda
   - nodefaults
 dependencies:
-  - medaka =1.0
-  - tensorflow =1.14
-  - h5py =2.7
+  - python =3.8
+  - xz =5.2.6
+  - medaka =1.7.0
+  - tensorflow =2.7.0
+  - h5py =3.7.0
