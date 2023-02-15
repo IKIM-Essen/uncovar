@@ -48,6 +48,15 @@ rule generate_lineage_variant_table:
         "../scripts/generate-lineage-variant-table.py"
 
 
+rule get_lineage_variant_table:
+    input:
+        expand(
+            "results/{date}/lineage-variant-report/{sample}.csv",
+            date="2022-05-16",
+            sample=get_samples_for_date("2022-05-16"),
+        ),
+
+
 use rule overview_table_html as generate_lineage_variant_report with:
     input:
         "results/{date}/lineage-variant-report/{sample}.csv",

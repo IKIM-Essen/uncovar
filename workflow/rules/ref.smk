@@ -163,7 +163,7 @@ rule get_genome_db_for_kraken:
     conda:
         "../envs/unix.yaml"
     shell:
-        "mkdir {output} && curl -SL ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/minikraken_8GB_202003.tgz | tar zxvf - -C {output} --strip 1 2> {log}"
+        "mkdir {output} && curl -SL https://genome-idx.s3.amazonaws.com/kraken/k2_standard_08gb_20220926.tar.gz | tar zxvf - -C {output} 2> {log}"
 
 
 rule get_taxonomie_db_for_krona:

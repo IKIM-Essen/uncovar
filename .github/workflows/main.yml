@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Formatting
-        uses: github/super-linter@v4.9.6
+        uses: github/super-linter@v4.10.1
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
@@ -133,7 +133,6 @@ jobs:
       - name: Test rule ${{ matrix.rule }} on ${{ matrix.technology }} ${{ matrix.seq_method }} data
         uses: snakemake/snakemake-github-action@v1.24.0
         with:
-          stagein: mamba env create -f workflow/envs/trinity.yaml -n trinity
           directory: .tests
           snakefile: workflow/Snakefile
           args: "-pr --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"

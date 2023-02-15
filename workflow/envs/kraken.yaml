@@ -1,6 +1,7 @@
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
+  - nodefaults
 dependencies:
-  - kraken2 =2.1.1
+  - kraken2 =2.1.2
   - krona =2.7.1
