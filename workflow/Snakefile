@@ -21,13 +21,7 @@ report: "report/workflow.rst"
 container: "docker://condaforge/mambaforge"
 
 
-containerized: "quay.io/uncovar/uncovar#0.15.0"
-
-
-if config["strain-calling"]["use-gisaid"]:
-
-    envvars:
-        "GISAID_API_TOKEN",
+containerized: "quay.io/uncovar/uncovar#0.15.1"
 
 
 include: "rules/common.smk"
@@ -47,15 +41,13 @@ include: "rules/variant_filtration.smk"
 include: "rules/variant_report.smk"
 include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
+include: "rules/long_read.smk"
+include: "rules/lineage_variant_calling.smk"
 
 
 if config["data-handling"]["use-data-handling"]:
 
     include: "rules/preprocessing.smk"
-
-
-include: "rules/long_read.smk"
-include: "rules/lineage_variant_calling.smk"
 
 
 if config["data-handling"]["archive-data"]:
