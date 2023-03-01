@@ -598,12 +598,16 @@ def get_bwa_index(wildcards):
 
 
 def get_target_events(wildcards):
-    if wildcards.reference == "main" or wildcards.clonality != "clonal":
-        # calling variants against the wuhan reference or we are explicitly interested in subclonal as well
-        return "SUBCLONAL_MINOR SUBCLONAL_MAJOR SUBCLONAL_HIGH CLONAL"
-    else:
-        # only keep clonal variants
+    if wildcards.clonality == "clonal":
         return "CLONAL"
+    elif wildcards.clonality == "subclonal-major":
+        return "CLONAL SUBCLONAL_MAJOR SUBCLONAL_HIGH"
+    elif wildcards.clonality == "subclonal-high":
+        return "CLONAL SUBCLONAL_HIGH"
+    elif wildcards.clonality == "subclonal":
+        return "CLONAL SUBCLONAL_MAJOR SUBCLONAL_HIGH SUBCLONAL_MINOR"
+    else:
+        raise ValueError(f"Unsupported clonality value: {wildcards.clonality}")
 
 
 def get_control_fdr_input(wildcards):
