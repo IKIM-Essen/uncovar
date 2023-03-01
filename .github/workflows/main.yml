@@ -48,13 +48,16 @@ jobs:
           stagein: mamba install -n snakemake -c conda-forge peppy
           args: "--lint"
 
-  Pre-Commit:
-    runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v4
-      - uses: pre-commit/action@v3.0.0
+  # pre-commit action currently fails:
+  # https://github.com/IKIM-Essen/uncovar/actions/runs/4304753941/jobs/7506225198#step:4:115
+  # revisit when new pre-commit release >3.0.0 is out
+  # Pre-Commit:
+  #   runs-on: ubuntu-latest
+  #   if: github.ref != 'refs/heads/master'
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-python@v4
+  #     - uses: pre-commit/action@v3.0.0
 
   Technology-Tests:
     runs-on: ubuntu-latest
@@ -63,7 +66,7 @@ jobs:
     needs:
       - Formatting
       - Linting
-      - Pre-Commit
+      #- Pre-Commit
     strategy:
       matrix:
         rule: [all, all -npr]
@@ -172,18 +175,19 @@ jobs:
     needs:
       - Formatting
       - Linting
-      - Pre-Commit
+      #- Pre-Commit
     strategy:
       matrix:
-        rule: [
+        rule:
+          [
             benchmark_strain_calling,
             benchmark_assembly,
             benchmark_mixtures,
             benchmark_non_sars_cov_2,
             benchmark_reads,
             compare_assemblers,
-            # generate_test_cases,
           ]
+    # generate_test_cases,
     steps:
       - uses: actions/checkout@v2
 
