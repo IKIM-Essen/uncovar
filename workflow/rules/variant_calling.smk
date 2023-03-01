@@ -143,13 +143,12 @@ rule varlociraptor_preprocess:
         temp("results/{date}/observations/ref~{reference}/{sample}.{varrange}.bcf"),
     params:
         depth=config["variant-calling"]["max-read-depth"],
-        extra=get_varlociraptor_preprocess_flags,
     log:
         "logs/{date}/varlociraptor/preprocess/ref~{reference}/{sample}.{varrange}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
-        "varlociraptor preprocess variants {params.extra} --candidates {input.candidates} "
+        "varlociraptor preprocess variants --candidates {input.candidates} "
         "{input.ref} --bam {input.bam} --max-depth {params.depth} --output {output} 2> {log}"
 
 
