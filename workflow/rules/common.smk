@@ -1588,7 +1588,7 @@ def get_checked_mode():
 
 
 def get_varlociraptor_preprocess_flags(wildcards):
-    technology = pep.sample_table.loc[wildcards.sample, "technology"]
+    technology = get_technology(wildcards)
     if technology == "ont":
         return "--pairhmm-mode homopolymer"
     elif technology == "illumina" or technology == "ion":
