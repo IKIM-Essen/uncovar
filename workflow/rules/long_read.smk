@@ -56,7 +56,7 @@ rule nanofilt:
 
 rule downsample_and_trim_raw:
     input:
-        primer=get_primer_file(sample),
+        primer=config["preprocessing"]["amplicon-primers"]["ont"],
         reads="results/{date}/filtered/nanofilt/{sample}.fastq",
         ref_genome="resources/genomes/main.fasta",
     output:
