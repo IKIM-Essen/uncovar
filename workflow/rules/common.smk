@@ -1591,7 +1591,7 @@ def get_varlociraptor_preprocess_flags(wildcards):
     technology = pep.sample_table.loc[wildcards.sample, "technology"]
     if technology == "ont":
         return "--pairhmm-mode homopolymer"
-    elif technolgy == "illumina" or technology == "ion":
+    elif technology == "illumina" or technology == "ion":
         return ""
     else:
         raise NotImplementedError(f"Technology {technology} not supported.")
