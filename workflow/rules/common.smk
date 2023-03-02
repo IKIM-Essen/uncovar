@@ -1673,7 +1673,7 @@ def get_genome_annotation(suffix=""):
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),
-    clonality="subclonal|clonal",
+    clonality="subclonal|clonal|subclonal-major|subclonal-high",
     annotation="orf|protein",
     filter="|".join(
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
