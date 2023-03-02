@@ -1588,6 +1588,8 @@ def get_checked_mode():
 
 
 def get_varlociraptor_preprocess_flags(wildcards):
+    samples = get_samples_for_date(wildcards.date)
+
     technology = samples.loc[wildcards.sample, "technology"]
     if technology == "ont":
         return "--pairhmm-mode homopolymer"
