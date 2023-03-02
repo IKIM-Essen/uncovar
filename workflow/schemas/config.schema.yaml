@@ -67,8 +67,13 @@ properties:
         type: integer
         description: only for Oxford Nanopore data. ARTIC primer version to clip from reads
       amplicon-primers:
-        type: string
-        description: path to amplicon primers in bedpe format for hard-clipping on paired end files (illumina)
+        properties:
+          ont:
+            type: string
+            description: path to amplicon primers in bed format for hard-clipping on single end files (Oxford Nanopore)
+        illumina:
+            type: string
+            description: path to amplicon primers in bed format for hard-clipping on paired end files (Illumina)
       amplicon-reference:
         type: string
         description: GenBank accession of reference sequence of the amplicon primers
