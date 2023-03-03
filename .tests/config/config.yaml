@@ -77,7 +77,8 @@ preprocessing:
   # for more information
   artic-primer-version: 3
   # path to amplicon primers in bedpe format for hard-clipping on paired end files (illumina)
-  amplicon-primers:
+  amplicon-primers: 
+    ont: "resources/nCoV-2019.primer.bed"
     illumina: "resources/nCoV-2019.primer.bed"
   # GenBank accession of reference sequence of the amplicon primers
   amplicon-reference: "MN908947"
