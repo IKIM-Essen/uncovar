@@ -213,7 +213,9 @@ def get_fastqs(wildcards):
 
 def get_resource(name):
     if "https" in str(Path(workflow.snakefile)):
-        return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name).replace("/", "//", 1)
+        return str(
+            (Path(workflow.snakefile).parent.parent.parent / "resources") / name
+        ).replace("\/", "//", 1)
     else:
         return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name)
 
