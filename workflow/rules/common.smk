@@ -212,7 +212,11 @@ def get_fastqs(wildcards):
 
 
 def get_resource(name):
-    return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name)
+    if "https" in str(Path(workflow.snakefile)):
+        url=str(urllib.request(workflow.snakefile))
+        return str(url.rsplit('/', 2)[0] / "resources" / name)
+    else:
+        return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name)
 
 
 def get_report_input(pattern):
