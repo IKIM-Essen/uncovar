@@ -4,6 +4,7 @@
 # except according to those terms.
 
 from pathlib import Path
+import os.path
 import pandas as pd
 import re
 import random
@@ -213,9 +214,12 @@ def get_fastqs(wildcards):
 
 def get_resource(name):
     if "https" in str(Path(workflow.snakefile)):
-        return str(
-            (Path(workflow.snakefile).parent.parent.parent / "resources") / name
-        ).replace("\/", "//", 1)
+        dirname = os.path.dirname
+        path_snakefile = str(workflow.snakefile)
+        path_new = dirname(dirname(path_snakefile))
+        folder = "resources"
+        path_complete = f"{path_new}/{folder}/{name}"
+        return path_complete
     else:
         return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name)
 
