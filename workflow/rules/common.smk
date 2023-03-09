@@ -213,15 +213,7 @@ def get_fastqs(wildcards):
 
 
 def get_resource(name):
-    if "https" in str(Path(workflow.snakefile)):
-        dirname = os.path.dirname
-        path_snakefile = str(workflow.snakefile)
-        path_new = dirname(dirname(path_snakefile))
-        folder = "resources"
-        path_complete = f"{path_new}/{folder}/{name}"
-        return path_complete
-    else:
-        return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name)
+    return workflow.source_path(f"../../resources/{name}")
 
 
 def get_report_input(pattern):
