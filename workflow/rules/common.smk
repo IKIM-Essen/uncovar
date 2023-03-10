@@ -213,7 +213,7 @@ def get_fastqs(wildcards):
 
 
 def get_resource(name):
-    return workflow.source_path(f"../../resources/{name}")
+    return workflow.sourcepath(f"../../resources/{name}")
 
 
 def get_report_input(pattern):
