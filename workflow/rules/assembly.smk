@@ -152,7 +152,7 @@ rule filter_chr0:
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/ragoo-remove-chr0.py"
+        "../scripts/ragtag-remove-chr0.py"
 
 
 # polish illumina de novo assembly
