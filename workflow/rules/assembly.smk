@@ -137,7 +137,7 @@ rule order_contigs:
         "minimal"
     shell:
         "(mkdir -p {params.outdir}/{wildcards.sample} && cd {params.outdir}/{wildcards.sample} &&"
-        "ragtag.py scaffold -C ../../../../../{input.reference} ../../../../../{input.contigs} &&"
+        " ragtag.py scaffold -C ../../../../../{input.reference} ../../../../../{input.contigs} &&"
         " cd ../../../../../ && mv {params.outdir}/{wildcards.sample}/ragtag_output/ragtag.scaffold.fasta {output})"
         " > {log} 2>&1"
 
