@@ -4,6 +4,7 @@
 # except according to those terms.
 
 from pathlib import Path
+import os.path
 import pandas as pd
 import re
 import random
@@ -212,7 +213,7 @@ def get_fastqs(wildcards):
 
 
 def get_resource(name):
-    return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name)
+    return workflow.source_path(f"../../resources/{name}")
 
 
 def get_report_input(pattern):
