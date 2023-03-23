@@ -35,7 +35,7 @@ rule control_fdr:
     conda:
         "../envs/varlociraptor.yaml"
     shell:
-        "varlociraptor filter-calls control-fdr --local {input} --var {wildcards.vartype} "
+        "varlociraptor filter-calls control-fdr --mode local-smart {input} --var {wildcards.vartype} "
         "--events {params.events} --fdr {params.fdr} > {output} 2> {log}"
 
 
