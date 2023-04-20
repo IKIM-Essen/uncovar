@@ -4,6 +4,7 @@
 # except according to those terms.
 
 from pathlib import Path
+import os.path
 import pandas as pd
 import re
 import random
@@ -212,7 +213,7 @@ def get_fastqs(wildcards):
 
 
 def get_resource(name):
-    return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name)
+    return workflow.source_path(f"../../resources/{name}")
 
 
 def get_report_input(pattern):
@@ -598,12 +599,16 @@ def get_bwa_index(wildcards):
 
 
 def get_target_events(wildcards):
-    if wildcards.reference == "main" or wildcards.clonality != "clonal":
-        # calling variants against the wuhan reference or we are explicitly interested in subclonal as well
-        return "SUBCLONAL_MINOR SUBCLONAL_MAJOR SUBCLONAL_HIGH CLONAL"
-    else:
-        # only keep clonal variants
+    if wildcards.clonality == "clonal":
         return "CLONAL"
+    elif wildcards.clonality == "subclonal-major":
+        return "CLONAL SUBCLONAL_MAJOR SUBCLONAL_HIGH"
+    elif wildcards.clonality == "subclonal-high":
+        return "CLONAL SUBCLONAL_HIGH"
+    elif wildcards.clonality == "subclonal":
+        return "CLONAL SUBCLONAL_MAJOR SUBCLONAL_HIGH SUBCLONAL_MINOR"
+    else:
+        raise ValueError(f"Unsupported clonality value: {wildcards.clonality}")
 
 
 def get_control_fdr_input(wildcards):
@@ -1669,7 +1674,7 @@ def get_genome_annotation(suffix=""):
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),
-    clonality="subclonal|clonal",
+    clonality="subclonal|clonal|subclonal-major|subclonal-high",
     annotation="orf|protein",
     filter="|".join(
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
