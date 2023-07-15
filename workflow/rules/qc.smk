@@ -184,7 +184,7 @@ rule create_krona_chart:
 rule combine_references:
     input:
         "resources/genomes/main.fasta",
-        "resources/genomes/human-genome.fna.gz",
+        ancient("resources/genomes/human-genome.fna.gz"),
     output:
         "resources/genomes/main-and-human-genome.fna.gz",
     log:
