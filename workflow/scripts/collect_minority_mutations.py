@@ -7,11 +7,9 @@ import os
 import pathlib as path
 import re
 import sys
-
 import numpy as np
 import pandas as pd
 import pysam
-import requests
 
 sys.stderr = open(snakemake.log[0], "w")
 

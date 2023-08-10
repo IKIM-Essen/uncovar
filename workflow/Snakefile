@@ -41,7 +41,7 @@ include: "rules/variant_filtration.smk"
 include: "rules/variant_report.smk"
 include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
-include: "rules/minority_variants_resistogram.smk"
+include: "rules/scoar.smk"
 include: "rules/long_read.smk"
 include: "rules/lineage_variant_calling.smk"
 

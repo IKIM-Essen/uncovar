@@ -400,7 +400,7 @@ rule snakemake_reports_patient:
             annotation=config["variant-calling"]["annotations"],
         ),
         # Resistogram
-        "results/{date}/resistogram/resistogram.json",
+        "results/{date}/scoar/scoar_resistogram.csv",
         # 6. High Quality Genomes
         "results/high-quality-genomes/{date}.fasta",
         "results/high-quality-genomes/{date}.csv",

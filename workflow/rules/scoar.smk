@@ -10,7 +10,7 @@ configfile: "config/config.yaml"
 rule collect_minority_mutations:
     input:
         bcfs=lambda wildcards: expand(
-            "results/{{date}}/annotated-calls/ref~main/annot~orf/{sample}.bcf",
+            "results/{date}/annotated-calls/ref~main/annot~orf/{{sample}}.bcf",
             sample=get_samples_for_date(wildcards),
         ),
         pan_calls="results/{date}/tables/pangolin_calls_per_stage.csv",
@@ -34,7 +34,7 @@ rule scoar:
     conda:
         "../envs/scoar.yaml"
     shell:
-        "../../resources/scoar.py {input} -p -o {output} 2> {log}"
+        "../../resources/scoar/scoar.py {input} -p -o {output} 2> {log}"
 
 
 
