@@ -14,3 +14,4 @@ dependencies:
   - intervaltree =3.0
   - ruamel.yaml =0.17
   - jsonschema =3.2
+  - nbformat =5.4
