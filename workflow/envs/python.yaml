@@ -4,6 +4,8 @@ channels:
   - anaconda
   - nodefaults
 dependencies:
+  - python =3.9
+  - nbconvert =7.8
   - pandas =1.2
   - jupyter =1.0
   - altair =4.1
@@ -14,4 +16,3 @@ dependencies:
   - intervaltree =3.0
   - ruamel.yaml =0.17
   - jsonschema =3.2
-  - nbformat =5.4
