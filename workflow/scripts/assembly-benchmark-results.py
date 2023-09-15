@@ -165,5 +165,3 @@ with open(snakemake.output[0], "w") as out:
     print(sum_of_edit_dist, file=out)
     print("Smallest cum. fraction of contigs", file=out)
     print(smallest_cum_frac, file=out)
-
-
