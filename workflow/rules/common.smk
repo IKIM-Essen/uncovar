@@ -1592,6 +1592,16 @@ def get_checked_mode():
     raise TypeError(f'Mode {mode} not recognized. Can be "patient" or "environment".')
 
 
+def get_varlociraptor_preprocess_flags(wildcards):
+    technology = get_technology(wildcards)
+    if technology == "ont":
+        return "--pairhmm-mode homopolymer"
+    elif technology == "illumina" or technology == "ion":
+        return ""
+    else:
+        raise NotImplementedError(f"Technology {technology} not supported.")
+
+
 def get_input_by_mode(wildcard):
     paths = [
         expand(
