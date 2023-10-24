@@ -9,3 +9,4 @@ dependencies:
   - requests =2.26
   - dnachisel =3.2
   - gffutils =0.10
+  - natsort =5.5.0
