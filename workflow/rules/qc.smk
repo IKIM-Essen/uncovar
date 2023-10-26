@@ -13,7 +13,7 @@ rule fastqc:
     log:
         "logs/{date}/fastqc/{sample}.log",
     wrapper:
-        "v1.12.2/bio/fastqc"
+        "v2.6.0/bio/fastqc"
 
 
 # TODO Change multiqc rules back to MultiQC wrapper once v1.11 is released
@@ -44,7 +44,7 @@ rule multiqc:
     log:
         "logs/{date}/multiqc.log",
     wrapper:
-        "v1.15.1/bio/multiqc"
+        "v2.7.0/bio/multiqc"
 
 
 rule multiqc_lab:
@@ -70,7 +70,7 @@ rule multiqc_lab:
     log:
         "logs/{date}/multiqc.log",
     wrapper:
-        "v2.6.0/bio/multiqc"
+        "v2.7.0/bio/multiqc"
 
 
 rule samtools_flagstat:
