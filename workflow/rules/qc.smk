@@ -13,7 +13,7 @@ rule fastqc:
     log:
         "logs/{date}/fastqc/{sample}.log",
     wrapper:
-        "v2.6.0/bio/fastqc"
+        "v1.12.2/bio/fastqc"
 
 
 # TODO Change multiqc rules back to MultiQC wrapper once v1.11 is released
