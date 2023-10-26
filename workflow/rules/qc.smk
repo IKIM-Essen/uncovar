@@ -14,7 +14,7 @@ rule fastqc:
         "logs/{date}/fastqc/{sample}.log",
     threads: 1
     resources:
-        mem_mb = 1024
+        mem_mb=1024
     wrapper:
         "v2.6.0/bio/fastqc"
 
