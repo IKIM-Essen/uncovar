@@ -6,7 +6,7 @@
 
 rule fastqc:
     input:
-        get_fastqs,
+        get_fastqc_input,
     output:
         html="results/{date}/qc/fastqc/{sample}.html",
         zip="results/{date}/qc/fastqc/{sample}_fastqc.zip",
