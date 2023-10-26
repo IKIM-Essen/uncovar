@@ -212,6 +212,10 @@ def get_fastqs(wildcards):
         return pep.sample_table.loc[wildcards.sample][["fq1"]]
 
 
+def get_fastqc_input(wildcards):
+    return pep.sample_table.loc[wildcards.sample][["fq1"]]
+
+
 def get_resource(name):
     return workflow.source_path(f"../../resources/{name}")
 
