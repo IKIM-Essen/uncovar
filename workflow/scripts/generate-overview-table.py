@@ -133,7 +133,7 @@ if is_patient_report():
         elif "consensus" == used:
             data.loc[sample, "Best Quality"] = "Consensus"
         elif "not-accepted" == used:
-            data.loc[sample, "Best Quality"] = "-"
+            data.loc[sample, "Best Quality"] = "not accepted by QA"
 
     # add pangolin results
     for sample, file in iter_with_samples(snakemake.input.pangolin):
