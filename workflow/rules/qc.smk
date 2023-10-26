@@ -12,8 +12,11 @@ rule fastqc:
         zip="results/{date}/qc/fastqc/{sample}_fastqc.zip",
     log:
         "logs/{date}/fastqc/{sample}.log",
+    threads: 1
+    resources:
+        mem_mb = 1024
     wrapper:
-        "v1.12.2/bio/fastqc"
+        "v2.6.0/bio/fastqc"
 
 
 # TODO Change multiqc rules back to MultiQC wrapper once v1.11 is released
