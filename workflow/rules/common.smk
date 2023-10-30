@@ -71,7 +71,6 @@ def get_samples_for_date(date, filtered=False):
     # filter
     if filtered:
         with checkpoints.quality_filter.get(date=date).output.passed_filter.open() as f:
-
             passend_samples = []
             for line in f:
                 passend_samples.append(line.strip())
@@ -410,7 +409,6 @@ def get_reads(wildcards):
         or wildcards.reference.startswith("polished-")
         or wildcards.reference.startswith("consensus-")
     ):
-
         illumina_pattern = expand(
             "results/{date}/trimmed/fastp-pe/{sample}.{read}.fastq.gz",
             read=[1, 2],
@@ -687,7 +685,6 @@ def generate_mixtures(wildcards):
         mixture_list = []
 
         for mix in range(no_mixtures):
-
             fractions = [random.randint(1, 100) for _ in range(no_strains)]
             s = sum(fractions)
             fractions = [round(i / s * 100) for i in fractions]
@@ -968,7 +965,6 @@ def get_assemblies_for_submission(wildcards, agg_type):
                 return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
 
     if wildcards.date != BENCHMARK_DATE_WILDCARD:
-
         all_samples_for_date = get_samples_for_date(wildcards.date)
 
         masked_samples = load_filtered_samples(wildcards, "masked-assembly")
@@ -1562,7 +1558,6 @@ def get_aggregated_pangolin_calls(wildcards, return_list="paths"):
     expanded_patterns = []
 
     for sample in samples:
-
         stage_wildcards = get_pattern_by_technology(
             wildcards,
             sample=sample,
