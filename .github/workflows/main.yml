@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Formatting
-        uses: github/super-linter@v4.10.1
+        uses: github/super-linter@v5.0.0
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
@@ -71,11 +71,14 @@ jobs:
       matrix:
         rule: [all, all -npr]
         # disable ont actions
-        # technology: [all, illumina, ont, ion]
-        technology: [all, illumina, ion]
+        technology: [all, illumina, ont, ion]
+        # technology: [all, illumina, ion]
         seq_method: [shotgun, amplicon]
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
       # android - will release about 10 GB if you don't need Android
       # dotnet  - will release about 20 GB if you don't need .NET
@@ -103,14 +106,14 @@ jobs:
           curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/B.1.1.7.reads.1.fastq.gz > .tests/data/B117.2.fastq.gz
           echo sample_name,fq1,fq2,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
           echo illumina-test,data/B117.1.fastq.gz,data/B117.2.fastq.gz,2022-01-01,$AMPLICON,illumina >> .tests/config/pep/samples.csv
-      # - name: Prepare test data for Oxford Nanopore
-      #   if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ont' || matrix.rule == 'compare_assemblers')
-      #   run: |
-      #     if [[ "${{ matrix.seq_method }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
-      #     mkdir -p .tests/data
-      #     curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz
-      #     echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
-      #     echo ont-test,data/ont_reads.fastq.gz,2022-01-01,$AMPLICON,ont >> .tests/config/pep/samples.csv
+      - name: Prepare test data for Oxford Nanopore
+        if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ont' || matrix.rule == 'compare_assemblers')
+        run: |
+          if [[ "${{ matrix.seq_method }}"  = "shotgun" ]] ; then export AMPLICON=0; else export AMPLICON=1; fi
+          mkdir -p .tests/data
+          curl -L https://github.com/thomasbtf/small-kraken-db/raw/master/ont_reads.fastq.gz > .tests/data/ont_reads.fastq.gz
+          echo sample_name,fq1,date,is_amplicon_data,technology > .tests/config/pep/samples.csv
+          echo ont-test,data/ont_reads.fastq.gz,2022-01-01,$AMPLICON,ont >> .tests/config/pep/samples.csv
       - name: Prepare test data for Ion Torrent
         if: steps.test-data.outputs.cache-hit != true && (startsWith(matrix.rule, 'all') && matrix.technology == 'ion' || matrix.rule == 'compare_assemblers')
         run: |
