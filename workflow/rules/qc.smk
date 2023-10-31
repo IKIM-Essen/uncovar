@@ -36,6 +36,7 @@ rule multiqc:
         ),
         expand_samples_for_date("logs/{{date}}/kallisto_quant/{sample}.log"),
         get_fastp_results,
+        # TODO re-implement kraken output
         # get_kraken_output,
         # get_kraken_output_after_filtering,
     output:
@@ -59,6 +60,7 @@ rule multiqc_lab:
             ]
         ),
         get_fastp_results,
+        # TODO re-implement kraken output
         # get_kraken_output,
     output:
         report(
