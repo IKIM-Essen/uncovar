@@ -41,7 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Lint workflow
-        uses: snakemake/snakemake-github-action@v1.24.0
+        uses: snakemake/snakemake-github-action@v1.25.1
         with:
           directory: .
           snakefile: workflow/Snakefile
@@ -137,14 +137,14 @@ jobs:
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314997.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.1.7.fasta
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314998.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.351.fasta
       - name: Test rule ${{ matrix.rule }} on ${{ matrix.technology }} ${{ matrix.seq_method }} data
-        uses: snakemake/snakemake-github-action@v1.24.0
+        uses: snakemake/snakemake-github-action@v1.25.1
         with:
           directory: .tests
           snakefile: workflow/Snakefile
           args: "-pr --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
 
       - name: Test report
-        uses: snakemake/snakemake-github-action@v1.24.0
+        uses: snakemake/snakemake-github-action@v1.25.1
         if: startsWith(matrix.rule, 'all -npr') != true
         with:
           directory: .tests
@@ -315,14 +315,14 @@ jobs:
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314997.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.1.7.fasta
           curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=MZ314998.1&rettype=fasta" | sed '$ d' > .tests/resources/genomes/B.1.351.fasta
       - name: Test rule ${{ matrix.rule }}
-        uses: snakemake/snakemake-github-action@v1.24.0
+        uses: snakemake/snakemake-github-action@v1.25.1
         with:
           directory: .tests
           snakefile: workflow/Snakefile
           args: "-pr --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
 
       - name: Test report
-        uses: snakemake/snakemake-github-action@v1.24.0
+        uses: snakemake/snakemake-github-action@v1.25.1
         if: startsWith(matrix.rule, 'all -npr') != true
         with:
           directory: .tests
