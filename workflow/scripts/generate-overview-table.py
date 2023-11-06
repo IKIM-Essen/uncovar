@@ -29,7 +29,6 @@ data = pd.DataFrame(index=snakemake.params.samples)
 # add kraken estimates
 species_columns = pd.DataFrame()
 for sample, file in iter_with_samples(snakemake.input.kraken):
-
     kraken_results = pd.read_csv(
         file,
         delimiter="\t",
