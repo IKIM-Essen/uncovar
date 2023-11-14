@@ -2,8 +2,8 @@
 
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/IKIM-Essen/uncovar/assets/77535027/c99f5a94-749b-422e-b319-1e3700d40a8e">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/IKIM-Essen/uncovar/assets/77535027/8e17c6fc-ff7a-4c25-afc9-7888036d693e">
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/IKIM-Essen/uncovar/assets/77535027/8e17c6fc-ff7a-4c25-afc9-7888036d693e">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/IKIM-Essen/uncovar/assets/77535027/c99f5a94-749b-422e-b319-1e3700d40a8e">
   <img alt="UnCoVar Logo dark/light">
 </picture>
 
