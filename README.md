@@ -1,6 +1,10 @@
 # UnCoVar
 
-![UnCoVar2](https://user-images.githubusercontent.com/77535027/133610563-d190e25c-504e-4953-92dd-f84a5b4a1191.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/IKIM-Essen/uncovar/assets/77535027/8705b0d0-5174-485c-8bac-089e685406d6">
+  <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/77535027/133610563-d190e25c-504e-4953-92dd-f84a5b4a1191.png">
+</picture>
+
 
 ## SARS-CoV-2 Variant Calling and Lineage Assignment
 
