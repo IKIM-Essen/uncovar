@@ -32,12 +32,12 @@ def get_identity(quast_report_paths: List[str]) -> dict:
 
         # load report
         report_df = pd.read_csv(
-            report_path, delimiter="\t", index_col=0, squeeze=True, names=["value"]
+            report_path, delimiter="\t", names=["name", "value"]
         )
-
+        report_df.set_index("name", inplace=True)
         # select genome fraction (%)
         try:
-            fraction = float(report_df.at["Genome fraction (%)"]) / 100
+            fraction = float(report_df.at["Genome fraction (%)", "value"]) / 100
         except:
             # no "Genome fraction (%)" in quast report. Case for not assemblable samples
             fraction = 0.0
