@@ -31,9 +31,7 @@ def get_identity(quast_report_paths: List[str]) -> dict:
         sample = path.dirname(report_path).split("/")[-1]
 
         # load report
-        report_df = pd.read_csv(
-            report_path, delimiter="\t", names=["name", "value"]
-        )
+        report_df = pd.read_csv(report_path, delimiter="\t", names=["name", "value"])
         report_df.set_index("name", inplace=True)
         # select genome fraction (%)
         try:
