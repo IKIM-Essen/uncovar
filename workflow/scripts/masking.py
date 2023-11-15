@@ -158,9 +158,7 @@ def mask_sequence(sequence, coverages, base_counts):
 
 
 def write_sequence(sequence):
-    with pysam.FastxFile(snakemake.input.sequence) as infile, open(
-        snakemake.output.masked_sequence, mode="w"
-    ) as outfile:
+    with open(snakemake.output.masked_sequence, mode="w") as outfile:
         print(">%s" % snakemake.wildcards.sample, file=outfile)
         print(sequence, file=outfile)
 
