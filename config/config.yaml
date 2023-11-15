@@ -74,12 +74,12 @@ assembly:
     # assemblers used for shotgun sequencing with on Illumina technology
     shotgun: "megahit-std"
     # assemblers used for amplicon sequencing with on Illumina technology
-    amplicon: "metaspades"
+    amplicon: "megahit-std"
   oxford nanopore:
     # assemblers used for shotgun sequencing with on Oxford Nanopore technology
     shotgun: "megahit-std"
     # assemblers used for amplicon sequencing with on Oxford Nanopore technology
-    amplicon: "spades"
+    amplicon: "megahit-std"
     # Medaka models are named to indicate i) the pore type, ii) the sequencing device (MinION or PromethION), iii) the basecaller variant, and iv) the basecaller version
     # with the format: {pore}_{device}_{caller variant}_{caller version}
     # See https://github.com/nanoporetech/medaka#models for more information.
@@ -88,7 +88,7 @@ assembly:
     # assemblers used for shotgun sequencing with on Ion Torrent technology
     shotgun: "megahit-std"
     # assemblers used for amplicon sequencing with on Torrent technology
-    amplicon: "spades"
+    amplicon: "megahit-std"
   # minimum posterior probability for a clonal variant to be included in the generated pseudo-assembly
   min-variant-prob: 0.95
 
