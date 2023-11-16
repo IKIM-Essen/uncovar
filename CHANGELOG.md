@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.16.0](https://github.com/IKIM-Essen/uncovar/compare/v0.15.1...v0.16.0) (2023-11-16)
+
+
+### Features
+
+* Update README.md for dark/light theme ([#614](https://github.com/IKIM-Essen/uncovar/issues/614)) ([33ac5f7](https://github.com/IKIM-Essen/uncovar/commit/33ac5f7b4f7af8bbb500e9f531ccbdc45ac9427f))
+
+
+### Bug Fixes
+
+* changes in path requirements for snakedeploy ([#590](https://github.com/IKIM-Essen/uncovar/issues/590)) ([406d456](https://github.com/IKIM-Essen/uncovar/commit/406d456edd15715f7e14338b8195d2a09a807e49))
+* improved clonality event definition, usage of major subclone for assembly polishing; upgrade to varlociraptor 6.0 ([#585](https://github.com/IKIM-Essen/uncovar/issues/585)) ([aced95e](https://github.com/IKIM-Essen/uncovar/commit/aced95e798fd0483e99120550f49614e680f56dd))
+* QA genome generation ([#613](https://github.com/IKIM-Essen/uncovar/issues/613)) ([2bb74bf](https://github.com/IKIM-Essen/uncovar/commit/2bb74bfc26dee80af7d04089aafe636ea7c6d76a))
+* switch from jupyter notebook to script ([#598](https://github.com/IKIM-Essen/uncovar/issues/598)) ([d0f293d](https://github.com/IKIM-Essen/uncovar/commit/d0f293d2b8136fb0d8ef3753733ab1d30fb20d56))
+* update multiqc ([#607](https://github.com/IKIM-Essen/uncovar/issues/607)) ([0070d89](https://github.com/IKIM-Essen/uncovar/commit/0070d8927290dd01f418b876b60f3405158f1ab9))
+* use homopolymer-pair-HMM-mode of Varlociraptor in case of nanopore reads ([505a271](https://github.com/IKIM-Essen/uncovar/commit/505a2714ba0e5642312051f5e5154f7d454ff57f))
+* use homopolymer-pair-HMM-mode of Varlociraptor in case of nanopore reads ([#587](https://github.com/IKIM-Essen/uncovar/issues/587)) ([9bc814f](https://github.com/IKIM-Essen/uncovar/commit/9bc814f7cb9e9d9e53d557d463e782801070b46e))
+
+
+### Performance Improvements
+
+* update to varlociraptor 8.4 ([#596](https://github.com/IKIM-Essen/uncovar/issues/596)) ([34701af](https://github.com/IKIM-Essen/uncovar/commit/34701af485aa1ec199a418ec1487a97677f624ca))
+
 ## [0.15.1](https://github.com/IKIM-Essen/uncovar/compare/v0.15.0...v0.15.1) (2022-11-30)
 
 
