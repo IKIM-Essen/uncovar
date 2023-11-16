@@ -68,14 +68,14 @@ jobs:
           remove-android: "true"
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Space
         run: |
           echo "Free space:"
           df -h
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Checkout release PR locally
         if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }}
@@ -128,7 +128,7 @@ jobs:
 
       - name: Set up Docker Buildx
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Quay Registry
         if: ${{ steps.release.outputs.release_created == 'true' }}
