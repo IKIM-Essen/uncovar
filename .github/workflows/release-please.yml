@@ -68,14 +68,14 @@ jobs:
           remove-android: "true"
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Space
         run: |
           echo "Free space:"
           df -h
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Checkout release PR locally
         if: ${{ steps.pr_created.outputs.pr == 'true' && steps.release.outputs.release_created != 'true' }}
@@ -111,7 +111,7 @@ jobs:
 
       - name: Create Dockerfile
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: snakemake/snakemake-github-action@v1.23.0
+        uses: snakemake/snakemake-github-action@v1.25.1
         with:
           directory: .
           snakefile: workflow/Snakefile
@@ -124,15 +124,15 @@ jobs:
 
       - name: Set up QEMU
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Quay Registry
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: quay.io
           username: uncovar+robot
@@ -140,7 +140,7 @@ jobs:
 
       - name: Build and push
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true

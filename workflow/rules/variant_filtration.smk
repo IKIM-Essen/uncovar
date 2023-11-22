@@ -6,9 +6,9 @@
 
 rule vembrane_filter:
     input:
-        "results/{date}/annotated-calls/ref~main/annot~{annotation}/{sample}.bcf",
+        vcf="results/{date}/annotated-calls/ref~main/annot~{annotation}/{sample}.bcf",
     output:
-        temp(
+        vcf=temp(
             "results/{date}/filtered-calls/ref~main/annot~{annotation}/{sample}.{filter}.bcf"
         ),
     params:
@@ -17,7 +17,7 @@ rule vembrane_filter:
     log:
         "logs/{date}/vembrane/{sample}.{filter}.{annotation}.log",
     wrapper:
-        "0.71.1/bio/vembrane/filter"
+        "v1.15.1/bio/vembrane/filter"
 
 
 rule control_fdr:
@@ -35,7 +35,7 @@ rule control_fdr:
     conda:
         "../envs/varlociraptor.yaml"
     shell:
-        "varlociraptor filter-calls control-fdr --local {input} --var {wildcards.vartype} "
+        "varlociraptor filter-calls control-fdr --mode local-smart {input} --var {wildcards.vartype} "
         "--events {params.events} --fdr {params.fdr} > {output} 2> {log}"
 
 
@@ -48,6 +48,6 @@ rule merge_calls:
     log:
         "logs/{date}/merge-calls/ref~{reference}/{sample}.{clonality}.{filter}.{annotation}.log",
     params:
-        "-a -Ob",
+        extra="-a",
     wrapper:
-        "0.69.0/bio/bcftools/concat"
+        "v1.15.1/bio/bcftools/concat"

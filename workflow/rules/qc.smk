@@ -6,14 +6,17 @@
 
 rule fastqc:
     input:
-        get_fastqs,
+        get_fastqc_input,
     output:
         html="results/{date}/qc/fastqc/{sample}.html",
         zip="results/{date}/qc/fastqc/{sample}_fastqc.zip",
     log:
         "logs/{date}/fastqc/{sample}.log",
+    threads: 1
+    resources:
+        mem_mb=1024,
     wrapper:
-        "0.69.0/bio/fastqc"
+        "v2.6.0/bio/fastqc"
 
 
 # TODO Change multiqc rules back to MultiQC wrapper once v1.11 is released
@@ -33,18 +36,19 @@ rule multiqc:
         ),
         expand_samples_for_date("logs/{{date}}/kallisto_quant/{sample}.log"),
         get_fastp_results,
-        get_kraken_output,
-        get_kraken_output_after_filtering,
+        # TODO re-implement kraken output
+        # get_kraken_output,
+        # get_kraken_output_after_filtering,
     output:
         "results/{date}/qc/multiqc.html",
     params:
-        params=(
+        extra=(
             "--config config/multiqc_config.yaml --title 'Results for data from {date}'"
         ),
     log:
         "logs/{date}/multiqc.log",
     wrapper:
-        "v0.86.0/bio/multiqc"
+        "v2.8.0/bio/multiqc"
 
 
 rule multiqc_lab:
@@ -56,7 +60,8 @@ rule multiqc_lab:
             ]
         ),
         get_fastp_results,
-        get_kraken_output,
+        # TODO re-implement kraken output
+        # get_kraken_output,
     output:
         report(
             "results/{date}/qc/laboratory/multiqc.html",
@@ -66,11 +71,11 @@ rule multiqc_lab:
             subcategory="1. Quality Control",
         ),
     params:
-        params="--config config/multiqc_config_lab.yaml --title 'Results for data from {date}'",
+        extra="--config config/multiqc_config_lab.yaml --title 'Results for data from {date}'",
     log:
         "logs/{date}/multiqc.log",
     wrapper:
-        "v0.86.0/bio/multiqc"
+        "v2.8.0/bio/multiqc"
 
 
 rule samtools_flagstat:
@@ -81,7 +86,7 @@ rule samtools_flagstat:
     log:
         "logs/{date}/samtools/{sample}_flagstat.log",
     wrapper:
-        "0.70.0/bio/samtools/flagstat"
+        "v1.15.1/bio/samtools/flagstat"
 
 
 rule samtools_depth:

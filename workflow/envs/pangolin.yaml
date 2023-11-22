@@ -1,5 +1,6 @@
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
+  - nodefaults
 dependencies:
-  - pangolin =4.0.6
+  - pangolin =4.3

@@ -4,6 +4,7 @@
 # except according to those terms.
 
 from pathlib import Path
+import os.path
 import pandas as pd
 import re
 import random
@@ -11,8 +12,18 @@ import urllib.request
 from snakemake.utils import validate
 
 
+if config["strain-calling"]["use-gisaid"]:
+
+    envvars:
+        "GISAID_API_TOKEN",
+
+
 VARTYPES = ["SNV", "MNV", "INS", "DEL", "REP", "INV", "DUP"]
+
+
 ILLUMINA_VARRANGE = ["small", "structural"]
+
+
 ONT_VARRANGE = ["homopolymer-medaka", "homopolymer-longshot"]
 ION_VARRANGE = ["small", "structural"]
 
@@ -60,7 +71,6 @@ def get_samples_for_date(date, filtered=False):
     # filter
     if filtered:
         with checkpoints.quality_filter.get(date=date).output.passed_filter.open() as f:
-
             passend_samples = []
             for line in f:
                 passend_samples.append(line.strip())
@@ -201,8 +211,12 @@ def get_fastqs(wildcards):
         return pep.sample_table.loc[wildcards.sample][["fq1"]]
 
 
+def get_fastqc_input(wildcards):
+    return pep.sample_table.loc[wildcards.sample][["fq1"]]
+
+
 def get_resource(name):
-    return str((Path(workflow.snakefile).parent.parent.parent / "resources") / name)
+    return workflow.source_path(f"../../resources/{name}")
 
 
 def get_report_input(pattern):
@@ -386,10 +400,6 @@ def get_reference(suffix=""):
     return inner
 
 
-def get_bwa_index_prefix(index_paths):
-    return os.path.splitext(index_paths[0])[0]
-
-
 def get_reads(wildcards):
     # alignment against the human reference genome is done with trimmed reads,
     # since this alignment is used to generate the ordered, non human reads
@@ -399,7 +409,6 @@ def get_reads(wildcards):
         or wildcards.reference.startswith("polished-")
         or wildcards.reference.startswith("consensus-")
     ):
-
         illumina_pattern = expand(
             "results/{date}/trimmed/fastp-pe/{sample}.{read}.fastq.gz",
             read=[1, 2],
@@ -592,12 +601,16 @@ def get_bwa_index(wildcards):
 
 
 def get_target_events(wildcards):
-    if wildcards.reference == "main" or wildcards.clonality != "clonal":
-        # calling variants against the wuhan reference or we are explicitly interested in subclonal as well
-        return "SUBCLONAL_MINOR SUBCLONAL_MAJOR SUBCLONAL_HIGH CLONAL"
-    else:
-        # only keep clonal variants
+    if wildcards.clonality == "clonal":
         return "CLONAL"
+    elif wildcards.clonality == "subclonal-major":
+        return "CLONAL SUBCLONAL_MAJOR SUBCLONAL_HIGH"
+    elif wildcards.clonality == "subclonal-high":
+        return "CLONAL SUBCLONAL_HIGH"
+    elif wildcards.clonality == "subclonal":
+        return "CLONAL SUBCLONAL_MAJOR SUBCLONAL_HIGH SUBCLONAL_MINOR"
+    else:
+        raise ValueError(f"Unsupported clonality value: {wildcards.clonality}")
 
 
 def get_control_fdr_input(wildcards):
@@ -672,7 +685,6 @@ def generate_mixtures(wildcards):
         mixture_list = []
 
         for mix in range(no_mixtures):
-
             fractions = [random.randint(1, 100) for _ in range(no_strains)]
             s = sum(fractions)
             fractions = [round(i / s * 100) for i in fractions]
@@ -809,6 +821,16 @@ def get_list_of_amplicon_states_assembler(samples):
 
 
 def get_varlociraptor_bias_flags(wildcards):
+    if wildcards.varrange == "lineage-variants":
+        # Known variants, we don't want to use bias detection at all.
+        # Rationale: the determined biases are hints for artifacts, which are particularly
+        # important to maintain a high precision with denovo calls. When there is prior knowledge
+        # about a variant like here, they are too conservative. E.g., when I see a typical omicron
+        # variant in a sample, I tend to believe it even if it happens to have a strand bias.
+        return (
+            "--omit-strand-bias --omit-read-orientation-bias --omit-read-position-bias "
+            "--omit-softclip-bias --omit-homopolymer-artifact-detection --omit-alt-locus-bias"
+        )
     if is_amplicon_data(wildcards.sample):
         # no bias detection possible
         return (
@@ -943,7 +965,6 @@ def get_assemblies_for_submission(wildcards, agg_type):
                 return "results/{date}/contigs/pseudoassembled/{sample}.fasta"
 
     if wildcards.date != BENCHMARK_DATE_WILDCARD:
-
         all_samples_for_date = get_samples_for_date(wildcards.date)
 
         masked_samples = load_filtered_samples(wildcards, "masked-assembly")
@@ -1537,7 +1558,6 @@ def get_aggregated_pangolin_calls(wildcards, return_list="paths"):
     expanded_patterns = []
 
     for sample in samples:
-
         stage_wildcards = get_pattern_by_technology(
             wildcards,
             sample=sample,
@@ -1569,6 +1589,16 @@ def get_checked_mode():
         return mode
 
     raise TypeError(f'Mode {mode} not recognized. Can be "patient" or "environment".')
+
+
+def get_varlociraptor_preprocess_flags(wildcards):
+    technology = get_technology(wildcards)
+    if technology == "ont":
+        return "--pairhmm-mode homopolymer"
+    elif technology == "illumina" or technology == "ion":
+        return ""
+    else:
+        raise NotImplementedError(f"Technology {technology} not supported.")
 
 
 def get_input_by_mode(wildcard):
@@ -1653,7 +1683,7 @@ def get_genome_annotation(suffix=""):
 wildcard_constraints:
     sample="[^/.]+",
     vartype="|".join(VARTYPES),
-    clonality="subclonal|clonal",
+    clonality="subclonal|clonal|subclonal-major|subclonal-high",
     annotation="orf|protein",
     filter="|".join(
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]

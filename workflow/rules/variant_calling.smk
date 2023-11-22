@@ -1,4 +1,4 @@
-# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Johannes Köster.
+# Copyright 2022 Thomas Battenfeld, Alexander Thomas, Simon Magin, Johannes Köster.
 # Licensed under the BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 # This file may not be copied, modified, or distributed
 # except according to those terms.
@@ -10,9 +10,9 @@ rule freebayes:
         ref_idx=get_reference(".fai"),
         # you can have a list of samples here
         samples="results/{date}/recal/ref~{reference}/{sample}.bam",
-        index="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
+        indexes="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.small.bcf"),
+        "results/{date}/candidate-calls/ref~{reference}/{sample}.small.bcf",
     params:
         # genotyping is performed by varlociraptor, hence we deactivate it in freebayes by
         # always setting --pooled-continuous
@@ -22,7 +22,7 @@ rule freebayes:
     log:
         "logs/{date}/freebayes/ref~{reference}/{sample}.log",
     wrapper:
-        "0.80.1/bio/freebayes"
+        "v1.15.1/bio/freebayes"
 
 
 # TODO check delly single end mode
@@ -33,7 +33,7 @@ rule delly:
         sample="results/{date}/recal/ref~{reference}/{sample}.bam",
         sample_idx="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
     output:
-        temp("results/{date}/candidate-calls/ref~{reference}/{sample}.structural.bcf"),
+        "results/{date}/candidate-calls/ref~{reference}/{sample}.structural.bcf",
     log:
         "logs/{date}/delly/ref~{reference}/{sample}.log",
     conda:
@@ -45,23 +45,24 @@ rule delly:
 rule medaka_variant:
     input:
         ref=get_reference(),
-        sample="results/{date}/recal/ref~{reference}/{sample}.bam",
-        bai="results/{date}/recal/ref~{reference}/{sample}.bam.bai",
+        sample="results/{date}/norm_trim_raw_reads/{sample}/{sample}.cap.clip.fasta",
     output:
-        temp(
-            "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer-medaka.vcf"
-        ),
+        "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer-medaka.vcf",
     params:
         outdir=get_output_dir,
+        # The default model covers almost all current use cases on MinION & GridION. For best results
+        # with PromethION and future pores etc an option to switch between models would be required,
+        # e.g. add col model in sample-sheet & use default (will still work for all) if not provided.
+        model="r941_min_hac_variant_g507",
     log:
         "logs/{date}/medaka/variant/ref~{reference}/{sample}.log",
     conda:
         "../envs/medaka.yaml"
     threads: 4
     shell:
-        "(medaka_variant -i {input.sample} -f {input.ref} -o {params.outdir}/{wildcards.sample} -t {threads} &&"
-        " mv $(cat {log}| grep '\- Final VCF written to' | sed s/'- Final VCF written to '//\ ) {output})"
-        " > {log} 2>&1"
+        "(medaka_haploid_variant -i {input.sample} -r {input.ref} -o medaka_tmp/medaka/{wildcards.date}/{wildcards.reference}/{wildcards.sample}"
+        " -t {threads} -m {params.model} && mv medaka_tmp/medaka/{wildcards.date}/{wildcards.reference}/{wildcards.sample}/medaka.annotated.vcf {output} &&"
+        " rm -r medaka_tmp/medaka/{wildcards.date}/{wildcards.reference}/{wildcards.sample}) > {log} 2>&1"
 
 
 rule longshot:
@@ -100,7 +101,7 @@ rule vcf_2_bcf:
     conda:
         "../envs/bcftools.yaml"
     shell:
-        "bcftools view -Oz -o {output} {input} 2> {log}"
+        "bcftools view -Oz -o {output} {input} 2> {log}"  # TODO -Oz generates a .vcf.gz!!
 
 
 rule render_scenario:
@@ -142,12 +143,13 @@ rule varlociraptor_preprocess:
         temp("results/{date}/observations/ref~{reference}/{sample}.{varrange}.bcf"),
     params:
         depth=config["variant-calling"]["max-read-depth"],
+        extra=get_varlociraptor_preprocess_flags,
     log:
         "logs/{date}/varlociraptor/preprocess/ref~{reference}/{sample}.{varrange}.log",
     conda:
         "../envs/varlociraptor.yaml"
     shell:
-        "varlociraptor preprocess variants --candidates {input.candidates} "
+        "varlociraptor preprocess variants {params.extra} --candidates {input.candidates} "
         "{input.ref} --bam {input.bam} --max-depth {params.depth} --output {output} 2> {log}"
 
 
@@ -184,6 +186,6 @@ rule merge_varranges:
     log:
         "logs/{date}/merge-calls/ref~{reference}/{sample}.log",
     params:
-        "-a -Ob",
+        extra="-a",
     wrapper:
-        "0.69.0/bio/bcftools/concat"
+        "v1.15.1/bio/bcftools/concat"

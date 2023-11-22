@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.16.0](https://github.com/IKIM-Essen/uncovar/compare/v0.15.1...v0.16.0) (2023-11-16)
+
+
+### Features
+
+* Update README.md for dark/light theme ([#614](https://github.com/IKIM-Essen/uncovar/issues/614)) ([33ac5f7](https://github.com/IKIM-Essen/uncovar/commit/33ac5f7b4f7af8bbb500e9f531ccbdc45ac9427f))
+
+
+### Bug Fixes
+
+* changes in path requirements for snakedeploy ([#590](https://github.com/IKIM-Essen/uncovar/issues/590)) ([406d456](https://github.com/IKIM-Essen/uncovar/commit/406d456edd15715f7e14338b8195d2a09a807e49))
+* improved clonality event definition, usage of major subclone for assembly polishing; upgrade to varlociraptor 6.0 ([#585](https://github.com/IKIM-Essen/uncovar/issues/585)) ([aced95e](https://github.com/IKIM-Essen/uncovar/commit/aced95e798fd0483e99120550f49614e680f56dd))
+* QA genome generation ([#613](https://github.com/IKIM-Essen/uncovar/issues/613)) ([2bb74bf](https://github.com/IKIM-Essen/uncovar/commit/2bb74bfc26dee80af7d04089aafe636ea7c6d76a))
+* switch from jupyter notebook to script ([#598](https://github.com/IKIM-Essen/uncovar/issues/598)) ([d0f293d](https://github.com/IKIM-Essen/uncovar/commit/d0f293d2b8136fb0d8ef3753733ab1d30fb20d56))
+* update multiqc ([#607](https://github.com/IKIM-Essen/uncovar/issues/607)) ([0070d89](https://github.com/IKIM-Essen/uncovar/commit/0070d8927290dd01f418b876b60f3405158f1ab9))
+* use homopolymer-pair-HMM-mode of Varlociraptor in case of nanopore reads ([505a271](https://github.com/IKIM-Essen/uncovar/commit/505a2714ba0e5642312051f5e5154f7d454ff57f))
+* use homopolymer-pair-HMM-mode of Varlociraptor in case of nanopore reads ([#587](https://github.com/IKIM-Essen/uncovar/issues/587)) ([9bc814f](https://github.com/IKIM-Essen/uncovar/commit/9bc814f7cb9e9d9e53d557d463e782801070b46e))
+
+
+### Performance Improvements
+
+* update to varlociraptor 8.4 ([#596](https://github.com/IKIM-Essen/uncovar/issues/596)) ([34701af](https://github.com/IKIM-Essen/uncovar/commit/34701af485aa1ec199a418ec1487a97677f624ca))
+
+## [0.15.1](https://github.com/IKIM-Essen/uncovar/compare/v0.15.0...v0.15.1) (2022-11-30)
+
+
+### Bug Fixes
+
+* **ci:** update black to rev 22.3.0 ([#523](https://github.com/IKIM-Essen/uncovar/issues/523)) ([2273b7d](https://github.com/IKIM-Essen/uncovar/commit/2273b7d49d21dfe48812f7e3e4d33969b62e1d9e))
+* disable ont actions ([#555](https://github.com/IKIM-Essen/uncovar/issues/555)) ([56e46ef](https://github.com/IKIM-Essen/uncovar/commit/56e46ef7e1663b4de3447068df7cb8b9d1d7b67f))
+* Replace outdated df append ([#544](https://github.com/IKIM-Essen/uncovar/issues/544)) ([4a40003](https://github.com/IKIM-Essen/uncovar/commit/4a4000310cba4f3e8640172eadebcd35239b2e34))
+* update channel priorities and snakemake wrappers ([#562](https://github.com/IKIM-Essen/uncovar/issues/562)) ([a0b6fd0](https://github.com/IKIM-Essen/uncovar/commit/a0b6fd0557b7e6cb3aeddd22e6a3350560c18415))
+* use latest varlociraptor release and ignore all biases in case of known lineage variant calling ([#575](https://github.com/IKIM-Essen/uncovar/issues/575)) ([fa957fd](https://github.com/IKIM-Essen/uncovar/commit/fa957fd44594920c12df3821a23905055b1de9c9))
+* voc probability ([#541](https://github.com/IKIM-Essen/uncovar/issues/541)) ([db6eb17](https://github.com/IKIM-Essen/uncovar/commit/db6eb175aa7c25948677a9b64258afd377016d8c))
+
 ## [0.15.0](https://github.com/IKIM-Essen/uncovar/compare/v0.14.0...v0.15.0) (2022-03-24)
 
 
