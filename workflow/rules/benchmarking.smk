@@ -130,8 +130,8 @@ rule summarize_assembly_results:
         notebooks=1,
     conda:
         "../envs/pysam.yaml"
-    notebook:
-        "../notebooks/assembly-benchmark-results.py.ipynb"
+    script:
+        "../scripts/assembly-benchmark-results.py"
 
 
 rule test_non_cov2:
