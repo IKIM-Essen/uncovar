@@ -4,7 +4,6 @@
 
 [https://github.com/IKIM-Essen/uncovar](https://github.com/IKIM-Essen/uncovar)
 
-
 ## How to execute the workflow?
 
 Once you have [installed mamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html), just follow the instructions 
