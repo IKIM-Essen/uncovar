@@ -42,7 +42,7 @@ First, create an appropriate project working directory on your system and enter 
 In all following steps, we will assume that you are inside of that directory.
 Second, run
 
-Given that Snakemake is installed and you want to clone the full workflow you can clone it as follows:
+Given that Snakemake is installed and you want to clone the full workflow you can do it as follows:
 
     git clone https://github.com/IKIM-Essen/uncovar
 
@@ -61,7 +61,7 @@ Snakedeploy will create two folders `workflow` and `config`. The former contains
 #### General settings
 
 To configure this workflow, modify `config/config.yaml` according to your
-needs, following the explanations provided in the file.
+needs, following the explanations provided in the file. It is especially recommended to provide a `BED` file with primer coordinates, when the analyzed reads derive from amplicon-tiled sequencing, so the primers are trimmed appropriately.
 
 #### Sample sheet
 
@@ -81,7 +81,7 @@ the following structure to when adding data automatically:
     ├── incoming
     └── snakemake-workflow-sars-cov2
         ├── data
-        └── ...
+            └── 2023-12-24
 
 However, this structure is not set in stone and can be adjusted via the
 `config/config.yaml` file under `data-handling`. Only the following path to the
@@ -89,7 +89,7 @@ corresponding folders, relative to the directory of UnCoVar are needed:
 
 - **incoming**: path of incoming data, which is moved to the data directory by
   the preprocessing script. Defaults to `../incoming/`.
-- **data**: path to store data within the workflow. defaults to `data/`.
+- **data**: path to store data within the workflow. defaults to `data/`. It is recommend using subfolders named properly (e.g. with date)
 - **archive**: path to archive data from the results from the analysis to.
   Defaults to `../archive/`.
 
