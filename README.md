@@ -1,5 +1,4 @@
-
-
+# UnCoVar
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/IKIM-Essen/uncovar/assets/77535027/8e17c6fc-ff7a-4c25-afc9-7888036d693e" width="40%">
@@ -7,26 +6,28 @@
   <img alt="UnCoVar Logo dark/light">
 </picture>
 
-# Workflow for Transparent and Robust Virus Variant Calling, Genome Reconstruction and Lineage Assignment
+## Workflow for Transparent and Robust Virus Variant Calling, Genome Reconstruction and Lineage Assignment
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥7.0-brightgreen.svg)](https://snakemake.bitbucket.io)
 [![GitHub actions status](https://github.com/koesterlab/snakemake-workflow-sars-cov2/workflows/Tests/badge.svg?branch=master)](https://github.com/koesterlab/snakemake-workflow-sars-cov2/actions?query=branch%3Amaster+workflow%3ATests)
 [![Docker Repository on Quay](https://quay.io/repository/uncovar/uncovar/status)](https://quay.io/repository/uncovar/uncovar)
-
-
 
 ## Usage
 
 <details>
   <Summary><b>Step 1: Install Snakemake and Snakedeploy</b></Summary>
 
-Snakemake and Snakedeploy are best installed via the [Mamba package manager](https://github.com/mamba-org/mamba) (a drop-in replacement for conda). If you have neither Conda nor Mamba, it can be installed via [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge). For other options see [here](https://github.com/mamba-org/mamba).
+Snakemake and Snakedeploy are best installed via the [Mamba package manager](https://github.com/mamba-org/mamba)
+ (a drop-in replacement for conda). If you have neither Conda nor Mamba, it can
+  be installed via [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge).
+  For other options see [here](https://github.com/mamba-org/mamba).
 
 Given that Mamba is installed, run
 
     mamba create -c conda-forge -c bioconda --name snakemake snakemake snakedeploy
 
-to install both Snakemake and Snakedeploy in an isolated environment. For all following commands ensure that this environment is activated via
+to install both Snakemake and Snakedeploy in an isolated environment. For all
+ following commands ensure that this environment is activated via
 
     conda activate snakemake
 </details>
@@ -38,22 +39,28 @@ First, create an appropriate project working directory on your system and enter 
 
     mkdir -p path/to/project-workdir
     cd path/to/project-workdir
-    
+
 In all following steps, we will assume that you are inside of that directory.
 Second, run
 
-Given that Snakemake is installed and you want to clone the full workflow you can do it as follows:
+Given that Snakemake is installed and you want to clone the full workflow you can
+ do it as follows:
 
     git clone https://github.com/IKIM-Essen/uncovar
 
-Given that Snakemake and Snakedeploy are installed and available (see Step 1), the workflow can be deployed as follows:
+Given that Snakemake and Snakedeploy are installed and available (see Step 1),
+ the workflow can be deployed as follows:
 
     snakedeploy deploy-workflow https://github.com/IKIM-Essen/uncovar . --tag v0.16.0
 
-Snakedeploy will create two folders `workflow` and `config`. The former contains the deployment of the UnCoVar workflow as a [Snakemake module](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#using-and-combining-pre-exising-workflows), the latter contains configuration files which will be modified in the next step in order to configure the workflow to your needs. Later, when executing the workflow, Snakemake will automatically find the main Snakefile in the workflow subfolder.
+Snakedeploy will create two folders `workflow` and `config`. The former contains
+ the deployment of the UnCoVar workflow as a
+  [Snakemake module](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#using-and-combining-pre-exising-workflows),
+  the latter contains configuration files which will be modified in the next step
+  in order to configure the workflow to your needs. Later, when executing the workflow,
+  Snakemake will automatically find the main Snakefile in the workflow subfolder.
 
 </details>
-
 
 <details>
   <Summary><b>Step 3: Configure workflow</b></Summary>
@@ -61,7 +68,9 @@ Snakedeploy will create two folders `workflow` and `config`. The former contains
 #### General settings
 
 To configure this workflow, modify `config/config.yaml` according to your
-needs, following the explanations provided in the file. It is especially recommended to provide a `BED` file with primer coordinates, when the analyzed reads derive from amplicon-tiled sequencing, so the primers are trimmed appropriately.
+ needs, following the explanations provided in the file. It is especially recommended
+ to provide a `BED` file with primer coordinates, when the analyzed reads derive
+ from amplicon-tiled sequencing, so the primers are trimmed appropriately.
 
 #### Sample sheet
 
@@ -69,8 +78,8 @@ The sample sheet contains all samples to be analyzed by UnCoVar.
 
 #### Auto filling
 
-UnCoVar offers the possibility to automatically append paired-end sequenced samples to the sample
-sheet. To load your data into the workflow execute
+UnCoVar offers the possibility to automatically append paired-end sequenced
+ samples to the sample sheet. To load your data into the workflow execute
 
     snakemake --cores all --use-conda update_sample
 
@@ -89,7 +98,8 @@ corresponding folders, relative to the directory of UnCoVar are needed:
 
 - **incoming**: path of incoming data, which is moved to the data directory by
   the preprocessing script. Defaults to `../incoming/`.
-- **data**: path to store data within the workflow. defaults to `data/`. It is recommend using subfolders named properly (e.g. with date)
+- **data**: path to store data within the workflow. defaults to `data/`. It is
+ recommend using subfolders named properly (e.g. with date)
 - **archive**: path to archive data from the results from the analysis to.
   Defaults to `../archive/`.
 
@@ -99,9 +109,9 @@ all files from incoming directory to the archive. After the analysis, all result
 are compressed and saved alongside the reads.
 
 Moreover, the sample sheet is automatically updated with the new files. Please
-note, that only the part of the filename before the first '\_' character is used
-as the sample name within the workflow. Technology and amplicon flag (**is_amplicon_data**) 
-have to be revisited manually
+ note, that only the part of the filename before the first '\_' character is used
+ as the sample name within the workflow. Technology and amplicon flag (**is_amplicon_data**)
+ have to be revisited manually
 
 #### Manual filling
 
@@ -125,10 +135,12 @@ content has to be defined:
   <Summary><b>Step 4: Run workflow</b></Summary>
 Given that the workflow has been properly deployed and configured, it can be executed as follows.
 
-Fow running the workflow while deploying any necessary software via conda (using the Mamba package manager by default), run Snakemake with
+Fow running the workflow while deploying any necessary software via conda (using
+ the Mamba package manager by default), run Snakemake with
 
     snakemake --cores all --use-conda 
-Snakemake will automatically detect the main Snakefile in the workflow subfolder and execute the workflow module that has been defined by the deployment in step 2.
+Snakemake will automatically detect the main Snakefile in the workflow subfolder
+ and execute the workflow module that has been defined by the deployment in step 2.
 
 For further options, e.g. for cluster and cloud execution, see the docs.
 </details>
