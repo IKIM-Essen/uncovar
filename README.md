@@ -68,7 +68,9 @@ Snakedeploy will create two folders `workflow` and `config`. The former contains
 <details>
   <Summary><b>Step 3: Configure workflow</b></Summary>
 
-#### General settings
+### General settings
+
+#### Config file
 
 To configure this workflow, modify `config/config.yaml` according to your
  needs, following the explanations provided in the file. It is especially recommended
