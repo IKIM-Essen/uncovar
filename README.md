@@ -6,7 +6,10 @@
   <img alt="UnCoVar Logo dark/light">
 </picture>
 
-## Workflow for Transparent and Robust Virus Variant Calling, Genome Reconstruction and Lineage Assignment
+<h1>
+Workflow for Transparent and Robust Virus Variant Calling, Genome Reconstruction
+ and Lineage Assignment
+</h1>
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥7.0-brightgreen.svg)](https://snakemake.bitbucket.io)
 [![GitHub actions status](https://github.com/koesterlab/snakemake-workflow-sars-cov2/workflows/Tests/badge.svg?branch=master)](https://github.com/koesterlab/snakemake-workflow-sars-cov2/actions?query=branch%3Amaster+workflow%3ATests)
