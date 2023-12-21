@@ -17,8 +17,7 @@ Workflow for Transparent and Robust Virus Variant Calling, Genome Reconstruction
 
 ## Usage
 
-<details>
-  <Summary><b>Step 1: Install Snakemake and Snakedeploy</b></Summary>
+### Step 1: Install Snakemake and Snakedeploy
 
 Snakemake and Snakedeploy are best installed via the [Mamba package manager](https://github.com/mamba-org/mamba)
  (a drop-in replacement for conda). If you have neither Conda nor Mamba, it can
@@ -27,21 +26,26 @@ Snakemake and Snakedeploy are best installed via the [Mamba package manager](htt
 
 Given that Mamba is installed, run
 
+```
     mamba create -c conda-forge -c bioconda --name snakemake snakemake snakedeploy
+```
 
 to install both Snakemake and Snakedeploy in an isolated environment. For all
  following commands ensure that this environment is activated via
 
+```
     conda activate snakemake
-</details>
+```
 
-<details>
-  <Summary><b>Step 2: Clone or Deploy workflow</b></Summary>
+### Step 2: Clone or Deploy workflow
 
 First, create an appropriate project working directory on your system and enter it:
 
-    mkdir -p path/to/project-workdir
-    cd path/to/project-workdir
+```sh
+    WORKDIR=path/to/project-workdir
+    mkdir -p ${WORKDIR}
+    cd ${WORKDIR}
+```
 
 In all following steps, we will assume that you are inside of that directory.
 Second, run
@@ -49,12 +53,16 @@ Second, run
 Given that Snakemake is installed and you want to clone the full workflow you can
  do it as follows:
 
+```sh
     git clone https://github.com/IKIM-Essen/uncovar
+```
 
 Given that Snakemake and Snakedeploy are installed and available (see Step 1),
  the workflow can be deployed as follows:
 
+```sh
     snakedeploy deploy-workflow https://github.com/IKIM-Essen/uncovar . --tag v0.16.0
+```
 
 Snakedeploy will create two folders `workflow` and `config`. The former contains
  the deployment of the UnCoVar workflow as a
@@ -63,10 +71,7 @@ Snakedeploy will create two folders `workflow` and `config`. The former contains
   in order to configure the workflow to your needs. Later, when executing the workflow,
   Snakemake will automatically find the main Snakefile in the workflow subfolder.
 
-</details>
-
-<details>
-  <Summary><b>Step 3: Configure workflow</b></Summary>
+### Step 3: Configure workflow
 
 ### General settings
 
@@ -86,16 +91,20 @@ The sample sheet contains all samples to be analyzed by UnCoVar.
 UnCoVar offers the possibility to automatically append paired-end sequenced
  samples to the sample sheet. To load your data into the workflow execute
 
+```sh
     snakemake --cores all --use-conda update_sample
+```
 
 with the root of the UnCoVar as working directory. It is recommended to use
 the following structure to when adding data automatically:
 
+```text
     ├── archive
     ├── incoming
     └── snakemake-workflow-sars-cov2
         ├── data
             └── 2023-12-24
+```
 
 However, this structure is not set in stone and can be adjusted via the
 `config/config.yaml` file under `data-handling`. Only the following path to the
@@ -134,21 +143,22 @@ content has to be defined:
   the samples (illumina, ont, ion)
 - **include_in_high_genome_summary**: indicates if sample should be included in the submission files (1) or not (0)
 
-</details>
+### Step 4: Run workflow
 
-<details>
-  <Summary><b>Step 4: Run workflow</b></Summary>
 Given that the workflow has been properly deployed and configured, it can be executed as follows.
 
 Fow running the workflow while deploying any necessary software via conda (using
  the Mamba package manager by default), run Snakemake with
 
-    snakemake --cores all --use-conda 
+```sh
+    snakemake --cores all --use-conda
+```
+
 Snakemake will automatically detect the main Snakefile in the workflow subfolder
  and execute the workflow module that has been defined by the deployment in step 2.
 
 For further options, e.g. for cluster and cloud execution, see the docs.
-</details>
+
 
 This workflow is written with Snakemake and details and tools are described in the
 [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog?usage=IKIM-Essen/uncovar).
