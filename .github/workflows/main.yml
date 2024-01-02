@@ -319,7 +319,7 @@ jobs:
         with:
           directory: .tests
           snakefile: workflow/Snakefile
-          args: "-pr --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
+          args: "-p --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
 
       - name: Test report
         uses: snakemake/snakemake-github-action@v1.25.1
