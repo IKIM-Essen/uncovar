@@ -26,14 +26,14 @@ Snakemake and Snakedeploy are best installed via the [Mamba package manager](htt
 
 Given that Mamba is installed, run
 
-```
+```sh
     mamba create -c conda-forge -c bioconda --name snakemake snakemake snakedeploy
 ```
 
 to install both Snakemake and Snakedeploy in an isolated environment. For all
  following commands ensure that this environment is activated via
 
-```
+```sh
     conda activate snakemake
 ```
 
