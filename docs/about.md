@@ -4,9 +4,10 @@
 
 - Alexander Thomas
 - Thomas Battenfeld
+- Simon Magin
 - Johannes Koester
 - Folker Meyer
-- TBA
+
 
 
 ## Tools used in UnCoVar
@@ -15,7 +16,6 @@ This project wouldn't be possible without several open source tools and librarie
 
 | Tool           | Link                                              |
 | -------------- | ------------------------------------------------- |
-| ABySS          | www.doi.org/10.1101/gr.214346.116                 |
 | Altair         | www.doi.org/10.21105/joss.01057                   |
 | BAMClipper     | www.doi.org/10.1038/s41598-017-01703-6            |
 | BCFtools       | www.doi.org/10.1093/gigascience/giab008           |
