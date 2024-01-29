@@ -324,7 +324,6 @@ with FastaFile(snakemake.input.reference) as infasta:
             known_non_synonymous_variants, VariantType.Subst, merge=False
         ):
             pos = variant.genome_pos()
-
             ref_allele = infasta.fetch(reference=contig, start=pos, end=pos + 3)
             for alt_allele in aa_to_dna(variant.right):
 
