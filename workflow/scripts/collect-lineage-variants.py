@@ -18,7 +18,7 @@ from pysam import FastaFile, VariantFile, VariantHeader, VariantRecord
 from requests.models import ContentDecodingError
 
 covariants_data = requests.get(
-    "https://raw.githubusercontent.com/hodcroftlab/covariants/master/web/data/clusters.json"
+    "https://raw.githubusercontent.com/hodcroftlab/covariants/master/web/public/data/clusters.json"
 ).json()
 translate_aa = get_backtranslation_table("Standard")
 gff = gffutils.create_db(snakemake.input.annotation, dbfn=":memory:")
