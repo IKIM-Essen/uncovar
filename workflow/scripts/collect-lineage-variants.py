@@ -18,7 +18,7 @@ from pysam import FastaFile, VariantFile, VariantHeader, VariantRecord
 from requests.models import ContentDecodingError
 
 covariants_data = requests.get(
-    "https://raw.githubusercontent.com/hodcroftlab/covariants/master/web/public/data/clusters.json"
+    "https://raw.githubusercontent.com/hodcroftlab/covariants/master/web/data/clusters.json"
 ).json()
 translate_aa = get_backtranslation_table("Standard")
 gff = gffutils.create_db(snakemake.input.annotation, dbfn=":memory:")
@@ -324,7 +324,7 @@ with FastaFile(snakemake.input.reference) as infasta:
             known_non_synonymous_variants, VariantType.Subst, merge=False
         ):
             pos = variant.genome_pos()
+
             ref_allele = infasta.fetch(reference=contig, start=pos, end=pos + 3)
             for alt_allele in aa_to_dna(variant.right):
-
                 write_record(pos, ref_allele, alt_allele, lineages, [variant])
