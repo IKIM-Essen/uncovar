@@ -1329,7 +1329,7 @@ def get_trimmed_reads(wildcards):
             "results/{{{{date}}}}/trimmed/fastp-pe/{{sample}}.{read}.fastq.gz",
             read=[1, 2],
         ),
-        ont_pattern="results/{{date}}/corrected/{sample}/{sample}.correctedReads.fasta",
+        ont_pattern="results/{{date}}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
         ion_torrent_pattern="results/{{date}}/trimmed/fastp-se/{sample}.fastq.gz",
     )
 
