@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Formatting
-        uses: github/super-linter@v5.0.0
+        uses: super-linter/super-linter@v5.7.2
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
@@ -69,7 +69,7 @@ jobs:
       #- Pre-Commit
     strategy:
       matrix:
-        rule: [all, all -npr]
+        rule: [all, all -np]
         # disable ont actions
         technology: [all, illumina, ont, ion]
         # technology: [all, illumina, ion]
@@ -141,11 +141,11 @@ jobs:
         with:
           directory: .tests
           snakefile: workflow/Snakefile
-          args: "-pr --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
+          args: "-p --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
 
       - name: Test report
         uses: snakemake/snakemake-github-action@v1.25.1
-        if: startsWith(matrix.rule, 'all -npr') != true
+        if: startsWith(matrix.rule, 'all -np') != true
         with:
           directory: .tests
           snakefile: workflow/Snakefile
@@ -319,11 +319,11 @@ jobs:
         with:
           directory: .tests
           snakefile: workflow/Snakefile
-          args: "-pr --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
+          args: "-p --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
 
       - name: Test report
         uses: snakemake/snakemake-github-action@v1.25.1
-        if: startsWith(matrix.rule, 'all -npr') != true
+        if: startsWith(matrix.rule, 'all -np') != true
         with:
           directory: .tests
           snakefile: workflow/Snakefile
