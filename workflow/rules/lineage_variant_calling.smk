@@ -48,13 +48,62 @@ rule generate_lineage_variant_table:
         "../scripts/generate-lineage-variant-table.py"
 
 
-rule get_lineage_variant_table:
+rule aggregate_lineage_variants:
+    input:
+        csv=lambda wildcards: expand(
+            "results/{{date}}/lineage-variant-report/{sample}.csv",
+            sample=get_samples_for_date(wildcards.date),
+        ),
+        annotation="resources/annotation_known_variants.gff.gz",
+    output:
+        "results/{date}/lineage-variant-overview/all.csv",
+    log:
+        "logs/{date}/aggregate-lineage-variants/all.log",
+    params:
+        sample=lambda wildcards: get_samples_for_date(wildcards.date)
+    conda:
+        "../envs/pysam.yaml"
+    script:
+        "../scripts/aggreagte-lineage-variants.py"
+
+
+rule get_aggregated_lineage_variant_table:
     input:
         expand(
-            "results/{date}/lineage-variant-report/{sample}.csv",
-            date="2022-05-16",
-            sample=get_samples_for_date("2022-05-16"),
+            "results/{date}/lineage-variant-report/all.csv",
+            date="2022-12-21",
         ),
+
+
+rule render_datavzrd_config:
+    input:
+        template=workflow.source_path("../../resources/lineage-variant-overview.template.datavzrd.yaml"),
+        table="results/{date}/lineage-variant-overview/all.csv",
+    output:
+        "results/{date}/datavzrd/variant-table-model.yaml",
+    log:
+        "logs/{date}/yte/render-datavzrd-config/variant-table-model.log",
+    template_engine:
+        "yte"   
+
+
+rule render_lineage_variant_table:
+    input:
+        config="results/{date}/datavzrd/variant-table-model.yaml",
+        table="results/{date}/lineage-variant-overview/all.csv",
+    output:
+        report(
+            directory("results/{date}/lineage-variant-report/all"),
+            htmlindex="index.html",
+            caption="../report/lineage-variant-overview.rst",
+            category="2. Variant Call Details",
+            subcategory=" VOC variant overview",
+        ),
+    log:
+        "logs/{date}/lineage-variant-overview/all.log",
+    wrapper:
+        "v2.1.0/utils/datavzrd"
+
 
 
 use rule overview_table_html as generate_lineage_variant_report with:
