@@ -102,6 +102,7 @@ rule kallisto_plot_strains:
             caption="../report/strain-calls-kallisto.rst",
             category="1. Overview",
             subcategory="4. Lineage Fraction per Sample",
+            labels={"sample": "{sample}"},
         ),
     log:
         "logs/{date}/plot-strains-kallisto/{sample}.log",
