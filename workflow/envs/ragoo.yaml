@@ -5,4 +5,3 @@ channels:
   - nodefaults
 dependencies:
   - ragoo =1.1
-  - python =3.8
