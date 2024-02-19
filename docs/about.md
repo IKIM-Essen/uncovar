@@ -56,4 +56,4 @@ This project wouldn't be possible without several open source tools and librarie
 | Varlociraptor  | <www.doi.org/10.1186/s13059-020-01993-6>            |
 | Vega-Lite      | <www.doi.org/10.1109/TVCG.2016.2599030>             |
 | Velvet         | <www.doi.org/10.1101/gr.074492.107>                 |
-| vembrane       | www.github.com/vembrane/vembrane>                   |
+| vembrane       | <www.github.com/vembrane/vembrane>                  |
