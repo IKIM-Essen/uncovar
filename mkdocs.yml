@@ -8,40 +8,12 @@ repo_name: ""
 
 nav:
   - Welcome: index.md
-  - Getting Started: getting-started.md
-  - Consumer Guide:
-      - Overview: consumer-guide/index.md
-      - Highlights: consumer-guide/first-impression.md
-      - Understanding the Report: consumer-guide/report-structure.md
-      - Lineages and Variants: consumer-guide/lineages-and-variants.md
-      - Submission Read Genomes: consumer-guide/submission-ready-genomes.md
-      - FAQs: consumer-guide/faqs.md
-  - User Guide:
-      - Overview: user-guide/index.md
-      - Installation: user-guide/installation.md
-      - Configuration: user-guide/configuration.md
-      - Create Your Analysis: user-guide/create-your-analysis.md
-      - Share Your Results: user-guide/share-your-results.md
-      - Customize Your Analysis: user-guide/customize-your-analysis.md
-      - FAQs: user-guide/faqs.md
-  - Developer Guide:
-      - Overview: dev-guide/index.md
-      - How to Contribute: dev-guide/contributing.md
-      - Pre-Analysis: dev-guide/pre-analysis.md
-      - Initial Quality Control: dev-guide/final-quality-control.md
-      - Sequence Preprocessing: dev-guide/sequence-preprocessing.md
-      - Assembly: dev-guide/assembly.md
-      - Lineage Calling: dev-guide/lineage-calling.md
-      - Variant Calling: dev-guide/variant-calling.md
-      - Reporting: dev-guide/reporting.md
-      - Final Quality Control: dev-guide/initial-quality-control.md
-      - Tests: dev-guide/tests.md
-      - CI/CD: dev-guide/ci-cd.md
-      - FAQs: dev-guide/faqs.md
-  - About:
-      - Team: about/team.md
-      - License: about/license.md
-      - Release Notes: about/changelog.md
+  - Benchmarking: benchmarking.md
+  - Installation: installation.md
+  - User Guide: user-guide.md
+  - Configuration: configuration.md
+  - FAQs: faq.md
+  - About: about.md
 
 theme:
   name: material
