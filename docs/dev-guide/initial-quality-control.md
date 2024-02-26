@@ -1,1 +1,0 @@
-# Inital Quality Control
