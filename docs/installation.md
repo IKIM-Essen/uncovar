@@ -1,6 +1,0 @@
-# Installation
-
-## Installing
-
-## Maintenance
-
