@@ -1,6 +1,6 @@
 # BSD 2-Clause License
 
-Copyright (c) 2020, Thomas Battenfeld, Johannes Köster, Folker Meyer, Alexander Thomas
+Copyright (c) 2024, Thomas Battenfeld, Johannes Köster, Folker Meyer, Alexander Thomas
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
