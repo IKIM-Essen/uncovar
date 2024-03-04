@@ -407,7 +407,7 @@ rule snakemake_reports_patient:
     params:
         for_testing=get_if_testing("--snakefile ../workflow/Snakefile"),
     conda:
-        None
+        "../envs/snakemake.yaml"
     log:
         "logs/snakemake_reports/{date}.log",
     shell:
