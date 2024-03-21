@@ -16,7 +16,7 @@ Workflow for Transparent and Robust Virus Variant Calling, Genome Reconstruction
 
 - Using state of the art tools, easily extended for other viruses
 
-![UnCoVar workflow](.assets/UnCoVar_wf_new.png)
+![UnCoVar workflow](./assets/UnCoVar_wf_new.png)
 
 | Stage | Step  | Tool Illumina | Tool Nanopore | SARS-CoV-2 specific |
 |---|---|---|---|---|
