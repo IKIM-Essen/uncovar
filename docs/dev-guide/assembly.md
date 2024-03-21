@@ -1,5 +1,0 @@
-# Assembly
-
-## Illumina
-
-## Oxford Nanopore

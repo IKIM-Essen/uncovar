@@ -1,64 +1,30 @@
-# Welcome to the Documentation of UnCoVar
+# UnCoVar -- an open, extensible framework for virus genome analysis
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/IKIM-Essen/uncovar/assets/77535027/8e17c6fc-ff7a-4c25-afc9-7888036d693e">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/IKIM-Essen/uncovar/assets/77535027/c99f5a94-749b-422e-b319-1e3700d40a8e">
+  <img alt="UnCoVar Logo dark/light">
+</picture>
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.bitbucket.io)
 [![GitHub actions status](https://github.com/koesterlab/snakemake-workflow-sars-cov2/workflows/Tests/badge.svg?branch=master)](https://github.com/koesterlab/snakemake-workflow-sars-cov2/actions?query=branch%3Amaster+workflow%3ATests)
 [![Docker Repository on Quay](https://quay.io/repository/uncovar/uncovar/status "Docker Repository on Quay")](https://quay.io/repository/uncovar/uncovar)
 
-UnCoVar is a reproducible and scalable workflow for transparent and robust
-SARS-CoV-2 variant calling and lineage assignment with comprehensive reporting.
+A Reproducible and Scalable Workflow for Transparent and Robust Virus Variant Calling and Lineage Assignment using SARS-CoV-2 as an example.
 
-<div class="row">
-  <div class="column">
-    <div class="card">
-        <div class="card-title">
-            <h3>Latest SARS-CoV-2 Lineage Assignment</h3>
-        </div>
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin molestie
-            neque scelerisque, bibendum nulla eget.
-        </p>
-    </div>
-  </div>
-  <div class="column">
-    <div class="card">
-        <div class="card-title">
-            <h3>Comprehensive Reporting</h3>
-        </div>
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin molestie
-            neque scelerisque, bibendum nulla eget.
-        </p>
-    </div>
-  </div>
-</div>
+- Using state of the art tools, easily extended for other viruses
 
-<div class="row">
-  <div class="column">
-    <div class="card">
-        <div class="card-title">
-        <h3>Submission Ready Genomes</h3>
-        </div>
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin molestie
-            neque scelerisque, bibendum nulla eget.
-        </p>
-    </div>
-  </div>
-  <div class="column">
-    <div class="card">
-        <div class="card-title">
-        <h3>Easy to Customize</h3>
-        </div>
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin molestie
-            neque scelerisque, bibendum nulla eget.
-        </p>
-    </div>
-  </div>
-</div>
+![UnCoVar tools](./assets/tools.png)
 
-[Getting Started](getting-started/){ .md-button }
-[User Guide](user-guide/){ .md-button }
+- Tools and database updates for critical components via Conda
 
-[introductory tutorial]: getting-started.md
-[User Guide]: user-guide/index.md
+- Built using modern design patterns with Conda and SnakeMake
+
+- Extensible and easy to customize
+
+- Customizable reporting with comprehensive visualization
+
+![UnCoVar visuals](./assets/uncovar-displays.png)
+
+- Submission Ready Genomes
+
