@@ -13,9 +13,10 @@ Workflow for Transparent and Robust Virus Variant Calling, Genome Reconstruction
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥7.0-brightgreen.svg)](https://snakemake.bitbucket.io)
 [![GitHub actions status](https://github.com/koesterlab/snakemake-workflow-sars-cov2/workflows/Tests/badge.svg?branch=master)](https://github.com/koesterlab/snakemake-workflow-sars-cov2/actions?query=branch%3Amaster+workflow%3ATests)
-[![Docker Repository on Quay](https://quay.io/repository/uncovar/uncovar/status)](https://quay.io/repository/uncovar/uncovar)
 
 - Using state of the art tools, easily extended for other viruses
+
+![UnCoVar workflow](.assets/UnCoVar_wf_new.png)
 
 | Stage | Step  | Tool Illumina | Tool Nanopore | SARS-CoV-2 specific |
 |---|---|---|---|---|
