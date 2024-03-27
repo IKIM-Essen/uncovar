@@ -111,7 +111,7 @@ Variant candidates are identified and called with Varlociraptor
 ### Coverage of Reference Genome
 
 Plot that is showing how well the reference genome is covered by the reads of each
- analyzed sample visualizing the depth (DP) values from SAMtools depth. 
+ analyzed sample visualizing the depth (DP) values from SAMtools depth.
 
 ## Section 4: Sequences
 
