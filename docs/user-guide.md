@@ -93,20 +93,20 @@ Variant candidates are identified and called with Varlociraptor
 ## Section 3: Sequencing Details
 
 ### MultiQC report for overall quality control
-  - General Stats
-  - Sequence Counts
-  - Sequence Quality Histograms
-  - Per Sequence Quality Scores
-  - Per Base Sequence Content
-  - Per Sequence GC Content
-  - Per Base N Content
-  - Sequence Length Distribution
-  - Sequence Duplication Levels
-  - Overrepresented sequences by samples
-  - Top overrepresented sequences
-  - Adapter Content
-  - Status Checks
-  - Software Versions
+- General Stats
+- Sequence Counts
+- Sequence Quality Histograms
+- Per Sequence Quality Scores
+- Per Base Sequence Content
+- Per Sequence GC Content
+- Per Base N Content
+- Sequence Length Distribution
+- Sequence Duplication Levels
+- Overrepresented sequences by samples
+- Top overrepresented sequences
+- Adapter Content
+- Status Checks
+- Software Versions
 
 ### Coverage of Reference Genome
 
