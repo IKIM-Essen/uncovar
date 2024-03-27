@@ -1,35 +1,18 @@
-# Overview
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/IKIM-Essen/uncovar/assets/77535027/8e17c6fc-ff7a-4c25-afc9-7888036d693e" width="40%">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/IKIM-Essen/uncovar/assets/77535027/c99f5a94-749b-422e-b319-1e3700d40a8e" width="40%">
-  <img alt="UnCoVar Logo dark/light">
-</picture>
-
 <h1>
 Workflow for Transparent and Robust Virus Variant Calling, Genome Reconstruction
  and Lineage Assignment
 </h1>
 
-[![Snakemake](https://img.shields.io/badge/snakemake-≥7.0-brightgreen.svg)](https://snakemake.bitbucket.io)
+[![Snakemake](https://img.shields.io/badge/snakemake-≥7.32.4-brightgreen.svg)](https://snakemake.bitbucket.io)
 [![GitHub actions status](https://github.com/koesterlab/snakemake-workflow-sars-cov2/workflows/Tests/badge.svg?branch=master)](https://github.com/koesterlab/snakemake-workflow-sars-cov2/actions?query=branch%3Amaster+workflow%3ATests)
 
+## Workflow Overview
+
+<img src="./assets/UnCoVar_wf_new.png" alt="UnCoVar workflow" width="90%"/>
+
+## Highlights
+
 - Using state of the art tools, easily extended for other viruses
-
-![UnCoVar workflow](./assets/UnCoVar_wf_new.png)
-
-| Stage | Step  | Tool Illumina | Tool Nanopore | SARS-CoV-2 specific |
-|---|---|---|---|---|
-| Preprocessing | primer clipping | BAMClipper | NoTrAmp | no |
-| Preprocessing | quality clipping | fastp | fastp | no |
-| Preprocessing | contamination removal | Kraken2 | Kraken2 | no |
-| Preprocessing | denoising | - | Canu, Medaka | no |
-| Assembly | assembly | MEGAHIT, metaSPAdes | MEGAHIT, metaSPAdes | no |
-| Assembly | scaffolding | RaGOO | RaGOO | no |
-| Analysis | SNV calling | freeBayes, DELLY | Medaka variant, Longshot | no |
-| Analysis | SNV validation | Varlociraptor | Varlociraptor | no |
-| Lineage call | read based lineage assignment | Kallisto | Kallisto | no |
-| Lineage call | lineage call | Pangolin | Pangolin | yes |
 
 - Tool and database updates for critical components via Conda
 
