@@ -7,22 +7,21 @@ repo_url: https://github.com/IKIM-Essen/uncovar/
 repo_name: ""
 
 nav:
-  - Welcome: index.md
-  - Benchmarking: benchmarking.md
+  - Overview: index.md
   - Installation: installation.md
-  - User Guide: user-guide.md
-  - Configuration: configuration.md
-  - FAQs: faq.md
-  - About: about.md
+  - The Report: user-guide.md
+  - Advanced Configuration: configuration.md
+  - Tools: tools.md
+  - License: license.md
 
 theme:
   name: material
   custom_dir: docs/.overrides
-  # logo: assets/img/UnCoVar_logo_1280.png
+  logo: assets/UnCoVar_virus_white_no_shadow.png
   palette:
     - media: "(prefers-color-scheme: light)" # light theme
       scheme: default
-      primary: blue grey
+      primary: teal
       accent: teal
       toggle:
         icon: material/toggle-switch-off-outline
@@ -37,21 +36,21 @@ theme:
   icon:
     repo: fontawesome/brands/github
     logo: fontawesome/solid/virus
-  favicon: fontawesome/solid/heart
+  favicon: assets/UnCoVar_favicon.png
   features:
     - navigation.instant
-    - navigation.tabs
+    # - navigation.tabs
     - navigation.indexes
     - navigation.tracking
     - navigation.expand
-    # - navigation.sections
+    - navigation.sections
     - navigation.top
     - toc.integrate
     - header.autohide
 
 extra:
-  version:
-    provider: mike
+  version: 1.0
+  provider: mike
   analytics:
     provider: google
     property: G-9R7WBBNN2S
@@ -70,16 +69,26 @@ markdown_extensions:
   # buttons: https://squidfunk.github.io/mkdocs-material/reference/buttons/
   - attr_list
   # codeblocks: https://squidfunk.github.io/mkdocs-material/reference/code-blocks/
-  - pymdownx.highlight
-  - pymdownx.inlinehilite
-  - pymdownx.superfences
-  - pymdownx.snippets
+  # pymdownx.highlight
+  # pymdownx.inlinehilite
+  # pymdownx.superfences
+  # pymdownx.snippets
   # call-outs: https://squidfunk.github.io/mkdocs-material/reference/admonitions/
   - admonition
-  - pymdownx.details
+  # pymdownx.details
   # lists: https://squidfunk.github.io/mkdocs-material/reference/lists/
   - def_list
-  - pymdownx.tasklist:
-      custom_checkbox: true
+  # pymdownx.tasklist:
+  #   custom_checkbox: true
   # tables: https://squidfunk.github.io/mkdocs-material/reference/tables/
   - tables
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/katex.js
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js
+
+extra_css:
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css
