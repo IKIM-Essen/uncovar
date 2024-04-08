@@ -1,6 +1,6 @@
 # Advanced Configuration
 
-The config file, found under `config/config.yaml` can be used to adapt your analysis
+The config file, found under `config/config.yaml` can be used to adapt your analysis.
 
 ## Execution Mode
 
