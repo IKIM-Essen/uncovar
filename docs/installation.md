@@ -31,7 +31,6 @@ First, create an appropriate project working directory on your system and enter 
 ```
 
 In all following steps, we will assume that you are inside of that directory.
-Second, run
 
 Given that Snakemake is installed and you want to clone the full workflow you can
  do it as follows:
@@ -73,7 +72,7 @@ With the root of the UnCoVar workflow as working directory, we recommended to
             └── 2023-12-24
 ```
 
-The structure can be adjusted to via the config file: `config/config.yaml` under
+The structure can be adjusted via the config file: `config/config.yaml` under
  `data-handling`:
 
 - **incoming**: path of incoming data, which is moved to the data directory by
@@ -100,7 +99,7 @@ To UnCoVars automated sample sheet filling, place your raw and compressed
 ```
 
 The files are appended to the sample sheet (auto check for duplications) and are
- moved to into a new folder with the current date (`YYYY-MM-DD`). `sample_name`
+ moved into a new folder with the current date (`YYYY-MM-DD`). `sample_name`
  is extracted from each filename and all characters before the first \_ are used.
  Make sure to include the correct flags for amplicon-generated files
  (`is_amplicon_data`) and sequencing technology (`technology`). For details on
