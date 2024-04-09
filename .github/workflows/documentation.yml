@@ -21,18 +21,18 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: SetUp Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
       - name: Update Contributing
-        run: cat CONTRIBUTING.md > docs/dev-guide/contributing.md
+        run: cat CONTRIBUTING.md > docs/contributing.md
 
       - name: Update Changelog
-        run: cat CHANGELOG.md > docs/about/changelog.md
+        run: cat CHANGELOG.md > docs/changelog.md
 
       - name: Update License
-        run: cat LICENSE > docs/about/license.md
+        run: cat LICENSE > docs/license.md
 
       - name: Install Dependencies
         run: pip install mkdocs-material

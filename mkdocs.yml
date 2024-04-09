@@ -7,50 +7,21 @@ repo_url: https://github.com/IKIM-Essen/uncovar/
 repo_name: ""
 
 nav:
-  - Welcome: index.md
-  - Getting Started: getting-started.md
-  - Consumer Guide:
-      - Overview: consumer-guide/index.md
-      - Highlights: consumer-guide/first-impression.md
-      - Understanding the Report: consumer-guide/report-structure.md
-      - Lineages and Variants: consumer-guide/lineages-and-variants.md
-      - Submission Read Genomes: consumer-guide/submission-ready-genomes.md
-      - FAQs: consumer-guide/faqs.md
-  - User Guide:
-      - Overview: user-guide/index.md
-      - Installation: user-guide/installation.md
-      - Configuration: user-guide/configuration.md
-      - Create Your Analysis: user-guide/create-your-analysis.md
-      - Share Your Results: user-guide/share-your-results.md
-      - Customize Your Analysis: user-guide/customize-your-analysis.md
-      - FAQs: user-guide/faqs.md
-  - Developer Guide:
-      - Overview: dev-guide/index.md
-      - How to Contribute: dev-guide/contributing.md
-      - Pre-Analysis: dev-guide/pre-analysis.md
-      - Initial Quality Control: dev-guide/final-quality-control.md
-      - Sequence Preprocessing: dev-guide/sequence-preprocessing.md
-      - Assembly: dev-guide/assembly.md
-      - Lineage Calling: dev-guide/lineage-calling.md
-      - Variant Calling: dev-guide/variant-calling.md
-      - Reporting: dev-guide/reporting.md
-      - Final Quality Control: dev-guide/initial-quality-control.md
-      - Tests: dev-guide/tests.md
-      - CI/CD: dev-guide/ci-cd.md
-      - FAQs: dev-guide/faqs.md
-  - About:
-      - Team: about/team.md
-      - License: about/license.md
-      - Release Notes: about/changelog.md
+  - Overview: index.md
+  - Installation: installation.md
+  - The Report: user-guide.md
+  - Advanced Configuration: configuration.md
+  - Tools: tools.md
+  - License: license.md
 
 theme:
   name: material
   custom_dir: docs/.overrides
-  # logo: assets/img/UnCoVar_logo_1280.png
+  logo: assets/UnCoVar_virus_white_no_shadow.png
   palette:
     - media: "(prefers-color-scheme: light)" # light theme
       scheme: default
-      primary: blue grey
+      primary: teal
       accent: teal
       toggle:
         icon: material/toggle-switch-off-outline
@@ -65,21 +36,21 @@ theme:
   icon:
     repo: fontawesome/brands/github
     logo: fontawesome/solid/virus
-  favicon: fontawesome/solid/heart
+  favicon: assets/UnCoVar_favicon.png
   features:
     - navigation.instant
-    - navigation.tabs
+    # - navigation.tabs
     - navigation.indexes
     - navigation.tracking
     - navigation.expand
-    # - navigation.sections
+    - navigation.sections
     - navigation.top
     - toc.integrate
     - header.autohide
 
 extra:
-  version:
-    provider: mike
+  version: 1.0
+  provider: mike
   analytics:
     provider: google
     property: G-9R7WBBNN2S
@@ -98,16 +69,26 @@ markdown_extensions:
   # buttons: https://squidfunk.github.io/mkdocs-material/reference/buttons/
   - attr_list
   # codeblocks: https://squidfunk.github.io/mkdocs-material/reference/code-blocks/
-  - pymdownx.highlight
-  - pymdownx.inlinehilite
-  - pymdownx.superfences
-  - pymdownx.snippets
+  # pymdownx.highlight
+  # pymdownx.inlinehilite
+  # pymdownx.superfences
+  # pymdownx.snippets
   # call-outs: https://squidfunk.github.io/mkdocs-material/reference/admonitions/
   - admonition
-  - pymdownx.details
+  # pymdownx.details
   # lists: https://squidfunk.github.io/mkdocs-material/reference/lists/
   - def_list
-  - pymdownx.tasklist:
-      custom_checkbox: true
+  # pymdownx.tasklist:
+  #   custom_checkbox: true
   # tables: https://squidfunk.github.io/mkdocs-material/reference/tables/
   - tables
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/katex.js
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js
+
+extra_css:
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css

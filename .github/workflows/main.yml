@@ -56,7 +56,7 @@ jobs:
   #   if: github.ref != 'refs/heads/master'
   #   steps:
   #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-python@v4
+  #     - uses: actions/setup-python@v5
   #     - uses: pre-commit/action@v3.0.0
 
   Technology-Tests:
@@ -76,7 +76,24 @@ jobs:
         seq_method: [shotgun, amplicon]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: false
+          
+          # all of these default to true, but feel free to set to
+          # "false" if necessary for your workflow
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: false
+          swap-storage: true
+
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -193,6 +210,22 @@ jobs:
     # generate_test_cases,
     steps:
       - uses: actions/checkout@v4
+
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: false
+          
+          # all of these default to true, but feel free to set to
+          # "false" if necessary for your workflow
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: false
+          swap-storage: true
 
       # - name: Cache conda dependencies
       #   uses: actions/cache@v2
