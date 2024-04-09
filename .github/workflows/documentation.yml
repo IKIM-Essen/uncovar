@@ -26,13 +26,13 @@ jobs:
           python-version: 3.x
 
       - name: Update Contributing
-        run: cat CONTRIBUTING.md > docs/dev-guide/contributing.md
+        run: cat CONTRIBUTING.md > docs/contributing.md
 
       - name: Update Changelog
-        run: cat CHANGELOG.md > docs/about/changelog.md
+        run: cat CHANGELOG.md > docs/changelog.md
 
       - name: Update License
-        run: cat LICENSE > docs/about/license.md
+        run: cat LICENSE > docs/license.md
 
       - name: Install Dependencies
         run: pip install mkdocs-material
