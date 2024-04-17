@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.0](https://github.com/IKIM-Essen/uncovar/compare/v0.16.0...v1.0.0) (2024-04-17)
+
+
+### Bug Fixes
+
+* docs deployment ([#635](https://github.com/IKIM-Essen/uncovar/issues/635)) ([dd767b0](https://github.com/IKIM-Essen/uncovar/commit/dd767b0348a4a8b0736a65475339aed80e96f5cb))
+* more meaningful info for patient overview table ([#609](https://github.com/IKIM-Essen/uncovar/issues/609)) ([77f7960](https://github.com/IKIM-Essen/uncovar/commit/77f796056709364d65b41126c2ee5208b56ef0d5))
+* pin to varlociraptor 8.4.4 ([#634](https://github.com/IKIM-Essen/uncovar/issues/634)) ([a4e1ea8](https://github.com/IKIM-Essen/uncovar/commit/a4e1ea814fcaae5a013ad53dcafceb2c4191ad1d))
+* pipe of stdout ([#631](https://github.com/IKIM-Essen/uncovar/issues/631)) ([a48a357](https://github.com/IKIM-Essen/uncovar/commit/a48a357e37590abce028216277eeb7105e205945))
+* remove -r flag ([#624](https://github.com/IKIM-Essen/uncovar/issues/624)) ([4f1b56b](https://github.com/IKIM-Essen/uncovar/commit/4f1b56bf4043743c1cb63b85e433742b677a6ac8))
+* update link for covariants ([#626](https://github.com/IKIM-Essen/uncovar/issues/626)) ([e6476b6](https://github.com/IKIM-Essen/uncovar/commit/e6476b6dee7d5fe1641dcba7cc83f1dcd22ea989))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([07d6fe2](https://github.com/IKIM-Essen/uncovar/commit/07d6fe29a99430c4b01a24aa6a4390d66ace177b))
+
 ## [0.16.0](https://github.com/IKIM-Essen/uncovar/compare/v0.15.1...v0.16.0) (2023-11-16)
 
 
