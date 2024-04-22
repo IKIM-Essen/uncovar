@@ -21,11 +21,11 @@ jobs:
             # except according to those terms.\n
           FileType: ".py, .smk, Snakefile"
           Path: "workflow/rules/, workflow/scripts/"
-          IgnorePath: ""
+          IgnorePath: "workflow/rules/long_read.smk, workflow/rules/variant_calling.smk"
 
       # Creates pull request with all changes in file
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "chore: update copyright preamble"
           delete-branch: true

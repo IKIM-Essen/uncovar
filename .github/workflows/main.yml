@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Formatting
-        uses: github/super-linter@v5.0.0
+        uses: super-linter/super-linter@v5.7.2
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
@@ -56,7 +56,7 @@ jobs:
   #   if: github.ref != 'refs/heads/master'
   #   steps:
   #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-python@v4
+  #     - uses: actions/setup-python@v5
   #     - uses: pre-commit/action@v3.0.0
 
   Technology-Tests:
@@ -69,14 +69,31 @@ jobs:
       #- Pre-Commit
     strategy:
       matrix:
-        rule: [all, all -npr]
+        rule: [all, all -np]
         # disable ont actions
         technology: [all, illumina, ont, ion]
         # technology: [all, illumina, ion]
         seq_method: [shotgun, amplicon]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: false
+          
+          # all of these default to true, but feel free to set to
+          # "false" if necessary for your workflow
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: false
+          swap-storage: true
+
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -141,25 +158,25 @@ jobs:
         with:
           directory: .tests
           snakefile: workflow/Snakefile
-          args: "-pr --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
+          args: "-p --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
 
       - name: Test report
         uses: snakemake/snakemake-github-action@v1.25.1
-        if: startsWith(matrix.rule, 'all -npr') != true
+        if: startsWith(matrix.rule, 'all -np') != true
         with:
           directory: .tests
           snakefile: workflow/Snakefile
           args: "${{ matrix.rule }} --report report.zip"
 
       - name: Upload report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: matrix.technology == 'all' && matrix.rule != 'all -npr'
         with:
           name: report-rule-${{ matrix.rule }}-${{ matrix.technology }}-${{ matrix.seq_method }}
           path: .tests/results/patient-reports/2022-01-01.zip
 
       - name: Upload logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: matrix.technology == 'all' && matrix.rule != 'all -npr'
         with:
           name: log-rule-${{ matrix.rule }}-technology-${{ matrix.technology }}
@@ -193,6 +210,22 @@ jobs:
     # generate_test_cases,
     steps:
       - uses: actions/checkout@v4
+
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: false
+          
+          # all of these default to true, but feel free to set to
+          # "false" if necessary for your workflow
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: false
+          swap-storage: true
 
       # - name: Cache conda dependencies
       #   uses: actions/cache@v2
@@ -319,24 +352,24 @@ jobs:
         with:
           directory: .tests
           snakefile: workflow/Snakefile
-          args: "-pr --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
+          args: "-p --use-conda --show-failed-logs --cores 2 --resources ncbi_api_requests=1 --conda-cleanup-pkgs cache --conda-frontend mamba ${{ matrix.rule }}"
 
       - name: Test report
         uses: snakemake/snakemake-github-action@v1.25.1
-        if: startsWith(matrix.rule, 'all -npr') != true
+        if: startsWith(matrix.rule, 'all -np') != true
         with:
           directory: .tests
           snakefile: workflow/Snakefile
           args: "${{ matrix.rule }} --report report.zip"
 
       # - name: Upload report
-      #   uses: actions/upload-artifact@v3
+      #   uses: actions/upload-artifact@v4
       #   with:
       #     name: report-rule-${{ matrix.rule }}
       #     path: .tests/results/patient-reports/2022-01-01.zip
 
       - name: Upload logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: log-rule-${{ matrix.rule }}
           path: .tests/logs/
