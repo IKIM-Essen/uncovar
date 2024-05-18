@@ -149,12 +149,6 @@ If the user is only interested in getting a specific result, every intermediate
 
 exchanging `date` and `sample` accordingly.
 
-This workflow is written with Snakemake. Details are described in the
-[Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog?usage=IKIM-Essen/uncovar).
-
-If you use this workflow in your work, don't forget to give credits to the
-authors by citing the URL of this repository and its DOI (see above).
-
 ----------------
 ## General settings
 
@@ -169,3 +163,9 @@ The incoming directory should contain paired end reads in (compressed) FASTQ
 format. UnCoVar automatically copies your data into the data directory and moves
 all files from incoming directory to the archive. After the analysis, all results
 are compressed and saved alongside the reads.
+
+This workflow is written with Snakemake. Details are described in the
+[Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog?usage=IKIM-Essen/uncovar).
+
+If you use this workflow in your work, don't forget to give credits to the
+authors by citing the URL of this repository and its DOI (see above).
