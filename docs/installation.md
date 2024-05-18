@@ -139,7 +139,17 @@ Given that the workflow has been properly deployed and configured, run Snakemake
 Snakemake will automatically detect the main Snakefile in the workflow subfolder
  and execute the workflow module that has been defined by the deployment.
 
-This workflow is written with Snakemake and details and tools are described in the
+If the user is only interested in getting a specific result, every intermediate
+ file of the analysis can be generated with including it in the execution
+ prompt, e.g. the FDR-controlled variant callings with major impact:
+
+```sh
+    snakemake --cores all --use-conda results/{date}/filtered-calls/ref~main/{sample}.subclonal-major.nofilter.orf.bcf
+```
+
+exchanging `date` and `sample` accordingly.
+
+This workflow is written with Snakemake. Details are described in the
 [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog?usage=IKIM-Essen/uncovar).
 
 If you use this workflow in your work, don't forget to give credits to the
