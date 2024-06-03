@@ -17,6 +17,8 @@ Workflow for Transparent and Robust Virus Variant Calling, Genome Reconstruction
 
 ## Usage
 
+The usage is described in detail in UnCoVar's [GitHub pages](https://ikim-essen.github.io/uncovar/)
+
 ### Step 1: Install Snakemake and Snakedeploy
 
 Snakemake and Snakedeploy are best installed via the [Mamba package manager](https://github.com/mamba-org/mamba)
