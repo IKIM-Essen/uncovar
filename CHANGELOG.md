@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/IKIM-Essen/uncovar/compare/v1.0.0...v1.0.1) (2024-06-06)
+
+
+### Bug Fixes
+
+* changed kraken input files for ont ([#650](https://github.com/IKIM-Essen/uncovar/issues/650)) ([b62007c](https://github.com/IKIM-Essen/uncovar/commit/b62007c7b10b9d933528a6b02933cca4bd751100))
+
 ## [1.0.0](https://github.com/IKIM-Essen/uncovar/compare/v0.16.0...v1.0.0) (2024-04-17)
 
 
