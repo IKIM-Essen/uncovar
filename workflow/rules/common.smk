@@ -156,8 +156,16 @@ def is_ion_torrent(wildcards, sample=None):
 def has_pseudo_assembly(wildcards, sample=None):
     """Returns if a pseudo-assembly should be created for the sample."""
     if sample is None:
-        return is_illumina(wildcards) or is_ion_torrent(wildcards) or is_illumina_se(wildacrds)
-    return is_illumina(None, sample) or is_ion_torrent(None, sample) or is_illumina_se(None, sample)
+        return (
+            is_illumina(wildcards)
+            or is_ion_torrent(wildcards)
+            or is_illumina_se(wildacrds)
+        )
+    return (
+        is_illumina(None, sample)
+        or is_ion_torrent(None, sample)
+        or is_illumina_se(None, sample)
+    )
 
 
 def has_consensus_assembly(wildcards, sample=None):
@@ -170,8 +178,14 @@ def has_consensus_assembly(wildcards, sample=None):
 def is_single_end(wildcards, sample=None):
     """Returns if the sample was sequenced with single end technology."""
     if sample is None:
-        return is_ont(wildcards) or is_ion_torrent(wildcards) or is_illumina_se(wildacrds)
-    return is_ont(None, sample) or is_ion_torrent(None, sample) or is_illumina_se(None, sample)
+        return (
+            is_ont(wildcards) or is_ion_torrent(wildcards) or is_illumina_se(wildacrds)
+        )
+    return (
+        is_ont(None, sample)
+        or is_ion_torrent(None, sample)
+        or is_illumina_se(None, sample)
+    )
 
 
 def get_fastqs(wildcards):
@@ -363,9 +377,11 @@ def get_non_cov2_calls(from_caller="pangolin"):
     pattern = (
         "results/benchmarking/tables/strain-calls/non-cov2-{accession}.polished.strains.pangolin.csv"
         if from_caller == "pangolin"
-        else "results/benchmarking/tables/strain-calls/non-cov2-{accession}.strains.kallisto.tsv"
-        if from_caller == "kallisto"
-        else []
+        else (
+            "results/benchmarking/tables/strain-calls/non-cov2-{accession}.strains.kallisto.tsv"
+            if from_caller == "kallisto"
+            else []
+        )
     )
 
     if not pattern:
@@ -421,7 +437,7 @@ def get_reads(wildcards):
             "results/{date}/trimmed/fastp-pe/{sample}.{read}.fastq.gz",
             read=[1, 2],
             **wildcards,
-        )  
+        )
 
         illumina_se_pattern = expand(
             "results/{date}/trimmed/fastp-se/{sample}.fastq.gz",
@@ -862,9 +878,7 @@ def get_varlociraptor_bias_flags(wildcards):
         )
     if is_amplicon_data(wildcards.sample):
         # no bias detection possible
-        return (
-            "--omit-strand-bias --omit-read-orientation-bias --omit-read-position-bias --omit-softclip-bias"
-        )
+        return "--omit-strand-bias --omit-read-orientation-bias --omit-read-position-bias --omit-softclip-bias"
     return ""
 
 
@@ -1145,18 +1159,22 @@ def get_fallbacks_for_report(fallback_type):
         if fallback_type == "pseudo":
             path = "results/{{date}}/contigs/pseudoassembled/{sample}.fasta"
             return [
-                path.format(sample=sample)
-                if has_pseudo_assembly(None, sample)
-                else "resources/genomes/main.fasta"
+                (
+                    path.format(sample=sample)
+                    if has_pseudo_assembly(None, sample)
+                    else "resources/genomes/main.fasta"
+                )
                 for sample in get_samples_for_date(wildcards.date)
             ]
 
         elif fallback_type == "consensus":
             path = "results/{{date}}/contigs/masked/consensus/{sample}.fasta"
             return [
-                path.format(sample=sample)
-                if has_consensus_assembly(None, sample)
-                else "resources/genomes/main.fasta"
+                (
+                    path.format(sample=sample)
+                    if has_consensus_assembly(None, sample)
+                    else "resources/genomes/main.fasta"
+                )
                 for sample in samples
             ]
 
@@ -1446,9 +1464,11 @@ def get_kallisto_quant_extra(wildcards, input):
         return get_if_testing("--single --fragment-length 250 --sd 47301")
 
     return (
-        f"--single --fragment-length {get_first_line(input.fragment_length)} --sd {get_first_line(input.standard_deviation)}"
-        if is_single_end(wildcards)
-        else "",
+        (
+            f"--single --fragment-length {get_first_line(input.fragment_length)} --sd {get_first_line(input.standard_deviation)}"
+            if is_single_end(wildcards)
+            else ""
+        ),
     )
 
 
@@ -1747,4 +1767,3 @@ wildcard_constraints:
         list(map(re.escape, config["variant-calling"]["filters"])) + ["nofilter"]
     ),
     varrange="structural|small|homopolymer-medaka|homopolymer-longshot|lineage-variants",
-
