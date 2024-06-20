@@ -153,7 +153,7 @@ rule species_diversity_before_pe:
 rule species_diversity_before_se:
     input:
         db="resources/minikraken-8GB",
-        reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz",
+        reads=get_species_diversity_before_se_input,
     output:
         kraken_output=temp(
             "results/{date}/species-diversity/se/{sample}/{sample}.kraken"
