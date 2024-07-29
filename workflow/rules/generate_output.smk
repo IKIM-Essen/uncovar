@@ -381,9 +381,11 @@ rule snakemake_reports_patient:
         "results/{date}/qc/laboratory/multiqc.html",
         "results/{date}/plots/coverage-reference-genome.png",
         "results/{date}/plots/coverage-assembled-genome.png",
-        lambda wildcards: "results/{date}/plots/primer-clipping-intervals.svg"
-        if any_sample_is_amplicon(wildcards)
-        else [],
+        lambda wildcards: (
+            "results/{date}/plots/primer-clipping-intervals.svg"
+            if any_sample_is_amplicon(wildcards)
+            else []
+        ),
         # 4. Assembly
         "results/{date}/filter-overview",
         "results/{date}/pangolin-call-overview",

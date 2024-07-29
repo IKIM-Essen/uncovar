@@ -20,9 +20,11 @@ rule get_genome:
         "resources/genomes/{accession}.fasta",
     params:
         accession=(
-            lambda w: config["virus-reference-genome"]
-            if w.accession == "main"
-            else w.accession
+            lambda w: (
+                config["virus-reference-genome"]
+                if w.accession == "main"
+                else w.accession
+            )
         ),
     log:
         "logs/genomes/get-genome/{accession}.log",
