@@ -191,34 +191,6 @@ rule get_human_genome:
         "curl -SL -o {output} {params.human_genome} 2> {log}"
 
 
-rule update_pangoLEARN:
-    output:
-        directory("results/{date}/pangolin/pangoLEARN"),
-    log:
-        "logs/{date}/pangolin/update.log",
-    conda:
-        "../envs/unix.yaml"
-    shell:
-        "(mkdir -p {output} &&"
-        " curl -L https://github.com/cov-lineages/pangoLEARN/archive/master.tar.gz |"
-        " tar xvz --strip-components=1 -C {output})"
-        " > {log} 2>&1"
-
-
-rule update_lineages:
-    output:
-        directory("results/{date}/pangolin/lineages"),
-    log:
-        "logs/{date}/pangolin/update.log",
-    conda:
-        "../envs/unix.yaml"
-    shell:
-        "(mkdir -p {output} &&"
-        " curl -L https://github.com/cov-lineages/lineages/archive/master.tar.gz | "
-        " tar xvz --strip-components=1 -C {output})"
-        " > {log} 2>&1"
-
-
 rule get_pangolin_data:
     output:
         "results/{date}/pangolin/pangolin-data.log",
