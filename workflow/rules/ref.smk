@@ -221,9 +221,9 @@ rule update_lineages:
 
 rule update_pangolin:
     output:
-        "results/{date}/pangolin/update.log",
+        "results/{date}/pangolin/pangolin-data.log",
     log:
-        "logs/{date}/pangolin/update.log",
+        "logs/{date}/pangolin/pangolin-data.log",
     conda:
         "../envs/pangolin.yaml"
     shell:
