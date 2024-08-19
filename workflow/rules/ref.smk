@@ -219,6 +219,18 @@ rule update_lineages:
         " > {log} 2>&1"
 
 
+rule update_pangolin:
+    output:
+        "results/{date}/pangolin/update.log",
+    log:
+        "logs/{date}/pangolin/update.log",
+    conda:
+        "../envs/pangolin.yaml"
+    shell:
+        "pangolin --update-data > {log} 2>&1 && cp {log} {output}"
+    
+
+
 rule get_gisaid_provision:
     output:
         "resources/gisaid/provision.json",

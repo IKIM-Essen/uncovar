@@ -141,19 +141,16 @@ rule kallisto_plot_all_strains:
 rule pangolin_call_strains:
     input:
         contigs=get_pangolin_input,
-        pangoLEARN="results/{date}/pangolin/pangoLEARN",
-        lineages="results/{date}/pangolin/lineages",
+        update="results/{date}/pangolin/update.log",
     output:
         "results/{date}/tables/strain-calls/{sample}.{stage}.strains.pangolin.csv",
     log:
         "logs/{date}/pangolin/{sample}.{stage}.log",
-    params:
-        pango_data_path=lambda w, input: os.path.dirname(input.pangoLEARN),
     conda:
         "../envs/pangolin.yaml"
     threads: 8
     shell:
-        "pangolin {input.contigs} --data {params.pango_data_path} --outfile {output} > {log} 2>&1"
+        "pangolin {input.contigs} --outfile {output} > {log} 2>&1"
 
 
 rule pangolin_plot_all_strains:
