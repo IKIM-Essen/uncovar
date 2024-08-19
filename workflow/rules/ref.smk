@@ -219,7 +219,7 @@ rule update_lineages:
         " > {log} 2>&1"
 
 
-rule update_pangolin:
+rule get_pangolin_data:
     output:
         "results/{date}/pangolin/pangolin-data.log",
     log:
