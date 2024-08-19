@@ -228,7 +228,6 @@ rule update_pangolin:
         "../envs/pangolin.yaml"
     shell:
         "pangolin --update-data > {log} 2>&1 && cp {log} {output}"
-    
 
 
 rule get_gisaid_provision:
