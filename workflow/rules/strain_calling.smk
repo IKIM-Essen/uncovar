@@ -141,7 +141,7 @@ rule kallisto_plot_all_strains:
 rule pangolin_call_strains:
     input:
         contigs=get_pangolin_input,
-        update="results/{date}/pangolin/pangolin-data.log",
+        data="results/{date}/pangolin/pangolin-data.log",
     output:
         "results/{date}/tables/strain-calls/{sample}.{stage}.strains.pangolin.csv",
     log:
