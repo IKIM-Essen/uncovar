@@ -82,6 +82,18 @@ The structure can be adjusted via the config file: `config/config.yaml` under
 - **archive**: path to archive data from the results from the analysis to.
   Defaults to `../archive/`.
 
+### ONT sample preprocessing
+Automates the extraction of sequencing reads from sample-specific folders, merges the reads from each   barcode into a single FASTQ file, and then renames the files for easy identification and downstream analysis.
+
+- **barcode.csv**: A CSV file containing the barcode sequences and their corresponding sample    identifiers.
+- **source_dir**: The directory path where the barcode-specific folders are located.
+- **output_dir**: The directory path where the renamed FASTQ files will be saved. 
+
+To run the tool, use the following command:
+```sh
+snakemake --config source_dir=path/to/barcode/folders output_dir=data/date/ --cores all --use-conda barcode_rename
+```
+
 ### Sample sheet
 
 The sample sheet contains all samples to be analyzed by UnCoVar. UnCoVar offers
