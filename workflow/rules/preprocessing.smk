@@ -14,12 +14,13 @@ rule update_sample:
     script:
         "../scripts/update-sample-sheet.py"
 
+
 rule barcode_rename:
     input:
-        barcodes = "barcode-rename.csv",
-        source_dir = config["source_dir"],
-    output: 
-        out_dir = directory(config["output_dir"])
+        barcodes="barcode-rename.csv",
+        source_dir=config["source_dir"],
+    output:
+        out_dir=directory(config["output_dir"]),
     log:
         "logs/barcode_rename.txt",
     conda:
