@@ -18,7 +18,7 @@ rule update_sample:
 rule barcode_rename:
     input:
         barcodes="barcode-rename.csv",
-        source_dir=config["source_dir"],
+        barcode_dir=config["barcode_dir"],
     output:
         out_dir=directory(config["output_dir"]),
     log:

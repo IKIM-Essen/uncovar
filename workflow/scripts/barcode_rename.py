@@ -64,7 +64,7 @@ def rename_files(final_dir):
 config = snakemake.config
 
 barcode_csv = str(snakemake.input.barcodes)
-source_path = str(config["source_dir"])
+source_path = str(config["barcode_dir"])
 out_dir = str(config["output_dir"])
 
 if not os.path.exists(source_path):
