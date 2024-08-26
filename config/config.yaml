@@ -31,9 +31,9 @@ data-handling:
   # the results from the latest run to
   archive: ../archive/
   #path to barcode folders
-  barcode_dir: /barcodes/
+  barcode_dir: /projects/seqlab/GridIONs/20240816_Covid-ONT_546-555_Gosch/20240816_Covid-ONT_546-555_Gosch/20240816_1340_X3_FAQ34771_0fb89eda/fastq_pass
   #path to store renamed FASTQ files
-  output_dir: renamed_fastq/
+  output_dir: data/2024-18-16/
 
 quality-criteria:
   illumina:
