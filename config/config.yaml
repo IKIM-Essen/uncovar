@@ -30,6 +30,10 @@ data-handling:
   # path to archive data from incoming and
   # the results from the latest run to
   archive: ../archive/
+  #path to barcode folders
+  barcode_dir: /barcodes/
+  #path to store renamed FASTQ files
+  output_dir: renamed_fastq/
 
 quality-criteria:
   illumina:

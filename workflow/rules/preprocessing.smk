@@ -18,9 +18,9 @@ rule update_sample:
 rule barcode_rename:
     input:
         barcodes="barcode-rename.csv",
-        barcode_dir=config["barcode_dir"],
+        #barcode_dir=config["barcode_dir"],
     output:
-        out_dir=directory(config["output_dir"]),
+        #out_dir=directory(config["output_dir"]),
     log:
         "logs/barcode_rename.txt",
     conda:

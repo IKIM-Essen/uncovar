@@ -83,10 +83,10 @@ The structure can be adjusted via the config file: `config/config.yaml` under
   Defaults to `../archive/`.
 
 ### ONT sample preprocessing
-Automates the extraction of sequencing reads from sample-specific folders, merges the reads from each 
+Automates the extraction of sequencing reads from sample-specific folders, merges the reads from each
   barcode into a single FASTQ file, and then renames the files for easy identification and downstream analysis.
 
-- **barcode-rename.csv**: A CSV file containing the barcode sequences and their corresponding sample 
+- **barcode-rename.csv**: A CSV file containing the barcode sequences and their corresponding sample
   identifiers.
 - **barcode_dir**: The directory path where the barcode-specific folders are located.
 - **output_dir**: The directory path where the renamed FASTQ files will be saved.
