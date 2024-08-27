@@ -124,6 +124,10 @@ strain-calling:
     B.1.617.2: OK091006
 
 # mutations to be highlighted (protein name -> variants)
+flirt:
+  S:
+    - F456L
+    - R346T
 mth:
   S:
     - L18F
