@@ -130,4 +130,5 @@ required:
   - assembly
   - variant-calling
   - strain-calling
+  - flirt
   - mth
