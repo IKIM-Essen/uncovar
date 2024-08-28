@@ -21,7 +21,7 @@ data-handling:
   # flag for archiving data
   # True: data is archived in path defined below
   # False: data is not archived
-  archive-data: True
+  archive-data: False
   # path of incoming data, which is moved to the
   # data directory by the preprocessing script
   incoming: ../incoming/
@@ -34,7 +34,7 @@ data-handling:
 quality-criteria:
   illumina:
     # minimal length of acceptable reads
-    min-length-reads: 30
+    min-length-reads: 100
     # average quality of acceptable reads (PHRED)
     min-PHRED: 20
   ont:
@@ -61,9 +61,9 @@ preprocessing:
   # ARTIC primer version to clip from reads. See
   # https://github.com/artic-network/artic-ncov2019/tree/master/primer_schemes/nCoV-2019/V4
   # for more information
-  artic-primer-version: 3
+  artic-primer-version: 4
   # path to amplicon primers in bed format for hard-clipping on paired end files (illumina) or url to file that should be downloaded
-  amplicon-primers: "resources/nCoV-2019.primer.bed"
+  amplicon-primers: "resources/SARS-CoV-2-artic-v4_1.primer.bed"
   # GenBank accession of reference sequence of the amplicon primers
   amplicon-reference: "MN908947"
 
@@ -124,10 +124,12 @@ strain-calling:
     B.1.617.2: OK091006
 
 # mutations to be highlighted (protein name -> variants)
+
 flirt:
   S:
     - F456L
     - R346T
+
 mth:
   S:
     - L18F
