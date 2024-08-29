@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/IKIM-Essen/uncovar/compare/v1.0.0...v1.1.0) (2024-08-29)
+
+
+### Features
+
+* FLiRT Mutations column ([#664](https://github.com/IKIM-Essen/uncovar/issues/664)) ([f77d42e](https://github.com/IKIM-Essen/uncovar/commit/f77d42e2154a95b6ca0e2c127df8ca134eda1789))
+
+
+### Bug Fixes
+
+* changed kraken input files for ont ([#650](https://github.com/IKIM-Essen/uncovar/issues/650)) ([b62007c](https://github.com/IKIM-Essen/uncovar/commit/b62007c7b10b9d933528a6b02933cca4bd751100))
+* pangolin data updates ([#662](https://github.com/IKIM-Essen/uncovar/issues/662)) ([f46ec83](https://github.com/IKIM-Essen/uncovar/commit/f46ec833ed56c39820c0a0e8d8e0295050a334ab))
+
 ## [1.0.0](https://github.com/IKIM-Essen/uncovar/compare/v0.16.0...v1.0.0) (2024-04-17)
 
 
