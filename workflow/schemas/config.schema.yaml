@@ -115,6 +115,9 @@ properties:
         description: flag for using gisaid or genbank
       lineage-references:
         type: object
+  flirt:
+    type: object
+    description: mutations to be highlighted (protein name -> variants)
   mth:
     type: object
     description: mutations to be highlighted (protein name -> variants)
@@ -130,4 +133,5 @@ required:
   - assembly
   - variant-calling
   - strain-calling
+  - flirt
   - mth

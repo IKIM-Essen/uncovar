@@ -166,6 +166,12 @@ mixtures:
     - "_MIX_B-1-1-7_PERC_90_MIX_B-1-351_PERC_10"
 
 # mutations to be highlighted (protein name -> variants)
+
+flirt:
+  S:
+    - F456L
+    - R346T
+
 mth:
   S:
     - N501Y
