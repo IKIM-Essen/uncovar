@@ -63,7 +63,7 @@ preprocessing:
   # for more information
   artic-primer-version: 4
   # path to amplicon primers in bed format for hard-clipping on paired end files (illumina) or url to file that should be downloaded
-  amplicon-primers: "resources/SARS-CoV-2-artic-v4_1.primer.bed"
+  amplicon-primers: "workflow/resources/SARS-CoV-2-artic-v4_1.primer.bed"
   # GenBank accession of reference sequence of the amplicon primers
   amplicon-reference: "MN908947"
 
