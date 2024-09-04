@@ -56,7 +56,7 @@ rule nanofilt:
 
 rule downsample_and_trim_raw:
     input:
-        primer=config["preprocessing"]["amplicon-primers"],
+        primer=workflow.source_path("../resources/nCoV-2019.primer.bed"),
         reads="results/{date}/filtered/nanofilt/{sample}.fastq",
         ref_genome="resources/genomes/main.fasta",
     output:
@@ -121,7 +121,7 @@ rule canu_correct:
 
 rule clip_adbc_corrected:
     input:
-        primer=config["preprocessing"]["amplicon-primers"],
+        primer=workflow.source_path("../resources/nCoV-2019.primer.bed"),
         reads="results/{date}/corrected/{sample}/{sample}.correctedReads.fasta",
         ref_genome="resources/genomes/main.fasta",
     output:
