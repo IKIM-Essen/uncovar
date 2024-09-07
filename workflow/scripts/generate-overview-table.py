@@ -193,7 +193,6 @@ AA_ALPHABET_TRANSLATION = {
 }
 
 for sample, file in iter_with_samples(snakemake.input.bcf):
-    flirt_mutations = {}
     mutations_of_interest = {}
     other_mutations = {}
 
@@ -229,14 +228,11 @@ for sample, file in iter_with_samples(snakemake.input.bcf):
 
                     hgvsp = f"{feature}:{alteration}"
                     entry = (hgvsp, f"{vaf:.3f}")
-                    if alteration in snakemake.params.flirt.get(feature, {}):
-                        insert_entry(flirt_mutations, hgvsp, vaf)
-                    elif alteration in snakemake.params.mth.get(feature, {}):
+                    if alteration in snakemake.params.mth.get(feature, {}):
                         insert_entry(mutations_of_interest, hgvsp, vaf)
                     else:
                         insert_entry(other_mutations, hgvsp, vaf)
 
-    data.loc[sample, "FLiRT Mutations"] = fmt_variants(flirt_mutations)
     data.loc[sample, "VOC Mutations"] = fmt_variants(mutations_of_interest)
     data.loc[sample, "Other Mutations"] = fmt_variants(other_mutations)
 
