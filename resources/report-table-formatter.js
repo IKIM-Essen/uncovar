@@ -91,9 +91,6 @@
       }
 
   },
-  "FLiRT Mutations": function format(value) {
-    return this["variant helper"](value, true);
-  },
   "VOC Mutations": function format(value) {
       return this["variant helper"](value, true);
   },
