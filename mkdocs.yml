@@ -8,7 +8,7 @@ repo_name: ""
 
 nav:
   - Overview: index.md
-  - Installation: installation.md
+  - Installation + Execution: installation.md
   - The Report: user-guide.md
   - Advanced Configuration: configuration.md
   - Tools: tools.md
