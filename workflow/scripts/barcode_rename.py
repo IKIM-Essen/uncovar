@@ -65,7 +65,7 @@ config = snakemake.config
 
 barcode_csv = str(snakemake.input.barcodes)
 source_path = str(snakemake.input.barcode_dir)
-out_dir = str(config["data-handling"]["output_dir"])
+out_dir = str(config["output_dir"])
 
 if not os.path.exists(source_path):
     print(f"Source directory '{source_path}' not found.")
