@@ -1679,6 +1679,11 @@ def get_genome_annotation(suffix=""):
 
     return inner
 
+def get_kracken_input:
+    if config["preprocessing"]["amplicon-primers"]:
+        "results/{date}/corrected/{sample}/{sample}.correctedReads.fasta.gz"
+    else:
+        "results/{date}/filtered/nanofilt/{sample}.fastq"
 
 wildcard_constraints:
     sample="[^/.]+",
