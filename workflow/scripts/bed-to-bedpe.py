@@ -4,10 +4,24 @@
 # except according to those terms.
 
 import pandas as pd
+import urllib.request
+
+# Function to check bed for url
+def check_bed_for_URL(bed_file):
+    if "https" in bed_file:
+        filename = bed_file.split("/")[-1]
+        filepath = "resources/{}".format(filename)
+        urllib.request.urlretrieve(bed_file, filepath)
+        return filepath
+    else:
+        return bed_file
+
+# Check bed file for URL    
+bed_file=check_bed_for_URL(snakemake.input[0])
 
 # Function to create a bedpe file from a bed file
 bed_list = []
-with open(snakemake.input[0]) as f:
+with open(bed_file) as f:
     line = f.readlines()
     for name in line:
         bed_list.append(name.split())
