@@ -153,7 +153,6 @@ rule overview_table_patient_csv:
             wildcards, "all samples"
         ),
         mth=config.get("mth"),
-        flirt=config.get("flirt"),
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
         mode=config["mode"],
     log:
@@ -179,7 +178,6 @@ use rule overview_table_patient_csv as overview_table_environment_csv with:
         qc_data="results/{date}/tables/environment-overview.csv",
     params:
         mth=config.get("mth"),
-        flirt=config.get("flirt"),
         samples=lambda wildcards: get_samples_for_date(wildcards.date),
         mode=config["mode"],
     log:
@@ -373,7 +371,6 @@ rule snakemake_reports_patient:
         expand_samples_for_date(
             ["results/{{date}}/lineage-variant-report/{sample}.lineage-variants"]
         ),
-        # lambda wildcards: "results/{date}/lineage-variant-report/all",
         lambda wildcards: expand(
             "results/{{date}}/vcf-report/{target}.{filter}.{annotation}",
             target=get_samples_for_date(wildcards.date) + ["all"],
@@ -383,10 +380,10 @@ rule snakemake_reports_patient:
         # 3. Sequencing Details
         "results/{date}/qc/laboratory/multiqc.html",
         "results/{date}/plots/coverage-reference-genome.png",
-        # "results/{date}/plots/coverage-assembled-genome.png",
-        # lambda wildcards: "results/{date}/plots/primer-clipping-intervals.svg"
-        # if any_sample_is_amplicon(wildcards)
-        # else [],
+        "results/{date}/plots/coverage-assembled-genome.png",
+        lambda wildcards: "results/{date}/plots/primer-clipping-intervals.svg"
+        if any_sample_is_amplicon(wildcards)
+        else [],
         # 4. Assembly
         "results/{date}/filter-overview",
         "results/{date}/pangolin-call-overview",
@@ -409,6 +406,8 @@ rule snakemake_reports_patient:
         "results/patient-reports/{date}.zip",
     params:
         for_testing=get_if_testing("--snakefile ../workflow/Snakefile"),
+    conda:
+        "../envs/snakemake.yaml"
     log:
         "logs/snakemake_reports/{date}.log",
     shell:
@@ -424,10 +423,10 @@ use rule snakemake_reports_patient as snakemake_reports_environment with:
             "results/{{date}}/{execution_mode}/overview/",
             execution_mode=get_checked_mode(),
         ),
-        # "results/{date}/plots/all.major-strain.strains.kallisto.svg",
-        # expand_samples_for_date(
-        #     ["results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg"]
-        # ),
+        "results/{date}/plots/all.major-strain.strains.kallisto.svg",
+        expand_samples_for_date(
+            ["results/{{date}}/plots/strain-calls/{sample}.strains.kallisto.svg"]
+        ),
         # 2. Variant Call Details
         expand_samples_for_date(
             ["results/{{date}}/lineage-variant-report/{sample}.lineage-variants"]
@@ -445,8 +444,3 @@ use rule snakemake_reports_patient as snakemake_reports_environment with:
         "results/environment-reports/{date}.zip",
     log:
         "logs/snakemake_reports/{date}.log",
-
-
-# rule output_sample_sheet:
-#     input:
-#         Path(pep.config_file()).parent / pep.config()["sample_table"],
