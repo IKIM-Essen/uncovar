@@ -4,4 +4,4 @@ channels:
   - imperial-college-research-computing
   - nodefaults
 dependencies:
-  - ragoo =1.1
+  - ragtag =2.1
