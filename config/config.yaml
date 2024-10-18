@@ -31,6 +31,11 @@ data-handling:
   # the results from the latest run to
   archive: ../archive/
 
+#path to barcode folders
+barcode_dir: ../barcode_dir/
+#path to store renamed FASTQ files
+output_dir: data/
+
 quality-criteria:
   illumina:
     # minimal length of acceptable reads
