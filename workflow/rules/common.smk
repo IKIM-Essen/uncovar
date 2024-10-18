@@ -355,9 +355,11 @@ def get_non_cov2_calls(from_caller="pangolin"):
     pattern = (
         "results/benchmarking/tables/strain-calls/non-cov2-{accession}.polished.strains.pangolin.csv"
         if from_caller == "pangolin"
-        else "results/benchmarking/tables/strain-calls/non-cov2-{accession}.strains.kallisto.tsv"
-        if from_caller == "kallisto"
-        else []
+        else (
+            "results/benchmarking/tables/strain-calls/non-cov2-{accession}.strains.kallisto.tsv"
+            if from_caller == "kallisto"
+            else []
+        )
     )
 
     if not pattern:
@@ -1113,18 +1115,22 @@ def get_fallbacks_for_report(fallback_type):
         if fallback_type == "pseudo":
             path = "results/{{date}}/contigs/pseudoassembled/{sample}.fasta"
             return [
-                path.format(sample=sample)
-                if has_pseudo_assembly(None, sample)
-                else "resources/genomes/main.fasta"
+                (
+                    path.format(sample=sample)
+                    if has_pseudo_assembly(None, sample)
+                    else "resources/genomes/main.fasta"
+                )
                 for sample in get_samples_for_date(wildcards.date)
             ]
 
         elif fallback_type == "consensus":
             path = "results/{{date}}/contigs/masked/consensus/{sample}.fasta"
             return [
-                path.format(sample=sample)
-                if has_consensus_assembly(None, sample)
-                else "resources/genomes/main.fasta"
+                (
+                    path.format(sample=sample)
+                    if has_consensus_assembly(None, sample)
+                    else "resources/genomes/main.fasta"
+                )
                 for sample in samples
             ]
 
@@ -1390,9 +1396,11 @@ def get_kallisto_quant_extra(wildcards, input):
         return get_if_testing("--single --fragment-length 250 --sd 47301")
 
     return (
-        f"--single --fragment-length {get_first_line(input.fragment_length)} --sd {get_first_line(input.standard_deviation)}"
-        if is_single_end(wildcards)
-        else "",
+        (
+            f"--single --fragment-length {get_first_line(input.fragment_length)} --sd {get_first_line(input.standard_deviation)}"
+            if is_single_end(wildcards)
+            else ""
+        ),
     )
 
 

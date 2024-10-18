@@ -22,7 +22,7 @@ rule samtools_sort:
 
 rule bed_to_bedpe:
     input:
-        check_bed_for_URL(config["preprocessing"]["amplicon-primers"]),
+        config["preprocessing"]["amplicon-primers"],
     output:
         "resources/primer.bedpe",
     log:
