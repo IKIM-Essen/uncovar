@@ -37,7 +37,7 @@ jobs:
       - name: Create Pull Request
         if: ${{ env.LATEST_PANGOLIN != env.CURRENT_PANGOLIN }}
         id: cpr
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           committer: GitHub <noreply@github.com>
