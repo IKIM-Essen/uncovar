@@ -180,7 +180,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: matrix.technology == 'all' && matrix.rule != 'all -npr'
         with:
-          name: log-rule-${{ matrix.rule }}-technology-${{ matrix.technology }}
+          name: log-rule-${{ matrix.rule }}-technology-${{ matrix.technology }}-${{ matrix.seq_method }}
           path: .tests/logs/
 
       - name: Change permissions for caching
