@@ -6,6 +6,7 @@
 import pandas as pd
 import urllib.request
 
+
 # Function to check bed for url
 def check_bed_for_URL(bed_file):
     if "https" in bed_file:
@@ -16,8 +17,9 @@ def check_bed_for_URL(bed_file):
     else:
         return bed_file
 
-# Check bed file for URL    
-bed_file=check_bed_for_URL(snakemake.input[0])
+
+# Check bed file for URL
+bed_file = check_bed_for_URL(snakemake.input[0])
 
 # Function to create a bedpe file from a bed file
 bed_list = []
