@@ -19,22 +19,22 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-#  Formatting:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v4
-#        with:
-#          depth: 0
-#      - name: Formatting
-#        uses: super-linter/super-linter@v5.7.2
-#        env:
-#          VALIDATE_ALL_CODEBASE: false
-#          DEFAULT_BRANCH: master
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          FILTER_REGEX_EXCLUDE: CHANGELOG.md
-#          VALIDATE_SNAKEMAKE_SNAKEFMT: true
-#          VALIDATE_PYTHON_BLACK: true
-#          VALIDATE_MARKDOWN: true
+  Formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          depth: 0
+      - name: Formatting
+        uses: super-linter/super-linter@v5.7.2
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FILTER_REGEX_EXCLUDE: CHANGELOG.md
+          VALIDATE_SNAKEMAKE_SNAKEFMT: true
+          VALIDATE_PYTHON_BLACK: true
+          VALIDATE_MARKDOWN: true
 
   Linting:
     runs-on: ubuntu-latest
@@ -66,7 +66,6 @@ jobs:
     env:
       GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
     needs:
-      - Formatting
       - Linting
       #- Pre-Commit
     strategy:
@@ -195,7 +194,6 @@ jobs:
     env:
       GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
     needs:
-      - Formatting
       - Linting
       #- Pre-Commit
     strategy:
