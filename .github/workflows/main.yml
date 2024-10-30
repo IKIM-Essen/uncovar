@@ -203,7 +203,6 @@ jobs:
             benchmark_strain_calling,
             benchmark_assembly,
             benchmark_mixtures,
-            benchmark_non_sars_cov_2,
             benchmark_reads,
             compare_assemblers,
           ]
