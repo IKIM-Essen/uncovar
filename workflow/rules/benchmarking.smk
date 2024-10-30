@@ -286,7 +286,7 @@ rule order_contigs_assembly_comparison:
         "minimal"
     shell:
         "(cd {params.outdir} &&"
-        " ragtag.py scaffold -C ../../../../../{input.reference} ../../../../../{input.contigs} &&"
+        " ragtag.py scaffold -C -w ../../../../../{input.reference} ../../../../../{input.contigs} &&"
         " cd ../../../../../ && mv {params.outdir}/ragtag_output/ragtag.scaffold.fasta {output})"
         " > {log} 2>&1"
 
