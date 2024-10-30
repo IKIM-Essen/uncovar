@@ -75,9 +75,11 @@ rule longshot:
             "results/{date}/candidate-calls/ref~{reference}/{sample}.homopolymer-longshot.vcf"
         ),
     params:
-        reference_name=lambda w: config["virus-reference-genome"]
-        if w.reference == "main"
-        else f"{w.reference}.1",
+        reference_name=lambda w: (
+            config["virus-reference-genome"]
+            if w.reference == "main"
+            else f"{w.reference}.1"
+        ),
     log:
         "logs/{date}/longshot/ref~{reference}/{sample}.log",
     conda:
