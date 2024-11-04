@@ -1,0 +1,813 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="SARS-CoV-2 Variant Calling and Lineage Assignment.">
+      
+      
+        <meta name="author" content="Institute for Artificial Intelligence in Medicine, Medical Faculty of the University of Duisburg Essen and the University Hospital Essen">
+      
+      
+        <link rel="canonical" href="https://ikim-essen.github.io/uncovar/changelog/">
+      
+      
+      
+      
+      <link rel="icon" href="../assets/UnCoVar_favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.43">
+    
+    
+      
+        <title>Changelog - UnCoVar Documention</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-9R7WBBNN2S"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-9R7WBBNN2S",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-9R7WBBNN2S",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#changelog" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="UnCoVar Documention" class="md-header__button md-logo" aria-label="UnCoVar Documention" data-md-component="logo">
+      
+  <img src="../assets/UnCoVar_virus_white_no_shadow.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            UnCoVar Documention
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="green"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/IKIM-Essen/uncovar/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="UnCoVar Documention" class="md-nav__button md-logo" aria-label="UnCoVar Documention" data-md-component="logo">
+      
+  <img src="../assets/UnCoVar_virus_white_no_shadow.png" alt="logo">
+
+    </a>
+    UnCoVar Documention
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/IKIM-Essen/uncovar/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    The Report
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Advanced Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tools
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h2 id="111-2024-11-04"><a href="https://github.com/IKIM-Essen/uncovar/compare/v1.1.0...v1.1.1">1.1.1</a> (2024-11-04)<a class="headerlink" href="#111-2024-11-04" title="Permanent link">&para;</a></h2>
+<h3 id="bug-fixes">Bug Fixes<a class="headerlink" href="#bug-fixes" title="Permanent link">&para;</a></h3>
+<ul>
+<li>fix file not found error on shared fs storage (<a href="https://github.com/IKIM-Essen/uncovar/issues/673">#673</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/c28db9608c816cc775397096d45bd33c8e59aace">c28db96</a>)</li>
+</ul>
+<h2 id="110-2024-10-31"><a href="https://github.com/IKIM-Essen/uncovar/compare/v1.0.0...v1.1.0">1.1.0</a> (2024-10-31)<a class="headerlink" href="#110-2024-10-31" title="Permanent link">&para;</a></h2>
+<h3 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h3>
+<ul>
+<li>FLiRT Mutations column (<a href="https://github.com/IKIM-Essen/uncovar/issues/664">#664</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/f77d42e2154a95b6ca0e2c127df8ca134eda1789">f77d42e</a>)</li>
+</ul>
+<h3 id="bug-fixes_1">Bug Fixes<a class="headerlink" href="#bug-fixes_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>changed kraken input files for ont (<a href="https://github.com/IKIM-Essen/uncovar/issues/650">#650</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/b62007c7b10b9d933528a6b02933cca4bd751100">b62007c</a>)</li>
+<li>move primer file location under workflow; this avoids file not being found in shared filesystems (<a href="https://github.com/IKIM-Essen/uncovar/issues/665">#665</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/9cb1576a8c41c23344940f2248e5d44464a53b2e">9cb1576</a>)</li>
+<li>pangolin data updates (<a href="https://github.com/IKIM-Essen/uncovar/issues/662">#662</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/f46ec833ed56c39820c0a0e8d8e0295050a334ab">f46ec83</a>)</li>
+<li>replace ragoo with ragtag (<a href="https://github.com/IKIM-Essen/uncovar/issues/591">#591</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/e64e9db7e81a295ff1775b880c255b71274448fd">e64e9db</a>)</li>
+</ul>
+<h2 id="100-2024-04-17"><a href="https://github.com/IKIM-Essen/uncovar/compare/v0.16.0...v1.0.0">1.0.0</a> (2024-04-17)<a class="headerlink" href="#100-2024-04-17" title="Permanent link">&para;</a></h2>
+<h3 id="bug-fixes_2">Bug Fixes<a class="headerlink" href="#bug-fixes_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>docs deployment (<a href="https://github.com/IKIM-Essen/uncovar/issues/635">#635</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/dd767b0348a4a8b0736a65475339aed80e96f5cb">dd767b0</a>)</li>
+<li>more meaningful info for patient overview table (<a href="https://github.com/IKIM-Essen/uncovar/issues/609">#609</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/77f796056709364d65b41126c2ee5208b56ef0d5">77f7960</a>)</li>
+<li>pin to varlociraptor 8.4.4 (<a href="https://github.com/IKIM-Essen/uncovar/issues/634">#634</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/a4e1ea814fcaae5a013ad53dcafceb2c4191ad1d">a4e1ea8</a>)</li>
+<li>pipe of stdout (<a href="https://github.com/IKIM-Essen/uncovar/issues/631">#631</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/a48a357e37590abce028216277eeb7105e205945">a48a357</a>)</li>
+<li>remove -r flag (<a href="https://github.com/IKIM-Essen/uncovar/issues/624">#624</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/4f1b56bf4043743c1cb63b85e433742b677a6ac8">4f1b56b</a>)</li>
+<li>update link for covariants (<a href="https://github.com/IKIM-Essen/uncovar/issues/626">#626</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/e6476b6dee7d5fe1641dcba7cc83f1dcd22ea989">e6476b6</a>)</li>
+</ul>
+<h3 id="miscellaneous-chores">Miscellaneous Chores<a class="headerlink" href="#miscellaneous-chores" title="Permanent link">&para;</a></h3>
+<ul>
+<li>release 1.0.0 (<a href="https://github.com/IKIM-Essen/uncovar/commit/07d6fe29a99430c4b01a24aa6a4390d66ace177b">07d6fe2</a>)</li>
+</ul>
+<h2 id="0160-2023-11-16"><a href="https://github.com/IKIM-Essen/uncovar/compare/v0.15.1...v0.16.0">0.16.0</a> (2023-11-16)<a class="headerlink" href="#0160-2023-11-16" title="Permanent link">&para;</a></h2>
+<h3 id="features_1">Features<a class="headerlink" href="#features_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Update README.md for dark/light theme (<a href="https://github.com/IKIM-Essen/uncovar/issues/614">#614</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/33ac5f7b4f7af8bbb500e9f531ccbdc45ac9427f">33ac5f7</a>)</li>
+</ul>
+<h3 id="bug-fixes_3">Bug Fixes<a class="headerlink" href="#bug-fixes_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>changes in path requirements for snakedeploy (<a href="https://github.com/IKIM-Essen/uncovar/issues/590">#590</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/406d456edd15715f7e14338b8195d2a09a807e49">406d456</a>)</li>
+<li>improved clonality event definition, usage of major subclone for assembly polishing; upgrade to varlociraptor 6.0 (<a href="https://github.com/IKIM-Essen/uncovar/issues/585">#585</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/aced95e798fd0483e99120550f49614e680f56dd">aced95e</a>)</li>
+<li>QA genome generation (<a href="https://github.com/IKIM-Essen/uncovar/issues/613">#613</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/2bb74bfc26dee80af7d04089aafe636ea7c6d76a">2bb74bf</a>)</li>
+<li>switch from jupyter notebook to script (<a href="https://github.com/IKIM-Essen/uncovar/issues/598">#598</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/d0f293d2b8136fb0d8ef3753733ab1d30fb20d56">d0f293d</a>)</li>
+<li>update multiqc (<a href="https://github.com/IKIM-Essen/uncovar/issues/607">#607</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/0070d8927290dd01f418b876b60f3405158f1ab9">0070d89</a>)</li>
+<li>use homopolymer-pair-HMM-mode of Varlociraptor in case of nanopore reads (<a href="https://github.com/IKIM-Essen/uncovar/commit/505a2714ba0e5642312051f5e5154f7d454ff57f">505a271</a>)</li>
+<li>use homopolymer-pair-HMM-mode of Varlociraptor in case of nanopore reads (<a href="https://github.com/IKIM-Essen/uncovar/issues/587">#587</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/9bc814f7cb9e9d9e53d557d463e782801070b46e">9bc814f</a>)</li>
+</ul>
+<h3 id="performance-improvements">Performance Improvements<a class="headerlink" href="#performance-improvements" title="Permanent link">&para;</a></h3>
+<ul>
+<li>update to varlociraptor 8.4 (<a href="https://github.com/IKIM-Essen/uncovar/issues/596">#596</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/34701af485aa1ec199a418ec1487a97677f624ca">34701af</a>)</li>
+</ul>
+<h2 id="0151-2022-11-30"><a href="https://github.com/IKIM-Essen/uncovar/compare/v0.15.0...v0.15.1">0.15.1</a> (2022-11-30)<a class="headerlink" href="#0151-2022-11-30" title="Permanent link">&para;</a></h2>
+<h3 id="bug-fixes_4">Bug Fixes<a class="headerlink" href="#bug-fixes_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>ci:</strong> update black to rev 22.3.0 (<a href="https://github.com/IKIM-Essen/uncovar/issues/523">#523</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/2273b7d49d21dfe48812f7e3e4d33969b62e1d9e">2273b7d</a>)</li>
+<li>disable ont actions (<a href="https://github.com/IKIM-Essen/uncovar/issues/555">#555</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/56e46ef7e1663b4de3447068df7cb8b9d1d7b67f">56e46ef</a>)</li>
+<li>Replace outdated df append (<a href="https://github.com/IKIM-Essen/uncovar/issues/544">#544</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/4a4000310cba4f3e8640172eadebcd35239b2e34">4a40003</a>)</li>
+<li>update channel priorities and snakemake wrappers (<a href="https://github.com/IKIM-Essen/uncovar/issues/562">#562</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/a0b6fd0557b7e6cb3aeddd22e6a3350560c18415">a0b6fd0</a>)</li>
+<li>use latest varlociraptor release and ignore all biases in case of known lineage variant calling (<a href="https://github.com/IKIM-Essen/uncovar/issues/575">#575</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/fa957fd44594920c12df3821a23905055b1de9c9">fa957fd</a>)</li>
+<li>voc probability (<a href="https://github.com/IKIM-Essen/uncovar/issues/541">#541</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/db6eb175aa7c25948677a9b64258afd377016d8c">db6eb17</a>)</li>
+</ul>
+<h2 id="0150-2022-03-24"><a href="https://github.com/IKIM-Essen/uncovar/compare/v0.14.0...v0.15.0">0.15.0</a> (2022-03-24)<a class="headerlink" href="#0150-2022-03-24" title="Permanent link">&para;</a></h2>
+<h3 id="features_2">Features<a class="headerlink" href="#features_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>update rbt to 0.39 (<a href="https://github.com/IKIM-Essen/uncovar/issues/510">#510</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/91b5ac585177b127a80548235abe7469a04e97cc">91b5ac5</a>)</li>
+</ul>
+<h3 id="bug-fixes_5">Bug Fixes<a class="headerlink" href="#bug-fixes_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add nofilter flag for variant calls (<a href="https://github.com/IKIM-Essen/uncovar/issues/505">#505</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/381007c351db1809d6c93dc337920d9e9fa3ed54">381007c</a>)</li>
+<li>primer clipping add up- and downstream (<a href="https://github.com/IKIM-Essen/uncovar/issues/515">#515</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/5c886fa439399c129fcec536b6d149b4e1741685">5c886fa</a>)</li>
+</ul>
+<h2 id="0140-2022-03-21"><a href="https://github.com/IKIM-Essen/uncovar/compare/v0.13.2...v0.14.0">0.14.0</a> (2022-03-21)<a class="headerlink" href="#0140-2022-03-21" title="Permanent link">&para;</a></h2>
+<h3 id="features_3">Features<a class="headerlink" href="#features_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add variant call details based on protein annotation (<a href="https://github.com/IKIM-Essen/uncovar/issues/487">#487</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/016bcfb3721ed31b208b29a9bdab7957be32439d">016bcfb</a>)</li>
+<li>call known lineage variants (<a href="https://github.com/IKIM-Essen/uncovar/issues/392">#392</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/9ad720c32f1b246b5ef8a20871063a05dfd682b8">9ad720c</a>)</li>
+<li><strong>deps:</strong> bump github/super-linter from 4.8.6 to 4.8.7 (<a href="https://github.com/IKIM-Essen/uncovar/issues/459">#459</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/c18f2412f576b26050e3296bdcc509cd5facf462">c18f241</a>)</li>
+<li><strong>deps:</strong> update pangolin to 3.1.19 (<a href="https://github.com/IKIM-Essen/uncovar/issues/461">#461</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/3971687db229577fa862b40f900701f18270011d">3971687</a>)</li>
+<li><strong>deps:</strong> update pangolin to 3.1.19 (<a href="https://github.com/IKIM-Essen/uncovar/issues/461">#461</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/d5f42ca229c038adaf0ccb1ce772aaa4e229b1fe">d5f42ca</a>)</li>
+<li><strong>deps:</strong> update pangolin to 3.1.20 (<a href="https://github.com/IKIM-Essen/uncovar/issues/467">#467</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/78cb7f4452fe703194aed2fb393649572b60519c">78cb7f4</a>)</li>
+<li>make incoming and archive structure data-handling optional (<a href="https://github.com/IKIM-Essen/uncovar/issues/443">#443</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/559e9c1c1af503398a1669fd0e4f04e7d4b4a7ac">559e9c1</a>)</li>
+<li>make sending lab column in rki report csv adjustable via config file (<a href="https://github.com/IKIM-Essen/uncovar/issues/492">#492</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/311e8578a7d9956ffb532314da60b01211a90b60">311e857</a>)</li>
+<li>rule and script bed_to_bedpe (<a href="https://github.com/IKIM-Essen/uncovar/issues/447">#447</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/3022eab0854992fb40894c7b1dd0feca8400b2fc">3022eab</a>)</li>
+</ul>
+<h3 id="bug-fixes_6">Bug Fixes<a class="headerlink" href="#bug-fixes_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add missing fasta index to vcf report (<a href="https://github.com/IKIM-Essen/uncovar/issues/480">#480</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/1697fb50b2e4b3d249c4a83e83ecab2876118a91">1697fb5</a>)</li>
+<li>add missing voc variant report to environmental report (<a href="https://github.com/IKIM-Essen/uncovar/issues/479">#479</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/16baef1c440dbf6e059b81d2c3f7f100c53ee692">16baef1</a>)</li>
+<li>bump rust-bio-tools to 0.38 (<a href="https://github.com/IKIM-Essen/uncovar/issues/449">#449</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/e85fa15f0489185b9fc7a851005da1078c06c3fb">e85fa15</a>)</li>
+<li>canu and porechop logging (<a href="https://github.com/IKIM-Essen/uncovar/commit/5db09352abdcb2af41ae5b72250b26c547951877">5db0935</a>)</li>
+<li>canu and porechop logs (<a href="https://github.com/IKIM-Essen/uncovar/issues/473">#473</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/497bfcdd1bda588209295e7cc3e7d3acf20a2182">497bfcd</a>)</li>
+<li><strong>ci:</strong> add missing missing echo to release please (<a href="https://github.com/IKIM-Essen/uncovar/issues/476">#476</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/6a0b899454883d6c53c4234f2b356f20ac503249">6a0b899</a>)</li>
+<li><strong>ci:</strong> change human reference from NC_000021.9 to BA000005.3 (<a href="https://github.com/IKIM-Essen/uncovar/issues/488">#488</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/14b4be01ee1ff586b0e12d13b15c254d739e260b">14b4be0</a>)</li>
+<li><strong>ci:</strong> change release please PR branch (<a href="https://github.com/IKIM-Essen/uncovar/issues/481">#481</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/603d3b5edfbc7864e279950f8981c534397105d9">603d3b5</a>)</li>
+<li><strong>ci:</strong> parse new json output from release please (<a href="https://github.com/IKIM-Essen/uncovar/issues/474">#474</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/eb598b7f4feb51d8d5679dc2ef0aa823a7127a52">eb598b7</a>)</li>
+<li><strong>ci:</strong> release please checkout branch (<a href="https://github.com/IKIM-Essen/uncovar/issues/477">#477</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/03a69bfe23097222cf88f43f15d4b40b5f4fb3de">03a69bf</a>)</li>
+<li>correct filtering in plot-lineages-over-time (<a href="https://github.com/IKIM-Essen/uncovar/issues/445">#445</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/c71f72bad90cc32923b7de6ffcc6de66367cf6ff">c71f72b</a>)</li>
+<li><strong>deps:</strong> update multiqc wrapper (<a href="https://github.com/IKIM-Essen/uncovar/issues/329">#329</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/42fbcd8bc442d5c1e2142fc6c14406819c2b63bb">42fbcd8</a>)</li>
+<li>fixed include flag KeyError (<a href="https://github.com/IKIM-Essen/uncovar/issues/452">#452</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/f47dad20891a447e202aa2ff3f1712b77daaa593">f47dad2</a>)</li>
+<li>order of include flag sample (<a href="https://github.com/IKIM-Essen/uncovar/issues/462">#462</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/429e5d9447b64dfbd20bcfaa924feb5fae7ddfb9">429e5d9</a>)</li>
+<li>pangolin plot color (<a href="https://github.com/IKIM-Essen/uncovar/issues/483">#483</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/9e368d572abfb4816f8a3270b8deb22c198234ad">9e368d5</a>)</li>
+<li>reduce loading time of coverage plots (<a href="https://github.com/IKIM-Essen/uncovar/issues/498">#498</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/8a8f53347aa90c66075c1418e9cdf34bbecc02bc">8a8f533</a>)</li>
+<li>remove removal of .indicators/replacement_notice.txt for int (<a href="https://github.com/IKIM-Essen/uncovar/issues/457">#457</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/c5b9f6c02c6e65646d0bc748cef5962b56322b3e">c5b9f6c</a>)</li>
+<li>rename column header in report formatter (<a href="https://github.com/IKIM-Essen/uncovar/issues/444">#444</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/8ba21d90caa0e312e4619fc02e1a38f84039805b">8ba21d9</a>)</li>
+<li>reset over table formatter (<a href="https://github.com/IKIM-Essen/uncovar/issues/448">#448</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/ee30a46bc966413fbd1f8d616a3f1f97b356ff72">ee30a46</a>)</li>
+<li>untmp recalibrated bam (<a href="https://github.com/IKIM-Essen/uncovar/issues/491">#491</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/1118fd91a815f002188ba9969ece6a159279953a">1118fd9</a>)</li>
+<li>VOC mutation table similarity calculation (<a href="https://github.com/IKIM-Essen/uncovar/issues/484">#484</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/82405ee8e1d0eddcf40315888ef3a32eda7b3954">82405ee</a>)</li>
+</ul>
+<h3 id="performance-improvements_1">Performance Improvements<a class="headerlink" href="#performance-improvements_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add ont temp flags (<a href="https://github.com/IKIM-Essen/uncovar/issues/475">#475</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/6447583800b756c573bcf959d14d0d6f29eebd21">6447583</a>)</li>
+<li>ont downsampling normalisation (<a href="https://github.com/IKIM-Essen/uncovar/issues/489">#489</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/f502dd287be37c76997f44054389124494e23ab7">f502dd2</a>)</li>
+<li>optimisations for ont - barcode+adapter-trimming, primer-trimming (porechop) and read correction (Canu) (<a href="https://github.com/IKIM-Essen/uncovar/issues/454">#454</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/e844fc40923fcaa8c680079a05cd09173027fb00">e844fc4</a>)</li>
+</ul>
+<h3 id="0132-2022-01-06"><a href="https://github.com/IKIM-Essen/uncovar/compare/v0.13.1...v0.13.2">0.13.2</a> (2022-01-06)<a class="headerlink" href="#0132-2022-01-06" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_7">Bug Fixes<a class="headerlink" href="#bug-fixes_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>wrong enumeration with kallisto included (<a href="https://github.com/IKIM-Essen/uncovar/issues/439">#439</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/1a6896926c4f38d897541a6d38dc874d54b57176">1a68969</a>)</li>
+</ul>
+<h3 id="0131-2022-01-04"><a href="https://github.com/IKIM-Essen/uncovar/compare/v0.13.0...v0.13.1">0.13.1</a> (2022-01-04)<a class="headerlink" href="#0131-2022-01-04" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_8">Bug Fixes<a class="headerlink" href="#bug-fixes_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>relative aggregation sample plot (<a href="https://github.com/IKIM-Essen/uncovar/issues/412">#412</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/6a8155ec0b227da9907fb709c909afdb35571375">6a8155e</a>)</li>
+</ul>
+<h2 id="0130-2022-01-03"><a href="https://github.com/IKIM-Essen/uncovar/compare/v0.12.0...v0.13.0">0.13.0</a> (2022-01-03)<a class="headerlink" href="#0130-2022-01-03" title="Permanent link">&para;</a></h2>
+<h3 id="features_4">Features<a class="headerlink" href="#features_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add optional column for adapters (<a href="https://github.com/IKIM-Essen/uncovar/issues/419">#419</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/f883ce24231d3e249c1c3a2798ad5c42cd954342">f883ce2</a>)</li>
+<li>add patient or environmental mode flag (<a href="https://github.com/IKIM-Essen/uncovar/issues/420">#420</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/9ac2002e733ecd215e89f5043409c4ab90d9064b">9ac2002</a>)</li>
+<li>add prettier to pre-commit (<a href="https://github.com/IKIM-Essen/uncovar/issues/427">#427</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/e7cb0a7a6de37b767befb314bdd32828437c53b7">e7cb0a7</a>)</li>
+</ul>
+<h3 id="bug-fixes_9">Bug Fixes<a class="headerlink" href="#bug-fixes_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>generate high quality report .csv file (<a href="https://github.com/IKIM-Essen/uncovar/issues/433">#433</a>) (<a href="https://github.com/IKIM-Essen/uncovar/commit/077b80d2b2b00026fc9944a26c0183505f9060cf">077b80d</a>)</li>
+</ul>
+<h2 id="0120-2021-12-23"><a href="https://www.github.com/IKIM-Essen/uncovar/compare/v0.11.0...v0.12.0">0.12.0</a> (2021-12-23)<a class="headerlink" href="#0120-2021-12-23" title="Permanent link">&para;</a></h2>
+<h3 id="features_5">Features<a class="headerlink" href="#features_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add varlociraptor test case generation (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/429">#429</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/3ec79756226500f2e686c1f5e7ed83d50de545c3">3ec7975</a>)</li>
+</ul>
+<h3 id="bug-fixes_10">Bug Fixes<a class="headerlink" href="#bug-fixes_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>update the mutations columns in the overview table formatter (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/423">#423</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/3af43b991af218931996d9093ecf944bff907476">3af43b9</a>)</li>
+</ul>
+<h2 id="0110-2021-12-21"><a href="https://www.github.com/IKIM-Essen/uncovar/compare/v0.10.2...v0.11.0">0.11.0</a> (2021-12-21)<a class="headerlink" href="#0110-2021-12-21" title="Permanent link">&para;</a></h2>
+<h3 id="features_6">Features<a class="headerlink" href="#features_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>update to rust-bio-tools 0.33 (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/388">#388</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/8f669159d7db8dad503cccf505c34a8271795bcd">8f66915</a>)</li>
+<li>update to varlociraptor 4.9 (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/424">#424</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/5a7ca5be08afdc6642a0db103c9fec2f6842fc53">5a7ca5b</a>)</li>
+</ul>
+<h3 id="0102-2021-12-19"><a href="https://www.github.com/IKIM-Essen/uncovar/compare/v0.10.1...v0.10.2">0.10.2</a> (2021-12-19)<a class="headerlink" href="#0102-2021-12-19" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_11">Bug Fixes<a class="headerlink" href="#bug-fixes_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li>pangolin input for overview table, bamclipper samtools error, include flag for high quality genome report (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/418">#418</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/9690f12e6725447e035903d3b4eecf31d01b1576">9690f12</a>)</li>
+</ul>
+<h3 id="0101-2021-12-17"><a href="https://www.github.com/IKIM-Essen/uncovar/compare/v0.10.0...v0.10.1">0.10.1</a> (2021-12-17)<a class="headerlink" href="#0101-2021-12-17" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_12">Bug Fixes<a class="headerlink" href="#bug-fixes_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li>names in report (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/410">#410</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/e5dbcbd61fc836e8705a08ac189235c78fd1db65">e5dbcbd</a>)</li>
+</ul>
+<h2 id="0100-2021-12-16"><a href="https://www.github.com/IKIM-Essen/uncovar/compare/v0.9.0...v0.10.0">0.10.0</a> (2021-12-16)<a class="headerlink" href="#0100-2021-12-16" title="Permanent link">&para;</a></h2>
+<h3 id="features_7">Features<a class="headerlink" href="#features_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>complete workflow if no samples pass the quality filter (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/411">#411</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/55b2dcce83c6349b4651c07acfda2cfe885ed0f6">55b2dcc</a>)</li>
+</ul>
+<h2 id="090-2021-12-15"><a href="https://www.github.com/IKIM-Essen/uncovar/compare/v0.8.0...v0.9.0">0.9.0</a> (2021-12-15)<a class="headerlink" href="#090-2021-12-15" title="Permanent link">&para;</a></h2>
+<h3 id="features_8">Features<a class="headerlink" href="#features_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>added variants-over-time-plot to report again (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/405">#405</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/bd5048af11d3f1f28a1853a9ec1070fe85ff977b">bd5048a</a>)</li>
+</ul>
+<h2 id="080-2021-12-15"><a href="https://www.github.com/IKIM-Essen/uncovar/compare/v0.7.0...v0.8.0">0.8.0</a> (2021-12-15)<a class="headerlink" href="#080-2021-12-15" title="Permanent link">&para;</a></h2>
+<h3 id="features_9">Features<a class="headerlink" href="#features_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add pangolin call table (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/397">#397</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/953211a552f0ce84594e598318cc25a7d406c3cd">953211a</a>)</li>
+<li>add rki include/exclude flag (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/319">#319</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/d2e6d20de0429323989d107eac5c4282561b57ce">d2e6d20</a>)</li>
+<li>added column in overview table for the clear name of the lineage (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/400">#400</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/38e34bba65ab28481466e5897019f060d57596f8">38e34bb</a>)</li>
+</ul>
+<h3 id="bug-fixes_13">Bug Fixes<a class="headerlink" href="#bug-fixes_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li>change report structure, add masked sequence, pangolin call on polished sequence (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/396">#396</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/d2ecaaa55efaf916fe380f042758f1560a5b389f">d2ecaaa</a>)</li>
+<li>rmv pipe from pre-commit (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/401">#401</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/3222bb2220ce517ba514f28f416c730ef884d52f">3222bb2</a>)</li>
+</ul>
+<h2 id="070-2021-12-14"><a href="https://www.github.com/IKIM-Essen/uncovar/compare/v0.6.0...v0.7.0">0.7.0</a> (2021-12-14)<a class="headerlink" href="#070-2021-12-14" title="Permanent link">&para;</a></h2>
+<h3 id="features_10">Features<a class="headerlink" href="#features_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add pre commit checks (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/398">#398</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/6982b3dcaca308840d9a70caec22e79bdb9025fc">6982b3d</a>)</li>
+</ul>
+<h3 id="bug-fixes_14">Bug Fixes<a class="headerlink" href="#bug-fixes_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li>remove cwd-check in update sample sheet script (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/393">#393</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/44d49d34e7ed2ad94002ed9b9e8868ec9665a541">44d49d3</a>)</li>
+<li>trigger docs build on release created (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/391">#391</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/e240aeb5f13d38a2ccf14ce1cb2277af197d9117">e240aeb</a>)</li>
+</ul>
+<h2 id="060-2021-12-13"><a href="https://www.github.com/IKIM-Essen/uncovar/compare/v0.5.0...v0.6.0">0.6.0</a> (2021-12-13)<a class="headerlink" href="#060-2021-12-13" title="Permanent link">&para;</a></h2>
+<h3 id="features_11">Features<a class="headerlink" href="#features_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li>update pangolin to 3.1.17 (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/389">#389</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/23ed39e6b7471a7f4efc649efb51882cf692e125">23ed39e</a>)</li>
+<li>update varlociraptor to version 4.8 (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/331">#331</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/009637621a3f55b8852c2aa9b428775f1286f40b">0096376</a>)</li>
+</ul>
+<h3 id="bug-fixes_15">Bug Fixes<a class="headerlink" href="#bug-fixes_15" title="Permanent link">&para;</a></h3>
+<ul>
+<li>generation of high quality genomes (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/394">#394</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/da00975893a20144c28cf4185c9263f6bd6c5a7c">da00975</a>)</li>
+<li>relative aggregation of samples for variants and lineages over time plots (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/382">#382</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/ebe556c3dfa7d1bbf6797d51452d06e53184f679">ebe556c</a>)</li>
+</ul>
+<h2 id="050-2021-12-09"><a href="https://www.github.com/IKIM-Essen/uncovar/compare/v0.4.1...v0.5.0">0.5.0</a> (2021-12-09)<a class="headerlink" href="#050-2021-12-09" title="Permanent link">&para;</a></h2>
+<h3 id="features_12">Features<a class="headerlink" href="#features_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>technology:</strong> add ion torrent processing (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/383">#383</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/288777cef21485fb0365c5c552690f2bf94b6e11">288777c</a>)</li>
+</ul>
+<h3 id="041-2021-12-07"><a href="https://www.github.com/IKIM-Essen/uncovar/compare/v0.4.0...v0.4.1">0.4.1</a> (2021-12-07)<a class="headerlink" href="#041-2021-12-07" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_16">Bug Fixes<a class="headerlink" href="#bug-fixes_16" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>ci:</strong> adjust commit message of copyright-preamble.yml to fit conventional commits format (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/369">#369</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/e067895adc368414000cba5e4db73edbb3d03b95">e067895</a>)</li>
+<li>GISAID lineage extraction [B.1.1.529 (probably).fasta] (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/372">#372</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/7750862a98890937885164b469b5f487ae70488a">7750862</a>)</li>
+</ul>
+<h2 id="040-2021-12-02"><a href="https://www.github.com/IKIM-Essen/uncovar/compare/v0.3.1...v0.4.0">0.4.0</a> (2021-12-02)<a class="headerlink" href="#040-2021-12-02" title="Permanent link">&para;</a></h2>
+<h3 id="features_13">Features<a class="headerlink" href="#features_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>technology:</strong> add Oxford Nanopore processing (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/305">#305</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/55f38f3f94146355c245f76d6c210dbf351a6eaf">55f38f3</a>)</li>
+</ul>
+<h3 id="bug-fixes_17">Bug Fixes<a class="headerlink" href="#bug-fixes_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add bam index for extract_reads_of_interest (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/366">#366</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/5f5dd27311d1bc27787b2061bba2312a50fbf720">5f5dd27</a>)</li>
+<li>changed contigs file for quast-rule to avoid workflow to stop because of low read numbers (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/338">#338</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/2d0e2465217470f0e9f089b9c3e240cddfc6336e">2d0e246</a>)</li>
+<li>changed JSON schema validator and updated files <a href="https://www.github.com/IKIM-Essen/uncovar/issues/364">#364</a> (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/75e62f20b88eaeb19389908e325b264b0f64081d">75e62f2</a>)</li>
+</ul>
+<h3 id="performance-improvements_2">Performance Improvements<a class="headerlink" href="#performance-improvements_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>changed chunksize of read json file from gisaid, excluded lineage without name (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/328">#328</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/b9e5c49dbf8910ad0332a73dba0c027bf3545c81">b9e5c49</a>)</li>
+</ul>
+<h3 id="031-2021-11-29"><a href="https://www.github.com/IKIM-Essen/uncovar/compare/v0.3.0...v0.3.1">0.3.1</a> (2021-11-29)<a class="headerlink" href="#031-2021-11-29" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_18">Bug Fixes<a class="headerlink" href="#bug-fixes_18" title="Permanent link">&para;</a></h3>
+<ul>
+<li>nested function usage and remove code duplication (<a href="https://www.github.com/IKIM-Essen/uncovar/issues/323">#323</a>) (<a href="https://www.github.com/IKIM-Essen/uncovar/commit/91e3ce922132309d3d226a9efceb995ce99b4489">91e3ce9</a>)</li>
+</ul>
+<h2 id="030-2021-11-05"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.5...v0.3.0">0.3.0</a> (2021-11-05)<a class="headerlink" href="#030-2021-11-05" title="Permanent link">&para;</a></h2>
+<h3 id="features_14">Features<a class="headerlink" href="#features_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add aggregation rule for publication plots (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/275">#275</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/a93bc18bae5976bcdb045d8daab6760e03e3a6ea">a93bc18</a>)</li>
+<li>add more voc mutations to config (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/314">#314</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/509860512f819887cfcb15786f127157382d5b29">5098605</a>)</li>
+<li>add plot of reads needed for sufficient lineage calling (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/263">#263</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/982f997b73fa110babde87cf9bea0406350fb0e7">982f997</a>)</li>
+<li>add plot of variants over time (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/279">#279</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/66ab12115814597a569a9662cba51ac679b1a81d">66ab121</a>)</li>
+<li>add schemes for sample sheet and config file (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/278">#278</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/09976b3b901f224374cc9baa3df1a65eed89822c">09976b3</a>)</li>
+<li>add standard reference lineages for kallisto based lineage calling (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/280">#280</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/6bb32f6cda5cddf6cb598e566bbee9b2af26f190">6bb32f6</a>)</li>
+<li>add todo action (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/277">#277</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/c1e44c5ee2ad7c9bd2b9cbf5182616a36c50a38d">c1e44c5</a>)</li>
+<li>add workflow catalog yml (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/199">#199</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/20135333faf2247f2a11e3201d362125de53e3b4">2013533</a>)</li>
+<li>comparison of assemblers (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/172">#172</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/8233829467b9cfaa45291225d05a8d6e34da044c">8233829</a>)</li>
+</ul>
+<h3 id="bug-fixes_19">Bug Fixes<a class="headerlink" href="#bug-fixes_19" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add "snakemake" in the readme for the Snakemake Workflow Catalog requirements (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/309">#309</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/2e5212c08604cc4b61704fc07711d00f964078d1">2e5212c</a>)</li>
+<li>changed call config file in update-sample-sheet (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/307">#307</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/406aef7ae411cc13ef9b1df3892922862104d01d">406aef7</a>)</li>
+<li>shotgun typo in config.yaml  (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/308">#308</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/d30f02b756699647bfbdcce802a33442bf324a76">d30f02b</a>)</li>
+<li>specify snakemake version used in pangolin env (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/284">#284</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/79a12a8fbecb0a83f263779880f9384cecf57529">79a12a8</a>)</li>
+</ul>
+<h3 id="025-2021-09-23"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.4...v0.2.5">0.2.5</a> (2021-09-23)<a class="headerlink" href="#025-2021-09-23" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_20">Bug Fixes<a class="headerlink" href="#bug-fixes_20" title="Permanent link">&para;</a></h3>
+<ul>
+<li>sha tag name (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/273">#273</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/b6d126582c630d64341ac18f18c982a584022f7e">b6d1265</a>)</li>
+</ul>
+<h3 id="024-2021-09-23"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.3...v0.2.4">0.2.4</a> (2021-09-23)<a class="headerlink" href="#024-2021-09-23" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_21">Bug Fixes<a class="headerlink" href="#bug-fixes_21" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add log in to quay registry (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/271">#271</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/16080de6a68c551698be9be6dbabd441f55befb0">16080de</a>)</li>
+</ul>
+<h3 id="023-2021-09-23"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.2...v0.2.3">0.2.3</a> (2021-09-23)<a class="headerlink" href="#023-2021-09-23" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_22">Bug Fixes<a class="headerlink" href="#bug-fixes_22" title="Permanent link">&para;</a></h3>
+<ul>
+<li>update readme to trigger release (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/269">#269</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/19129a91fae5a068deb55d5243fc1c47953d5d3c">19129a9</a>)</li>
+</ul>
+<h3 id="022-2021-09-22"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.1...v0.2.2">0.2.2</a> (2021-09-22)<a class="headerlink" href="#022-2021-09-22" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_23">Bug Fixes<a class="headerlink" href="#bug-fixes_23" title="Permanent link">&para;</a></h3>
+<ul>
+<li>rmv path for buildah (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/265">#265</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/2341a61623d4a905c8ace15363e57db8ada173dd">2341a61</a>)</li>
+</ul>
+<h3 id="021-2021-09-22"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.2.0...v0.2.1">0.2.1</a> (2021-09-22)<a class="headerlink" href="#021-2021-09-22" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_24">Bug Fixes<a class="headerlink" href="#bug-fixes_24" title="Permanent link">&para;</a></h3>
+<ul>
+<li>container version tag (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/262">#262</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/d4c1ef6b69439b92932b8398bf1cc8c753f16003">d4c1ef6</a>)</li>
+</ul>
+<h2 id="020-2021-09-22"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.8...v0.2.0">0.2.0</a> (2021-09-22)<a class="headerlink" href="#020-2021-09-22" title="Permanent link">&para;</a></h2>
+<h3 id="features_15">Features<a class="headerlink" href="#features_15" title="Permanent link">&para;</a></h3>
+<ul>
+<li>adding new rule update_sample to workflow (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/254">#254</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/3878c1b0089396e79dac614c09bf3985d74de96b">3878c1b</a>)</li>
+</ul>
+<h3 id="bug-fixes_25">Bug Fixes<a class="headerlink" href="#bug-fixes_25" title="Permanent link">&para;</a></h3>
+<ul>
+<li>maximize build space for container image (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/261">#261</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/0de2cc92c75bfa4f69ca48b576a57bd688f539b1">0de2cc9</a>)</li>
+</ul>
+<h3 id="018-2021-09-20"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.7...v0.1.8">0.1.8</a> (2021-09-20)<a class="headerlink" href="#018-2021-09-20" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_26">Bug Fixes<a class="headerlink" href="#bug-fixes_26" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add missing path to the Dockerfile job (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/258">#258</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/e733d2dd1081e632ce39b71cb47d122225011b6d">e733d2d</a>)</li>
+</ul>
+<h3 id="017-2021-09-20"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.6...v0.1.7">0.1.7</a> (2021-09-20)<a class="headerlink" href="#017-2021-09-20" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_27">Bug Fixes<a class="headerlink" href="#bug-fixes_27" title="Permanent link">&para;</a></h3>
+<ul>
+<li>update snakemake actions for container file (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/256">#256</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/cb31e92d263dfcdc94675aa3ef8a9274b472654a">cb31e92</a>)</li>
+</ul>
+<h3 id="016-2021-09-16"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.5...v0.1.6">0.1.6</a> (2021-09-16)<a class="headerlink" href="#016-2021-09-16" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_28">Bug Fixes<a class="headerlink" href="#bug-fixes_28" title="Permanent link">&para;</a></h3>
+<ul>
+<li>change path of docker file (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/251">#251</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/1abebcff23ef6c4eb82a414a9a9ceadd84cc0c4d">1abebcf</a>)</li>
+</ul>
+<h3 id="015-2021-09-15"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.4...v0.1.5">0.1.5</a> (2021-09-15)<a class="headerlink" href="#015-2021-09-15" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_29">Bug Fixes<a class="headerlink" href="#bug-fixes_29" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add GISAID var to env (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/248">#248</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/e859aedea76e37594c6a1070827dbc59c3a69b83">e859aed</a>)</li>
+</ul>
+<h3 id="014-2021-09-14"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.3...v0.1.4">0.1.4</a> (2021-09-14)<a class="headerlink" href="#014-2021-09-14" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_30">Bug Fixes<a class="headerlink" href="#bug-fixes_30" title="Permanent link">&para;</a></h3>
+<ul>
+<li>change " to ' (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/246">#246</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/ffca4975410e8e1e6de96f058c907e19bc5ed5d5">ffca497</a>)</li>
+</ul>
+<h3 id="013-2021-09-09"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.2...v0.1.3">0.1.3</a> (2021-09-09)<a class="headerlink" href="#013-2021-09-09" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_31">Bug Fixes<a class="headerlink" href="#bug-fixes_31" title="Permanent link">&para;</a></h3>
+<ul>
+<li>add extract gisaid env (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/235">#235</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/2b94752704a669d0a29d05eab23bb9e8d7d11fc5">2b94752</a>)</li>
+<li>improve if statement with release check (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/239">#239</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/12cc85f672c71361da48b617869582207c5d3f3e">12cc85f</a>)</li>
+</ul>
+<h3 id="012-2021-09-06"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.1...v0.1.2">0.1.2</a> (2021-09-06)<a class="headerlink" href="#012-2021-09-06" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_32">Bug Fixes<a class="headerlink" href="#bug-fixes_32" title="Permanent link">&para;</a></h3>
+<ul>
+<li>merge push to quay.io into release please (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/231">#231</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/e9d782dc5db6bd24d097d95f6f945cb02a1ff3aa">e9d782d</a>)</li>
+<li>remove pre von relase action (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/232">#232</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/301043f7e1b5a913f3b216eaf66640ae79756f67">301043f</a>)</li>
+</ul>
+<h3 id="011-2021-09-01"><a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/compare/v0.1.0...v0.1.1">0.1.1</a> (2021-09-01)<a class="headerlink" href="#011-2021-09-01" title="Permanent link">&para;</a></h3>
+<h3 id="bug-fixes_33">Bug Fixes<a class="headerlink" href="#bug-fixes_33" title="Permanent link">&para;</a></h3>
+<ul>
+<li>change trigger of registry release action (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/223">#223</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/1464ece23a689df6f5c9ef0db3a1252b53612cfc">1464ece</a>)</li>
+</ul>
+<h2 id="010-2021-08-31">0.1.0 (2021-08-31)<a class="headerlink" href="#010-2021-08-31" title="Permanent link">&para;</a></h2>
+<h3 id="bug-fixes_34">Bug Fixes<a class="headerlink" href="#bug-fixes_34" title="Permanent link">&para;</a></h3>
+<ul>
+<li>change release-please-action (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/217">#217</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/20af1dba16d69802a5ed48d453f3a7dc024c26e1">20af1db</a>)</li>
+<li>change trigger of release please (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/212">#212</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/c7a9978c8d4439ae77042703b58daa93b416a8a7">c7a9978</a>)</li>
+<li>relase plase indent (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/216">#216</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/9140a2916a34e616c39de4c052567c2dbc51bd3d">9140a29</a>)</li>
+<li>release command (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/219">#219</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/fb84404bad162ebdc939d8a67ed379ea86d77b75">fb84404</a>)</li>
+<li>release please command (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/218">#218</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/7c646897d2ff69289b85f24a11bb641628e78c86">7c64689</a>)</li>
+<li>release please if statement (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/220">#220</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/41f41d5f21a1f3b1864ee2ad6a1abc8e15a50593">41f41d5</a>)</li>
+<li>release please local PR checkout (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/221">#221</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/b348aa7ea1eebf00621ee62c52aca655fa8f4c83">b348aa7</a>)</li>
+<li>release please pr tag (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/215">#215</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/5d54bb4435d6ac8cdaf696c2b5b991a6ceb49c11">5d54bb4</a>)</li>
+<li>release please rmv double dollar (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/222">#222</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/0003da90e8bf65b34ace990576d4e27f5494330c">0003da9</a>)</li>
+<li>release please step id (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/214">#214</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/fa5a9cccf6930058d169ff2e4a8cbab30bde0ad7">fa5a9cc</a>)</li>
+</ul>
+<h3 id="miscellaneous-chores_1">Miscellaneous Chores<a class="headerlink" href="#miscellaneous-chores_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>release 0.1.0 (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/issues/201">#201</a>) (<a href="https://www.github.com/koesterlab/snakemake-workflow-sars-cov2/commit/f211058ffe0aa8c58b2d35bfb84838ec031b1283">f211058</a>)</li>
+</ul>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.indexes", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "toc.integrate", "header.autohide"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": 1.0}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+        <script src="../javascripts/katex.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>

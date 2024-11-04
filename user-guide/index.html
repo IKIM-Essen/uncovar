@@ -1,0 +1,846 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="SARS-CoV-2 Variant Calling and Lineage Assignment.">
+      
+      
+        <meta name="author" content="Institute for Artificial Intelligence in Medicine, Medical Faculty of the University of Duisburg Essen and the University Hospital Essen">
+      
+      
+        <link rel="canonical" href="https://ikim-essen.github.io/uncovar/user-guide/">
+      
+      
+        <link rel="prev" href="../installation/">
+      
+      
+        <link rel="next" href="../configuration/">
+      
+      
+      <link rel="icon" href="../assets/UnCoVar_favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.43">
+    
+    
+      
+        <title>The Report - UnCoVar Documention</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-9R7WBBNN2S"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-9R7WBBNN2S",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-9R7WBBNN2S",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-report" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="UnCoVar Documention" class="md-header__button md-logo" aria-label="UnCoVar Documention" data-md-component="logo">
+      
+  <img src="../assets/UnCoVar_virus_white_no_shadow.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            UnCoVar Documention
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              The Report
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="green"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/IKIM-Essen/uncovar/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="UnCoVar Documention" class="md-nav__button md-logo" aria-label="UnCoVar Documention" data-md-component="logo">
+      
+  <img src="../assets/UnCoVar_virus_white_no_shadow.png" alt="logo">
+
+    </a>
+    UnCoVar Documention
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/IKIM-Essen/uncovar/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    The Report
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    The Report
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#section-1-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 1: Overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 1: Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#report" class="md-nav__link">
+    <span class="md-ellipsis">
+      Report
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-2-variant-call-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 2: Variant Call Details
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 2: Variant Call Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#voc-similarity" class="md-nav__link">
+    <span class="md-ellipsis">
+      VOC Similarity
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rendered-variant-callings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rendered variant callings
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-3-sequencing-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 3: Sequencing Details
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 3: Sequencing Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiqc-report-for-overall-quality-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      MultiQC report for overall quality control
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coverage-of-reference-genome" class="md-nav__link">
+    <span class="md-ellipsis">
+      Coverage of Reference Genome
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-4-sequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 4: Sequences
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 4: Sequences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quality-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quality Overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quality Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filter-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filter Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pangolin-call-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pangolin Call Overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pangolin Call Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quality-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quality Criteria
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-5-variant-call-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 5: Variant Call Files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-6-high-quality-genomes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 6: High-Quality Genomes
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Advanced Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tools
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="the-report">The Report<a class="headerlink" href="#the-report" title="Permanent link">&para;</a></h1>
+<p>UnCoVar automatically generates a HTML-based report for a detailed insight into
+the analysed patient or environmental samples.</p>
+<h2 id="section-1-overview">Section 1: Overview<a class="headerlink" href="#section-1-overview" title="Permanent link">&para;</a></h2>
+<h3 id="report">Report<a class="headerlink" href="#report" title="Permanent link">&para;</a></h3>
+<p>An overview table of key information through several stages of the workflow.
+The table consists of the following columns:</p>
+<ul>
+<li>Sample: The sample name as entered in the sample sheet
+  (<code>config/pep/samples.csv</code>) before starting the workflow.</li>
+<li>Eukaryota to Unclassified: Classification of the sample contents on the
+  domain level. Especially interesting for samples created via
+  <a href="https://en.wikipedia.org/wiki/Shotgun_sequencing">shotgun sequencing</a>.
+  with amplicon tiled preparation)</li>
+<li>Raw Reads: Number of reads in the raw input of the sample.</li>
+<li>Trimmed Read: Number of reads after <a href="https://www.ecseq.com/support/ngs/trimming-adapter-sequences-is-it-necessary">adapter removal</a>.</li>
+<li>Filtered Reads: Number of reads after removing sequences that could belong
+  to the human host from which the sample was taken.</li>
+<li>Largest Contig: The length of the largest sequences after
+  <a href="https://en.wikipedia.org/wiki/De_novo_sequence_assemblers"><em>de novo</em> assembly</a></li>
+<li>De Novo Sequence: The length of the <em>de novo</em> assembled sequence after
+  reference guided scaffolding. This sequence has less bias towards the
+  SARS-CoV-2 reference genome.
+  <a href="https://github.com/malonge/RaGOO">RaGOO</a></li>
+<li>Pseudo Sequence: The length of the pseudo assembled sequence. This sequence
+  has a stronger bias towards the SARS-CoV-2 reference genome, as detected
+  variants (on read level) are applied onto that reference. Only applicable
+  for samples process on Illumina devices.</li>
+<li>Consensus Sequence: The length of the consensus sequences. This sequence
+  also has a bias towards the SARS-CoV-2 reference genomes. It is created by
+  using neural networks applied on a pileup of individual sequencing reads
+  against the reference genome Only applicable for samples process on
+  Oxford Nanopore devices.
+  called variants with <a href="https://varlociraptor.github.io">Varlociraptor</a>
+  into the Wuhan-Hu-1 Reference
+  <a href="https://www.ncbi.nlm.nih.gov/nuccore/1798174254"><code>NC_045512.2</code></a></li>
+<li>Best Quality: Indicates which of the assemblies performed produces the
+  highest quality sequence and also indicates failed QC.</li>
+<li>Pango Lineage: Called lineage in <a href="https://cov-lineages.org/">Pango nomenclature</a>.</li>
+<li>WHO Label: Lineage name determined by the <a href="https://www.who.int/en/activities/tracking-SARS-CoV-2-variants/">WHO</a>.</li>
+<li>VOC Mutations: Mutations that occur in Variants of Concern (VOC). These VOCs
+  typically have: Increase in transmissibility or detrimental change in COVID-19
+  epidemiology; OR Increase in virulence or change in clinical disease
+  presentation; OR Decrease in effectiveness of public health and social
+  measures or available diagnostics, vaccines, therapeutics.
+  Other Mutations: Other Mutations that occur in the sample.
+  of specific concern
+  (<a href="https://en.wikipedia.org/wiki/Variant_of_concern">VOC</a>) and other found variants</li>
+</ul>
+<h2 id="section-2-variant-call-details">Section 2: Variant Call Details<a class="headerlink" href="#section-2-variant-call-details" title="Permanent link">&para;</a></h2>
+<h3 id="voc-similarity">VOC Similarity<a class="headerlink" href="#voc-similarity" title="Permanent link">&para;</a></h3>
+<p>Estimation of VOC similarity based on each sample's SNV profile, compared to all
+ VOCs from <a href="covariants.org">covariants.org</a>.</p>
+<ul>
+<li>Mutations: All possible SNVs found in the catalog with all SNVs of the most similar
+  VOC showing first.</li>
+<li>Probability: A-posteriori probability that the observation of the mutation is true.</li>
+<li>Frequency: Variant allele frequency (VAF). The percentage of sequencing reads
+  matching a specific SNV divided by the overall coverage at
+  that position.</li>
+<li>The colmuns with the VOC names represent the Top 10 similar VOCs, based on the
+  similarity of their SNV profile to the SNVs found in the sample.
+  measure of similarity. To determine the degree of similarity between the sample
+  and the VOCs, we performed the following scoring. Let <span class="arithmatex">\(n\)</span> be the total number
+  of variants and <span class="arithmatex">\(m\)</span> be the number of VOCs. Let <span class="arithmatex">\(X\)</span> be a binary matrix that
+  relates variants with VOCs, namely, <span class="arithmatex">\(X_{i,j} = 1\)</span> if and only if variant <span class="arithmatex">\(i\)</span>
+  is in  <span class="arithmatex">\(VOC_j\)</span>, with <span class="arithmatex">\(i = 1,\ldots,n\)</span> and <span class="arithmatex">\(j = 1,\ldots,m\)</span>. Let <span class="arithmatex">\(\theta_i\)</span>
+  be the latent allele frequency of variant <span class="arithmatex">\(i\)</span> in the given sample and <span class="arithmatex">\(\hat\theta_i\)</span>
+  be the maximum a posteriori estimate of <span class="arithmatex">\(\theta_i\)</span> as provided by Varlociraptor.
+  Let <span class="arithmatex">\(p_i = Pr(\theta_i &gt; 0 \mid D)\)</span> be the posterior probability that the variant
+  <span class="arithmatex">\(i\)</span> is present in the sample (i.e., the probability that its latent allele
+  frequency is greater than zero, given the data <span class="arithmatex">\(D\)</span>). Then, the similarity of
+  a given sample to <span class="arithmatex">\(VOC_j\)</span> can be calculated as the Jaccard-like similarity score:</li>
+</ul>
+<div class="arithmatex">\[\frac{\sum_{i=1}^n p_i \cdot \hat\theta_i \cdot X_{i,j} + (1-p_i) \cdot
+ (1-X_{i,j})}{n}\]</div>
+<h3 id="rendered-variant-callings">Rendered variant callings<a class="headerlink" href="#rendered-variant-callings" title="Permanent link">&para;</a></h3>
+<p>Variant callings rendered with Oncoprint:</p>
+<ul>
+<li>with <strong>high and moderate</strong>/<strong>low</strong> impact</li>
+<li>on <strong>ORF</strong>/<strong>Protein</strong> level</li>
+</ul>
+<p>Variant candidates are identified and called with Varlociraptor</p>
+<h2 id="section-3-sequencing-details">Section 3: Sequencing Details<a class="headerlink" href="#section-3-sequencing-details" title="Permanent link">&para;</a></h2>
+<h3 id="multiqc-report-for-overall-quality-control">MultiQC report for overall quality control<a class="headerlink" href="#multiqc-report-for-overall-quality-control" title="Permanent link">&para;</a></h3>
+<ul>
+<li>General Stats</li>
+<li>Sequence Counts</li>
+<li>Sequence Quality Histograms</li>
+<li>Per Sequence Quality Scores</li>
+<li>Per Base Sequence Content</li>
+<li>Per Sequence GC Content</li>
+<li>Per Base N Content</li>
+<li>Sequence Length Distribution</li>
+<li>Sequence Duplication Levels</li>
+<li>Overrepresented sequences by samples</li>
+<li>Top overrepresented sequences</li>
+<li>Adapter Content</li>
+<li>Status Checks</li>
+<li>Software Versions</li>
+</ul>
+<h3 id="coverage-of-reference-genome">Coverage of Reference Genome<a class="headerlink" href="#coverage-of-reference-genome" title="Permanent link">&para;</a></h3>
+<p>Plot that is showing how well the reference genome is covered by the reads of each
+ analyzed sample visualizing the depth (DP) values from SAMtools depth.</p>
+<h2 id="section-4-sequences">Section 4: Sequences<a class="headerlink" href="#section-4-sequences" title="Permanent link">&para;</a></h2>
+<h3 id="quality-overview">Quality Overview<a class="headerlink" href="#quality-overview" title="Permanent link">&para;</a></h3>
+<h4 id="filter-overview">Filter Overview<a class="headerlink" href="#filter-overview" title="Permanent link">&para;</a></h4>
+<p>A table comparing identity and number of N bases for all samples for the reconstructed
+ genomes UnCoVar generates with its two main assembly methods (<em>de novo</em>
+ assembly + scaffolding and consensus sequence based on called variants).</p>
+<h4 id="pangolin-call-overview">Pangolin Call Overview<a class="headerlink" href="#pangolin-call-overview" title="Permanent link">&para;</a></h4>
+<p>A table of lineage calls for all samples throughout several stages of the
+ workflow, as determined by <a href="https://github.com/cov-lineages/pangolin">Pangolin</a>.</p>
+<p>These stages are:</p>
+<ul>
+<li><strong>Scaffolded</strong> Sequences: Contigs from the
+  <a href="https://en.wikipedia.org/wiki/De_novo_sequence_assemblers"><em>de novo</em> assembly</a>,
+  ordered against the virus reference genome (default: Wuhan-Hu-1 Reference
+  <a href="https://www.ncbi.nlm.nih.gov/nuccore/1798174254"><code>NC_045512.2</code></a>) with
+  <a href="https://github.com/malonge/RaGOO">RaGOO</a>.</li>
+<li><strong>Polished</strong> Sequences: Scaffolded sequence polished by applying variants with
+  an allele frequency of 100% (called by <a href="https://varlociraptor.github.io">Varlociraptor</a>
+  at FDR <code>5%</code> by default).</li>
+<li><strong>Masked Polished</strong> Sequences: Polished Sequences masked due to two criteria.
+  See <a href="#quality-criteria">below</a> for a more in-depth explanation of these two criteria.</li>
+<li><strong>Consensus</strong> Sequences: Using corrected reads and the virus reference
+  genome (default: Wuhan-Hu-1 Reference
+  <a href="https://www.ncbi.nlm.nih.gov/nuccore/1798174254"><code>NC_045512.2</code></a>) a
+  <a href="https://en.wikipedia.org/wiki/Consensus_sequence">consensus sequence</a>
+  is generated using <a href="https://github.com/nanoporetech/medaka">medaka</a>.
+  Consensus Sequences are only generated for Oxford Nanopore data.</li>
+<li><strong>Masked Consensus</strong> Sequences: Consensus Sequence masked due to low position
+  coverage. See <a href="#quality-criteria">below</a> for a more in-depth explanation of
+  the criteria. Masked consensus Sequences are only generated for Oxford
+  Nanopore data.</li>
+<li><strong>Pseudo</strong> Sequences: Sequences that are1 generated based on the virus reference
+  genome (default: Wuhan-Hu-1 Reference
+  <a href="https://www.ncbi.nlm.nih.gov/nuccore/1798174254"><code>NC_045512.2</code></a>) and by applying
+  variants with an allele frequency of 100% (called by
+  <a href="https://varlociraptor.github.io">Varlociraptor</a> with a default FDR of <code>5%</code>).
+  Masked Pseudo Sequences are not generated, as the quality criteria <a href="#quality-criteria">below</a>
+  are implicit considered when creating a "normal" Pseudo Sequence. Pseudo sequences
+  are only generated for Illumina and Ion Torrent data.</li>
+</ul>
+<h5 id="quality-criteria">Quality Criteria<a class="headerlink" href="#quality-criteria" title="Permanent link">&para;</a></h5>
+<ol>
+<li>Positions in the reconstructed genome that are covered by less than a certain
+   amount (default: <code>20</code>) reads are be masked with N.</li>
+<li>Informative positions (A, T, G, C) which are not supported by a certain
+   percentage (default: <code>90%</code>) of the aligned reads are masked by non-informative
+   placeholders of the <a href="https://www.bioinformatics.org/sms/iupac.html">IUPAC nucleotide code</a>.
+   Not applicable for model-based basecall procedures (e.g. Oxford Nanopore).</li>
+</ol>
+<h2 id="section-5-variant-call-files">Section 5: Variant Call Files<a class="headerlink" href="#section-5-variant-call-files" title="Permanent link">&para;</a></h2>
+<p>Downloadable <code>.vcf</code> files of the different stages for variant calling:</p>
+<ul>
+<li>with <strong>high and moderate</strong>/<strong>low</strong> impact</li>
+<li>on <strong>ORF</strong>/<strong>Protein</strong> level</li>
+</ul>
+<h2 id="section-6-high-quality-genomes">Section 6: High-Quality Genomes<a class="headerlink" href="#section-6-high-quality-genomes" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Multi-FASTA file, including the reconstructed genomes from samples, that passed
+  the quality control</li>
+<li><code>.csv</code> file, including additional submission data for each sample that passed
+  the quality control</li>
+</ul>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.indexes", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "toc.integrate", "header.autohide"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": 1.0}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+        <script src="../javascripts/katex.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>
