@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/IKIM-Essen/uncovar/compare/v1.1.0...v1.1.1) (2024-11-04)
+
+
+### Bug Fixes
+
+* fix file not found error on shared fs storage ([#673](https://github.com/IKIM-Essen/uncovar/issues/673)) ([c28db96](https://github.com/IKIM-Essen/uncovar/commit/c28db9608c816cc775397096d45bd33c8e59aace))
+
 ## [1.1.0](https://github.com/IKIM-Essen/uncovar/compare/v1.0.0...v1.1.0) (2024-10-31)
 
 
