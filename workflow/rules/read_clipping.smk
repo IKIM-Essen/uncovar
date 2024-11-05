@@ -22,7 +22,7 @@ rule samtools_sort:
 
 rule bed_to_bedpe:
     input:
-        check_bed_for_URL(config["preprocessing"]["amplicon-primers"]),
+        config["preprocessing"]["amplicon-primers"],
     output:
         "resources/primer.bedpe",
     log:
@@ -44,7 +44,6 @@ rule bamclipper:
         ),
     params:
         output_dir=get_output_dir,
-        cwd=lambda w: os.getcwd(),
         bed_path=lambda w, input: os.path.join(os.getcwd(), input.bedpe),
         bam=lambda w, input: os.path.basename(input.bam),
     log:
@@ -57,7 +56,7 @@ rule bamclipper:
         " cp {input.bai} {params.output_dir} &&"
         " cd {params.output_dir} &&"
         " bamclipper.sh -b {params.bam} -p {params.bed_path} -n {threads} -u 5 -d 5) "
-        " > {params.cwd}/{log} 2>&1"
+        " > {log} 2>&1"
 
 
 rule fgbio:

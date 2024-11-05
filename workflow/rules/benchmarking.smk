@@ -277,17 +277,17 @@ rule order_contigs_assembly_comparison:
             "results/{date}/assembly/{sample}/{assembler}/{sample}.ordered.contigs.fasta"
         ),
     log:
-        "logs/{date}/ragoo/{assembler}/{sample}.log",
+        "logs/{date}/ragtag/{assembler}/{sample}.log",
     params:
         outdir=get_output_dir,
     conda:
-        "../envs/ragoo.yaml"
+        "../envs/ragtag.yaml"
     shadow:
         "minimal"
     shell:
         "(cd {params.outdir} &&"
-        " ragoo.py ../../../../../{input.contigs} ../../../../../{input.reference} &&"
-        " cd ../../../../../ && mv {params.outdir}/ragoo_output/ragoo.fasta {output})"
+        " ragtag.py scaffold -C -w ../../../../../{input.reference} ../../../../../{input.contigs} &&"
+        " cd ../../../../../ && mv {params.outdir}/ragtag_output/ragtag.scaffold.fasta {output})"
         " > {log} 2>&1"
 
 
@@ -297,7 +297,7 @@ use rule filter_chr0 as filter_chr0_assembly_comparison with:
     output:
         "results/{date}/assembly/{sample}/{assembler}/{sample}.contigs.ordered.filtered.fasta",
     log:
-        "logs/{date}/ragoo/{assembler}/{sample}_cleaned.log",
+        "logs/{date}/ragtag/{assembler}/{sample}_cleaned.log",
 
 
 use rule align_contigs as align_contigs_assembly_comparison with:

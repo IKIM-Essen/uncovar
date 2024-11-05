@@ -140,7 +140,7 @@ jobs:
 
       - name: Build and push
         if: ${{ steps.release.outputs.release_created == 'true' }}
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true

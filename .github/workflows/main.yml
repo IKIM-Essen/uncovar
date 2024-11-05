@@ -23,8 +23,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Formatting
-        uses: super-linter/super-linter@v5.7.2
+        uses: super-linter/super-linter@v7.1.0
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
@@ -64,7 +66,6 @@ jobs:
     env:
       GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
     needs:
-      - Formatting
       - Linting
       #- Pre-Commit
     strategy:
@@ -179,7 +180,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: matrix.technology == 'all' && matrix.rule != 'all -npr'
         with:
-          name: log-rule-${{ matrix.rule }}-technology-${{ matrix.technology }}
+          name: log-rule-${{ matrix.rule }}-technology-${{ matrix.technology }}-${{ matrix.seq_method }}
           path: .tests/logs/
 
       - name: Change permissions for caching
@@ -193,7 +194,6 @@ jobs:
     env:
       GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
     needs:
-      - Formatting
       - Linting
       #- Pre-Commit
     strategy:
@@ -203,7 +203,6 @@ jobs:
             benchmark_strain_calling,
             benchmark_assembly,
             benchmark_mixtures,
-            benchmark_non_sars_cov_2,
             benchmark_reads,
             compare_assemblers,
           ]

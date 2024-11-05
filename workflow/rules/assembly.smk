@@ -128,18 +128,16 @@ rule order_contigs:
     output:
         temp("results/{date}/contigs/ordered-unfiltered/{sample}.fasta"),
     log:
-        "logs/{date}/ragoo/{sample}.log",
+        "logs/{date}/ragtag/{sample}.log",
     params:
         outdir=get_output_dir,
     conda:
-        "../envs/ragoo.yaml"
+        "../envs/ragtag.yaml"
     shadow:
         "minimal"
     shell:
-        "(mkdir -p {params.outdir}/{wildcards.sample} && cd {params.outdir}/{wildcards.sample} &&"
-        " ragoo.py ../../../../../{input.contigs} ../../../../../{input.reference} &&"
-        " cd ../../../../../ && mv {params.outdir}/{wildcards.sample}/ragoo_output/ragoo.fasta {output})"
-        " > {log} 2>&1"
+        " ragtag.py scaffold -C -w -o {params.outdir}/{wildcards.sample} {input.reference} {input.contigs} &&"
+        " mv {params.outdir}/{wildcards.sample}/ragtag.scaffold.fasta {output} > {log} 2>&1"
 
 
 rule filter_chr0:
@@ -148,11 +146,11 @@ rule filter_chr0:
     output:
         temp("results/{date}/contigs/ordered/{sample}.fasta"),
     log:
-        "logs/{date}/ragoo/{sample}_cleaned.log",
+        "logs/{date}/ragtag/{sample}_cleaned.log",
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/ragoo-remove-chr0.py"
+        "../scripts/ragtag-remove-chr0.py"
 
 
 # polish illumina de novo assembly
