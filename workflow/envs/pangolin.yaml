@@ -3,5 +3,5 @@ channels:
   - bioconda
   - nodefaults
 dependencies:
-  - pangolin =4.3
-  - snakemake-minimal=7.24.0 # TODO keep until https://github.com/bioconda/bioconda-recipes/pull/42192 and we can pin to 4.3.1 above
+  - pangolin =4.3.1
+  - snakemake-minimal=7.24.0 # TODO keep until https://github.com/bioconda/bioconda-recipes/pull/42192 and we can pin to 4.3.1.1 above
