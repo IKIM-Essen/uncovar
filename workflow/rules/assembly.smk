@@ -136,8 +136,8 @@ rule order_contigs:
     shadow:
         "minimal"
     shell:
-        " ragtag.py scaffold -C -w -o {params.outdir}/{wildcards.sample} {input.reference} {input.contigs} &&"
-        " mv {params.outdir}/{wildcards.sample}/ragtag.scaffold.fasta {output} > {log} 2>&1"
+        "(ragtag.py scaffold -C -w -o {params.outdir}/{wildcards.sample} {input.reference} {input.contigs} &&"
+        " mv {params.outdir}/{wildcards.sample}/ragtag.scaffold.fasta {output}) > {log} 2>&1"
 
 
 rule filter_chr0:
