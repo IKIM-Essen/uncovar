@@ -43,6 +43,8 @@ include: "rules/generate_output.smk"
 include: "rules/benchmarking.smk"
 include: "rules/long_read.smk"
 include: "rules/lineage_variant_calling.smk"
+include: "rules/amplicon_stats.smk"
+include: "rules/freyja.smk"
 
 
 if config["data-handling"]["use-data-handling"]:
