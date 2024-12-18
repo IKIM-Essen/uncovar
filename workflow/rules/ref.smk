@@ -33,7 +33,7 @@ rule get_genome:
     resources:
         ncbi_api_requests=1,
     shell:
-        "((esearch -db nucleotide -query '{params.accession}' | "
+        "openssl version && ((esearch -db nucleotide -query '{params.accession}' | "
         "efetch -format fasta > {output}) && [ -s {output} ]) 2> {log}"
 
 
