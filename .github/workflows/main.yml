@@ -190,7 +190,7 @@ jobs:
         run: sudo df -h
 
   Benchmarks-Tests:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     env:
       GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
     needs:
