@@ -98,6 +98,11 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Update curl and OpenSSL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl libcurl4 openssl
+          
       # android - will release about 10 GB if you don't need Android
       # dotnet  - will release about 20 GB if you don't need .NET
       - name: Free up some disk sapce
