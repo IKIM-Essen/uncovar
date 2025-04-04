@@ -32,9 +32,9 @@ data-handling:
   archive: ../archive/
 
 #path to barcode folders
-barcode_dir: ../barcode_dir/
+barcode_dir: "../barcode_dir/"
 #path to store renamed FASTQ files
-output_dir: data/
+output_dir: "data/"
 
 quality-criteria:
   illumina:
