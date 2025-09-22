@@ -22,7 +22,7 @@ jobs:
   Formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Formatting
@@ -41,7 +41,7 @@ jobs:
     env:
       GISAID_API_TOKEN: ${{ secrets.GISAID_API_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Lint workflow
         uses: snakemake/snakemake-github-action@v1.25.1
         with:
@@ -57,7 +57,7 @@ jobs:
   #   runs-on: ubuntu-latest
   #   if: github.ref != 'refs/heads/master'
   #   steps:
-  #     - uses: actions/checkout@v4
+  #     - uses: actions/checkout@v5
   #     - uses: actions/setup-python@v5
   #     - uses: pre-commit/action@v3.0.0
 
@@ -76,7 +76,7 @@ jobs:
         # technology: [all, illumina, ion]
         seq_method: [shotgun, amplicon]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@v1.3.1
@@ -208,7 +208,7 @@ jobs:
           ]
     # generate_test_cases,
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@v1.3.1
